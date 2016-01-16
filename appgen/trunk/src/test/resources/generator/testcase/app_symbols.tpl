@@ -1,0 +1,26 @@
+#TEMPLATE(ABC,'Application Builder Class Templates'),FAMILY('ABC')
+#APPLICATION
+#EQUATE(%result,'')
+#SET(%result,'')
+#FOR(%Module)
+	#set(%result,%result&','&%module)
+#ENDFOR
+#ASSERT(%result=',test001.clw,test002.clw,test003.clw,test.clw','Result:'&%result)
+#FIX(%Module,'test002.clw')
+#SET(%result,'')
+#FOR(%ModuleProcedure)
+	#set(%result,%result&','&%ModuleProcedure)
+#ENDFOR
+#ASSERT(%result=',updateInvoice','Result:'&%result)
+#SET(%result,'')
+#FOR(%Procedure)
+	#set(%result,%result&','&%Procedure)
+#ENDFOR
+#ASSERT(%result=',Main,Updateinvitem,updateInvoice','Result:'&%result)
+#fix(%procedure,'Main')
+#SET(%result,'')
+#FOR(%control)
+	#set(%result,%result&','&%control)
+#ENDFOR
+#ASSERT(%result=',?Browse:1,?Insert:2,?Change:2,?Delete:2,?CurrentTab,?Tab:2,?Close,?Help','Result:'&%result)
+#ASSERT(%window='QuickWindowC',%window)

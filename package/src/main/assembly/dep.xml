@@ -1,0 +1,45 @@
+<assembly>
+  <id>bin</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>jar/</outputDirectory>
+      <scope>runtime</scope>
+      <excludes>
+      	<exclude>bouncycastle*</exclude>
+      	<exclude>clarion2java*</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+  <fileSets>
+  	<fileSet>
+		<directory>src/main/doc</directory>
+  		<includes>
+			<include>*</include>
+		</includes>
+		<outputDirectory>doc</outputDirectory>
+  	</fileSet>
+  	<fileSet>
+  		<includes>
+  			<include>examples/**/*.clw</include>
+  			<include>examples/**/*.inc</include>
+  			<include>examples/**/*.INC</include>
+  			<include>examples/**/*.CLW</include>
+  			<include>examples/**/*.app</include>
+  			<include>examples/**/*.dct</include>
+  			<include>examples/**/*.xml</include>
+  			<include>**/README</include>
+  			<include>**/LICENCE</include>
+  			<include>**/CHANGELOG</include>
+  			<include>examples/settings.xml.example</include>
+  		</includes>
+  		<excludes>
+  			<exclude>examples/**/libsrc/*</exclude>
+  		</excludes>
+  	</fileSet>
+  </fileSets>
+</assembly>
+

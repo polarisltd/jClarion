@@ -1,0 +1,11 @@
+source.. = src/
+output.. = bin/
+bin.includes = META-INF/,\
+               .,\
+               plugin.xml,\
+	       icons/, \
+               lib/clarion-runtime-1.115-SNAPSHOT.jar,\
+               lib/clarion-sysruntime-1.17-SNAPSHOT.jar,\
+               lib/clarion-appgen-1.0-SNAPSHOT.jar,\
+               lib/jazzy-0.5.2-rtext-1.4.1-2.jar,\
+               lib/clarion-compile-1.22-SNAPSHOT.jar

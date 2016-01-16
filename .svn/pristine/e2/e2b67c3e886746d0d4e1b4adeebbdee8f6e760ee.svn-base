@@ -1,0 +1,1122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+    <extension
+          id="org.jclarion.clarion.ide.model.app.ProcedureModel"
+          name="org.jclarion.clarion.ide.model.app.ProcedureModel"
+          point="org.eclipse.ui.perspectives">
+        <perspective
+              class="org.jclarion.clarion.ide.PerspectiveFactory"
+              icon="icons/clarion-perspective-icon.png"
+              id="org.jclarion.clarion.ide.PerspectiveFactory"
+              name="JClarion"/>
+    </extension>
+
+    <extension
+            point="org.eclipse.core.filebuffers.documentSetup"
+            id="org.jclarion.clarion.ide.editor.ClarionIncDocumentSetupParticipant"
+            name="org.jclarion.clarion.ide.editor.ClarionIncDocumentSetupParticipant">
+        <participant
+              class="org.jclarion.clarion.ide.editor.ClarionIncDocumentSetupParticipant"
+              extensions="inc,clw,INC,CLW">
+        </participant>
+    </extension>
+
+    <extension point="org.eclipse.ui.editors">
+        <editor
+              class="org.jclarion.clarion.ide.editor.ClarionIncEditor"
+              contributorClass="org.jclarion.clarion.ide.editor.ClarionIncEditorActionContributor"
+              default="true"
+              extensions="inc,clw,INC,CLW"
+              icon="icons/clarion-inc-editor-icon.png"
+              id="org.jclarion.clarion.ide.editor.ClarionIncEditor"
+              matchingStrategy="org.jclarion.clarion.ide.editor.ClarionMatchStrategy"
+              name="Clarion *.inc Editor">
+        </editor>
+        <editor
+                name="Clarion Window Editor"
+                icon="icons/clarion-window-editor-icon.png"
+                class="org.jclarion.clarion.ide.editor.ClarionToJavaEditor"
+                id="org.jclarion.clarion.ide.editor.ClarionToJavaEditor">
+        </editor>
+        <editor
+              class="org.jclarion.clarion.ide.editor.ClarionProcedureEditor"
+              id="org.jclarion.clarion.ide.editor.ClarionProcedureEditor"
+              name="Clarion Procedure">
+        </editor>
+        <editor
+              class="org.jclarion.clarion.ide.editor.ClarionControlEmbedEditor"
+              id="org.jclarion.clarion.ide.editor.ClarionControlEmbedEditor"
+              name="Clarion Control Embeds">
+        </editor>
+    </extension>
+
+    <extension
+          point="org.eclipse.ui.commands">
+       <command
+             id="org.jclarion.clarion.ide.command.OpenProcedureHandler"
+             name="Open">
+       </command>
+       <command
+             id="org.jclarion.clarion.ide.command.OpenModuleSourceHandler"
+             name="Open">
+       </command>
+       <command
+             id="org.jclarion.clarion.ide.command.OpenProcedureSourceHandler"
+             name="Open">
+       </command>
+       <command
+             id="org.jclarion.clarion.ide.command.AddProcedureHandler"
+             name="ADd">
+       </command>
+       <command
+             id="org.jclarion.clarion.ide.command.CopyProcedureHandler"
+             name="Copy">
+       </command>
+       <command
+             id="org.jclarion.clarion.ide.command.DeleteProcedureHandler"
+             name="Delete">
+       </command>
+       <command
+             id="org.jclarion.clarion.ide.command.RunClarionProgram"
+             name="Run">
+       </command>
+       <command
+             id="org.jclarion.clarion.ide.command.FindProcedureHandler"
+             name="Find">
+       </command>
+    </extension>
+
+    <extension
+            point="org.eclipse.ui.handlers">
+        <handler
+              class="org.jclarion.clarion.ide.command.OpenProcedureHandler"
+              commandId="org.jclarion.clarion.ide.command.OpenProcedureHandler">
+           <activeWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.jclarion.clarion.ide.command.OpenProcedureSourceHandler"
+              commandId="org.jclarion.clarion.ide.command.OpenProcedureSourceHandler">
+           <activeWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.jclarion.clarion.ide.command.OpenModuleSourceHandler"
+              commandId="org.jclarion.clarion.ide.command.OpenModuleSourceHandler">
+           <activeWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.jclarion.clarion.ide.command.AddProcedureHandler"
+              commandId="org.jclarion.clarion.ide.command.AddProcedureHandler">
+           <activeWhen>
+ 			<reference definitionId="jclarion.todoProcedure"/>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.jclarion.clarion.ide.command.CopyProcedureHandler"
+              commandId="org.jclarion.clarion.ide.command.CopyProcedureHandler">
+           <activeWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.jclarion.clarion.ide.command.DeleteProcedureHandler"
+              commandId="org.jclarion.clarion.ide.command.DeleteProcedureHandler">
+           <activeWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.jclarion.clarion.ide.command.RunClarionProgram"
+              commandId="org.jclarion.clarion.ide.command.RunClarionProgram">
+        </handler>
+        <handler
+              class="org.jclarion.clarion.ide.command.FindProcedureHandler"
+              commandId="org.jclarion.clarion.ide.command.FindProcedureHandler">
+        </handler>
+    </extension>
+
+    <!--
+    ****************************************************************************
+        Tabbed Properties
+    ****************************************************************************
+    -->
+
+    <!-- Contributors -->
+    <extension
+            point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+        <propertyContributor
+                contributorId="org.jclarion.clarion.ide.editor.ClarionIncEditor">
+            <propertyCategory category="clarion_source"/>
+        </propertyContributor>
+    </extension>
+
+    <extension
+            point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+        <propertyContributor
+                contributorId="org.jclarion.clarion.ide.editor.ClarionToJavaEditor">
+            <propertyCategory category="clarion_objects"/>
+        </propertyContributor>
+    </extension>
+
+    <!-- Tabs -->
+    <extension
+            point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+
+        <propertyTabs
+                contributorId="org.jclarion.clarion.ide.editor.ClarionIncEditor">
+
+            <propertyTab category="clarion_source" id="jclarion.tab.Name" label="Name"/>
+        </propertyTabs>
+    </extension>
+
+    <extension
+            point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+
+        <propertyTabs
+                contributorId="org.jclarion.clarion.ide.editor.ClarionToJavaEditor">
+
+            <propertyTab category="clarion_objects" id="jclarion.tab.Position" label="Position"/>
+            <propertyTab category="clarion_objects" id="jclarion.tab.Text" label="Text" afterTab="jclarion.tab.Position"/>
+            <propertyTab category="clarion_objects" id="jclarion.tab.Data" label="Data" afterTab="jclarion.tab.Text"/>
+            <propertyTab category="clarion_objects" id="jclarion.tab.Orientation" label="Orientation" afterTab="jclarion.tab.Data"/>
+            <propertyTab category="clarion_objects" id="jclarion.tab.Display" label="Display" afterTab="jclarion.tab.Orientation"/>
+            <propertyTab category="clarion_objects" id="jclarion.tab.Font" label="Font" afterTab="jclarion.tab.Display"/>
+            <propertyTab category="clarion_objects" id="jclarion.tab.Color" label="Color" afterTab="jclarion.tab.Font"/>
+            <propertyTab category="clarion_objects" id="jclarion.tab.Behaviour" label="Behaviour" afterTab="jclarion.tab.Color"/>
+        </propertyTabs>
+    </extension>
+
+    <!-- Sections -->
+    <extension
+            point="org.eclipse.ui.views.properties.tabbed.propertySections">
+
+        <propertySections
+                contributorId="org.jclarion.clarion.ide.editor.ClarionIncEditor">
+
+            <!-- Name tab -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.NamePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.NamePropertySection"
+                    tab="jclarion.tab.Name">
+                <input type="org.jclarion.clarion.ide.model.ClarionIncContent"/>
+            </propertySection>
+        </propertySections>
+    </extension>
+
+    <extension
+            point="org.eclipse.ui.views.properties.tabbed.propertySections">
+
+        <propertySections
+                contributorId="org.jclarion.clarion.ide.editor.ClarionToJavaEditor">
+
+            <!-- Position tab -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.PositionPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.PositionPropertySection"
+                    tab="jclarion.tab.Position">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.SizePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.SizePropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.PositionPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.RatioPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.RatioPropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.SizePropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            
+            
+   			<propertySection
+                    class="org.jclarion.clarion.ide.view.properties.AbsolutePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.AbsolutePropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.RatioPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.BandPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+   			<propertySection
+                    class="org.jclarion.clarion.ide.view.properties.WithPriorPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.WithPriorPropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.AbsolutePropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.BandPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+   			<propertySection
+                    class="org.jclarion.clarion.ide.view.properties.WithNextPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.WithNextPropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.WithPriorPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.BandPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.LandscapePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.LandscapePropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.WithNextPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ReportPropertySectionFilter">
+	            <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.UnitsPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.UnitsPropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.LandscapePropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ReportPropertySectionFilter">
+	            <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.PaperPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.PaperPropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.UnitsPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ReportPropertySectionFilter">
+	            <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.PaperWidthPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.PaperWidthPropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.PaperPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ReportPropertySectionFilter">
+	            <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>            
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.PaperHeightPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.PaperHeightPropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.PaperWidthPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ReportPropertySectionFilter">
+	            <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>  
+            
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.RatioPositionPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.RatioPositionPropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.PaperHeightPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.RatioSizePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.RatioSizePropertySection"
+                    tab="jclarion.tab.Position"
+                    afterSection="org.jclarion.clarion.ide.view.properties.RatioPositionPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>            
+                      
+            <!-- Text tab -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.TextPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.TextPropertySection"
+                    tab="jclarion.tab.Text">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.UsePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.UsePropertySection"
+                    tab="jclarion.tab.Text"
+                    afterSection="org.jclarion.clarion.ide.view.properties.TextPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+
+            <!-- Data -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.FromPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.FromPropertySection"
+                    tab="jclarion.tab.Data"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ListControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.PreviewPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.PreviewPropertySection"
+                    tab="jclarion.tab.Data"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ReportPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+
+            <!-- Orientation -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.OrientationPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.OrientationPropertySection"
+                    tab="jclarion.tab.Orientation">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.OrientationOffsetPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.OrientationOffsetPropertySection"
+                    tab="jclarion.tab.Orientation"
+                    afterSection="org.jclarion.clarion.ide.view.properties.TextPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+
+            <!-- Display tab -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.BoxedPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.BoxedPropertySection"
+                    tab="jclarion.tab.Display">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.TrnPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.TrnPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.BoxedPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.BevelOuterPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.BevelOuterPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.TrnPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.BevelInnerPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.BevelInnerPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.BevelOuterPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.DisablePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.DisablePropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.BevelInnerPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.HidePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.HidePropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.DisablePropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.SkipPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.SkipPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.HidePropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.TipPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.TipPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.SkipPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.HlpControlPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.HlpControlPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.TipPropertySection">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.MsgPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.MsgPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.HlpControlPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.FlatPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.FlatPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.MsgPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.FlatPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.IconPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.IconPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.FlatPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.IconPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.FormatPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.FormatPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.IconPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ListControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.FullPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.FullPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.FormatPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.FullPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.HScrollPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.HScrollPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.FullPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.HScrollPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.VScrollPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.VScrollPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.HScrollPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.VScrollPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.DropPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.DropPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.VScrollPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ListControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.NoBarPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.NoBarPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.DropPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ListControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.LineWidthPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.LineWidthPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.NoBarPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.LineControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ResizePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ResizePropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.LineWidthPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ResizeControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.SinglePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.SinglePropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.ResizePropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.TextControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.FillPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.FillPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.SinglePropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.PanelControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.NoSheetPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.NoSheetPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.FillPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.SheetControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.SpreadPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.SpreadPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.NoSheetPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.SheetControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.WizardPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.WizardPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.SpreadPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.SheetControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.SystemPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.SystemPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.WizardPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.CenteredPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.CenteredPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.SystemPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.MaximizePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.MaximizePropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.CenteredPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ToolBoxPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ToolBoxPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.MaximizePropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.GrayPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.GrayPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.ToolBoxPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.HlpWindowPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.HlpWindowPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.GrayPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.TiledPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.TiledPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.HlpWindowPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.NoFramePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.NoFramePropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.TiledPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.MdiPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.MdiPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.NoFramePropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.CenterPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.CenterPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.MdiPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.TimerPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.TimerPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.CenterPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.DoublePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.DoublePropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.TimerPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.MaxPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.MaxPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.DoublePropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ModalPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ModalPropertySection"
+                    tab="jclarion.tab.Display"
+                    afterSection="org.jclarion.clarion.ide.view.properties.MaxPropertySection">
+                <input type="org.jclarion.clarion.ide.model.WindowTargetWrapper"/>
+            </propertySection>
+
+            <!-- Font tab -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.FontPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.FontPropertySection"
+                    tab="jclarion.tab.Font">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.FontColorPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.FontColorConstantPropertySection"
+                    tab="jclarion.tab.Font"
+                    afterSection="org.jclarion.clarion.ide.view.properties.FontPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+
+            <!-- Color tab -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ColorFillPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ColorFillPropertySection"
+                    tab="jclarion.tab.Color">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ColorSelectedPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ColorSelectedPropertySection"
+                    tab="jclarion.tab.Color"
+                    afterSection="org.jclarion.clarion.ide.view.properties.ColorFillPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ColorSelectedFillPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ColorSelectedFillPropertySection"
+                    tab="jclarion.tab.Color"
+                    afterSection="org.jclarion.clarion.ide.view.properties.ColorSelectedPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+
+            <!-- Behaviour tab -->
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.StdPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.StdPropertySection"
+                    tab="jclarion.tab.Behaviour">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ImmPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ImmPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.StdPropertySection">
+                <input type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.KeyPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.KeyPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.ImmPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ButtonControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.DefaultPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.DefaultPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.KeyPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ButtonControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.UprPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.UprPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.KeyPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.EntryControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.CapPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.CapPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.UprPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.EntryControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.PasswordPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.PasswordPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.CapPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.EntryControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ReadOnlyPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ReadOnlyPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.PasswordPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ReadOnlyPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ColumnPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ColumnPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.ReadOnlyPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ListControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.MarkPropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.MarkPropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.ColumnPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.ListControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.TrueValuePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.TrueValuePropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.MarkPropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.CheckControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.FalseValuePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.FalseValuePropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.TruePropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.CheckControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                    class="org.jclarion.clarion.ide.view.properties.ValuePropertySection"
+                    id="org.jclarion.clarion.ide.view.properties.ValuePropertySection"
+                    tab="jclarion.tab.Behaviour"
+                    afterSection="org.jclarion.clarion.ide.view.properties.FalsePropertySection"
+                    filter="org.jclarion.clarion.ide.view.properties.filter.RadioControlPropertySectionFilter">
+                <input type="org.jclarion.clarion.ide.model.ControlWrapper"/>
+            </propertySection>
+            <propertySection
+                  afterSection="org.jclarion.clarion.ide.view.properties.UsePropertySection"
+                  class="org.jclarion.clarion.ide.view.properties.LabelPropertySection"
+                  id="org.jclarion.clarion.ide.view.properties.LabelPropertySection"
+                  tab="jclarion.tab.Text">
+               <input
+                     type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper">
+               </input>
+            </propertySection>
+            <propertySection
+                  afterSection="org.jclarion.clarion.ide.view.properties.LabelPropertySection"
+                  class="org.jclarion.clarion.ide.view.properties.PrePropertySection"
+                  id="org.jclarion.clarion.ide.view.properties.PrePropertySection"
+                  tab="jclarion.tab.Text"
+                  filter="org.jclarion.clarion.ide.view.properties.filter.ReportPropertySectionFilter">
+               <input
+                     type="org.jclarion.clarion.ide.model.AbstractPropertyObjectWrapper">
+               </input>
+            </propertySection>
+        </propertySections>
+    </extension>
+    <extension
+          point="org.eclipse.ui.views">
+       <view
+             category="org.jclarion"
+             class="org.jclarion.clarion.ide.view.ClarionFields"
+             id="org.jclarion.clarion.ide.view.ClarionFields"
+             name="Clarion Fields"
+             restorable="true">
+       </view>
+       <category
+             id="org.jclarion"
+             name="JClarion">
+       </category>
+       <view
+             category="org.jclarion"
+             class="org.jclarion.clarion.ide.view.ClarionControls"
+             id="org.jclarion.clarion.ide.view.ClarionControls"
+             name="Control Templates"
+             restorable="true">
+       </view>
+    </extension>
+    <extension
+          point="org.eclipse.ui.navigator.navigatorContent">
+       <navigatorContent
+             activeByDefault="true"
+             contentProvider="org.jclarion.clarion.ide.view.navigator.AppProcedure"
+             id="org.jclarion.clarion.ide.view.navigator.AppProcedure"
+             labelProvider="org.jclarion.clarion.ide.view.navigator.AppProcedure"
+             name="Clarion Procedures">
+          <triggerPoints>
+             <or>
+                <instanceof
+                      value="org.eclipse.core.resources.IProject">
+                </instanceof>
+             </or>
+          </triggerPoints>
+       </navigatorContent>
+    </extension>
+    <extension
+          point="org.eclipse.core.runtime.adapters">
+       <factory
+             adaptableType="org.eclipse.core.resources.IProject"
+             class="org.jclarion.clarion.ide.model.AppProjectFactory">
+          <adapter
+                type="org.jclarion.clarion.ide.model.AppProject">
+          </adapter>
+       </factory>
+    </extension>
+    <extension
+          point="org.eclipse.ui.navigator.viewer">
+       <viewerContentBinding
+             viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+          <includes>
+             <contentExtension
+                   pattern="org.jclarion.clarion.ide.view.navigator.AppProcedure">
+             </contentExtension>
+          </includes>
+       </viewerContentBinding>
+    </extension>
+    <extension
+          point="org.eclipse.ui.menus">
+       <menuContribution
+             allPopups="true"
+             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+          <command
+                commandId="org.jclarion.clarion.ide.command.OpenProcedureHandler"
+                label="Edit Procedure"
+                style="push">
+             <visibleWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+             </visibleWhen>
+          </command>
+          <command
+                commandId="org.jclarion.clarion.ide.command.OpenProcedureSourceHandler"
+                label="Edit Full Procedure Source"
+                style="push">
+             <visibleWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+             </visibleWhen>
+          </command>
+          <command
+                commandId="org.jclarion.clarion.ide.command.OpenModuleSourceHandler"
+                label="Edit Module Source"
+                style="push">
+             <visibleWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+             </visibleWhen>
+          </command>
+          <command
+                commandId="org.jclarion.clarion.ide.command.AddProcedureHandler"
+                label="Create Procedure"
+                style="push">
+             <visibleWhen>
+ 			<reference definitionId="jclarion.todoProcedure"/>
+             </visibleWhen>
+          </command>
+          <command
+                commandId="org.jclarion.clarion.ide.command.CopyProcedureHandler"
+                label="Copy Procedure"
+                style="push">
+             <visibleWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+             </visibleWhen>
+          </command>
+          <command
+                commandId="org.jclarion.clarion.ide.command.DeleteProcedureHandler"
+                label="Delete Procedure"
+                style="push">
+             <visibleWhen>
+ 			<reference definitionId="jclarion.realProcedure"/>
+             </visibleWhen>
+          </command>
+          <command
+                commandId="org.jclarion.clarion.ide.command.FindProcedureHandler"
+                label="Find Procedure"
+                style="push">
+             <visibleWhen>
+                <reference
+                      definitionId="jclarion.appModel">
+                </reference>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="true"
+             locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+          <dynamic
+                class="org.jclarion.clarion.ide.nature.ToggleProjectNature"
+                id="org.jclarion.clarion.ide.menus.toggleProjectNature">
+          </dynamic>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+          <toolbar
+                id="org.jclarion.clarion.ide.toolbar">
+             <command
+                   commandId="org.jclarion.clarion.ide.command.RunClarionProgram"
+                   label="Run Clarion"
+                   style="push">
+             </command>
+          </toolbar>
+       </menuContribution>
+    </extension>
+    <extension
+          point="org.eclipse.ui.editors.documentProviders">
+       <provider
+             class="org.jclarion.clarion.ide.model.EmbedDocumentProvider"
+             id="org.jclarion.clarion.ide.model.EmbedDocumentProvider"
+             inputTypes="org.jclarion.clarion.ide.model.EmbedInput">
+       </provider>
+       <provider
+             class="org.jclarion.clarion.ide.model.EmbeditorDocumentProvider"
+             id="org.jclarion.clarion.ide.model.EmbeditorDocumentProvider"
+             inputTypes="org.jclarion.clarion.ide.model.EmbeditorInput">
+       </provider>
+       <provider
+             class="org.jclarion.clarion.ide.model.TargetSourceDocumentProvider"
+             id="org.jclarion.clarion.ide.model.TargetSourceDocumentProvider"
+             inputTypes="org.jclarion.clarion.ide.model.ClarionToJavaInput">
+       </provider>
+    </extension>
+    <extension
+          point="org.eclipse.core.expressions.propertyTesters">
+       <propertyTester
+             class="org.jclarion.clarion.ide.expression.ProcedureTest"
+             id="jclarion.ProcedureTest"
+             namespace="jclarion.procedure"
+             properties="procedureExists"
+             type="org.jclarion.clarion.ide.model.app.ProcedureModel">
+       </propertyTester>
+       <propertyTester
+             class="org.jclarion.clarion.ide.expression.ProjectTest"
+             id="jclarion.ProjectTest"
+             namespace="jclarion.project"
+             properties="isClarionProject"
+             type="org.eclipse.core.resources.IProject">
+       </propertyTester>
+    </extension>
+    <extension
+          point="org.eclipse.core.expressions.definitions">
+       <definition id="jclarion.realProcedure">
+                <with variable="selection">
+                   <count value="1">
+                   </count>
+                   <iterate ifEmpty="false">
+                      <test property="jclarion.procedure.procedureExists" value="true"/>
+                   </iterate>
+                </with>
+       </definition>
+       <definition id="jclarion.todoProcedure">
+                <with variable="selection">
+                   <count value="1">
+                   </count>
+                   <iterate ifEmpty="false">
+                      <test property="jclarion.procedure.procedureExists" value="false"/>
+                   </iterate>
+                </with>
+       </definition>
+       <definition
+             id="jclarion.notClarionProject">
+          <with
+                variable="selection">
+             <count
+                   value="1">
+             </count>
+             <iterate
+                   ifEmpty="false">
+                <test
+                      property="jclarion.project.isClarionProject"
+                      value="false">
+                </test>
+             </iterate>
+          </with>
+       </definition>
+       <definition
+             id="jclarion.clarionProject">
+          <with
+                variable="selection">
+             <count
+                   value="1">
+             </count>
+             <iterate
+                   ifEmpty="false">
+                <test
+                      property="jclarion.project.isClarionProject"
+                      value="true">
+                </test>
+             </iterate>
+          </with>
+       </definition>
+       <definition
+             id="jclarion.appModel">
+          <with
+                variable="selection">
+             <count
+                   value="1">
+             </count>
+             <iterate
+                   ifEmpty="false">
+                <instanceof
+                      value="org.jclarion.clarion.ide.model.app.AppModel">
+                </instanceof>
+             </iterate>
+          </with>
+       </definition>
+    </extension>
+
+    <extension
+          id="org.jclarion.clarion.ide.builder.AppCodeGenerator"
+          name="AppCode Generator"
+          point="org.eclipse.core.resources.builders">
+       <builder
+             callOnEmptyDelta="false"
+             hasNature="true"
+             isConfigurable="false">
+          <run
+                class="org.jclarion.clarion.ide.builder.AppCodeGenerator">
+          </run>
+       </builder>
+    </extension>
+    <extension
+          id="jclarion.Clarion"
+          name="Clarion Project"
+          point="org.eclipse.core.resources.natures">
+       <builder
+             id="org.jclarion.clarion.ide.builder.AppCodeGenerator">
+       </builder>
+       <requires-nature
+             id="org.eclipse.jdt.core.javanature">
+       </requires-nature>
+       <runtime>
+          <run
+                class="org.jclarion.clarion.ide.nature.ClarionNature">
+          </run>
+       </runtime>
+       <builder
+             id="org.jclarion.clarion.ide.builder.ClarionToJavaBuilder">
+       </builder>
+    </extension>
+    <extension	
+          id="org.jclarion.clarion.ide.builder.ClarionToJavaBuilder"
+          name="Compile Clarion Source"
+          point="org.eclipse.core.resources.builders">
+       <builder
+             callOnEmptyDelta="false"
+             hasNature="true"
+             isConfigurable="false">
+          <run
+                class="org.jclarion.clarion.ide.builder.ClarionToJavaBuilder">
+          </run>
+       </builder>
+    </extension>
+    <extension
+          point="org.eclipse.ui.bindings">
+       <key
+             commandId="org.jclarion.clarion.ide.command.FindProcedureHandler"
+             contextId="org.eclipse.ui.contexts.window"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="Ctrl+Shift+F">
+       </key>
+    </extension>
+
+</plugin>

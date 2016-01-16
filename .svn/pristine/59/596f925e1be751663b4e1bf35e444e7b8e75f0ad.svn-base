@@ -1,0 +1,21 @@
+#TEMPLATE(ABC,'Application Builder Class Templates'),FAMILY('ABC')
+#APPLICATION
+#!
+#! Test:  Some multi dimension arrays
+ #FIND(%ModuleProcedure,'Updateinvitem')
+ #ASSERT(%ModuleProcedure='Updateinvitem',%moduleprocedure)
+ #ASSERT(%Module='test003.clw',%Module)
+ #FIND(%ModuleProcedure,'Foobar')
+ #ASSERT(%ModuleProcedure=%null,'Result:'&%moduleprocedure)
+ #FIX(%procedure,'Updateinvitem')
+ #ASSERT(%procedure='Updateinvitem','Result:'&%procedure)
+ #FIND(%controltype,'JUNK',%control)
+ #ASSERT(%procedure='Updateinvitem','Result:'&%procedure)
+ #ASSERT(%controltype=%null,'Result:'&%controltype)
+ #ASSERT(%procedure='Updateinvitem','Result:'&%procedure)
+ #FIND(%controltype,'LIST',%control)
+ #ASSERT(%procedure='Updateinvitem','Result:'&%procedure)
+ #ASSERT(%controltype=%null,'Result:'&%controltype)
+ #FIX(%procedure,'updateInvoice')
+ #FIND(%controltype,'LIST',%control)
+ #ASSERT(%controltype='LIST','Result:'&%controltype)

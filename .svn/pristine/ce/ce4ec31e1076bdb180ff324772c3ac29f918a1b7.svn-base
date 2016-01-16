@@ -1,0 +1,14 @@
+#
+# To run Eclipse with these debug options, add -debug option and point it to
+# this file in the Run Configuration's Arguments tab
+#
+
+#org.eclipse.ui/debug=false
+#org.eclipse.ui/trace/keyBindings=false
+#org.eclipse.ui/trace/keyBindings.verbose=false
+#org.eclipse.ui/trace/sources=false
+#org.eclipse.ui/trace/handlers=true
+#org.eclipse.ui/trace/handlers.verbose=true
+org.eclipse.ui/trace/handlers.verbose.commandId=org.jclarion.clarion.ide.view.ViewContentOutlineItemHandler
+#org.eclipse.ui/trace/contexts=false
+#org.eclipse.ui/trace/contexts.verbose=false

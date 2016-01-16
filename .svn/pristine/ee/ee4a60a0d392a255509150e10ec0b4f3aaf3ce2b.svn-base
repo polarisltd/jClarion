@@ -1,0 +1,219 @@
+#
+# Messages are keyed on class name
+#
+
+AbstractColorPropertySection.Divider.label=or
+
+AbstractJClarionPropertySection.Button.label=Change\u2026
+
+AddWindowAction.label=Add Window
+AddWindowAction.tooltip=Add a new Window using default values at the caret location
+
+AppModel.default_name=app
+
+BevelInnerPropertySection.label=Inner bevel
+
+BevelOuterPropertySection.label=Outer bevel
+
+BoxedPropertySection.label=Boxed
+
+CapPropertySection.label=Capitalize
+
+CenterPropertySection.label=Center
+
+CenteredPropertySection.label=Centered
+
+ClarionIncContent.name_pattern=Window: {0}
+
+ClarionIncEditor.new_window=Window\tWINDOW('Caption'),AT(,,185,92),MDI,GRAY,SYSTEM,FONT('MS Sans Serif',8,, |\n\
+\t\tFONT:regular),RESIZE\n\
+\tEND\n
+
+ColorFillPropertySection.label=Fill
+
+ColorSelectedPropertySection.label=Selected
+
+ColorSelectedFillPropertySection.label=Selected fill
+
+ColumnNode.Field.display_name=Field
+
+ColumnNode.Group.Header.label=Header
+ColumnNode.Property.Indent.label=Indent
+ColumnNode.Property.Justification.label=Justification
+ColumnNode.Property.ScrollBar.label=Scroll bar
+ColumnNode.Property.Text.label=Text
+ColumnNode.Property.Width.label=Width
+
+ColumnNode.Group.Data.label=Data
+ColumnNode.Property.DataIndent.label=Data indent
+ColumnNode.Property.DataJustification.label=Data justification
+ColumnNode.Property.Picture.label=Picture
+
+ColumnNode.Group.Flags.label=Flags
+ColumnNode.Property.Fixed.label=Fixed
+ColumnNode.Property.HasColor.label=Has color
+ColumnNode.Property.LastOnLine.label=Last on line
+ColumnNode.Property.Locator.label=Locator
+ColumnNode.Property.Resizeable.label=Resizeable
+ColumnNode.Property.Style.label=Style
+ColumnNode.Property.Underline.label=Underline
+ColumnNode.Property.Vertical.label=Vertical Line
+
+ColumnNode.Group.General.label=General
+ColumnNode.Property.Icon.label=Icon
+ColumnNode.Values.Icon.None.label=NONE
+ColumnNode.Values.Icon.Normal.label=NORMAL
+ColumnNode.Values.Icon.Transparent.label=TRANSPARENT
+
+ColumnNode.Group.Style.label=Style and Colors
+ColumnNode.Property.DefaultStyle.label=Default style
+
+ColumnNode.Group.Tree.label=Tree
+ColumnNode.Property.ShowBoxes.label=Show boxes
+ColumnNode.Property.ShowLevel.label=Show level
+ColumnNode.Property.ShowLines.label=Show lines
+ColumnNode.Property.ShowRoot.label=Show root
+ColumnNode.Property.Tree.label=Tree
+
+ColumnPropertySection.label=Column
+
+CompilationException.message=Compilation error at line {0}, column {1}
+
+ControlWrapper.name_pattern={0}: {1}
+
+DefaultPropertySection.label=Default
+
+DisablePropertySection.label=Disable
+
+DoublePropertySection.label=Double
+
+DropPropertySection.label=Drop down
+
+FalseValuePropertySection.label=False value
+
+FillPropertySection.label=Fill
+
+FlatPropertySection.label=Flat
+
+FontPropertySection.label=Font
+
+FontColorPropertySection.label=Color
+
+FormatPropertySection.label=Format
+
+LandscapePropertySection.label=Landscape
+
+PaperWidthPropertySection.label=Paper Width
+
+PaperHeightPropertySection.label=Paper Height
+
+UnitsPropertySection.label=Units
+
+AbsolutePropertySection.label=Absolute
+WithPriorPropertySection.label=With Prior
+WithNextPropertySection.label=With Next
+
+PreviewPropertySection.label=Preview
+
+FromPropertySection.label=From queue
+
+FullPropertySection.label=Full
+
+GrayPropertySection.label=Gray
+
+HidePropertySection.label=Hide
+
+HlpControlPropertySection.label=Help
+
+HlpWindowPropertySection.label=Help
+
+HScrollPropertySection.label=Horizontal scroll
+
+IconPropertySection.label=Icon
+
+ImmPropertySection.label=Imm
+
+KeyPropertySection.label=Key
+
+LineWidthPropertySection.label=Line width
+
+ListFormatDialog.Table.tooltip=Demonstration of column settings
+ListFormatDialog.ToolItem.AddField.tooltip=Add field
+ListFormatDialog.ToolItem.Delete.tooltip=Delete
+ListFormatDialog.ToolItem.MoveLeft.tooltip=Move left
+ListFormatDialog.ToolItem.MoveRight.tooltip=Move right
+
+MarkPropertySection.label=Mark
+
+MaxPropertySection.label=Max
+
+MaximizePropertySection.label=Maximize
+
+MdiPropertySection.label=MDI
+
+ModalPropertySection.label=Modal
+
+MsgPropertySection.label=Message
+
+NoBarPropertySection.label=No bar
+
+NoFramePropertySection.label=No frame
+
+NoSheetPropertySection.label=No sheet
+
+OrientationPropertySection.label=Orientation
+
+OrientationOffsetPropertySection.label=Offset
+
+PasswordPropertySection.label=Password
+
+PicturePropertySection.label=Picture
+
+PositionPropertySection.X.label=X
+PositionPropertySection.Y.label=Y
+
+ReadOnlyPropertySection.label=Read only
+
+ResizePropertySection.label=Resize
+
+ScrollPropertySection.label=Scroll
+ScrollPropertySection.Type.label=Type
+
+SinglePropertySection.label=Single
+
+SizePropertySection.Width.label=Width
+SizePropertySection.Height.label=Height
+
+SkipPropertySection.label=Skip
+
+SpreadPropertySection.label=Spread
+
+StdPropertySection.label=Std
+
+SystemPropertySection.label=System
+
+TextPropertySection.label=Text
+
+TiledPropertySection.label=Tiled
+
+TimerPropertySection.label=Timer
+
+TipPropertySection.label=Tip
+
+ToolBoxPropertySection.label=Tool box
+
+TrnPropertySection.label=Transparent
+
+TrueValuePropertySection.label=True value
+
+UprPropertySection.label=Uppercase
+
+UsePropertySection.label=Use
+
+ValuePropertySection.label=Value
+
+VScrollPropertySection.label=Vertical scroll
+
+WindowTargetWrapper.name_pattern=Window: {0}
+
+WizardPropertySection.label=Wizard

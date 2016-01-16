@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/barney/personal/c8/java/clarion/c9/target/c9backup-1.20.jar"/>
+	<classpathentry kind="lib" path="/home/barney/personal/c8/java/clarion/c9/target/c9p2p-1.20.jar"/>
+	<classpathentry kind="lib" path="/home/barney/personal/c8/java/clarion/c9/target/postgresql-8.4-701.jdbc4.jar"/>
+	<classpathentry kind="lib" path="/home/barney/personal/c8/java/clarion/c9/target/partsmagician-common-1.20.jar"/>
+	<classpathentry kind="lib" path="/home/barney/personal/c8/java/clarion/c9/target/clarion-sysruntime-1.16.jar"/>
+	<classpathentry kind="lib" path="/home/barney/personal/c8/java/clarion/c9/target/jazzy-0.5.2-rtext-1.4.1-2.jar"/>
+	<classpathentry kind="lib" path="/home/barney/personal/c8/java/clarion/c9/target/c9lib-1.153.jar"/>
+	<classpathentry kind="lib" path="/home/barney/personal/c8/java/clarion/c9/target/clarion-runtime-1.114.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

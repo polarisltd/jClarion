@@ -1,0 +1,67 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ * Java6
+ * Eclipse 3.4+ (Ganymede)
+
+Developed and tested on Eclipse 3.8.2 (Indigo)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is not a fully-fledged Maven project - it does not follow the required
+Maven project structure and as such does not compile the source or execute
+tests. The project is an Eclipse PDE project with a POM bolted-on to
+automatically copy the required dependencies to the 'lib' directory. Maven is
+not properly used because:
+ * The current PDE Mojo is not compatible with Eclipse 3.2+
+ * The Tycho plugin, which uses the Plug-Ins artifacts to inform Maven of
+   dependecies and supports compilation, testing and packaging, requires
+   Maven 3.
+
+Until we upgrade to Maven 3, Eclipse's .classpath, .project and .settings are
+checked in Subversion.
+
+!!! Do not run 'mvn eclipse:eclipse' !!!
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Run
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~ Plug-In
+* Right click 'clarion-ide' and run as 'Eclipse Application'
+
+~~~ Tests
+* Right click 'clarion-ide' and run as 'JUnit Plug-in Test'
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Switch to 'JClarion' perspective
+* Import test project:
+    -> General
+    -> Existing Projects into Workspace
+    -> test/res/example-project
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Conventions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+pluging.xml
+~~~~~~~~~~~
+
+* All defined IDs are the fully qualified class name. While this gives the
+  appearance of duplication in plugin.xml, it makes it easier to know what the
+  ID is and to spot typos.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Bugs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Changing WINDOW name in editor is not propagated to Properties view
+* Re-compile ClarionToJava when underlying document changes
+* Ordering of properties
+* Content Outline view should update when property is set (ENTER)

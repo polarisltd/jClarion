@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="res/example-project/**" kind="src" path="test"/>
+	<classpathentry exported="true" kind="lib" path="lib/jazzy-0.5.2-rtext-1.4.1-2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/clarion-appgen-1.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/clarion-sysruntime-1.17-SNAPSHOT.jar"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/clarion-runtime"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/clarion-appgen"/>
+	<classpathentry kind="lib" path="lib/clarion-compile-1.22-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/clarion-runtime-1.115-SNAPSHOT.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

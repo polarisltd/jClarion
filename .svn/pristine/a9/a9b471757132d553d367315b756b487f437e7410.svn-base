@@ -1,0 +1,1308 @@
+[VERSION2]
+[DICTIONARY]
+VERSION '1'
+
+
+
+[LONGDESC]
+!This is the dictionary for C8 software workshop and new and used units
+[FILES]
+
+[LONGDESC]
+!New C8 Accounts datafile.  This file stores both accounts and cash    accou
+!nts.
+!
+!
+!See accounts fspec for more information
+Accnt FILE,DRIVER('ODBC'),OWNER(ODBCSource),NAME('public.accnt'),PRE(AC),BINDABLE,THREAD  !C8 Accounts
+!!> IDENT(34),USAGE(File)
+PrimaryKey KEY(AC:ID),NOCASE,OPT,PRIMARY  !Primary Key
+!!> IDENT(67),AUTO
+AccountType KEY(AC:CashAccount,AC:CODE),OPT  !Account Type key
+!!> IDENT(68)
+ClarIDKey KEY(AC:clid),NOCASE
+AccountCode KEY(AC:CODE),OPT  !Ensure Unique Account Codes
+!!> IDENT(118)
+Record                   RECORD
+[SCREENCONTROLS]
+! PROMPT('clid:'),USE(?AC:clid:Prompt)
+! ENTRY(@n3),USE(AC:clid)
+[REPORTCONTROLS]
+! STRING(@n3),USE(AC:clid)
+clid LONG,NAME('clid')
+!!> IDENT(1286),PROMPT('clid:'),HEADER('clid'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('custtype:'),USE(?AC:custtype:Prompt)
+! ENTRY(@n-7),USE(AC:custtype),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-7),USE(AC:custtype),RIGHT(1)
+custtype SHORT,NAME('custtype')
+!!>PROMPT('custtype:'),HEADER('custtype'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! OPTION('sms Notify'),AT(,,50,48),USE(AC:smsNotify),BOXED
+! RADIO('Global Setting'),USE(?AC:smsNotify:Radio1),VALUE('G')
+! RADIO('Yes'),USE(?AC:smsNotify:Radio2),VALUE('Y')
+! RADIO('No'),USE(?AC:smsNotify:Radio3),VALUE('N')
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:smsNotify)
+smsNotify STRING(1),NAME('smsnotify')
+!!> IDENT(1354),VALID(INLIST('Global Setting|Yes|No')),PROMPT('sms Notify:'),HEADER('sms Notify'),PICTURE(@s1),VALUES('G|Y|N')
+[SCREENCONTROLS]
+! OPTION('email Notify'),AT(,,50,48),USE(AC:emailNotify),BOXED
+! RADIO('Global Setting'),USE(?AC:emailNotify:Radio1),VALUE('G')
+! RADIO('Yes'),USE(?AC:emailNotify:Radio2),VALUE('Y')
+! RADIO('No'),USE(?AC:emailNotify:Radio3),VALUE('N')
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:emailNotify)
+emailNotify STRING(1),NAME('emailnotify')
+!!> IDENT(1355),VALID(INLIST('Global Setting|Yes|No')),PROMPT('email Notify:'),HEADER('email Notify'),PICTURE(@s1),VALUES('G|Y|N')
+[SCREENCONTROLS]
+! PROMPT('firstname:'),USE(?AC:firstname:Prompt)
+! ENTRY(@s30),USE(AC:firstname)
+[REPORTCONTROLS]
+! STRING(@s30),USE(AC:firstname)
+firstname STRING(30),NAME('firstname')
+!!>PROMPT('firstname:'),HEADER('firstname'),PICTURE(@s30)
+[SCREENCONTROLS]
+! PROMPT('lastname:'),USE(?AC:lastname:Prompt)
+! ENTRY(@s30),USE(AC:lastname)
+[REPORTCONTROLS]
+! STRING(@s30),USE(AC:lastname)
+lastname STRING(30),NAME('lastname')
+!!>PROMPT('lastname:'),HEADER('lastname'),PICTURE(@s30)
+[SCREENCONTROLS]
+! PROMPT('middlename:'),USE(?AC:middlename:Prompt)
+! ENTRY(@s30),USE(AC:middlename)
+[REPORTCONTROLS]
+! STRING(@s30),USE(AC:middlename)
+middlename STRING(30),NAME('middlename')
+!!>PROMPT('middlename:'),HEADER('middlename'),PICTURE(@s30)
+[SCREENCONTROLS]
+! PROMPT('salutation:'),USE(?AC:salutation:Prompt)
+! ENTRY(@s5),USE(AC:salutation)
+[REPORTCONTROLS]
+! STRING(@s5),USE(AC:salutation)
+salutation STRING(5),NAME('salutation')
+!!>PROMPT('salutation:'),HEADER('salutation'),PICTURE(@s5)
+[SCREENCONTROLS]
+! OPTION('job Notify'),AT(,,50,48),USE(AC:jobNotify),BOXED
+! RADIO('Global Setting'),USE(?AC:jobNotify:Radio1),VALUE('G')
+! RADIO('Yes'),USE(?AC:jobNotify:Radio2),VALUE('Y')
+! RADIO('No'),USE(?AC:jobNotify:Radio3),VALUE('N')
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:jobNotify)
+jobNotify STRING(1),NAME('jobnotify')
+!!> IDENT(1357),VALID(INLIST('Global Setting|Yes|No')),PROMPT('job Notify:'),HEADER('job Notify'),PICTURE(@s1),VALUES('G|Y|N')
+[SCREENCONTROLS]
+! OPTION('order Notify'),AT(,,50,48),USE(AC:orderNotify),BOXED
+! RADIO('Global Setting'),USE(?AC:orderNotify:Radio1),VALUE('G')
+! RADIO('Yes'),USE(?AC:orderNotify:Radio2),VALUE('Y')
+! RADIO('No'),USE(?AC:orderNotify:Radio3),VALUE('N')
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:orderNotify)
+orderNotify STRING(1),NAME('ordernotify')
+!!> IDENT(1358),VALID(INLIST('Global Setting|Yes|No')),PROMPT('order Notify:'),HEADER('order Notify'),PICTURE(@s1),VALUES('G|Y|N')
+[SCREENCONTROLS]
+! PROMPT('statement Notify:'),USE(?AC:statementNotify:Prompt)
+! ENTRY(@s1),USE(AC:statementNotify)
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:statementNotify)
+statementNotify STRING(1),NAME('statementnotify')
+!!> IDENT(1368),PROMPT('statement Notify:'),HEADER('statement Notify'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('ID:'),USE(?AC:ID:Prompt)
+! ENTRY(@n14),USE(AC:ID),RIGHT(1),MSG('Unique Account Identifier'),TIP('Unique Account Identifier'),REQ
+[REPORTCONTROLS]
+! STRING(@n14),USE(AC:ID),RIGHT(1)
+ID LONG,NAME('id')  !Unique Account Identifier
+!!> IDENT(509),VALID(NONZERO),PROMPT('ID:'),HEADER('ID'),MESSAGE('Unique Account Identifier'),TOOLTIP('Unique Account Identifier'),PICTURE(@n14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('CODE:'),USE(?AC:CODE:Prompt)
+! ENTRY(@s10),USE(AC:CODE),MSG('Accounts Seach Code.'),TIP('Accounts Seach Code.'),REQ,UPR
+[REPORTCONTROLS]
+! STRING(@s10),USE(AC:CODE)
+CODE STRING(10),NAME('code')  !Accounts Seach Code.
+!!> IDENT(453),VALID(NONZERO),PROMPT('CODE:'),HEADER('CODE'),MESSAGE('Accounts Seach Code.'),TOOLTIP('Accounts Seach Code.'),PICTURE(@s10),CASE(UPPER)
+[SCREENCONTROLS]
+! PROMPT('Cash Account:'),USE(?AC:CashAccount:Prompt)
+! ENTRY(@n-7),USE(AC:CashAccount),RIGHT(1),MSG('If set then customer is a cash account'),TIP('If set then customer is a cash account')
+[REPORTCONTROLS]
+! STRING(@n-7),USE(AC:CashAccount),RIGHT(1)
+CashAccount SHORT,NAME('cashaccount')  !If set then customer is a cash account
+!!> IDENT(473),INITIAL('0'),PROMPT('Cash Account:'),HEADER('Cash Account'),MESSAGE('If set then customer is a cash account'),TOOLTIP('If set then customer is a cash account'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+[LONGDESC]
+!Creditor or debtor flag.
+!
+!
+!Can assume either the value 'C' for creditor, 'D' for debtor or both.
+[SCREENCONTROLS]
+! OPTION('Cred Debt'),AT(,,50,48),USE(AC:CredDebt),BOXED,MSG('Creditor or Debtor flag'),TIP('Creditor or Debtor flag')
+! RADIO('Both'),USE(?AC:CredDebt:Radio1),VALUE('B')
+! RADIO('Creditor'),USE(?AC:CredDebt:Radio2),VALUE('C')
+! RADIO('Debtor'),USE(?AC:CredDebt:Radio3),VALUE('D')
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:CredDebt)
+CredDebt STRING(1),NAME('creddebt')  !Creditor or Debtor flag
+!!> IDENT(454),VALID(INLIST('Both|Creditor|Debtor')),INITIAL('''B'''),PROMPT('Cred Debt:'),HEADER('Cred Debt'),MESSAGE('Creditor or Debtor flag'),TOOLTIP('Creditor or Debtor flag'),PICTURE(@s1),CASE(UPPER),VALUES('B|C|D')
+[SCREENCONTROLS]
+! PROMPT('Name:'),USE(?AC:Name:Prompt)
+! ENTRY(@s40),USE(AC:Name),MSG('B'),TIP('B')
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:Name)
+Name STRING(40),NAME('name')  !Name of the account holder
+!!> IDENT(455),PROMPT('Name:'),HEADER('Name'),MESSAGE('B'),TOOLTIP('B'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('Contact:'),USE(?AC:Contact:Prompt)
+! ENTRY(@s40),USE(AC:Contact),MSG('Contact name of the account holder'),TIP('Contact name of the account holder')
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:Contact)
+Contact STRING(40),NAME('contact')  !Contact name of the account holder
+!!> IDENT(456),PROMPT('Contact:'),HEADER('Contact'),MESSAGE('Contact name of the account holder'),TOOLTIP('Contact name of the account holder'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('Addr 1:'),USE(?AC:Addr1:Prompt)
+! ENTRY(@s30),USE(AC:Addr1),MSG('Account Holder Address'),TIP('Account Holder Address')
+[REPORTCONTROLS]
+! STRING(@s30),USE(AC:Addr1)
+Addr1 STRING(30),NAME('addr1')  !Account Holder Address
+!!> IDENT(457),PROMPT('Addr 1:'),HEADER('Addr 1'),MESSAGE('Account Holder Address'),TOOLTIP('Account Holder Address'),PICTURE(@s30)
+[SCREENCONTROLS]
+! PROMPT('Addr 2:'),USE(?AC:Addr2:Prompt)
+! ENTRY(@s30),USE(AC:Addr2),MSG('Account Holder address2'),TIP('Account Holder address2')
+[REPORTCONTROLS]
+! STRING(@s30),USE(AC:Addr2)
+Addr2 STRING(30),NAME('addr2')  !Account Holder address2
+!!> IDENT(458),PROMPT('Addr 2:'),HEADER('Addr 2'),MESSAGE('Account Holder address2'),TOOLTIP('Account Holder address2'),PICTURE(@s30)
+[SCREENCONTROLS]
+! PROMPT('Town:'),USE(?AC:Town:Prompt)
+! ENTRY(@s20),USE(AC:Town),MSG('Account Holder Town'),TIP('Account Holder Town')
+[REPORTCONTROLS]
+! STRING(@s20),USE(AC:Town)
+Town STRING(20),NAME('town')  !Account Holder Town
+!!> IDENT(459),PROMPT('Town:'),HEADER('Town'),MESSAGE('Account Holder Town'),TOOLTIP('Account Holder Town'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('State:'),USE(?AC:State:Prompt)
+! ENTRY(@s3),USE(AC:State),MSG('Account Holder state'),TIP('Account Holder state')
+[REPORTCONTROLS]
+! STRING(@s3),USE(AC:State)
+State STRING(3),NAME('state')  !Account Holder state
+!!> IDENT(460),PROMPT('State:'),HEADER('State'),MESSAGE('Account Holder state'),TOOLTIP('Account Holder state'),PICTURE(@s3)
+[SCREENCONTROLS]
+! PROMPT('Post Code:'),USE(?AC:PostCode:Prompt)
+! ENTRY(@s6),USE(AC:PostCode),MSG('Account holder postcode'),TIP('Account holder postcode')
+[REPORTCONTROLS]
+! STRING(@s6),USE(AC:PostCode)
+PostCode STRING(6),NAME('postcode')  !Account holder postcode
+!!> IDENT(461),PROMPT('Post Code:'),HEADER('Post Code'),MESSAGE('Account holder postcode'),TOOLTIP('Account holder postcode'),PICTURE(@s6)
+[SCREENCONTROLS]
+! PROMPT('Phone Main:'),USE(?AC:PhoneMain:Prompt)
+! ENTRY(@s15),USE(AC:PhoneMain),MSG('Main Phone Number'),TIP('Main Phone Number')
+[REPORTCONTROLS]
+! STRING(@s15),USE(AC:PhoneMain)
+PhoneMain STRING(15),NAME('phonemain')  !Main Phone Number
+!!> IDENT(462),PROMPT('Phone Main:'),HEADER('Phone Main'),MESSAGE('Main Phone Number'),TOOLTIP('Main Phone Number'),PICTURE(@s15)
+[SCREENCONTROLS]
+! PROMPT('Phone Alt:'),USE(?AC:PhoneAlt:Prompt)
+! ENTRY(@s15),USE(AC:PhoneAlt),MSG('Alternate Phone number'),TIP('Alternate Phone number')
+[REPORTCONTROLS]
+! STRING(@s15),USE(AC:PhoneAlt)
+PhoneAlt STRING(15),NAME('phonealt')  !Alternate Phone number
+!!> IDENT(464),PROMPT('Phone Alt:'),HEADER('Phone Alt'),MESSAGE('Alternate Phone number'),TOOLTIP('Alternate Phone number'),PICTURE(@s15)
+[SCREENCONTROLS]
+! PROMPT('Phone Mobile:'),USE(?AC:PhoneMobile:Prompt)
+! ENTRY(@s15),USE(AC:PhoneMobile),MSG('Mobile Phone number'),TIP('Mobile Phone number')
+[REPORTCONTROLS]
+! STRING(@s15),USE(AC:PhoneMobile)
+PhoneMobile STRING(15),NAME('phonemobile')  !Mobile Phone number
+!!> IDENT(465),PROMPT('Phone Mobile:'),HEADER('Phone Mobile'),MESSAGE('Mobile Phone number'),TOOLTIP('Mobile Phone number'),PICTURE(@s15)
+[SCREENCONTROLS]
+! PROMPT('Phone Fax:'),USE(?AC:PhoneFax:Prompt)
+! ENTRY(@s15),USE(AC:PhoneFax),MSG('Fax Phone number'),TIP('Fax Phone number')
+[REPORTCONTROLS]
+! STRING(@s15),USE(AC:PhoneFax)
+PhoneFax STRING(15),NAME('phonefax')  !Fax Phone number
+!!> IDENT(466),PROMPT('Phone Fax:'),HEADER('Phone Fax'),MESSAGE('Fax Phone number'),TOOLTIP('Fax Phone number'),PICTURE(@s15)
+[SCREENCONTROLS]
+! PROMPT('EM ail:'),USE(?AC:EMail:Prompt)
+! ENTRY(@s64),USE(AC:EMail),MSG('Email address'),TIP('Email address')
+[REPORTCONTROLS]
+! STRING(@s64),USE(AC:EMail)
+EMail STRING(64),NAME('email')  !Email address
+!!> IDENT(467),PROMPT('EM ail:'),HEADER('EM ail'),MESSAGE('Email address'),TOOLTIP('Email address'),PICTURE(@s64)
+[SCREENCONTROLS]
+! PROMPT('DL:'),USE(?AC:DL:Prompt)
+! ENTRY(@s20),USE(AC:DL),MSG('Drivers Licence No'),TIP('Drivers Licence No')
+[REPORTCONTROLS]
+! STRING(@s20),USE(AC:DL)
+DL STRING(20),NAME('dl')  !Drivers Licence No
+!!> IDENT(468),PROMPT('DL:'),HEADER('DL'),MESSAGE('Drivers Licence No'),TOOLTIP('Drivers Licence No'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('DOB:'),USE(?AC:DOB:Prompt)
+! ENTRY(@d6),USE(AC:DOB),MSG('Date of Birth'),TIP('Date of Birth')
+[REPORTCONTROLS]
+! STRING(@d6),USE(AC:DOB)
+DOB DATE,NAME('dob')  !Date of Birth
+!!> IDENT(469),PROMPT('DOB:'),HEADER('DOB'),MESSAGE('Date of Birth'),TOOLTIP('Date of Birth'),PICTURE(@d6)
+[SCREENCONTROLS]
+! PROMPT('ABN:'),USE(?AC:ABN:Prompt)
+! ENTRY(@s15),USE(AC:ABN),MSG('Australian Business Number'),TIP('Australian Business Number')
+[REPORTCONTROLS]
+! STRING(@s15),USE(AC:ABN)
+ABN STRING(15),NAME('abn')  !Australian Business Number
+!!> IDENT(528),PROMPT('ABN:'),HEADER('ABN'),MESSAGE('Australian Business Number'),TOOLTIP('Australian Business Number'),PICTURE(@s15)
+[SCREENCONTROLS]
+! PROMPT('Notes:'),USE(?AC:Notes:Prompt)
+! TEXT,USE(AC:Notes),MSG('Freeform notes'),TIP('Freeform notes')
+[REPORTCONTROLS]
+! TEXT,USE(AC:Notes)
+Notes STRING(1000),NAME('notes')  !Freeform notes
+!!> IDENT(470),PROMPT('Notes:'),HEADER('Notes'),MESSAGE('Freeform notes'),TOOLTIP('Freeform notes'),PICTURE(@s255)
+[SCREENCONTROLS]
+! PROMPT('no Statement:'),USE(?AC:noStatement:Prompt)
+! ENTRY(@n3),USE(AC:noStatement),MSG('If true, do not print statements for this customer'),TIP('If true, do not print statements for this customer')
+[REPORTCONTROLS]
+! STRING(@n3),USE(AC:noStatement)
+noStatement BYTE,NAME('nostatement')  !If true, do not print statements for this customer
+!!> IDENT(835),PROMPT('no Statement:'),HEADER('no Statement'),MESSAGE('If true, do not print statements for this customer'),TOOLTIP('If true, do not print statements for this customer'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('print Invoices:'),USE(?AC:printInvoices:Prompt)
+! ENTRY(@n3),USE(AC:printInvoices)
+[REPORTCONTROLS]
+! STRING(@n3),USE(AC:printInvoices)
+printInvoices BYTE,NAME('printinvoices')
+!!> IDENT(1471),PROMPT('print Invoices:'),HEADER('print Invoices'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('Credit Card:'),USE(?AC:CreditCard:Prompt)
+! ENTRY(@n-7),USE(AC:CreditCard),RIGHT(1),MSG('Has a credit card (if set interrogate creditcard file)'),TIP('Has a credit card (if set interrogate creditcard file)')
+[REPORTCONTROLS]
+! STRING(@n-7),USE(AC:CreditCard),RIGHT(1)
+CreditCard SHORT,NAME('creditcard')  !Has a credit card (if set interrogate creditcard file)
+!!> IDENT(471),PROMPT('Credit Card:'),HEADER('Credit Card'),MESSAGE('Has a credit card (if set interrogate creditcard file)'),TOOLTIP('Has a credit card (if set interrogate creditcard file)'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('Day 90 Balance:'),USE(?AC:Day90Balance:Prompt)
+! ENTRY(@n$-14.2),USE(AC:Day90Balance),DECIMAL(12),MSG('90 Day balance (minus this months transactions)'),TIP('90 Day balance (minus this months transactions)')
+[REPORTCONTROLS]
+! STRING(@n$-14.2),USE(AC:Day90Balance),DECIMAL(12)
+Day90Balance DECIMAL(9,2),NAME('day90balance')  !90 Day balance (minus this months transactions)
+!!> IDENT(483),PROMPT('Day 90 Balance:'),HEADER('Day 90 Balance'),MESSAGE('90 Day balance (minus this months transactions)'),TOOLTIP('90 Day balance (minus this months transactions)'),PICTURE(@n$-14.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('YTDI nv:'),USE(?AC:YTDInv:Prompt)
+! ENTRY(@n$15.2),USE(AC:YTDInv),DECIMAL(12),MSG('Yeat To Date Invoice Tally'),TIP('Yeat To Date Invoice Tally')
+[REPORTCONTROLS]
+! STRING(@n$15.2),USE(AC:YTDInv),DECIMAL(12)
+YTDInv DECIMAL(11,2),NAME('ytdinv')  !Year To Date Invoice Tally
+!!> IDENT(613),PROMPT('YTDI nv:'),HEADER('YTDI nv'),MESSAGE('Yeat To Date Invoice Tally'),TOOLTIP('Yeat To Date Invoice Tally'),PICTURE(@n$15.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('YTDY ear:'),USE(?AC:YTDYear:Prompt)
+! ENTRY(@s5),USE(AC:YTDYear),MSG('Year To Date Year'),TIP('Year To Date Year')
+[REPORTCONTROLS]
+! STRING(@s5),USE(AC:YTDYear)
+YTDYear STRING(5),NAME('ytdyear')  !Year To Date Year, in YY-YY format.
+!!> IDENT(615),PROMPT('YTDY ear:'),HEADER('YTDY ear'),MESSAGE('Year To Date Year'),TOOLTIP('Year To Date Year'),PICTURE(@s5)
+[SCREENCONTROLS]
+! PROMPT('Limit:'),USE(?AC:Limit:Prompt)
+! ENTRY(@n$11.2),USE(AC:Limit),DECIMAL(12),MSG('Current Transaction limit'),TIP('Current Transaction limit')
+[REPORTCONTROLS]
+! STRING(@n$11.2),USE(AC:Limit),DECIMAL(12)
+Limit DECIMAL(8,2),NAME('flimit')  !Total balance limit
+!!> IDENT(485),PROMPT('Limit:'),HEADER('Limit'),MESSAGE('Current Transaction limit'),TOOLTIP('Current Transaction limit'),PICTURE(@n$11.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! OPTION('Late Bal Type'),AT(,,50,48),USE(AC:LateBalType),BOXED,MSG('Where to calculate late balance, N:No notification, G: Global, A: Account'),TIP('Where to calculate late balance, N:No notification, G: Global, A: Account')
+! RADIO('None'),USE(?AC:LateBalType:Radio1),VALUE('N')
+! RADIO('x Days'),USE(?AC:LateBalType:Radio2),VALUE('G')
+! RADIO('Other'),USE(?AC:LateBalType:Radio3),VALUE('A')
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:LateBalType)
+LateBalType STRING(1),NAME('latebaltype')  !Where to calculate late balance, default:No notification, G: Global, A: Account
+!!> IDENT(634),VALID(INLIST('None|x Days|Other')),PROMPT('Late Bal Type:'),HEADER('Late Bal Type'),MESSAGE('Where to calculate late balance, N:No notification, G: Global, A: Account'),TOOLTIP('Where to calculate late balance, N:No notification, G: Global, A: Account'),PICTURE(@s1),VALUES('N|G|A')
+[SCREENCONTROLS]
+! PROMPT('Late Bal Thres:'),USE(?AC:LateBalThres:Prompt)
+! ENTRY(@n-7),USE(AC:LateBalThres),RIGHT(1),MSG('Late balance threshold (days)'),TIP('Late balance threshold (days)')
+[REPORTCONTROLS]
+! STRING(@n-7),USE(AC:LateBalThres),RIGHT(1)
+LateBalThres SHORT,NAME('latebalthres')  !Late balance threshold (days): used if LateBalType='A'
+!!> IDENT(635),PROMPT('Late Bal Thres:'),HEADER('Late Bal Thres'),MESSAGE('Late balance threshold (days)'),TOOLTIP('Late balance threshold (days)'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('Default Discount:'),USE(?AC:DefaultDiscount:Prompt)
+! ENTRY(@n6.2~%~),USE(AC:DefaultDiscount),DECIMAL(12),MSG('Spare Parts Discount'),TIP('Spare Parts Discount')
+[REPORTCONTROLS]
+! STRING(@n6.2~%~),USE(AC:DefaultDiscount),DECIMAL(12)
+DefaultDiscount DECIMAL(5,2),NAME('defaultdiscount')  !Spare Parts Discount
+!!> IDENT(604),PROMPT('Default Discount:'),HEADER('Default Discount'),MESSAGE('Spare Parts Discount'),TOOLTIP('Spare Parts Discount'),PICTURE(@n6.2~%~),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('spare 1:'),USE(?AC:spare1:Prompt)
+! ENTRY(@s40),USE(AC:spare1)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare1)
+spare1 STRING(40),NAME('spare1')
+!!> IDENT(575),PROMPT('spare 1:'),HEADER('spare 1'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 2:'),USE(?AC:spare2:Prompt)
+! ENTRY(@s40),USE(AC:spare2)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare2)
+spare2 STRING(40),NAME('spare2')
+!!> IDENT(576),PROMPT('spare 2:'),HEADER('spare 2'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 3:'),USE(?AC:spare3:Prompt)
+! ENTRY(@s40),USE(AC:spare3)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare3)
+spare3 STRING(40),NAME('spare3')
+!!> IDENT(577),PROMPT('spare 3:'),HEADER('spare 3'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 4:'),USE(?AC:spare4:Prompt)
+! ENTRY(@s40),USE(AC:spare4)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare4)
+spare4 STRING(40),NAME('spare4')
+!!> IDENT(578),PROMPT('spare 4:'),HEADER('spare 4'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 5:'),USE(?AC:spare5:Prompt)
+! ENTRY(@s40),USE(AC:spare5)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare5)
+spare5 STRING(40),NAME('spare5')
+!!> IDENT(579),PROMPT('spare 5:'),HEADER('spare 5'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 6:'),USE(?AC:spare6:Prompt)
+! ENTRY(@s40),USE(AC:spare6)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare6)
+spare6 STRING(40),NAME('spare6')
+!!> IDENT(580),PROMPT('spare 6:'),HEADER('spare 6'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 7:'),USE(?AC:spare7:Prompt)
+! ENTRY(@s40),USE(AC:spare7)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare7)
+spare7 STRING(40),NAME('spare7')
+!!> IDENT(581),PROMPT('spare 7:'),HEADER('spare 7'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 8:'),USE(?AC:spare8:Prompt)
+! ENTRY(@s40),USE(AC:spare8)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare8)
+spare8 STRING(40),NAME('spare8')
+!!> IDENT(582),PROMPT('spare 8:'),HEADER('spare 8'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 9:'),USE(?AC:spare9:Prompt)
+! ENTRY(@s40),USE(AC:spare9)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare9)
+spare9 STRING(40),NAME('spare9')
+!!> IDENT(583),PROMPT('spare 9:'),HEADER('spare 9'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('spare 10:'),USE(?AC:spare10:Prompt)
+! ENTRY(@s40),USE(AC:spare10)
+[REPORTCONTROLS]
+! STRING(@s40),USE(AC:spare10)
+spare10 STRING(40),NAME('spare10')
+!!> IDENT(584),PROMPT('spare 10:'),HEADER('spare 10'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('Alt Addr 1:'),USE(?AC:AltAddr1:Prompt)
+! ENTRY(@s30),USE(AC:AltAddr1)
+[REPORTCONTROLS]
+! STRING(@s30),USE(AC:AltAddr1)
+AltAddr1 STRING(30),NAME('altaddr1')
+!!> IDENT(1658),PROMPT('Alt Addr 1:'),HEADER('Alt Addr 1'),PICTURE(@s30)
+[SCREENCONTROLS]
+! PROMPT('altaddr 2:'),USE(?AC:altaddr2:Prompt)
+! ENTRY(@s30),USE(AC:altaddr2)
+[REPORTCONTROLS]
+! STRING(@s30),USE(AC:altaddr2)
+altaddr2 STRING(30),NAME('altaddr2')
+!!> IDENT(1659),PROMPT('altaddr 2:'),HEADER('altaddr 2'),PICTURE(@s30)
+[SCREENCONTROLS]
+! PROMPT('alttown:'),USE(?AC:alttown:Prompt)
+! ENTRY(@s20),USE(AC:alttown)
+[REPORTCONTROLS]
+! STRING(@s20),USE(AC:alttown)
+alttown STRING(20),NAME('alttown')
+!!> IDENT(1661),PROMPT('alttown:'),HEADER('alttown'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('altstate:'),USE(?AC:altstate:Prompt)
+! ENTRY(@s3),USE(AC:altstate)
+[REPORTCONTROLS]
+! STRING(@s3),USE(AC:altstate)
+altstate STRING(3),NAME('altstate')
+!!> IDENT(1663),PROMPT('altstate:'),HEADER('altstate'),PICTURE(@s3)
+[SCREENCONTROLS]
+! PROMPT('altpostcode:'),USE(?AC:altpostcode:Prompt)
+! ENTRY(@s6),USE(AC:altpostcode)
+[REPORTCONTROLS]
+! STRING(@s6),USE(AC:altpostcode)
+altpostcode STRING(6),NAME('altpostcode')
+!!> IDENT(1664),PROMPT('altpostcode:'),HEADER('altpostcode'),PICTURE(@s6)
+[SCREENCONTROLS]
+! PROMPT('alttype:'),USE(?AC:alttype:Prompt)
+! ENTRY(@s1),USE(AC:alttype)
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:alttype)
+alttype STRING(1),NAME('alttype')
+!!> IDENT(1665),PROMPT('alttype:'),HEADER('alttype'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('marketing:'),USE(?AC:marketing:Prompt)
+! ENTRY(@n3),USE(AC:marketing)
+[REPORTCONTROLS]
+! STRING(@n3),USE(AC:marketing)
+marketing BYTE,NAME('marketing')
+!!> IDENT(1668),PROMPT('marketing:'),HEADER('marketing'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('accountemail:'),USE(?AC:accountemail:Prompt)
+! ENTRY(@s64),USE(AC:accountemail)
+[REPORTCONTROLS]
+! STRING(@s64),USE(AC:accountemail)
+accountemail STRING(64),NAME('accountemail')
+!!> IDENT(1670),PROMPT('accountemail:'),HEADER('accountemail'),PICTURE(@s64)
+[SCREENCONTROLS]
+! PROMPT('taxexempt:'),USE(?AC:taxexempt:Prompt)
+! ENTRY(@n3),USE(AC:taxexempt)
+[REPORTCONTROLS]
+! STRING(@n3),USE(AC:taxexempt)
+taxexempt BYTE,NAME('taxexempt')
+!!> IDENT(1673),PROMPT('taxexempt:'),HEADER('taxexempt'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('disctype:'),USE(?AC:disctype:Prompt)
+! ENTRY(@s1),USE(AC:disctype)
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:disctype)
+disctype STRING(1),NAME('disctype')
+!!> IDENT(1741),PROMPT('disctype:'),HEADER('disctype'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('disccost:'),USE(?AC:disccost:Prompt)
+! ENTRY(@s1),USE(AC:disccost)
+[REPORTCONTROLS]
+! STRING(@s1),USE(AC:disccost)
+disccost STRING(1),NAME('disccost')
+!!> IDENT(1743),PROMPT('disccost:'),HEADER('disccost'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('phonenamemain:'),USE(?AC:phonenamemain:Prompt)
+! ENTRY(@s20),USE(AC:phonenamemain)
+[REPORTCONTROLS]
+! STRING(@s20),USE(AC:phonenamemain)
+phonenamemain STRING(20),NAME('phonenamemain')
+!!> IDENT(1799),PROMPT('phonenamemain:'),HEADER('phonenamemain'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('phonenamealt:'),USE(?AC:phonenamealt:Prompt)
+! ENTRY(@s20),USE(AC:phonenamealt)
+[REPORTCONTROLS]
+! STRING(@s20),USE(AC:phonenamealt)
+phonenamealt STRING(20),NAME('phonenamealt')
+!!> IDENT(1800),PROMPT('phonenamealt:'),HEADER('phonenamealt'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('phonenamemobile:'),USE(?AC:phonenamemobile:Prompt)
+! ENTRY(@s20),USE(AC:phonenamemobile)
+[REPORTCONTROLS]
+! STRING(@s20),USE(AC:phonenamemobile)
+phonenamemobile STRING(20),NAME('phonenamemobile')
+!!> IDENT(1801),PROMPT('phonenamemobile:'),HEADER('phonenamemobile'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('phonenamefax:'),USE(?AC:phonenamefax:Prompt)
+! ENTRY(@s20),USE(AC:phonenamefax)
+[REPORTCONTROLS]
+! STRING(@s20),USE(AC:phonenamefax)
+phonenamefax STRING(20),NAME('phonenamefax')
+!!> IDENT(1802),PROMPT('phonenamefax:'),HEADER('phonenamefax'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('ordershipping:'),USE(?AC:ordershipping:Prompt)
+! ENTRY(@n-14),USE(AC:ordershipping),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(AC:ordershipping),RIGHT(1)
+ordershipping LONG,NAME('ordershipping')
+!!>PROMPT('ordershipping:'),HEADER('ordershipping'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('ordernumreq:'),USE(?AC:ordernumreq:Prompt)
+! ENTRY(@n3),USE(AC:ordernumreq)
+[REPORTCONTROLS]
+! STRING(@n3),USE(AC:ordernumreq)
+ordernumreq BYTE,NAME('ordernumreq')
+!!>PROMPT('ordernumreq:'),HEADER('ordernumreq'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('icon:'),USE(?AC:icon:Prompt)
+! ENTRY(@n-14),USE(AC:icon),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(AC:icon),RIGHT(1)
+icon LONG,NAME('icon')
+!!>PROMPT('icon:'),HEADER('icon'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('suspended:'),USE(?AC:suspended:Prompt)
+! ENTRY(@n3),USE(AC:suspended)
+[REPORTCONTROLS]
+! STRING(@n3),USE(AC:suspended)
+suspended BYTE,NAME('suspended')
+!!>PROMPT('suspended:'),HEADER('suspended'),PICTURE(@n3)
+                         END
+                       END
+
+invitem FILE,DRIVER('ODBC'),OWNER(ODBCSource),NAME('public.invitem'),PRE(ivl),BINDABLE,THREAD  !Invoice item file
+!!> IDENT(12),USAGE(File)
+INV_KEY KEY(ivl:INVOICE,ivl:clid),NAME('inv_key'),NOCASE,OPT
+!!> IDENT(10)
+positionkey KEY(ivl:clid),NAME('|READONLY'),NOCASE,PRIMARY
+!!> IDENT(240)
+PARTKEY KEY(ivl:FRANCHISE,ivl:PARTNUM,ivl:DATE),DUP,NAME('partkey'),OPT
+!!> IDENT(197)
+DATE_KEY KEY(ivl:DATE),DUP,NAME('date_key'),NOCASE,OPT
+!!> IDENT(11)
+Record                   RECORD
+[SCREENCONTROLS]
+! PROMPT('clid:'),USE(?ivl:clid:Prompt)
+! ENTRY(@n3),USE(ivl:clid)
+[REPORTCONTROLS]
+! STRING(@n3),USE(ivl:clid)
+clid LONG,NAME('clid')
+!!> IDENT(1287),PROMPT('clid:'),HEADER('clid'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('INVOICE:'),USE(?ivl:INVOICE:Prompt)
+! ENTRY(@n-14),USE(ivl:INVOICE),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivl:INVOICE),RIGHT(1)
+INVOICE LONG,NAME('invoice')
+!!> IDENT(84),PROMPT('INVOICE:'),HEADER('INVOICE'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('PARTNUM:'),USE(?ivl:PARTNUM:Prompt)
+! ENTRY(@s20),USE(ivl:PARTNUM)
+[REPORTCONTROLS]
+! STRING(@s20),USE(ivl:PARTNUM)
+PARTNUM STRING(20),NAME('partnum')
+!!> IDENT(85),PROMPT('PARTNUM:'),HEADER('PARTNUM'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('format:'),USE(?ivl:format:Prompt)
+! ENTRY(@s20),USE(ivl:format)
+[REPORTCONTROLS]
+! STRING(@s20),USE(ivl:format)
+format STRING(20),NAME('format')
+!!> IDENT(1098),PROMPT('format:'),HEADER('format'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('FRANCHISE:'),USE(?ivl:FRANCHISE:Prompt)
+! ENTRY(@n3),USE(ivl:FRANCHISE),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n3),USE(ivl:FRANCHISE),RIGHT(1)
+FRANCHISE BYTE,NAME('franchise')
+!!> IDENT(86),PROMPT('FRANCHISE:'),HEADER('FRANCHISE'),PICTURE(@n3),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('DESCIPTION:'),USE(?ivl:DESCIPTION:Prompt)
+! ENTRY(@s60),USE(ivl:DESCIPTION)
+[REPORTCONTROLS]
+! STRING(@s60),USE(ivl:DESCIPTION)
+DESCIPTION STRING(60),NAME('desciption')
+!!> IDENT(87),PROMPT('DESCIPTION:'),HEADER('DESCIPTION'),PICTURE(@s60)
+[SCREENCONTROLS]
+! PROMPT('QUANTITY:'),USE(?ivl:QUANTITY:Prompt)
+! ENTRY(@n-7),USE(ivl:QUANTITY),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-7),USE(ivl:QUANTITY),RIGHT(1)
+QUANTITY SHORT,NAME('quantity')
+!!> IDENT(88),PROMPT('QUANTITY:'),HEADER('QUANTITY'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('PRICE:'),USE(?ivl:PRICE:Prompt)
+! ENTRY(@n-10.2),USE(ivl:PRICE),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivl:PRICE),DECIMAL(12)
+PRICE DECIMAL(7,2),NAME('price')
+!!> IDENT(89),PROMPT('PRICE:'),HEADER('PRICE'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('LASTINCOST:'),USE(?ivl:LASTINCOST:Prompt)
+! ENTRY(@n-10.2),USE(ivl:LASTINCOST),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivl:LASTINCOST),DECIMAL(12)
+LASTINCOST DECIMAL(7,2),NAME('lastincost')
+!!> IDENT(90),PROMPT('LASTINCOST:'),HEADER('LASTINCOST'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('QTYSUPP:'),USE(?ivl:QTYSUPP:Prompt)
+! ENTRY(@n-7),USE(ivl:QTYSUPP),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-7),USE(ivl:QTYSUPP),RIGHT(1)
+QTYSUPP SHORT,NAME('qtysupp')
+!!> IDENT(91),PROMPT('QTYSUPP:'),HEADER('QTYSUPP'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('LOCATION:'),USE(?ivl:LOCATION:Prompt)
+! ENTRY(@s6),USE(ivl:LOCATION)
+[REPORTCONTROLS]
+! STRING(@s6),USE(ivl:LOCATION)
+LOCATION STRING(6),NAME('location')
+!!> IDENT(92),PROMPT('LOCATION:'),HEADER('LOCATION'),PICTURE(@s6)
+[SCREENCONTROLS]
+! PROMPT('DATE:'),USE(?ivl:DATE:Prompt)
+! ENTRY(@n-14),USE(ivl:DATE),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivl:DATE),RIGHT(1)
+DATE DATE,NAME('date')
+!!> IDENT(93),PROMPT('DATE:'),HEADER('DATE'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('TAXRATE:'),USE(?ivl:TAXRATE:Prompt)
+! ENTRY(@n-7.2),USE(ivl:TAXRATE),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(ivl:TAXRATE),DECIMAL(12)
+TAXRATE DECIMAL(5,2),NAME('taxrate')
+!!> IDENT(94),PROMPT('TAXRATE:'),HEADER('TAXRATE'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('tax:'),USE(?ivl:tax:Prompt)
+! ENTRY(@s1),USE(ivl:tax)
+[REPORTCONTROLS]
+! STRING(@s1),USE(ivl:tax)
+tax STRING(1),NAME('tax')
+!!> IDENT(1709),PROMPT('tax:'),HEADER('tax'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('recno:'),USE(?ivl:recno:Prompt)
+! ENTRY(@n-14),USE(ivl:recno),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivl:recno),RIGHT(1)
+recno LONG,NAME('recno')
+!!> IDENT(1117),PROMPT('recno:'),HEADER('recno'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('stockcost:'),USE(?ivl:stockcost:Prompt)
+! ENTRY(@n-10.2),USE(ivl:stockcost),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivl:stockcost),DECIMAL(12)
+stockcost DECIMAL(7,2),NAME('stockcost')
+!!> IDENT(1760),PROMPT('stockcost:'),HEADER('stockcost'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('dailycost:'),USE(?ivl:dailycost:Prompt)
+! ENTRY(@n-10.2),USE(ivl:dailycost),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivl:dailycost),DECIMAL(12)
+dailycost DECIMAL(7,2),NAME('dailycost')
+!!> IDENT(1761),PROMPT('dailycost:'),HEADER('dailycost'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('discount:'),USE(?ivl:discount:Prompt)
+! ENTRY(@n-12.4),USE(ivl:discount),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-12.4),USE(ivl:discount),DECIMAL(12)
+discount DECIMAL(9,4),NAME('discount')
+!!> IDENT(1763),PROMPT('discount:'),HEADER('discount'),PICTURE(@n-12.4),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('linediscrate:'),USE(?ivl:linediscrate:Prompt)
+! ENTRY(@n-6.2),USE(ivl:linediscrate),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-6.2),USE(ivl:linediscrate),DECIMAL(12)
+linediscrate DECIMAL(4,2),NAME('linediscrate')
+!!> IDENT(1881),PROMPT('linediscrate:'),HEADER('linediscrate'),PICTURE(@n-6.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('forcedsupply:'),USE(?ivl:forcedsupply:Prompt)
+! ENTRY(@n-7),USE(ivl:forcedsupply),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-7),USE(ivl:forcedsupply),RIGHT(1)
+forcedsupply SHORT,NAME('forcedsupply')
+!!>PROMPT('forcedsupply:'),HEADER('forcedsupply'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+                         END
+                       END
+
+invhead FILE,DRIVER('ODBC'),OWNER(ODBCSource),NAME('public.invhead'),PRE(ivh),BINDABLE,THREAD  !New Invoice Header file
+!!> IDENT(10),USAGE(File)
+INV_KEY KEY(ivh:INVOICE),NAME('inv_key'),NOCASE,OPT,PRIMARY
+!!> IDENT(7)
+CLIENT_KEY KEY(ivh:CLIENT,ivh:INVOICE),DUP,NAME('client_key'),NOCASE,OPT
+!!> IDENT(8)
+REV_CLIENT_KEY KEY(-ivh:CLIENT,-ivh:INVOICE),DUP,NOCASE,OPT
+!!> IDENT(312)
+DATE_KEY KEY(ivh:DATE),DUP,NAME('date_key'),NOCASE,OPT
+!!> IDENT(9)
+Record                   RECORD
+[SCREENCONTROLS]
+! PROMPT('clid:'),USE(?ivh:clid:Prompt)
+! ENTRY(@n3),USE(ivh:clid)
+[REPORTCONTROLS]
+! STRING(@n3),USE(ivh:clid)
+clid LONG,NAME('clid')
+!!> IDENT(1288),PROMPT('clid:'),HEADER('clid'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('INVOICE:'),USE(?ivh:INVOICE:Prompt)
+! ENTRY(@n-14),USE(ivh:INVOICE),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivh:INVOICE),RIGHT(1)
+INVOICE LONG,NAME('invoice')
+!!> IDENT(66),PROMPT('INVOICE:'),HEADER('INVOICE'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('CLIENT:'),USE(?ivh:CLIENT:Prompt)
+! ENTRY(@n-14),USE(ivh:CLIENT),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivh:CLIENT),RIGHT(1)
+CLIENT LONG,NAME('client')
+!!> IDENT(67),PROMPT('CLIENT:'),HEADER('CLIENT'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('INVPREFIX:'),USE(?ivh:INVPREFIX:Prompt)
+! ENTRY(@s1),USE(ivh:INVPREFIX)
+[REPORTCONTROLS]
+! STRING(@s1),USE(ivh:INVPREFIX)
+INVPREFIX STRING(1),NAME('invprefix')
+!!> IDENT(68),PROMPT('INVPREFIX:'),HEADER('INVPREFIX'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('ORDERNUM:'),USE(?ivh:ORDERNUM:Prompt)
+! ENTRY(@s40),USE(ivh:ORDERNUM)
+[REPORTCONTROLS]
+! STRING(@s40),USE(ivh:ORDERNUM)
+ORDERNUM STRING(40),NAME('ordernum')
+!!> IDENT(69),PROMPT('ORDERNUM:'),HEADER('ORDERNUM'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('FREIGHT:'),USE(?ivh:FREIGHT:Prompt)
+! ENTRY(@n-7.2),USE(ivh:FREIGHT),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(ivh:FREIGHT),DECIMAL(12)
+FREIGHT DECIMAL(5,2),NAME('freight')
+!!> IDENT(70),PROMPT('FREIGHT:'),HEADER('FREIGHT'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('DEPOSIT:'),USE(?ivh:DEPOSIT:Prompt)
+! ENTRY(@n-10.2),USE(ivh:DEPOSIT),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:DEPOSIT),DECIMAL(12)
+DEPOSIT DECIMAL(7,2),NAME('deposit')
+!!> IDENT(71),PROMPT('DEPOSIT:'),HEADER('DEPOSIT'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('DISCOUNT:'),USE(?ivh:DISCOUNT:Prompt)
+! ENTRY(@n-10.2),USE(ivh:DISCOUNT),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:DISCOUNT),DECIMAL(12)
+DISCOUNT DECIMAL(7,2),NAME('discount')
+!!> IDENT(72),PROMPT('DISCOUNT:'),HEADER('DISCOUNT'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('INVTOTAL:'),USE(?ivh:INVTOTAL:Prompt)
+! ENTRY(@n-10.2),USE(ivh:INVTOTAL),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:INVTOTAL),DECIMAL(12)
+INVTOTAL DECIMAL(7,2),NAME('invtotal')
+!!> IDENT(73),PROMPT('INVTOTAL:'),HEADER('INVTOTAL'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('gst:'),USE(?ivh:gst:Prompt)
+! ENTRY(@n-10.2),USE(ivh:gst),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:gst),DECIMAL(12)
+gst DECIMAL(7,2),NAME('gst')
+!!> IDENT(1706),PROMPT('gst:'),HEADER('gst'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('ORDTOTAL:'),USE(?ivh:ORDTOTAL:Prompt)
+! ENTRY(@n-10.2),USE(ivh:ORDTOTAL),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:ORDTOTAL),DECIMAL(12)
+ORDTOTAL DECIMAL(7,2),NAME('ordtotal')
+!!> IDENT(74),PROMPT('ORDTOTAL:'),HEADER('ORDTOTAL'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('PAIDTOTAL:'),USE(?ivh:PAIDTOTAL:Prompt)
+! ENTRY(@n-10.2),USE(ivh:PAIDTOTAL),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:PAIDTOTAL),DECIMAL(12)
+PAIDTOTAL DECIMAL(7,2),NAME('paidtotal')
+!!> IDENT(75),PROMPT('PAIDTOTAL:'),HEADER('PAIDTOTAL'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('TENDERED:'),USE(?ivh:TENDERED:Prompt)
+! ENTRY(@n-10.2),USE(ivh:TENDERED),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:TENDERED),DECIMAL(12)
+TENDERED DECIMAL(7,2),NAME('tendered')
+!!> IDENT(849),PROMPT('TENDERED:'),HEADER('TENDERED'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('OTHERDESC:'),USE(?ivh:OTHERDESC:Prompt)
+! ENTRY(@s40),USE(ivh:OTHERDESC)
+[REPORTCONTROLS]
+! STRING(@s40),USE(ivh:OTHERDESC)
+OTHERDESC STRING(40),NAME('otherdesc')
+!!> IDENT(76),PROMPT('OTHERDESC:'),HEADER('OTHERDESC'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('OTHERVALUE:'),USE(?ivh:OTHERVALUE:Prompt)
+! ENTRY(@n-10.2),USE(ivh:OTHERVALUE),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:OTHERVALUE),DECIMAL(12)
+OTHERVALUE DECIMAL(7,2),NAME('othervalue')
+!!> IDENT(77),PROMPT('OTHERVALUE:'),HEADER('OTHERVALUE'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('PHONE:'),USE(?ivh:PHONE:Prompt)
+! ENTRY(@s15),USE(ivh:PHONE)
+[REPORTCONTROLS]
+! STRING(@s15),USE(ivh:PHONE)
+PHONE STRING(15),NAME('phone')
+!!> IDENT(78),PROMPT('PHONE:'),HEADER('PHONE'),PICTURE(@s15)
+[SCREENCONTROLS]
+! PROMPT('REMARKS:'),USE(?ivh:REMARKS:Prompt)
+! ENTRY(@s15),USE(ivh:REMARKS)
+[REPORTCONTROLS]
+! STRING(@s15),USE(ivh:REMARKS)
+REMARKS STRING(15),NAME('remarks')
+!!> IDENT(79),PROMPT('REMARKS:'),HEADER('REMARKS'),PICTURE(@s15)
+[SCREENCONTROLS]
+! PROMPT('PARTCOUNT:'),USE(?ivh:PARTCOUNT:Prompt)
+! ENTRY(@n-7),USE(ivh:PARTCOUNT),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-7),USE(ivh:PARTCOUNT),RIGHT(1)
+PARTCOUNT SHORT,NAME('partcount')
+!!> IDENT(80),PROMPT('PARTCOUNT:'),HEADER('PARTCOUNT'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('DATE:'),USE(?ivh:DATE:Prompt)
+! ENTRY(@n-14),USE(ivh:DATE),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivh:DATE),RIGHT(1)
+DATE DATE,NAME('date')
+!!> IDENT(81),PROMPT('DATE:'),HEADER('DATE'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('TIME:'),USE(?ivh:TIME:Prompt)
+! ENTRY(@n-14),USE(ivh:TIME),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivh:TIME),RIGHT(1)
+TIME TIME,NAME('time')
+!!> IDENT(82),PROMPT('TIME:'),HEADER('TIME'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('TAX:'),USE(?ivh:TAX:Prompt)
+! ENTRY(@s1),USE(ivh:TAX)
+[REPORTCONTROLS]
+! STRING(@s1),USE(ivh:TAX)
+TAX STRING(1),NAME('tax')
+!!> IDENT(83),PROMPT('TAX:'),HEADER('TAX'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('taxdeposit:'),USE(?ivh:taxdeposit:Prompt)
+! ENTRY(@s1),USE(ivh:taxdeposit)
+[REPORTCONTROLS]
+! STRING(@s1),USE(ivh:taxdeposit)
+taxdeposit STRING(1),NAME('taxdeposit')
+!!> IDENT(1463),PROMPT('taxdeposit:'),HEADER('taxdeposit'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('INV PARENT:'),USE(?ivh:INV_PARENT:Prompt)
+! ENTRY(@n-14),USE(ivh:INV_PARENT),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivh:INV_PARENT),RIGHT(1)
+INV_PARENT LONG,NAME('inv_parent')
+!!> IDENT(985),PROMPT('INV PARENT:'),HEADER('INV PARENT'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('DEPOSIT RECLAIM:'),USE(?ivh:DEPOSIT_RECLAIM:Prompt)
+! ENTRY(@n-10.2),USE(ivh:DEPOSIT_RECLAIM),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:DEPOSIT_RECLAIM),DECIMAL(12)
+DEPOSIT_RECLAIM DECIMAL(7,2),NAME('deposit_reclaim')
+!!> IDENT(987),PROMPT('DEPOSIT RECLAIM:'),HEADER('DEPOSIT RECLAIM'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('RECLAIM TOTAL:'),USE(?ivh:RECLAIM_TOTAL:Prompt)
+! ENTRY(@n-10.2),USE(ivh:RECLAIM_TOTAL),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:RECLAIM_TOTAL),DECIMAL(12)
+RECLAIM_TOTAL DECIMAL(7,2),NAME('reclaim_total')
+!!> IDENT(988),PROMPT('RECLAIM TOTAL:'),HEADER('RECLAIM TOTAL'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('PICKUP TOTAL:'),USE(?ivh:PICKUP_TOTAL:Prompt)
+! ENTRY(@n-10.2),USE(ivh:PICKUP_TOTAL),DECIMAL(12),MSG('Total amount of ordered parts reinvoiced'),TIP('Total amount of ordered parts reinvoiced')
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(ivh:PICKUP_TOTAL),DECIMAL(12)
+PICKUP_TOTAL DECIMAL(7,2),NAME('pickup_total')  !Total amount of ordered parts reinvoiced
+!!> IDENT(990),PROMPT('PICKUP TOTAL:'),HEADER('PICKUP TOTAL'),MESSAGE('Total amount of ordered parts reinvoiced'),TOOLTIP('Total amount of ordered parts reinvoiced'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('CLERK:'),USE(?ivh:CLERK:Prompt)
+! ENTRY(@n-14),USE(ivh:CLERK),RIGHT(1),MSG('Clerk Who placed order'),TIP('Clerk Who placed order')
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivh:CLERK),RIGHT(1)
+CLERK LONG,NAME('clerk')  !Clerk Who placed order
+!!> IDENT(1012),PROMPT('CLERK:'),HEADER('CLERK'),MESSAGE('Clerk Who placed order'),TOOLTIP('Clerk Who placed order'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('ACCDEPOSIT:'),USE(?ivh:ACCDEPOSIT:Prompt)
+! ENTRY(@n-13.2),USE(ivh:ACCDEPOSIT),DECIMAL(12),MSG('Deposit Reclaim from Account'),TIP('Deposit Reclaim from Account')
+[REPORTCONTROLS]
+! STRING(@n-13.2),USE(ivh:ACCDEPOSIT),DECIMAL(12)
+ACCDEPOSIT DECIMAL(9,2),NAME('accdeposit')  !Deposit Reclaim from Account
+!!> IDENT(1465),PROMPT('ACCDEPOSIT:'),HEADER('ACCDEPOSIT'),MESSAGE('Deposit Reclaim from Account'),TOOLTIP('Deposit Reclaim from Account'),PICTURE(@n-13.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('notify:'),USE(?ivh:notify:Prompt)
+! ENTRY(@n-7),USE(ivh:notify),RIGHT(1),MSG('Notififcation setting for parts received'),TIP('Notififcation setting for parts received')
+[REPORTCONTROLS]
+! STRING(@n-7),USE(ivh:notify),RIGHT(1)
+notify SHORT,NAME('notify')  !Notififcation setting for parts received
+!!> IDENT(1492),PROMPT('notify:'),HEADER('notify'),MESSAGE('Notififcation setting for parts received'),TOOLTIP('Notififcation setting for parts received'),PICTURE(@n-7),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('discrate:'),USE(?ivh:discrate:Prompt)
+! ENTRY(@n-7.2),USE(ivh:discrate),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(ivh:discrate),DECIMAL(12)
+discrate DECIMAL(5,2),NAME('discrate')
+!!> IDENT(1754),PROMPT('discrate:'),HEADER('discrate'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('disctype:'),USE(?ivh:disctype:Prompt)
+! ENTRY(@s1),USE(ivh:disctype)
+[REPORTCONTROLS]
+! STRING(@s1),USE(ivh:disctype)
+disctype STRING(1),NAME('disctype')
+!!> IDENT(1755),PROMPT('disctype:'),HEADER('disctype'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('disccosttype:'),USE(?ivh:disccosttype:Prompt)
+! ENTRY(@s1),USE(ivh:disccosttype)
+[REPORTCONTROLS]
+! STRING(@s1),USE(ivh:disccosttype)
+disccosttype STRING(1),NAME('disccosttype')
+!!> IDENT(1757),PROMPT('disccosttype:'),HEADER('disccosttype'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('exttype:'),USE(?ivh:exttype:Prompt)
+! ENTRY(@n3),USE(ivh:exttype)
+[REPORTCONTROLS]
+! STRING(@n3),USE(ivh:exttype)
+exttype BYTE,NAME('exttype')
+!!>PROMPT('exttype:'),HEADER('exttype'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('extclid:'),USE(?ivh:extclid:Prompt)
+! ENTRY(@n-14),USE(ivh:extclid),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivh:extclid),RIGHT(1)
+extclid LONG,NAME('extclid')
+!!>PROMPT('extclid:'),HEADER('extclid'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('conv invoice:'),USE(?ivh:conv_invoice:Prompt)
+! ENTRY(@n-14),USE(ivh:conv_invoice),RIGHT(1),MSG('For quotes: the invoice that was rasied in response to this. Could be another quote.'),TIP('For quotes: the invoice that was rasied in response to this. Could be another quote.')
+[REPORTCONTROLS]
+! STRING(@n-14),USE(ivh:conv_invoice),RIGHT(1)
+conv_invoice LONG,NAME('conv_invoice')  !For quotes: the invoice that was rasied in response to this. Could be another quote.
+!!>PROMPT('conv invoice:'),HEADER('conv invoice'),MESSAGE('For quotes: the invoice that was rasied in response to this. Could be another quote.'),TOOLTIP('For quotes: the invoice that was rasied in response to this. Could be another quote.'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+                         END
+                       END
+
+Franch FILE,DRIVER('ODBC'),OWNER(ODBCSource),NAME('public.franch'),PRE(PSI),BINDABLE,THREAD  !C8 Franchise file
+!!> IDENT(16),USAGE(File)
+REFKEY KEY(PSI:REFCODE),NAME('refkey'),NOCASE,OPT,PRIMARY
+!!> IDENT(20),AUTO
+HEADERKEY KEY(PSI:HEADER),DUP,NAME('headerkey'),NOCASE,OPT
+!!> IDENT(21)
+CREDKEY KEY(PSI:CREDCODE),DUP,NAME('credkey'),NOCASE,OPT
+!!> IDENT(22)
+Record                   RECORD
+[SCREENCONTROLS]
+! PROMPT('clid:'),USE(?PSI:clid:Prompt)
+! ENTRY(@n3),USE(PSI:clid)
+[REPORTCONTROLS]
+! STRING(@n3),USE(PSI:clid)
+clid LONG,NAME('clid')
+!!> IDENT(1290),PROMPT('clid:'),HEADER('clid'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('webcategory:'),USE(?PSI:webcategory:Prompt)
+! ENTRY(@n-14),USE(PSI:webcategory),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(PSI:webcategory),RIGHT(1)
+webcategory LONG,NAME('webcategory')
+!!> IDENT(1604),PROMPT('webcategory:'),HEADER('webcategory'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('website:'),USE(?PSI:website:Prompt)
+! ENTRY(@s60),USE(PSI:website)
+[REPORTCONTROLS]
+! STRING(@s60),USE(PSI:website)
+website STRING(60),NAME('website')
+!!> IDENT(1730),PROMPT('website:'),HEADER('website'),PICTURE(@s60)
+[SCREENCONTROLS]
+! PROMPT('phone:'),USE(?PSI:phone:Prompt)
+! ENTRY(@s20),USE(PSI:phone)
+[REPORTCONTROLS]
+! STRING(@s20),USE(PSI:phone)
+phone STRING(20),NAME('phone')
+!!> IDENT(1507),PROMPT('phone:'),HEADER('phone'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('phonealt:'),USE(?PSI:phonealt:Prompt)
+! ENTRY(@s20),USE(PSI:phonealt)
+[REPORTCONTROLS]
+! STRING(@s20),USE(PSI:phonealt)
+phonealt STRING(20),NAME('phonealt')
+!!>PROMPT('phonealt:'),HEADER('phonealt'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('fax:'),USE(?PSI:fax:Prompt)
+! ENTRY(@s20),USE(PSI:fax)
+[REPORTCONTROLS]
+! STRING(@s20),USE(PSI:fax)
+fax STRING(20),NAME('fax')
+!!> IDENT(1508),PROMPT('fax:'),HEADER('fax'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('notes:'),USE(?PSI:notes:Prompt)
+! TEXT,USE(PSI:notes)
+[REPORTCONTROLS]
+! TEXT,USE(PSI:notes)
+notes STRING(2000),NAME('notes')
+!!> IDENT(1509),PROMPT('notes:'),HEADER('notes'),PICTURE(@s255)
+[SCREENCONTROLS]
+! PROMPT('email:'),USE(?PSI:email:Prompt)
+! ENTRY(@s60),USE(PSI:email)
+[REPORTCONTROLS]
+! STRING(@s60),USE(PSI:email)
+email STRING(60),NAME('email')
+!!> IDENT(1510),PROMPT('email:'),HEADER('email'),PICTURE(@s60)
+[SCREENCONTROLS]
+! PROMPT('LOCK:'),USE(?PSI:LOCK:Prompt)
+! ENTRY(@n3),USE(PSI:LOCK),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n3),USE(PSI:LOCK),RIGHT(1)
+LOCK BYTE,NAME('lock')
+!!> IDENT(167),PROMPT('LOCK:'),HEADER('LOCK'),PICTURE(@n3),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('REFCODE:'),USE(?PSI:REFCODE:Prompt)
+! ENTRY(@n3),USE(PSI:REFCODE),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n3),USE(PSI:REFCODE),RIGHT(1)
+REFCODE BYTE,NAME('refcode')
+!!> IDENT(168),PROMPT('REFCODE:'),HEADER('REFCODE'),PICTURE(@n3),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('HEADER:'),USE(?PSI:HEADER:Prompt)
+! ENTRY(@s30),USE(PSI:HEADER)
+[REPORTCONTROLS]
+! STRING(@s30),USE(PSI:HEADER)
+HEADER STRING(30),NAME('header')
+!!> IDENT(169),PROMPT('HEADER:'),HEADER('HEADER'),PICTURE(@s30)
+[SCREENCONTROLS]
+! PROMPT('FILENAME:'),USE(?PSI:FILENAME:Prompt)
+! ENTRY(@s8),USE(PSI:FILENAME)
+[REPORTCONTROLS]
+! STRING(@s8),USE(PSI:FILENAME)
+FILENAME STRING(8),NAME('filename')
+!!> IDENT(170),PROMPT('FILENAME:'),HEADER('FILENAME'),PICTURE(@s8)
+[SCREENCONTROLS]
+! PROMPT('ACCOUNTNUM:'),USE(?PSI:ACCOUNTNUM:Prompt)
+! ENTRY(@s20),USE(PSI:ACCOUNTNUM)
+[REPORTCONTROLS]
+! STRING(@s20),USE(PSI:ACCOUNTNUM)
+ACCOUNTNUM STRING(20),NAME('accountnum')
+!!> IDENT(171),PROMPT('ACCOUNTNUM:'),HEADER('ACCOUNTNUM'),PICTURE(@s20)
+[SCREENCONTROLS]
+! PROMPT('CREDCODE:'),USE(?PSI:CREDCODE:Prompt)
+! ENTRY(@s10),USE(PSI:CREDCODE)
+[REPORTCONTROLS]
+! STRING(@s10),USE(PSI:CREDCODE)
+CREDCODE STRING(10),NAME('credcode')
+!!> IDENT(172),PROMPT('CREDCODE:'),HEADER('CREDCODE'),PICTURE(@s10)
+[SCREENCONTROLS]
+! PROMPT('PAYTAX:'),USE(?PSI:PAYTAX:Prompt)
+! ENTRY(@s1),USE(PSI:PAYTAX)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:PAYTAX)
+PAYTAX STRING(1),NAME('paytax')
+!!> IDENT(173),PROMPT('PAYTAX:'),HEADER('PAYTAX'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('SPARE:'),USE(?PSI:SPARE:Prompt)
+! ENTRY(@s1),USE(PSI:SPARE)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:SPARE)
+SPARE STRING(1),NAME('spare')
+!!> IDENT(174),PROMPT('SPARE:'),HEADER('SPARE'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('DISCTRADE:'),USE(?PSI:DISCTRADE:Prompt)
+! ENTRY(@n-7.2),USE(PSI:DISCTRADE),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(PSI:DISCTRADE),DECIMAL(12)
+DISCTRADE DECIMAL(5,2),NAME('disctrade')
+!!> IDENT(175),PROMPT('DISCTRADE:'),HEADER('DISCTRADE'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('USEMASTER:'),USE(?PSI:USEMASTER:Prompt)
+! ENTRY(@s1),USE(PSI:USEMASTER)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:USEMASTER)
+USEMASTER STRING(1),NAME('usemaster')
+!!> IDENT(176),PROMPT('USEMASTER:'),HEADER('USEMASTER'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('SPARE_2:'),USE(?PSI:SPARE_2:Prompt)
+! ENTRY(@n3),USE(PSI:SPARE_2),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n3),USE(PSI:SPARE_2),RIGHT(1)
+SPARE_2 BYTE,NAME('spare_2')
+!!> IDENT(177),PROMPT('SPARE_2:'),HEADER('SPARE_2'),PICTURE(@n3),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('MARKUP1:'),USE(?PSI:MARKUP1:Prompt)
+! ENTRY(@n-10.2),USE(PSI:MARKUP1),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:MARKUP1),DECIMAL(12)
+MARKUP1 DECIMAL(7,2),NAME('markup1')
+!!> IDENT(178),PROMPT('MARKUP1:'),HEADER('MARKUP1'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('MARKUP2:'),USE(?PSI:MARKUP2:Prompt)
+! ENTRY(@n-10.2),USE(PSI:MARKUP2),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:MARKUP2),DECIMAL(12)
+MARKUP2 DECIMAL(7,2),NAME('markup2')
+!!> IDENT(179),PROMPT('MARKUP2:'),HEADER('MARKUP2'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('MARKUP3:'),USE(?PSI:MARKUP3:Prompt)
+! ENTRY(@n-10.2),USE(PSI:MARKUP3),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:MARKUP3),DECIMAL(12)
+MARKUP3 DECIMAL(7,2),NAME('markup3')
+!!> IDENT(180),PROMPT('MARKUP3:'),HEADER('MARKUP3'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('MARKUP4:'),USE(?PSI:MARKUP4:Prompt)
+! ENTRY(@n-10.2),USE(PSI:MARKUP4),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:MARKUP4),DECIMAL(12)
+MARKUP4 DECIMAL(7,2),NAME('markup4')
+!!> IDENT(181),PROMPT('MARKUP4:'),HEADER('MARKUP4'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('MARKUP5:'),USE(?PSI:MARKUP5:Prompt)
+! ENTRY(@n-10.2),USE(PSI:MARKUP5),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:MARKUP5),DECIMAL(12)
+MARKUP5 DECIMAL(7,2),NAME('markup5')
+!!> IDENT(182),PROMPT('MARKUP5:'),HEADER('MARKUP5'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('PRICEBRK1:'),USE(?PSI:PRICEBRK1:Prompt)
+! ENTRY(@n-10.2),USE(PSI:PRICEBRK1),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:PRICEBRK1),DECIMAL(12)
+PRICEBRK1 DECIMAL(7,2),NAME('pricebrk1')
+!!> IDENT(183),PROMPT('PRICEBRK1:'),HEADER('PRICEBRK1'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('PRICEBRK2:'),USE(?PSI:PRICEBRK2:Prompt)
+! ENTRY(@n-10.2),USE(PSI:PRICEBRK2),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:PRICEBRK2),DECIMAL(12)
+PRICEBRK2 DECIMAL(7,2),NAME('pricebrk2')
+!!> IDENT(184),PROMPT('PRICEBRK2:'),HEADER('PRICEBRK2'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('PRICEBRK3:'),USE(?PSI:PRICEBRK3:Prompt)
+! ENTRY(@n-10.2),USE(PSI:PRICEBRK3),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:PRICEBRK3),DECIMAL(12)
+PRICEBRK3 DECIMAL(7,2),NAME('pricebrk3')
+!!> IDENT(185),PROMPT('PRICEBRK3:'),HEADER('PRICEBRK3'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('PRICEBRK4:'),USE(?PSI:PRICEBRK4:Prompt)
+! ENTRY(@n-10.2),USE(PSI:PRICEBRK4),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:PRICEBRK4),DECIMAL(12)
+PRICEBRK4 DECIMAL(7,2),NAME('pricebrk4')
+!!> IDENT(186),PROMPT('PRICEBRK4:'),HEADER('PRICEBRK4'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('PRICEBRK5:'),USE(?PSI:PRICEBRK5:Prompt)
+! ENTRY(@n-10.2),USE(PSI:PRICEBRK5),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-10.2),USE(PSI:PRICEBRK5),DECIMAL(12)
+PRICEBRK5 DECIMAL(7,2),NAME('pricebrk5')
+!!> IDENT(187),PROMPT('PRICEBRK5:'),HEADER('PRICEBRK5'),PICTURE(@n-10.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('SWITCH_1:'),USE(?PSI:SWITCH_1:Prompt)
+! ENTRY(@s1),USE(PSI:SWITCH_1)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:SWITCH_1)
+SWITCH_1 STRING(1),NAME('switch_1')
+!!> IDENT(188),PROMPT('SWITCH_1:'),HEADER('SWITCH_1'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('SWITCH_2:'),USE(?PSI:SWITCH_2:Prompt)
+! ENTRY(@s1),USE(PSI:SWITCH_2)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:SWITCH_2)
+SWITCH_2 STRING(1),NAME('switch_2')
+!!> IDENT(189),PROMPT('SWITCH_2:'),HEADER('SWITCH_2'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('SWITCH_3:'),USE(?PSI:SWITCH_3:Prompt)
+! ENTRY(@s1),USE(PSI:SWITCH_3)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:SWITCH_3)
+SWITCH_3 STRING(1),NAME('switch_3')
+!!> IDENT(190),PROMPT('SWITCH_3:'),HEADER('SWITCH_3'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('SWITCH_4:'),USE(?PSI:SWITCH_4:Prompt)
+! ENTRY(@s1),USE(PSI:SWITCH_4)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:SWITCH_4)
+SWITCH_4 STRING(1),NAME('switch_4')
+!!> IDENT(191),PROMPT('SWITCH_4:'),HEADER('SWITCH_4'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('SWITCH_5:'),USE(?PSI:SWITCH_5:Prompt)
+! ENTRY(@s1),USE(PSI:SWITCH_5)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:SWITCH_5)
+SWITCH_5 STRING(1),NAME('switch_5')
+!!> IDENT(192),PROMPT('SWITCH_5:'),HEADER('SWITCH_5'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('minmargin 1:'),USE(?PSI:minmargin1:Prompt)
+! ENTRY(@n-7.2),USE(PSI:minmargin1),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(PSI:minmargin1),DECIMAL(12)
+minmargin1 DECIMAL(5,2),NAME('minmargin1')
+!!> IDENT(1530),PROMPT('minmargin 1:'),HEADER('minmargin 1'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('minmargin 2:'),USE(?PSI:minmargin2:Prompt)
+! ENTRY(@n-7.2),USE(PSI:minmargin2),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(PSI:minmargin2),DECIMAL(12)
+minmargin2 DECIMAL(5,2),NAME('minmargin2')
+!!> IDENT(1531),PROMPT('minmargin 2:'),HEADER('minmargin 2'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('minmargin 3:'),USE(?PSI:minmargin3:Prompt)
+! ENTRY(@n-7.2),USE(PSI:minmargin3),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(PSI:minmargin3),DECIMAL(12)
+minmargin3 DECIMAL(5,2),NAME('minmargin3')
+!!> IDENT(1532),PROMPT('minmargin 3:'),HEADER('minmargin 3'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('minmargin 4:'),USE(?PSI:minmargin4:Prompt)
+! ENTRY(@n-7.2),USE(PSI:minmargin4),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(PSI:minmargin4),DECIMAL(12)
+minmargin4 DECIMAL(5,2),NAME('minmargin4')
+!!> IDENT(1533),PROMPT('minmargin 4:'),HEADER('minmargin 4'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('minmargin 5:'),USE(?PSI:minmargin5:Prompt)
+! ENTRY(@n-7.2),USE(PSI:minmargin5),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(PSI:minmargin5),DECIMAL(12)
+minmargin5 DECIMAL(5,2),NAME('minmargin5')
+!!> IDENT(1534),PROMPT('minmargin 5:'),HEADER('minmargin 5'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('listmarkup:'),USE(?PSI:listmarkup:Prompt)
+! ENTRY(@n-7.2),USE(PSI:listmarkup),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n-7.2),USE(PSI:listmarkup),DECIMAL(12)
+listmarkup DECIMAL(5,2),NAME('listmarkup')
+!!> IDENT(1535),PROMPT('listmarkup:'),HEADER('listmarkup'),PICTURE(@n-7.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('archived:'),USE(?PSI:archived:Prompt)
+! ENTRY(@n3),USE(PSI:archived)
+[REPORTCONTROLS]
+! STRING(@n3),USE(PSI:archived)
+archived BYTE,NAME('archived')
+!!> IDENT(1805),PROMPT('archived:'),HEADER('archived'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('ordermethod:'),USE(?PSI:ordermethod:Prompt)
+! ENTRY(@s1),USE(PSI:ordermethod)
+[REPORTCONTROLS]
+! STRING(@s1),USE(PSI:ordermethod)
+ordermethod STRING(1),NAME('ordermethod')
+!!> IDENT(1815),PROMPT('ordermethod:'),HEADER('ordermethod'),PICTURE(@s1)
+[SCREENCONTROLS]
+! PROMPT('containsdups:'),USE(?PSI:containsdups:Prompt)
+! ENTRY(@n3),USE(PSI:containsdups)
+[REPORTCONTROLS]
+! STRING(@n3),USE(PSI:containsdups)
+containsdups BYTE,NAME('containsdups')
+!!>PROMPT('containsdups:'),HEADER('containsdups'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('allowdirectshipping:'),USE(?PSI:allowdirectshipping:Prompt)
+! ENTRY(@n-14),USE(PSI:allowdirectshipping),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14),USE(PSI:allowdirectshipping),RIGHT(1)
+allowdirectshipping LONG,NAME('allowdirectshipping')
+!!>PROMPT('allowdirectshipping:'),HEADER('allowdirectshipping'),PICTURE(@n-14),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('packpricefile:'),USE(?PSI:packpricefile:Prompt)
+! ENTRY(@n3),USE(PSI:packpricefile)
+[REPORTCONTROLS]
+! STRING(@n3),USE(PSI:packpricefile)
+packpricefile BYTE,NAME('packpricefile')
+!!>PROMPT('packpricefile:'),HEADER('packpricefile'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('packorder:'),USE(?PSI:packorder:Prompt)
+! ENTRY(@n3),USE(PSI:packorder)
+[REPORTCONTROLS]
+! STRING(@n3),USE(PSI:packorder)
+packorder BYTE,NAME('packorder')
+!!>PROMPT('packorder:'),HEADER('packorder'),PICTURE(@n3)
+                         END
+                       END
+[RELATIONS]
+              RELATION,ONE:MANY,DELETE(RESTRICT)
+Accnt          FILE(AC:PrimaryKey)
+invhead          RELATED_FILE(ivh:CLIENT_KEY)
+          FILE_TO_RELATED_KEY
+            FIELD(AC:ID,ivh:CLIENT)
+            FIELD(NOLINK,ivh:INVOICE)
+          END
+          RELATED_FILE_TO_KEY
+            FIELD(ivh:CLIENT,AC:ID)
+          END
+        END
+
+              RELATION,ONE:MANY,UPDATE(RESTRICT),DELETE(RESTRICT)
+invhead          FILE(ivh:INV_KEY)
+invitem          RELATED_FILE(ivl:INV_KEY)
+          FILE_TO_RELATED_KEY
+            FIELD(ivh:INVOICE,ivl:INVOICE)
+            FIELD(NOLINK,ivl:clid)
+          END
+          RELATED_FILE_TO_KEY
+            FIELD(ivl:INVOICE,ivh:INVOICE)
+          END
+        END
+
+

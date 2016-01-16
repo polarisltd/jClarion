@@ -1,0 +1,16 @@
+Clarion 2 Java. 
+
+Compile your clarion source code into java
+
+See doc/UserGuide.pdf for documentation
+
+Source code can be either downloaded directory from the SVN repository or from the maven repository:
+
+SVN:
+svn co https://clarion2java.svn.sourceforge.net/svnroot/clarion2java/sysruntime/trunk
+svn co https://clarion2java.svn.sourceforge.net/svnroot/clarion2java/runtime/trunk
+svn co https://clarion2java.svn.sourceforge.net/svnroot/clarion2java/compiler/trunk
+svn co https://clarion2java.svn.sourceforge.net/svnroot/clarion2java/plugin/trunk
+
+Maven:
+http://repo1.maven.org/maven2/org/jclarion/clarion/

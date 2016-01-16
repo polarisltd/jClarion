@@ -1,0 +1,57 @@
+#TEMPLATE(ABC,'Application Builder Class Templates'),FAMILY('ABC')
+#APPLICATION
+Test 1
+#SUSPEND
+#?1
+	#SUSPEND
+#?2
+	#RESUME
+	#SUSPEND
+3
+	#RESUME
+	#SUSPEND
+#?4
+	#RESUME
+#?5
+#RESUME
+Test 2
+#SUSPEND
+#?1
+#?2
+3
+#?4
+#RESUME
+Test 3
+#SUSPEND
+#?1
+	#SUSPEND
+#?2
+	#RESUME
+	#SUSPEND
+#?3
+#IF(3*5=15)
+	#RELEASE
+#ENDIF 
+	#RESUME
+	#SUSPEND
+#?4
+	#RESUME
+#?5
+#RESUME
+Test 4
+#SUSPEND
+#?1
+	#SUSPEND
+#?2
+	#RESUME
+	#SUSPEND
+#?3
+#IF(3*5=10)
+	#RELEASE
+#ENDIF 
+	#RESUME
+	#SUSPEND
+#?4
+	#RESUME
+#?5
+#RESUME

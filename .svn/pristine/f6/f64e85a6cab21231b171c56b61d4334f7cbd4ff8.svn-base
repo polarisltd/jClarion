@@ -1,0 +1,51 @@
+
+Release 1.5 - tweaks and bug fixes
+* Changed memory model so it can handle multibyte charsets.  OVER() on multibyte strings now works. Also file based string representations such as keypointer() and converting groups from/to strings now work correctly with multibytes
+* PostgreSQL Database manager now supports creation of differing encodings on databases. Managed via schema.properties. System will default to encoding PostgreSQL recommends. i.e. on linux UTF8 on Windows, depends on codepage windows is using.
+* bugfix/optimisation on queue. If new sort order is a subset of existing sort order then just use existing sort order. So implicit sub sort ordering is preserved
+* extension : added GCD function. Return greatest common divisor
+* improved interaction with database accomodating alternative db character encoding approaches.
+* extension. Allow view{prop:sql}='select ?'.
+* support images being on filesystem, or http:// or elsewhere. Use filefactory system to get image
+* support images in reports
+* bugfix with comparing strings : only trim whitespace. Was also trimming \0 chars
+* Rewired how clarion arrays are converted into java. Cleaner implementation and allows for thread able arrays and better support of other constructs such as OVER() (not yet implemented)
+* Rewired how references on groups are converted into java.
+* Various NPE/ArrayBounds guards and bug fixes
+* Added SREAL
+* Added pagebefore/pageafter support on report
+* added support for CENTER(offset)
+* added VCR stubs (not yet implemented)
+* drag and drop support
+* Added support for logout(files) (not yet fully implemented)
+* added copy(file,string)
+* Added queue ordering as alternative function. i.e. addf(queue, function(group,group) )
+* memory model for ASTRING
+* Support mnemonic hotkeys with numbers as well as letters
+* a number of tweaks and fixes to compiler. Notably:
+** correct handling of empty PRE()
+** relaxed acceptance of whitespace in conditions. i.e. "< =" is same as "<="
+** bugfix relating to handling of class interfaces in some circumstances
+** can use LIKE and OVER at same time
+** Do not use Integer.parseInt() to convert rawstrings into rawints : this technique can generate NFE's.
+
+Release 1.4 - bugfix release
+* ini file handling bugfix. FileLock on Windows machines sometimes conflicts with implemention of JFileDialog
+* Improved handling of casted queues : so that queue internal structure is shared : not just the buffer. Needed to properly implement libsrc bufferedpairsqueue/fieldpairsqueue casting
+* Improved over() attribute when the OVER objects do not perfectly match in size. Particularly for GROUP casting
+* Bugfix with printing TEXT blocks. X position was not scaling onto printer paper properly
+* Bugfix memory leak with file. If you opened and closed a file many times but never changed the contents of the file buffer over time this would leak memory. Changing data in the buffer would reclaim that memory, but buffix was for situations where this rarely or never occurs.
+
+Release 1.3 - bugfix release
+* bugfix on file exists test
+* memorize DB backup directory
+* bugfix where destroy was not compiling correctly
+* rewrote ini file handling to be more robust and efficient. Use RandomAccessFile and FileLock instead of juggling temporary files around
+* bugfix with post(event,control,thread) compilation
+* tidied up memory model to permit instance() function to return an integer than can be remapped to an actual thread locked object
+* Allow groups to be passed via memory casting when polymorphic relationship does not exist. i.e. make libsrc/ adderror addtranslation compile without having to make changes to libsrc  
+* Added rewrite rule to rewrite report &window as report &report. I.e. allow abreport.clw to compile without requiring manual modification
+
+Release 1.2 - Clarion 6 support
+
+Release 1.1 - initial release (Clarion 5.5 support)

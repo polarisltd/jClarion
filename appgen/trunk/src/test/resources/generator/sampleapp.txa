@@ -1,0 +1,2468 @@
+[APPLICATION]
+VERSION 33
+TODO ABC ToDo
+DICTIONARY 'c8odbc.dct'
+PROCEDURE Main
+[COMMON]
+FROM ABC
+[PROMPTS]
+%ClassItem UNIQUE DEFAULT  ('ErrorManager', 'FileManager:Accnt', 'FileManager:Franch', |
+  'FileManager:invhead', 'FileManager:invitem', 'FuzzyMatcher', 'INIManager', 'RelationManager:Accnt', |
+  'RelationManager:Franch', 'RelationManager:invhead', 'RelationManager:invitem', |
+  'Translator')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 12
+WHEN  ('ErrorManager') ('ErrorClass')
+WHEN  ('FileManager:Accnt') ('FileManager')
+WHEN  ('FileManager:Franch') ('FileManager')
+WHEN  ('FileManager:invhead') ('FileManager')
+WHEN  ('FileManager:invitem') ('FileManager')
+WHEN  ('FuzzyMatcher') ('FuzzyClass')
+WHEN  ('INIManager') ('INIClass')
+WHEN  ('RelationManager:Accnt') ('RelationManager')
+WHEN  ('RelationManager:Franch') ('RelationManager')
+WHEN  ('RelationManager:invhead') ('RelationManager')
+WHEN  ('RelationManager:invitem') ('RelationManager')
+WHEN  ('Translator') ('TranslatorClass')
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 12
+WHEN  ('ErrorManager') ('')
+WHEN  ('FileManager:Accnt') ('')
+WHEN  ('FileManager:Franch') ('')
+WHEN  ('FileManager:invhead') ('')
+WHEN  ('FileManager:invitem') ('')
+WHEN  ('FuzzyMatcher') ('')
+WHEN  ('INIManager') ('')
+WHEN  ('RelationManager:Accnt') ('')
+WHEN  ('RelationManager:Franch') ('')
+WHEN  ('RelationManager:invhead') ('')
+WHEN  ('RelationManager:invitem') ('')
+WHEN  ('Translator') ('')
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%ProgramAuthor DEFAULT  ('')
+%MessageDescription LONG  (1)
+%GlobalExternal LONG  (0)
+%ExternalSource DEFAULT  ('Dynamic Link Library (DLL)')
+%GenerateEmbedComments LONG  (0)
+%INIActive LONG  (0)
+%INIFile DEFAULT  ('Program Name.INI')
+%ININame DEFAULT  ('')
+%PreserveVars MULTI LONG  ()
+%PreserveVar DEPEND %PreserveVars DEFAULT TIMES 0
+
+%EnableRunTimeTranslator LONG  (0)
+%FuzzyMatchingEnabled LONG  (1)
+%IgnoreCase LONG  (1)
+%WordOnly LONG  (0)
+%WindowFrameDragging LONG  (1)
+%DefaultGenerate LONG  (0)
+%DefaultRILogout LONG  (1)
+%LockRecoverTime DEFAULT  ('10')
+%DefaultThreaded DEFAULT  ('Use File Setting')
+%DefaultCreate DEFAULT  ('Use File Setting')
+%DefaultExternal DEFAULT  ('None External')
+%DefaultExternalSource DEFAULT  ('')
+%DefaultExternalAPP LONG  (0)
+%DefaultExport LONG  (0)
+%DefaultOpenMode DEFAULT  ('Share')
+%DefaultUserAccess DEFAULT  ('Read/Write')
+%DefaultOtherAccess DEFAULT  ('Deny None')
+%DefaultLazyOpen LONG  (1)
+%OverrideGenerate DEPEND %File LONG TIMES 0
+
+%OverrideRILogout DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use Default')
+WHEN  ('Accnt') ('Use Default')
+WHEN  ('Franch') ('Use Default')
+WHEN  ('invhead') ('Use Default')
+WHEN  ('invitem') ('Use Default')
+
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 12
+WHEN  ('ErrorManager') ('YES')
+WHEN  ('FileManager:Accnt') ('YES')
+WHEN  ('FileManager:Franch') ('YES')
+WHEN  ('FileManager:invhead') ('YES')
+WHEN  ('FileManager:invitem') ('YES')
+WHEN  ('FuzzyMatcher') ('YES')
+WHEN  ('INIManager') ('YES')
+WHEN  ('RelationManager:Accnt') ('YES')
+WHEN  ('RelationManager:Franch') ('YES')
+WHEN  ('RelationManager:invhead') ('YES')
+WHEN  ('RelationManager:invitem') ('YES')
+WHEN  ('Translator') ('YES')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 12
+WHEN  ('ErrorManager') ('GlobalErrors')
+WHEN  ('FileManager:Accnt') ('Hide:Access:Accnt')
+WHEN  ('FileManager:Franch') ('Hide:Access:Franch')
+WHEN  ('FileManager:invhead') ('Hide:Access:invhead')
+WHEN  ('FileManager:invitem') ('Hide:Access:invitem')
+WHEN  ('FuzzyMatcher') ('FuzzyMatcher')
+WHEN  ('INIManager') ('INIMgr')
+WHEN  ('RelationManager:Accnt') ('Hide:Relate:Accnt')
+WHEN  ('RelationManager:Franch') ('Hide:Relate:Franch')
+WHEN  ('RelationManager:invhead') ('Hide:Relate:invhead')
+WHEN  ('RelationManager:invitem') ('Hide:Relate:invitem')
+WHEN  ('Translator') ('Translator')
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 12
+WHEN  ('ErrorManager') (1)
+WHEN  ('FileManager:Accnt') (1)
+WHEN  ('FileManager:Franch') (1)
+WHEN  ('FileManager:invhead') (1)
+WHEN  ('FileManager:invitem') (1)
+WHEN  ('FuzzyMatcher') (1)
+WHEN  ('INIManager') (1)
+WHEN  ('RelationManager:Accnt') (1)
+WHEN  ('RelationManager:Franch') (1)
+WHEN  ('RelationManager:invhead') (1)
+WHEN  ('RelationManager:invitem') (1)
+WHEN  ('Translator') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 12
+WHEN  ('ErrorManager') (1)
+WHEN  ('FileManager:Accnt') (1)
+WHEN  ('FileManager:Franch') (1)
+WHEN  ('FileManager:invhead') (1)
+WHEN  ('FileManager:invitem') (1)
+WHEN  ('FuzzyMatcher') (1)
+WHEN  ('INIManager') (1)
+WHEN  ('RelationManager:Accnt') (1)
+WHEN  ('RelationManager:Franch') (1)
+WHEN  ('RelationManager:invhead') (1)
+WHEN  ('RelationManager:invitem') (1)
+WHEN  ('Translator') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 12
+WHEN  ('ErrorManager') ('')
+WHEN  ('FileManager:Accnt') ('')
+WHEN  ('FileManager:Franch') ('')
+WHEN  ('FileManager:invhead') ('')
+WHEN  ('FileManager:invitem') ('')
+WHEN  ('FuzzyMatcher') ('')
+WHEN  ('INIManager') ('')
+WHEN  ('RelationManager:Accnt') ('')
+WHEN  ('RelationManager:Franch') ('')
+WHEN  ('RelationManager:invhead') ('')
+WHEN  ('RelationManager:invitem') ('')
+WHEN  ('Translator') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 12
+WHEN  ('ErrorManager') (0)
+WHEN  ('FileManager:Accnt') (0)
+WHEN  ('FileManager:Franch') (0)
+WHEN  ('FileManager:invhead') (0)
+WHEN  ('FileManager:invitem') (0)
+WHEN  ('FuzzyMatcher') (0)
+WHEN  ('INIManager') (0)
+WHEN  ('RelationManager:Accnt') (0)
+WHEN  ('RelationManager:Franch') (0)
+WHEN  ('RelationManager:invhead') (0)
+WHEN  ('RelationManager:invitem') (0)
+WHEN  ('Translator') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 1
+WHEN  ('FuzzyMatcher')TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 1
+WHEN  ('FuzzyMatcher')TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%OverrideThreaded DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use Default')
+WHEN  ('Accnt') ('Use Default')
+WHEN  ('Franch') ('Use Default')
+WHEN  ('invhead') ('Use Default')
+WHEN  ('invitem') ('Use Default')
+
+%OverrideCreate DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use Default')
+WHEN  ('Accnt') ('Use Default')
+WHEN  ('Franch') ('Use Default')
+WHEN  ('invhead') ('Use Default')
+WHEN  ('invitem') ('Use Default')
+
+%OverrideExternal DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use Default')
+WHEN  ('Accnt') ('Use Default')
+WHEN  ('Franch') ('Use Default')
+WHEN  ('invhead') ('Use Default')
+WHEN  ('invitem') ('Use Default')
+
+%OverrideExternalSource DEPEND %File DEFAULT TIMES 0
+
+%OverrideExternalAPP DEPEND %File LONG TIMES 0
+
+%OverrideExport DEPEND %File LONG TIMES 0
+
+%FileDeclarationMode DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use User Options')
+WHEN  ('Accnt') ('Use User Options')
+WHEN  ('Franch') ('Use User Options')
+WHEN  ('invhead') ('Use User Options')
+WHEN  ('invitem') ('Use User Options')
+
+%FileDeclarationThread DEPEND %File LONG TIMES 5
+WHEN  ('') (0)
+WHEN  ('Accnt') (1)
+WHEN  ('Franch') (1)
+WHEN  ('invhead') (1)
+WHEN  ('invitem') (1)
+
+%FileDeclarationBindable DEPEND %File LONG TIMES 5
+WHEN  ('') (1)
+WHEN  ('Accnt') (1)
+WHEN  ('Franch') (1)
+WHEN  ('invhead') (1)
+WHEN  ('invitem') (1)
+
+%FileDeclarationName DEPEND %File DEFAULT TIMES 0
+
+%FileDeclarationOver DEPEND %File DEFAULT TIMES 0
+
+%FileDeclarationType DEPEND %File LONG TIMES 5
+WHEN  ('') (0)
+WHEN  ('Accnt') (0)
+WHEN  ('Franch') (0)
+WHEN  ('invhead') (0)
+WHEN  ('invitem') (0)
+
+%OverrideOpenMode DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use Default')
+WHEN  ('Accnt') ('Use Default')
+WHEN  ('Franch') ('Use Default')
+WHEN  ('invhead') ('Use Default')
+WHEN  ('invitem') ('Use Default')
+
+%OverrideUserAccess DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use Default')
+WHEN  ('Accnt') ('Use Default')
+WHEN  ('Franch') ('Use Default')
+WHEN  ('invhead') ('Use Default')
+WHEN  ('invitem') ('Use Default')
+
+%OverrideOtherAccess DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use Default')
+WHEN  ('Accnt') ('Use Default')
+WHEN  ('Franch') ('Use Default')
+WHEN  ('invhead') ('Use Default')
+WHEN  ('invitem') ('Use Default')
+
+%OverrideLazyOpen DEPEND %File DEFAULT TIMES 5
+WHEN  ('') ('Use Default')
+WHEN  ('Accnt') ('Use Default')
+WHEN  ('Franch') ('Use Default')
+WHEN  ('invhead') ('Use Default')
+WHEN  ('invitem') ('Use Default')
+
+%StandardExternalModule DEPEND %Module LONG TIMES 5
+WHEN  ('') (1)
+WHEN  ('test.clw') (1)
+WHEN  ('test001.clw') (1)
+WHEN  ('test002.clw') (1)
+WHEN  ('test003.clw') (1)
+
+%NoGenerateGlobals LONG  (0)
+%WindowManagerType DEFAULT  ('WindowManager')
+%ResetOnGainFocus LONG  (0)
+%AutoToolbar LONG  (1)
+%AutoRefresh LONG  (1)
+%ImageClass DEFAULT  ('ImageManager')
+%ErrorManagerType DEFAULT  ('ErrorClass')
+%DefaultErrorCategory DEFAULT  ('ABC')
+%StoreErrorHistory LONG  (0)
+%LimitStoredHistory LONG  (0)
+%ErrorHistoryThreshold DEFAULT  ('300')
+%HistoryViewTrigger DEFAULT  ('Level:Fatal')
+%PopupClass DEFAULT  ('PopupClass')
+%SelectFileClass DEFAULT  ('SelectFileClass')
+%ResizerType DEFAULT  ('WindowResizeClass')
+%ResizerDeFaultFindParents LONG  (1)
+%ResizerDefaultOptimizeMoves LONG  (1)
+%ResizerDefaultOptimizeRedraws LONG  (1)
+%INIClass DEFAULT  ('INIClass')
+%RunTimeTranslatorType DEFAULT  ('TranslatorClass')
+%ExtractionFilename DEFAULT  ('')
+%TranslationGroups MULTI LONG  ()
+%TranslationFile DEPEND %TranslationGroups DEFAULT TIMES 0
+
+%TranslationGroup DEPEND %TranslationGroups DEFAULT TIMES 0
+
+%FuzzyMatcherClass DEFAULT  ('FuzzyClass')
+%FileManagerType DEFAULT  ('FileManager')
+%ViewManagerType DEFAULT  ('ViewManager')
+%RelationManagerType DEFAULT  ('RelationManager')
+%BrowserType DEFAULT  ('BrowseClass')
+%ActiveInvisible LONG  (0)
+%AllowUnfilled LONG  (0)
+%RetainRow LONG  (1)
+%BrowseEIPManagerType DEFAULT  ('BrowseEIPManager')
+%EditInPlaceType DEFAULT  ('EditEntryClass')
+%GridClass DEFAULT  ('GridClass')
+%SidebarClass DEFAULT  ('SidebarClass')
+%StepManagerType DEFAULT  ('StepClass')
+%StepManagerLongType DEFAULT  ('StepLongClass')
+%StepManagerRealType DEFAULT  ('StepRealClass')
+%StepManagerStringType DEFAULT  ('StepStringClass')
+%StepManagerCustomType DEFAULT  ('StepCustomClass')
+%StepLocatorType DEFAULT  ('StepLocatorClass')
+%EntryLocatorType DEFAULT  ('EntryLocatorClass')
+%IncrementalLocatorType DEFAULT  ('IncrementalLocatorClass')
+%FilteredLocatorType DEFAULT  ('FilterLocatorClass')
+%FileDropManagerType DEFAULT  ('FileDropClass')
+%FileDropComboManagerType DEFAULT  ('FileDropComboClass')
+%QBEFormType DEFAULT  ('QueryFormClass')
+%QBEFormVisualType DEFAULT  ('QueryFormVisual')
+%QBEListType DEFAULT  ('QueryListClass')
+%QBEListVisualType DEFAULT  ('QueryListVisual')
+%ProcessType DEFAULT  ('ProcessClass')
+%PrintPreviewType DEFAULT  ('PrintPreviewClass')
+%ReportManagerType DEFAULT  ('ReportManager')
+%AsciiViewerClass DEFAULT  ('AsciiViewerClass')
+%AsciiSearchClass DEFAULT  ('AsciiSearchClass')
+%AsciiPrintClass DEFAULT  ('AsciiPrintClass')
+%AsciiFileManagerType DEFAULT  ('AsciiFileClass')
+%ToolbarClass DEFAULT  ('ToolbarClass')
+%ToolbarListBoxType DEFAULT  ('ToolbarListboxClass')
+%ToolbarRelTreeType DEFAULT  ('ToolbarReltreeClass')
+%ToolbarUpdateClassType DEFAULT  ('ToolbarUpdateClass')
+%OverrideAbcSettings LONG  (0)
+%AbcSourceLocation DEFAULT  ('LINK')
+%AbcLibraryName DEFAULT  ('')
+[PERSIST]
+[PROJECT]
+#system win32 exe
+#model clarion dll
+#compile "test.clw" -- GENERATED
+#compile "test001.clw" -- GENERATED
+#compile "test002.clw" -- GENERATED
+#compile "test003.clw" -- GENERATED
+#link "test.EXE"
+[PROGRAM]
+[COMMON]
+FROM ABC ABC
+[END]
+[MODULE]
+[COMMON]
+FROM ABC GENERATED
+[PROCEDURE]
+NAME Main
+[COMMON]
+DESCRIPTION 'Browse the invhead File'
+FROM ABC Window
+CATEGORY 'Browse'
+MODIFIED '2013/04/15' ' 3:22:05'
+[DATA]
+CurrentTab               STRING(80)
+!!> GUID('783156c3-84d6-4b36-98de-6f29de53bcc6'),SCOPE(1)
+[FILES]
+[PRIMARY]
+invhead
+[INSTANCE]
+1
+[KEY]
+ivh:INV_KEY
+[PROMPTS]
+%ButtonAction DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRunName DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRunParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%ButtonThread DEPEND %Control LONG TIMES 0
+
+%ButtonThreadStack DEPEND %Control DEFAULT TIMES 0
+
+%ButtonParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRequest DEPEND %Control DEFAULT TIMES 0
+
+%PreLookupKey DEPEND %Control KEY TIMES 0
+
+%PreLookupField DEPEND %Control COMPONENT TIMES 0
+
+%PreLookupProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%PostLookupKey DEPEND %Control KEY TIMES 0
+
+%PostLookupField DEPEND %Control COMPONENT TIMES 0
+
+%PostLookupProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%ForceWindowRefresh DEPEND %Control LONG TIMES 0
+
+%ClassItem UNIQUE DEFAULT  ('Default', 'WindowToolbar')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%Parameters DEFAULT  ('')
+%ReturnValue FIELD  ()
+%WindowOperationMode DEFAULT  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('NO')
+WHEN  ('WindowToolbar') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (1)
+WHEN  ('WindowToolbar') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (1)
+WHEN  ('WindowToolbar') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('')
+WHEN  ('WindowToolbar') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (0)
+WHEN  ('WindowToolbar') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ButtonReturnValueAssignment DEPEND %Control FIELD TIMES 0
+
+%ButtonReturnValueReferenceAssign DEPEND %Control LONG TIMES 0
+
+%ButtonThreadParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonThreadReturnValueAssignment DEPEND %Control FIELD TIMES 0
+
+%PostLookupDuringValidate DEPEND %Control LONG TIMES 0
+
+%LookupAssign DEPEND %Control MULTI LONG TIMES 0
+
+%MoreField DEPEND %LookupAssign DEFAULT TIMES 0
+
+%MoreTarget DEPEND %LookupAssign FIELD TIMES 0
+
+%CheckedAssigns DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedAssignVariable DEPEND %CheckedAssigns FIELD TIMES 0
+
+%CheckedAssignValue DEPEND %CheckedAssigns DEFAULT TIMES 0
+
+%CheckedHides DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedControl DEPEND %CheckedHides DEFAULT TIMES 0
+
+%CheckedControlAction DEPEND %CheckedHides DEFAULT TIMES 0
+
+%CheckedEnables DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedControl1 DEPEND %CheckedEnables DEFAULT TIMES 0
+
+%CheckedControl1Action DEPEND %CheckedEnables DEFAULT TIMES 0
+
+%UncheckedAssigns DEPEND %Control MULTI LONG TIMES 0
+
+%UncheckedAssignVariable DEPEND %UncheckedAssigns FIELD TIMES 0
+
+%UncheckedAssignValue DEPEND %UncheckedAssigns DEFAULT TIMES 0
+
+%UnCheckedHides DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedControl DEPEND %UnCheckedHides DEFAULT TIMES 0
+
+%UnCheckedControlAction DEPEND %UnCheckedHides DEFAULT TIMES 0
+
+%UnCheckedEnables DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedControl1 DEPEND %UnCheckedEnables DEFAULT TIMES 0
+
+%UnCheckedControl1Action DEPEND %UnCheckedEnables DEFAULT TIMES 0
+
+[ADDITION]
+NAME ABC BrowseBox
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%AcceptToolBarControl LONG  (0)
+%EnableQuickScan LONG  (0)
+%LocatorType DEFAULT  ('Step')
+%OverrideDefaultLocator LONG  (0)
+%OverrideLocator DEFAULT  ('')
+%RecordFilter DEFAULT  ('')
+%RangeField COMPONENT  ()
+%RangeLimitType DEFAULT  ('')
+%RangeLimit FIELD  ()
+%RangeLow FIELD  ()
+%RangeHigh FIELD  ()
+%RangeFile FILE  ()
+%ScrollBehavior DEFAULT  ('Fixed Thumb')
+%SortOrder MULTI LONG  ()
+%SortCondition DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortKey DEPEND %SortOrder KEY TIMES 0
+
+%SortLocatorType DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortOverrideDefaultLocator DEPEND %SortOrder LONG TIMES 0
+
+%SortOverrideLocator DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortRecordFilter DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortRangeField DEPEND %SortOrder COMPONENT TIMES 0
+
+%SortRangeLimitType DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortRangeLimit DEPEND %SortOrder FIELD TIMES 0
+
+%SortRangeLow DEPEND %SortOrder FIELD TIMES 0
+
+%SortRangeHigh DEPEND %SortOrder FIELD TIMES 0
+
+%SortRangeFile DEPEND %SortOrder FILE TIMES 0
+
+%SortScrollBehavior DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortScrollKeyDistribution DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortCustomKeyDistribution DEPEND %SortOrder MULTI LONG TIMES 0
+
+%SortKeyDistributionValue DEPEND %SortCustomKeyDistribution DEFAULT TIMES 0
+
+%SortScrollAlpha DEPEND %SortOrder LONG TIMES 0
+
+%SortScrollNumeric DEPEND %SortOrder LONG TIMES 0
+
+%SortScrollAlt DEPEND %SortOrder LONG TIMES 0
+
+%ClassItem UNIQUE DEFAULT  ('Default', 'Locator0', 'Step0')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%LoadMethod DEFAULT  ('Page')
+%FindDefaultAnywhere LONG  (0)
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 3
+WHEN  ('Default') ('NO')
+WHEN  ('Locator0') ('NO')
+WHEN  ('Step0') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 3
+WHEN  ('Default') (1)
+WHEN  ('Locator0') (1)
+WHEN  ('Step0') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 3
+WHEN  ('Default') (1)
+WHEN  ('Locator0') (1)
+WHEN  ('Step0') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 3
+WHEN  ('Default') ('')
+WHEN  ('Locator0') ('')
+WHEN  ('Step0') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 3
+WHEN  ('Default') (0)
+WHEN  ('Locator0') (0)
+WHEN  ('Step0') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%AddSortFields DEFAULT  ('')
+%ResetFields MULTI LONG  ()
+%ResetField DEPEND %ResetFields FIELD TIMES 0
+
+%ScrollKeyDistribution DEFAULT  ('Alpha')
+%CustomKeyDistribution MULTI LONG  ()
+%KeyDistributionValue DEPEND %CustomKeyDistribution DEFAULT TIMES 0
+
+%ScrollAlpha LONG  (1)
+%ScrollNumeric LONG  (0)
+%ScrollAlt LONG  (0)
+%SortFindAnywhere DEPEND %SortOrder LONG TIMES 0
+
+%SortAddSortFields DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortResetFields DEPEND %SortOrder MULTI LONG TIMES 0
+
+%SortResetField DEPEND %SortResetFields FIELD TIMES 0
+
+%HotFields MULTI LONG  ()
+%HotField DEPEND %HotFields FIELD TIMES 0
+
+%HotFieldBound DEPEND %HotFields LONG TIMES 0
+
+%HotFieldBindOnly DEPEND %HotFields LONG TIMES 0
+
+%ControlFieldForegroundNormal DEPEND %Control DEPEND %ControlField LONG TIMES 1
+WHEN  ('?Browse:1')TIMES 9
+WHEN  ('ivh:CLIENT') (-1)
+WHEN  ('ivh:DEPOSIT') (-1)
+WHEN  ('ivh:DISCOUNT') (-1)
+WHEN  ('ivh:FREIGHT') (-1)
+WHEN  ('ivh:INVOICE') (-1)
+WHEN  ('ivh:INVPREFIX') (-1)
+WHEN  ('ivh:INVTOTAL') (-1)
+WHEN  ('ivh:ORDERNUM') (-1)
+WHEN  ('ivh:clid') (-1)
+
+%ControlFieldBackgroundNormal DEPEND %Control DEPEND %ControlField LONG TIMES 1
+WHEN  ('?Browse:1')TIMES 9
+WHEN  ('ivh:CLIENT') (-1)
+WHEN  ('ivh:DEPOSIT') (-1)
+WHEN  ('ivh:DISCOUNT') (-1)
+WHEN  ('ivh:FREIGHT') (-1)
+WHEN  ('ivh:INVOICE') (-1)
+WHEN  ('ivh:INVPREFIX') (-1)
+WHEN  ('ivh:INVTOTAL') (-1)
+WHEN  ('ivh:ORDERNUM') (-1)
+WHEN  ('ivh:clid') (-1)
+
+%ControlFieldForegroundSelected DEPEND %Control DEPEND %ControlField LONG TIMES 1
+WHEN  ('?Browse:1')TIMES 9
+WHEN  ('ivh:CLIENT') (-1)
+WHEN  ('ivh:DEPOSIT') (-1)
+WHEN  ('ivh:DISCOUNT') (-1)
+WHEN  ('ivh:FREIGHT') (-1)
+WHEN  ('ivh:INVOICE') (-1)
+WHEN  ('ivh:INVPREFIX') (-1)
+WHEN  ('ivh:INVTOTAL') (-1)
+WHEN  ('ivh:ORDERNUM') (-1)
+WHEN  ('ivh:clid') (-1)
+
+%ControlFieldBackgroundSelected DEPEND %Control DEPEND %ControlField LONG TIMES 1
+WHEN  ('?Browse:1')TIMES 9
+WHEN  ('ivh:CLIENT') (-1)
+WHEN  ('ivh:DEPOSIT') (-1)
+WHEN  ('ivh:DISCOUNT') (-1)
+WHEN  ('ivh:FREIGHT') (-1)
+WHEN  ('ivh:INVOICE') (-1)
+WHEN  ('ivh:INVPREFIX') (-1)
+WHEN  ('ivh:INVTOTAL') (-1)
+WHEN  ('ivh:ORDERNUM') (-1)
+WHEN  ('ivh:clid') (-1)
+
+%ConditionalColors DEPEND %Control DEPEND %ControlField MULTI LONG TIMES 0
+
+%ColorCondition DEPEND %ConditionalColors DEFAULT TIMES 0
+
+%ConditionalControlFieldForegroundNormal DEPEND %ConditionalColors LONG TIMES 0
+
+%ConditionalControlFieldBackgroundNormal DEPEND %ConditionalColors LONG TIMES 0
+
+%ConditionalControlFieldForegroundSelected DEPEND %ConditionalColors LONG TIMES 0
+
+%ConditionalControlFieldBackgroundSelected DEPEND %ConditionalColors LONG TIMES 0
+
+%ControlFieldIcon DEPEND %Control DEPEND %ControlField DEFAULT TIMES 0
+
+%ConditionalIcons DEPEND %Control DEPEND %ControlField MULTI LONG TIMES 0
+
+%IconCondition DEPEND %ConditionalIcons DEFAULT TIMES 0
+
+%ConditionalControlFieldIcon DEPEND %ConditionalIcons DEFAULT TIMES 0
+
+%ControlFieldStyle DEPEND %Control DEPEND %ControlField DEFAULT TIMES 0
+
+%ConditionalStyles DEPEND %Control DEPEND %ControlField MULTI LONG TIMES 0
+
+%StyleCondition DEPEND %ConditionalStyles DEFAULT TIMES 0
+
+%ConditionalControlFieldStyle DEPEND %ConditionalStyles DEFAULT TIMES 0
+
+%BrowseTotals MULTI LONG  ()
+%BrowseTotalTarget DEPEND %BrowseTotals FIELD TIMES 0
+
+%BrowseTotalType DEPEND %BrowseTotals DEFAULT TIMES 0
+
+%BrowseTotalField DEPEND %BrowseTotals FIELD TIMES 0
+
+%BrowseTotalBasedOn DEPEND %BrowseTotals DEFAULT TIMES 0
+
+%BrowseTotalCondition DEPEND %BrowseTotals DEFAULT TIMES 0
+
+[ADDITION]
+NAME ABC BrowseUpdateButtons
+[INSTANCE]
+INSTANCE 2
+PARENT 1
+PROCPROP
+[PROMPTS]
+%UpdateProcedure PROCEDURE  (updateInvoice)
+%EditViaPopup LONG  (1)
+%EditInPlace LONG  (0)
+%ClassItem UNIQUE DEFAULT  ('BrowseEIPManager')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('BrowseEIPManager') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('BrowseEIPManager') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('BrowseEIPManager') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('BrowseEIPManager') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('BrowseEIPManager') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%EIPTabAction DEFAULT  ('Default')
+%EIPTabRemain LONG  (0)
+%EIPEnterAction DEFAULT  ('Default')
+%EIPEnterRemain LONG  (0)
+%EIPArrowAction DEFAULT  ('Default')
+%EIPArrowRemain LONG  (1)
+%EIPArrowRetain LONG  (1)
+%EIPFocusAction DEFAULT  ('Default')
+%EIPInsertionPoint DEFAULT  ('After')
+%EditInPlaceList MULTI LONG  ()
+%EditInPlaceField DEPEND %EditInPlaceList FIELD TIMES 0
+
+%AllowEIP DEPEND %EditInPlaceList LONG TIMES 0
+
+[ADDITION]
+NAME ABC CloseButton
+[INSTANCE]
+INSTANCE 3
+[ADDITION]
+NAME ABC WindowResize
+[INSTANCE]
+INSTANCE 4
+[PROMPTS]
+%UseAppStrategy DEFAULT  ('1')
+%AppStrategy DEFAULT  ('Surface')
+%RestrictMinSize LONG  (1)
+%WindowMinWidth DEFAULT  ('0')
+%WindowMaxWidth DEFAULT  ('0')
+%ClassItem UNIQUE DEFAULT  ('Default')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%WindowMinHeight DEFAULT  ('')
+%RestrictMaxSize LONG  (0)
+%WindowMaxHeight DEFAULT  ('')
+%OverrideControls MULTI LONG  ()
+%OverrideControl DEPEND %OverrideControls DEFAULT TIMES 0
+
+%DisableResize DEPEND %OverrideControls LONG TIMES 0
+
+%HorizResize DEPEND %OverrideControls DEFAULT TIMES 0
+
+%VertResize DEPEND %OverrideControls DEFAULT TIMES 0
+
+%HorizPositional DEPEND %OverrideControls DEFAULT TIMES 0
+
+%VertPositional DEPEND %OverrideControls DEFAULT TIMES 0
+
+%AutoFindParents DEFAULT  ('Default')
+%DeferMoves DEFAULT  ('Default')
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+[WINDOW]
+QuickWindowC WINDOW('Browse the invhead File'),AT(,,358,188),FONT('MS Sans Serif',8),RESIZE, |
+          GRAY,IMM,MDI,HLP('Main'),SYSTEM
+          LIST,AT(8,20,342,124),USE(?Browse:1),HVSCROLL,FORMAT('20R(2)|M~clid~C(0)@n3@6' & |
+            '4R(2)|M~INVOICE~C(0)@n-14@64R(2)|M~CLIENT~C(0)@n-14@40L(2)|M~INVPREFIX~L(2' & |
+            ')@s1@80L(2)|M~ORDERNUM~L(2)@s40@36D(10)|M~FREIGHT~C(0)@n-7.2@48D(16)|M~DEP' & |
+            'OSIT~C(0)@n-10.2@48D(14)|M~DISCOUNT~C(0)@n-10.2@48D(14)|M~INVTOTAL~C(0)@n-10.2@'), |
+            FROM(Queue:Browse:1),IMM,MSG('Browsing Records'),#FIELDS(ivh:clid,ivh:INVOICE, |
+            ivh:CLIENT,ivh:INVPREFIX,ivh:ORDERNUM,ivh:FREIGHT,ivh:DEPOSIT,ivh:DISCOUNT,ivh:INVTOTAL), |
+            #ORIG(?List),#SEQ(1),#ORDINAL(1)
+          BUTTON('&Insert'),AT(207,148,45,14),USE(?Insert:2),#LINK(?Change:2),#ORIG(?Insert), |
+            #SEQ(2),#ORDINAL(2)
+          BUTTON('&Change'),AT(256,148,45,14),USE(?Change:2),DEFAULT,#LINK(?Delete:2),#ORIG(?Change), |
+            #SEQ(2),#ORDINAL(3)
+          BUTTON('&Delete'),AT(305,148,45,14),USE(?Delete:2),#LINK(?Insert:2),#ORIG(?Delete), |
+            #SEQ(2),#ORDINAL(4)
+          SHEET,AT(4,4,350,162),USE(?CurrentTab),#ORIG(CurrentTab),#ORDINAL(5)
+            TAB('ivh:INV_KEY'),USE(?Tab:2),#ORDINAL(6)
+            END
+          END
+          BUTTON('Close'),AT(260,170,45,14),USE(?Close),#ORIG(?Close),#SEQ(3),#ORDINAL(7)
+          BUTTON('Help'),AT(309,170,45,14),USE(?Help),STD(STD:Help),#ORDINAL(8)
+        END
+
+[END]
+[MODULE]
+[COMMON]
+FROM ABC GENERATED
+[PROCEDURE]
+NAME updateInvoice
+[COMMON]
+DESCRIPTION 'Update the invhead File'
+FROM ABC Window
+CATEGORY 'Form'
+MODIFIED '2013/04/15' ' 3:25:34'
+[DATA]
+CurrentTab               STRING(80)
+!!> GUID('7bbc3119-9bbe-412a-9776-9db35144bede'),SCOPE(1)
+ActionMessage            CSTRING(40)
+!!> GUID('251fb18a-ad02-4356-b1e8-9bf4d23a1da6'),SCOPE(1)
+[SCREENCONTROLS]
+! PROMPT('t Current:'),USE(?tCurrent:Prompt)
+! ENTRY(@n$-14.2),USE(tCurrent),DECIMAL(12)
+[REPORTCONTROLS]
+! STRING(@n$-14.2),USE(tCurrent),DECIMAL(12)
+tCurrent                 DECIMAL(8,2)
+!!> GUID('6d00b78e-2232-43fd-9de6-f18bc62bc8fb'),PROMPT('t Current:'),HEADER('t Current'),PICTURE(@n$-14.2),JUSTIFY(DECIMAL,12)
+[SCREENCONTROLS]
+! PROMPT('My Account:'),USE(?MyAccount:Prompt)
+! ENTRY(@s20),USE(MyAccount)
+[REPORTCONTROLS]
+! STRING(@s20),USE(MyAccount)
+MyAccount                CLASS(C8:Accounts)
+!!> GUID('d57f3dd5-8f64-4832-ae78-4ad7958bcdc4'),PROMPT('My Account:'),HEADER('My Account'),PICTURE(@s20)
+                         END
+!!> GUID('0834c091-4892-413d-bb5f-d56017f9fadd')
+[SCREENCONTROLS]
+! PROMPT('cc Details:'),USE(?ccDetails:Prompt)
+! ENTRY(@n3),USE(ccDetails)
+[REPORTCONTROLS]
+! STRING(@n3),USE(ccDetails)
+ccDetails                BYTE
+!!> GUID('8a1dbb13-e650-41ea-a4c2-774420505bca'),PROMPT('cc Details:'),HEADER('cc Details'),PICTURE(@n3)
+[SCREENCONTROLS]
+! PROMPT('Credit Card:'),USE(?CreditCard:Prompt)
+! ENTRY(@s20),USE(CreditCard)
+[REPORTCONTROLS]
+! STRING(@s20),USE(CreditCard)
+CreditCard               STRING(20)
+!!> GUID('95e06303-adef-491c-b489-c2b6f1edd3f4'),PROMPT('Credit Card:'),HEADER('Credit Card'),PICTURE(@s20)
+[FILES]
+[PRIMARY]
+invitem
+[INSTANCE]
+2
+[KEY]
+ivl:INV_KEY
+[PRIMARY]
+invhead
+[INSTANCE]
+4
+[OTHERS]
+invhead
+[PROMPTS]
+%ButtonAction DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRunName DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRunParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%ButtonThread DEPEND %Control LONG TIMES 0
+
+%ButtonThreadStack DEPEND %Control DEFAULT TIMES 0
+
+%ButtonParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRequest DEPEND %Control DEFAULT TIMES 0
+
+%PreLookupKey DEPEND %Control KEY TIMES 0
+
+%PreLookupField DEPEND %Control COMPONENT TIMES 0
+
+%PreLookupProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%PostLookupKey DEPEND %Control KEY TIMES 0
+
+%PostLookupField DEPEND %Control COMPONENT TIMES 0
+
+%PostLookupProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%ForceWindowRefresh DEPEND %Control LONG TIMES 0
+
+%ClassItem UNIQUE DEFAULT  ('Default', 'WindowToolbar')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%Parameters DEFAULT  ('')
+%ReturnValue FIELD  ()
+%WindowOperationMode DEFAULT  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('NO')
+WHEN  ('WindowToolbar') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (1)
+WHEN  ('WindowToolbar') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (1)
+WHEN  ('WindowToolbar') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('')
+WHEN  ('WindowToolbar') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (0)
+WHEN  ('WindowToolbar') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ButtonReturnValueAssignment DEPEND %Control FIELD TIMES 0
+
+%ButtonReturnValueReferenceAssign DEPEND %Control LONG TIMES 0
+
+%ButtonThreadParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonThreadReturnValueAssignment DEPEND %Control FIELD TIMES 0
+
+%PostLookupDuringValidate DEPEND %Control LONG TIMES 0
+
+%LookupAssign DEPEND %Control MULTI LONG TIMES 0
+
+%MoreField DEPEND %LookupAssign DEFAULT TIMES 0
+
+%MoreTarget DEPEND %LookupAssign FIELD TIMES 0
+
+%CheckedAssigns DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedAssignVariable DEPEND %CheckedAssigns FIELD TIMES 0
+
+%CheckedAssignValue DEPEND %CheckedAssigns DEFAULT TIMES 0
+
+%CheckedHides DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedControl DEPEND %CheckedHides DEFAULT TIMES 0
+
+%CheckedControlAction DEPEND %CheckedHides DEFAULT TIMES 0
+
+%CheckedEnables DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedControl1 DEPEND %CheckedEnables DEFAULT TIMES 0
+
+%CheckedControl1Action DEPEND %CheckedEnables DEFAULT TIMES 0
+
+%UncheckedAssigns DEPEND %Control MULTI LONG TIMES 0
+
+%UncheckedAssignVariable DEPEND %UncheckedAssigns FIELD TIMES 0
+
+%UncheckedAssignValue DEPEND %UncheckedAssigns DEFAULT TIMES 0
+
+%UnCheckedHides DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedControl DEPEND %UnCheckedHides DEFAULT TIMES 0
+
+%UnCheckedControlAction DEPEND %UnCheckedHides DEFAULT TIMES 0
+
+%UnCheckedEnables DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedControl1 DEPEND %UnCheckedEnables DEFAULT TIMES 0
+
+%UnCheckedControl1Action DEPEND %UnCheckedEnables DEFAULT TIMES 0
+
+[ADDITION]
+NAME ABC RecordValidation
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%ValidateOnAccept LONG  (1)
+%ValidateOnNonStopSelect LONG  (1)
+%ControlsExcluded MULTI LONG  ()
+%ControlToExclude DEPEND %ControlsExcluded DEFAULT TIMES 0
+
+%ValidateUsingColoration LONG  (0)
+%InvalidFieldColor LONG  (255)
+%InvalidPromptColor LONG  (255)
+%UseValidateMessage LONG  (0)
+%ValidationMessage DEFAULT  ('The values of Colored Fields are invalid, Please correct this information.')
+%MessageControl FIELD  ()
+[ADDITION]
+NAME ABC BrowseBox
+[INSTANCE]
+INSTANCE 2
+[PROMPTS]
+%AcceptToolBarControl LONG  (0)
+%EnableQuickScan LONG  (0)
+%LocatorType DEFAULT  ('Step')
+%OverrideDefaultLocator LONG  (0)
+%OverrideLocator DEFAULT  ('')
+%RecordFilter DEFAULT  ('')
+%RangeField COMPONENT  (ivl:INVOICE)
+%RangeLimitType DEFAULT  ('File Relationship')
+%RangeLimit FIELD  ()
+%RangeLow FIELD  ()
+%RangeHigh FIELD  ()
+%RangeFile FILE  (invhead)
+%ScrollBehavior DEFAULT  ('Fixed Thumb')
+%SortOrder MULTI LONG  ()
+%SortCondition DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortKey DEPEND %SortOrder KEY TIMES 0
+
+%SortLocatorType DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortOverrideDefaultLocator DEPEND %SortOrder LONG TIMES 0
+
+%SortOverrideLocator DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortRecordFilter DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortRangeField DEPEND %SortOrder COMPONENT TIMES 0
+
+%SortRangeLimitType DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortRangeLimit DEPEND %SortOrder FIELD TIMES 0
+
+%SortRangeLow DEPEND %SortOrder FIELD TIMES 0
+
+%SortRangeHigh DEPEND %SortOrder FIELD TIMES 0
+
+%SortRangeFile DEPEND %SortOrder FILE TIMES 0
+
+%SortScrollBehavior DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortScrollKeyDistribution DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortCustomKeyDistribution DEPEND %SortOrder MULTI LONG TIMES 0
+
+%SortKeyDistributionValue DEPEND %SortCustomKeyDistribution DEFAULT TIMES 0
+
+%SortScrollAlpha DEPEND %SortOrder LONG TIMES 0
+
+%SortScrollNumeric DEPEND %SortOrder LONG TIMES 0
+
+%SortScrollAlt DEPEND %SortOrder LONG TIMES 0
+
+%ClassItem UNIQUE DEFAULT  ('Default', 'Locator0', 'Step0')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%LoadMethod DEFAULT  ('Page')
+%FindDefaultAnywhere LONG  (0)
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 3
+WHEN  ('Default') ('NO')
+WHEN  ('Locator0') ('NO')
+WHEN  ('Step0') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 3
+WHEN  ('Default') (1)
+WHEN  ('Locator0') (1)
+WHEN  ('Step0') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 3
+WHEN  ('Default') (1)
+WHEN  ('Locator0') (1)
+WHEN  ('Step0') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 3
+WHEN  ('Default') ('')
+WHEN  ('Locator0') ('')
+WHEN  ('Step0') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 3
+WHEN  ('Default') (0)
+WHEN  ('Locator0') (0)
+WHEN  ('Step0') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%AddSortFields DEFAULT  ('')
+%ResetFields MULTI LONG  ()
+%ResetField DEPEND %ResetFields FIELD TIMES 0
+
+%ScrollKeyDistribution DEFAULT  ('Alpha')
+%CustomKeyDistribution MULTI LONG  ()
+%KeyDistributionValue DEPEND %CustomKeyDistribution DEFAULT TIMES 0
+
+%ScrollAlpha LONG  (1)
+%ScrollNumeric LONG  (0)
+%ScrollAlt LONG  (0)
+%SortFindAnywhere DEPEND %SortOrder LONG TIMES 0
+
+%SortAddSortFields DEPEND %SortOrder DEFAULT TIMES 0
+
+%SortResetFields DEPEND %SortOrder MULTI LONG TIMES 0
+
+%SortResetField DEPEND %SortResetFields FIELD TIMES 0
+
+%HotFields MULTI LONG  ()
+%HotField DEPEND %HotFields FIELD TIMES 0
+
+%HotFieldBound DEPEND %HotFields LONG TIMES 0
+
+%HotFieldBindOnly DEPEND %HotFields LONG TIMES 0
+
+%ControlFieldForegroundNormal DEPEND %Control DEPEND %ControlField LONG TIMES 1
+WHEN  ('?Browse:2')TIMES 9
+WHEN  ('ivl:DESCIPTION') (-1)
+WHEN  ('ivl:FRANCHISE') (-1)
+WHEN  ('ivl:INVOICE') (-1)
+WHEN  ('ivl:LASTINCOST') (-1)
+WHEN  ('ivl:PARTNUM') (-1)
+WHEN  ('ivl:PRICE') (-1)
+WHEN  ('ivl:QUANTITY') (-1)
+WHEN  ('ivl:clid') (-1)
+WHEN  ('ivl:format') (-1)
+
+%ControlFieldBackgroundNormal DEPEND %Control DEPEND %ControlField LONG TIMES 1
+WHEN  ('?Browse:2')TIMES 9
+WHEN  ('ivl:DESCIPTION') (-1)
+WHEN  ('ivl:FRANCHISE') (-1)
+WHEN  ('ivl:INVOICE') (-1)
+WHEN  ('ivl:LASTINCOST') (-1)
+WHEN  ('ivl:PARTNUM') (-1)
+WHEN  ('ivl:PRICE') (-1)
+WHEN  ('ivl:QUANTITY') (-1)
+WHEN  ('ivl:clid') (-1)
+WHEN  ('ivl:format') (-1)
+
+%ControlFieldForegroundSelected DEPEND %Control DEPEND %ControlField LONG TIMES 1
+WHEN  ('?Browse:2')TIMES 9
+WHEN  ('ivl:DESCIPTION') (-1)
+WHEN  ('ivl:FRANCHISE') (-1)
+WHEN  ('ivl:INVOICE') (-1)
+WHEN  ('ivl:LASTINCOST') (-1)
+WHEN  ('ivl:PARTNUM') (-1)
+WHEN  ('ivl:PRICE') (-1)
+WHEN  ('ivl:QUANTITY') (-1)
+WHEN  ('ivl:clid') (-1)
+WHEN  ('ivl:format') (-1)
+
+%ControlFieldBackgroundSelected DEPEND %Control DEPEND %ControlField LONG TIMES 1
+WHEN  ('?Browse:2')TIMES 9
+WHEN  ('ivl:DESCIPTION') (-1)
+WHEN  ('ivl:FRANCHISE') (-1)
+WHEN  ('ivl:INVOICE') (-1)
+WHEN  ('ivl:LASTINCOST') (-1)
+WHEN  ('ivl:PARTNUM') (-1)
+WHEN  ('ivl:PRICE') (-1)
+WHEN  ('ivl:QUANTITY') (-1)
+WHEN  ('ivl:clid') (-1)
+WHEN  ('ivl:format') (-1)
+
+%ConditionalColors DEPEND %Control DEPEND %ControlField MULTI LONG TIMES 0
+
+%ColorCondition DEPEND %ConditionalColors DEFAULT TIMES 0
+
+%ConditionalControlFieldForegroundNormal DEPEND %ConditionalColors LONG TIMES 0
+
+%ConditionalControlFieldBackgroundNormal DEPEND %ConditionalColors LONG TIMES 0
+
+%ConditionalControlFieldForegroundSelected DEPEND %ConditionalColors LONG TIMES 0
+
+%ConditionalControlFieldBackgroundSelected DEPEND %ConditionalColors LONG TIMES 0
+
+%ControlFieldIcon DEPEND %Control DEPEND %ControlField DEFAULT TIMES 0
+
+%ConditionalIcons DEPEND %Control DEPEND %ControlField MULTI LONG TIMES 0
+
+%IconCondition DEPEND %ConditionalIcons DEFAULT TIMES 0
+
+%ConditionalControlFieldIcon DEPEND %ConditionalIcons DEFAULT TIMES 0
+
+%ControlFieldStyle DEPEND %Control DEPEND %ControlField DEFAULT TIMES 0
+
+%ConditionalStyles DEPEND %Control DEPEND %ControlField MULTI LONG TIMES 0
+
+%StyleCondition DEPEND %ConditionalStyles DEFAULT TIMES 0
+
+%ConditionalControlFieldStyle DEPEND %ConditionalStyles DEFAULT TIMES 0
+
+%BrowseTotals MULTI LONG  ()
+%BrowseTotalTarget DEPEND %BrowseTotals FIELD TIMES 0
+
+%BrowseTotalType DEPEND %BrowseTotals DEFAULT TIMES 0
+
+%BrowseTotalField DEPEND %BrowseTotals FIELD TIMES 0
+
+%BrowseTotalBasedOn DEPEND %BrowseTotals DEFAULT TIMES 0
+
+%BrowseTotalCondition DEPEND %BrowseTotals DEFAULT TIMES 0
+
+[ADDITION]
+NAME ABC BrowseUpdateButtons
+[INSTANCE]
+INSTANCE 3
+PARENT 2
+[PROMPTS]
+%UpdateProcedure PROCEDURE  (Updateinvitem)
+%EditViaPopup LONG  (1)
+%EditInPlace LONG  (0)
+%ClassItem UNIQUE DEFAULT  ('BrowseEIPManager')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('BrowseEIPManager') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('BrowseEIPManager') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('BrowseEIPManager') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('BrowseEIPManager') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('BrowseEIPManager') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%EIPTabAction DEFAULT  ('Default')
+%EIPTabRemain LONG  (0)
+%EIPEnterAction DEFAULT  ('Default')
+%EIPEnterRemain LONG  (0)
+%EIPArrowAction DEFAULT  ('Default')
+%EIPArrowRemain LONG  (1)
+%EIPArrowRetain LONG  (1)
+%EIPFocusAction DEFAULT  ('Default')
+%EIPInsertionPoint DEFAULT  ('After')
+%EditInPlaceList MULTI LONG  ()
+%EditInPlaceField DEPEND %EditInPlaceList FIELD TIMES 0
+
+%AllowEIP DEPEND %EditInPlaceList LONG TIMES 0
+
+[ADDITION]
+NAME ABC SaveButton
+[INSTANCE]
+INSTANCE 4
+PROCPROP
+[PROMPTS]
+%InsertAllowed LONG  (1)
+%InsertMessage DEFAULT  ('Adding a invhead Record')
+%ChangeAllowed LONG  (1)
+%ChangeMessage DEFAULT  ('Changing a invhead Record')
+%DeleteAllowed LONG  (1)
+%DeleteMessage DEFAULT  ('Deleting a invhead Record')
+%MessageHeader LONG  (0)
+%ActionOnDelete DEFAULT  ('Standard Warning')
+%PrimingFields MULTI LONG  ()
+%PrimedField DEPEND %PrimingFields FIELD TIMES 0
+
+%PrimedValue DEPEND %PrimingFields DEFAULT TIMES 0
+
+%ActionOnCancel DEFAULT  ('Confirm Cancel')
+%MessageLocation DEFAULT  ('Title Bar')
+%MessageStatusSection DEFAULT  ('0')
+%HistoryKey DEFAULT  ('734')
+%AppendToTitle LONG  (0)
+%AppendToTitleID DEFAULT  ('')
+%ViewMessage DEFAULT  ('View Record')
+%AfterGoodInsert DEFAULT  ('Return to caller')
+%AskAfterAdd LONG  (0)
+[ADDITION]
+NAME ABC CancelButton
+[INSTANCE]
+INSTANCE 5
+[ADDITION]
+NAME ABC WindowResize
+[INSTANCE]
+INSTANCE 7
+[PROMPTS]
+%UseAppStrategy DEFAULT  ('1')
+%AppStrategy DEFAULT  ('Surface')
+%RestrictMinSize LONG  (1)
+%WindowMinWidth DEFAULT  ('0')
+%WindowMaxWidth DEFAULT  ('0')
+%ClassItem UNIQUE DEFAULT  ('Default')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%WindowMinHeight DEFAULT  ('')
+%RestrictMaxSize LONG  (0)
+%WindowMaxHeight DEFAULT  ('')
+%OverrideControls MULTI LONG  ()
+%OverrideControl DEPEND %OverrideControls DEFAULT TIMES 0
+
+%DisableResize DEPEND %OverrideControls LONG TIMES 0
+
+%HorizResize DEPEND %OverrideControls DEFAULT TIMES 0
+
+%VertResize DEPEND %OverrideControls DEFAULT TIMES 0
+
+%HorizPositional DEPEND %OverrideControls DEFAULT TIMES 0
+
+%VertPositional DEPEND %OverrideControls DEFAULT TIMES 0
+
+%AutoFindParents DEFAULT  ('Default')
+%DeferMoves DEFAULT  ('Default')
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+[WINDOW]
+QuickWindowA WINDOW('Update the invhead File'),AT(,,248,192),FONT('MS Sans Serif',8),RESIZE, |
+          GRAY,IMM,MDI,HLP('updateInvoice'),SYSTEM
+          SHEET,AT(4,4,240,166),USE(?CurrentTab),#ORIG(CurrentTab),#ORDINAL(1)
+            TAB('General'),USE(?Tab:1),#ORDINAL(2)
+              PROMPT('clid:'),AT(8,30),USE(?ivh:clid:Prompt),#LINK(?ivh:clid),#ORIG(?ivh:clid:Prompt), |
+                #ORDINAL(3)
+              ENTRY(@n3),AT(76,30,40,10),USE(ivh:clid),#LINK(?ivh:clid:Prompt),#ORIG(ivh:clid), |
+                #ORDINAL(4)
+              PROMPT('INVOICE:'),AT(8,44),USE(?ivh:INVOICE:Prompt),#LINK(?ivh:INVOICE),#ORIG(?ivh:INVOICE:Prompt), |
+                #ORDINAL(5)
+              ENTRY(@n-14),AT(76,44,64,10),USE(ivh:INVOICE),RIGHT(1),#LINK(?ivh:INVOICE:Prompt), |
+                #ORIG(ivh:INVOICE),#ORDINAL(6)
+              PROMPT('CLIENT:'),AT(8,58),USE(?ivh:CLIENT:Prompt),#LINK(?ivh:CLIENT),#ORIG(?ivh:CLIENT:Prompt), |
+                #ORDINAL(7)
+              ENTRY(@n-14),AT(76,58,64,10),USE(ivh:CLIENT),RIGHT(1),#LINK(?ivh:CLIENT:Prompt), |
+                #ORIG(ivh:CLIENT),#ORDINAL(8)
+              PROMPT('INVPREFIX:'),AT(8,72),USE(?ivh:INVPREFIX:Prompt),#LINK(?ivh:INVPREFIX), |
+                #ORIG(?ivh:INVPREFIX:Prompt),#ORDINAL(9)
+              ENTRY(@s1),AT(76,72,40,10),USE(ivh:INVPREFIX),#LINK(?ivh:INVPREFIX:Prompt),#ORIG(ivh:INVPREFIX), |
+                #ORDINAL(10)
+              PROMPT('ORDERNUM:'),AT(8,86),USE(?ivh:ORDERNUM:Prompt),#LINK(?ivh:ORDERNUM), |
+                #ORIG(?ivh:ORDERNUM:Prompt),#ORDINAL(11)
+              ENTRY(@s40),AT(76,86,164,10),USE(ivh:ORDERNUM),#LINK(?ivh:ORDERNUM:Prompt),#ORIG(ivh:ORDERNUM), |
+                #ORDINAL(12)
+              PROMPT('FREIGHT:'),AT(8,100),USE(?ivh:FREIGHT:Prompt),#LINK(?ivh:FREIGHT),#ORIG(?ivh:FREIGHT:Prompt), |
+                #ORDINAL(13)
+              ENTRY(@n-7.2),AT(76,100,40,10),USE(ivh:FREIGHT),DECIMAL(12),#LINK(?ivh:FREIGHT:Prompt), |
+                #ORIG(ivh:FREIGHT),#ORDINAL(14)
+              PROMPT('DEPOSIT:'),AT(8,114),USE(?ivh:DEPOSIT:Prompt),#LINK(?ivh:DEPOSIT),#ORIG(?ivh:DEPOSIT:Prompt), |
+                #ORDINAL(15)
+              ENTRY(@n-10.2),AT(76,114,48,10),USE(ivh:DEPOSIT),DECIMAL(12),#LINK(?ivh:DEPOSIT:Prompt), |
+                #ORIG(ivh:DEPOSIT),#ORDINAL(16)
+              PROMPT('DISCOUNT:'),AT(8,128),USE(?ivh:DISCOUNT:Prompt),#LINK(?ivh:DISCOUNT), |
+                #ORIG(?ivh:DISCOUNT:Prompt),#ORDINAL(17)
+              ENTRY(@n-10.2),AT(76,128,48,10),USE(ivh:DISCOUNT),DECIMAL(12),#LINK(?ivh:DISCOUNT:Prompt), |
+                #ORIG(ivh:DISCOUNT),#ORDINAL(18)
+              PROMPT('INVTOTAL:'),AT(8,142),USE(?ivh:INVTOTAL:Prompt),#LINK(?ivh:INVTOTAL), |
+                #ORIG(?ivh:INVTOTAL:Prompt),#ORDINAL(19)
+              ENTRY(@n-10.2),AT(76,142,48,10),USE(ivh:INVTOTAL),DECIMAL(12),#LINK(?ivh:INVTOTAL:Prompt), |
+                #ORIG(ivh:INVTOTAL),#ORDINAL(20)
+              PROMPT('gst:'),AT(8,156),USE(?ivh:gst:Prompt),#LINK(?ivh:gst),#ORIG(?ivh:gst:Prompt), |
+                #ORDINAL(21)
+              ENTRY(@n-10.2),AT(76,156,48,10),USE(ivh:gst),DECIMAL(12),#LINK(?ivh:gst:Prompt), |
+                #ORIG(ivh:gst),#ORDINAL(22)
+            END
+            TAB('General (cont.)'),USE(?Tab:2),#ORDINAL(23)
+              PROMPT('ORDTOTAL:'),AT(8,30),USE(?ivh:ORDTOTAL:Prompt),#LINK(?ivh:ORDTOTAL), |
+                #ORIG(?ivh:ORDTOTAL:Prompt),#ORDINAL(24)
+              ENTRY(@n-10.2),AT(76,30,48,10),USE(ivh:ORDTOTAL),DECIMAL(12),#LINK(?ivh:ORDTOTAL:Prompt), |
+                #ORIG(ivh:ORDTOTAL),#ORDINAL(25)
+              PROMPT('PAIDTOTAL:'),AT(8,44),USE(?ivh:PAIDTOTAL:Prompt),#LINK(?ivh:PAIDTOTAL), |
+                #ORIG(?ivh:PAIDTOTAL:Prompt),#ORDINAL(26)
+              ENTRY(@n-10.2),AT(76,44,48,10),USE(ivh:PAIDTOTAL),DECIMAL(12),#LINK(?ivh:PAIDTOTAL:Prompt), |
+                #ORIG(ivh:PAIDTOTAL),#ORDINAL(27)
+              PROMPT('TENDERED:'),AT(8,58),USE(?ivh:TENDERED:Prompt),#LINK(?ivh:TENDERED), |
+                #ORIG(?ivh:TENDERED:Prompt),#ORDINAL(28)
+              ENTRY(@n-10.2),AT(76,58,48,10),USE(ivh:TENDERED),DECIMAL(12),#LINK(?ivh:TENDERED:Prompt), |
+                #ORIG(ivh:TENDERED),#ORDINAL(29)
+              PROMPT('OTHERDESC:'),AT(8,72),USE(?ivh:OTHERDESC:Prompt),#LINK(?ivh:OTHERDESC), |
+                #ORIG(?ivh:OTHERDESC:Prompt),#ORDINAL(30)
+              ENTRY(@s40),AT(76,72,164,10),USE(ivh:OTHERDESC),#LINK(?ivh:OTHERDESC:Prompt), |
+                #ORIG(ivh:OTHERDESC),#ORDINAL(31)
+              PROMPT('OTHERVALUE:'),AT(8,86),USE(?ivh:OTHERVALUE:Prompt),#LINK(?ivh:OTHERVALUE), |
+                #ORIG(?ivh:OTHERVALUE:Prompt),#ORDINAL(32)
+              ENTRY(@n-10.2),AT(76,86,48,10),USE(ivh:OTHERVALUE),DECIMAL(12),#LINK(?ivh:OTHERVALUE:Prompt), |
+                #ORIG(ivh:OTHERVALUE),#ORDINAL(33)
+              PROMPT('PHONE:'),AT(8,100),USE(?ivh:PHONE:Prompt),#LINK(?ivh:PHONE),#ORIG(?ivh:PHONE:Prompt), |
+                #ORDINAL(34)
+              ENTRY(@s15),AT(76,100,64,10),USE(ivh:PHONE),#LINK(?ivh:PHONE:Prompt),#ORIG(ivh:PHONE), |
+                #ORDINAL(35)
+              PROMPT('REMARKS:'),AT(8,114),USE(?ivh:REMARKS:Prompt),#LINK(?ivh:REMARKS),#ORIG(?ivh:REMARKS:Prompt), |
+                #ORDINAL(36)
+              ENTRY(@s15),AT(76,114,64,10),USE(ivh:REMARKS),#LINK(?ivh:REMARKS:Prompt),#ORIG(ivh:REMARKS), |
+                #ORDINAL(37)
+              PROMPT('PARTCOUNT:'),AT(8,128),USE(?ivh:PARTCOUNT:Prompt),#LINK(?ivh:PARTCOUNT), |
+                #ORIG(?ivh:PARTCOUNT:Prompt),#ORDINAL(38)
+              ENTRY(@n-7),AT(76,128,40,10),USE(ivh:PARTCOUNT),RIGHT(1),#LINK(?ivh:PARTCOUNT:Prompt), |
+                #ORIG(ivh:PARTCOUNT),#ORDINAL(39)
+              PROMPT('DATE:'),AT(8,142),USE(?ivh:DATE:Prompt),#LINK(?ivh:DATE),#ORIG(?ivh:DATE:Prompt), |
+                #ORDINAL(40)
+              ENTRY(@n-14),AT(76,142,64,10),USE(ivh:DATE),RIGHT(1),#LINK(?ivh:DATE:Prompt), |
+                #ORIG(ivh:DATE),#ORDINAL(41)
+              PROMPT('TIME:'),AT(8,156),USE(?ivh:TIME:Prompt),#LINK(?ivh:TIME),#ORIG(?ivh:TIME:Prompt), |
+                #ORDINAL(42)
+              ENTRY(@n-14),AT(76,156,64,10),USE(ivh:TIME),RIGHT(1),#LINK(?ivh:TIME:Prompt), |
+                #ORIG(ivh:TIME),#ORDINAL(43)
+            END
+            TAB('General (cont. 2)'),USE(?Tab:3),#ORDINAL(44)
+              PROMPT('TAX:'),AT(8,30),USE(?ivh:TAX:Prompt),#LINK(?ivh:TAX),#ORIG(?ivh:TAX:Prompt), |
+                #ORDINAL(45)
+              ENTRY(@s1),AT(76,30,40,10),USE(ivh:TAX),#LINK(?ivh:TAX:Prompt),#ORIG(ivh:TAX), |
+                #ORDINAL(46)
+              PROMPT('taxdeposit:'),AT(8,44),USE(?ivh:taxdeposit:Prompt),#LINK(?ivh:taxdeposit), |
+                #ORIG(?ivh:taxdeposit:Prompt),#ORDINAL(47)
+              ENTRY(@s1),AT(76,44,40,10),USE(ivh:taxdeposit),#LINK(?ivh:taxdeposit:Prompt), |
+                #ORIG(ivh:taxdeposit),#ORDINAL(48)
+              PROMPT('INV PARENT:'),AT(8,58),USE(?ivh:INV_PARENT:Prompt),#LINK(?ivh:INV_PARENT), |
+                #ORIG(?ivh:INV_PARENT:Prompt),#ORDINAL(49)
+              ENTRY(@n-14),AT(76,58,64,10),USE(ivh:INV_PARENT),RIGHT(1),#LINK(?ivh:INV_PARENT:Prompt), |
+                #ORIG(ivh:INV_PARENT),#ORDINAL(50)
+              PROMPT('DEPOSIT RECLAIM:'),AT(8,72),USE(?ivh:DEPOSIT_RECLAIM:Prompt),#LINK(?ivh:DEPOSIT_RECLAIM), |
+                #ORIG(?ivh:DEPOSIT_RECLAIM:Prompt),#ORDINAL(51)
+              ENTRY(@n-10.2),AT(76,72,48,10),USE(ivh:DEPOSIT_RECLAIM),DECIMAL(12),#LINK(?ivh:DEPOSIT_RECLAIM:Prompt), |
+                #ORIG(ivh:DEPOSIT_RECLAIM),#ORDINAL(52)
+              PROMPT('RECLAIM TOTAL:'),AT(8,86),USE(?ivh:RECLAIM_TOTAL:Prompt),#LINK(?ivh:RECLAIM_TOTAL), |
+                #ORIG(?ivh:RECLAIM_TOTAL:Prompt),#ORDINAL(53)
+              ENTRY(@n-10.2),AT(76,86,48,10),USE(ivh:RECLAIM_TOTAL),DECIMAL(12),#LINK(?ivh:RECLAIM_TOTAL:Prompt), |
+                #ORIG(ivh:RECLAIM_TOTAL),#ORDINAL(54)
+              PROMPT('PICKUP TOTAL:'),AT(8,100),USE(?ivh:PICKUP_TOTAL:Prompt),#LINK(?ivh:PICKUP_TOTAL), |
+                #ORIG(?ivh:PICKUP_TOTAL:Prompt),#ORDINAL(55)
+              ENTRY(@n-10.2),AT(76,100,48,10),USE(ivh:PICKUP_TOTAL),DECIMAL(12),MSG('Total amou' & |
+                'nt of ordered parts reinvoiced'),TIP('Total amount of ordered parts reinvoiced'), |
+                #LINK(?ivh:PICKUP_TOTAL:Prompt),#ORIG(ivh:PICKUP_TOTAL),#ORDINAL(56)
+              PROMPT('CLERK:'),AT(8,114),USE(?ivh:CLERK:Prompt),#LINK(?ivh:CLERK),#ORIG(?ivh:CLERK:Prompt), |
+                #ORDINAL(57)
+              ENTRY(@n-14),AT(76,114,64,10),USE(ivh:CLERK),RIGHT(1),MSG('Clerk Who placed order'), |
+                TIP('Clerk Who placed order'),#LINK(?ivh:CLERK:Prompt),#ORIG(ivh:CLERK),#ORDINAL(58)
+              PROMPT('ACCDEPOSIT:'),AT(8,128),USE(?ivh:ACCDEPOSIT:Prompt),#LINK(?ivh:ACCDEPOSIT), |
+                #ORIG(?ivh:ACCDEPOSIT:Prompt),#ORDINAL(59)
+              ENTRY(@n-13.2),AT(76,128,60,10),USE(ivh:ACCDEPOSIT),DECIMAL(12),MSG('Deposit Re' & |
+                'claim from Account'),TIP('Deposit Reclaim from Account'),#LINK(?ivh:ACCDEPOSIT:Prompt), |
+                #ORIG(ivh:ACCDEPOSIT),#ORDINAL(60)
+              PROMPT('notify:'),AT(8,142),USE(?ivh:notify:Prompt),#LINK(?ivh:notify),#ORIG(?ivh:notify:Prompt), |
+                #ORDINAL(61)
+              ENTRY(@n-7),AT(76,142,40,10),USE(ivh:notify),RIGHT(1),MSG('Notififcation ' & |
+                'setting for parts received'),TIP('Notififcation setting for parts received'), |
+                #LINK(?ivh:notify:Prompt),#ORIG(ivh:notify),#ORDINAL(62)
+              PROMPT('discrate:'),AT(8,156),USE(?ivh:discrate:Prompt),#LINK(?ivh:discrate), |
+                #ORIG(?ivh:discrate:Prompt),#ORDINAL(63)
+              ENTRY(@n-7.2),AT(76,156,40,10),USE(ivh:discrate),DECIMAL(12),#LINK(?ivh:discrate:Prompt), |
+                #ORIG(ivh:discrate),#ORDINAL(64)
+            END
+            TAB('General (cont. 3)'),USE(?Tab:4),#ORDINAL(65)
+              PROMPT('disctype:'),AT(8,30),USE(?ivh:disctype:Prompt),#LINK(?ivh:disctype), |
+                #ORIG(?ivh:disctype:Prompt),#ORDINAL(66)
+              ENTRY(@s1),AT(76,30,40,10),USE(ivh:disctype),#LINK(?ivh:disctype:Prompt),#ORIG(ivh:disctype), |
+                #ORDINAL(67)
+              PROMPT('disccosttype:'),AT(8,44),USE(?ivh:disccosttype:Prompt),#LINK(?ivh:disccosttype), |
+                #ORIG(?ivh:disccosttype:Prompt),#ORDINAL(68)
+              ENTRY(@s1),AT(76,44,40,10),USE(ivh:disccosttype),#LINK(?ivh:disccosttype:Prompt), |
+                #ORIG(ivh:disccosttype),#ORDINAL(69)
+              PROMPT('exttype:'),AT(8,58),USE(?ivh:exttype:Prompt),#LINK(?ivh:exttype),#ORIG(?ivh:exttype:Prompt), |
+                #ORDINAL(70)
+              ENTRY(@n3),AT(76,58,40,10),USE(ivh:exttype),#LINK(?ivh:exttype:Prompt),#ORIG(ivh:exttype), |
+                #ORDINAL(71)
+              PROMPT('extclid:'),AT(8,72),USE(?ivh:extclid:Prompt),#LINK(?ivh:extclid),#ORIG(?ivh:extclid:Prompt), |
+                #ORDINAL(72)
+              ENTRY(@n-14),AT(76,72,64,10),USE(ivh:extclid),RIGHT(1),#LINK(?ivh:extclid:Prompt), |
+                #ORIG(ivh:extclid),#ORDINAL(73)
+              PROMPT('conv invoice:'),AT(8,86),USE(?ivh:conv_invoice:Prompt),#LINK(?ivh:conv_invoice), |
+                #ORIG(?ivh:conv_invoice:Prompt),#ORDINAL(74)
+              ENTRY(@n-14),AT(76,86,64,10),USE(ivh:conv_invoice),RIGHT(1),MSG('For quotes' & |
+                ': the invoice that was rasied in response to this. Could be another quote.'), |
+                TIP('For quotes: the invoice that was rasied in response to this. Could' & |
+                ' be another quote.'),#LINK(?ivh:conv_invoice:Prompt),#ORIG(ivh:conv_invoice), |
+                #ORDINAL(75)
+            END
+            TAB('invitem'),USE(?Tab:5),#ORDINAL(76)
+              LIST,AT(8,30,232,118),USE(?Browse:2),HVSCROLL,FORMAT('20R(2)|M~clid~C(0)@' & |
+                'n3@64R(2)|M~INVOICE~C(0)@n-14@80L(2)|M~PARTNUM~L(2)@s20@80L(2)|M~forma' & |
+                't~L(2)@s20@40R(2)|M~FRANCHISE~C(0)@n3@80L(2)|M~DESCIPTION~L(2)@s60@36R' & |
+                '(2)|M~QUANTITY~C(0)@n-7@48D(20)|M~PRICE~C(0)@n-10.2@48D(10)|M~LASTINCO' & |
+                'ST~C(0)@n-10.2@'),FROM(Queue:Browse:2),IMM,MSG('Browsing Records'),#FIELDS(ivl:clid, |
+                ivl:INVOICE,ivl:PARTNUM,ivl:format,ivl:FRANCHISE,ivl:DESCIPTION,ivl:QUANTITY, |
+                ivl:PRICE,ivl:LASTINCOST),#ORIG(?List),#SEQ(2),#ORDINAL(77)
+              BUTTON('&Insert'),AT(97,152,45,14),USE(?Insert:3),#LINK(?Change:3),#ORIG(?Insert), |
+                #SEQ(3),#ORDINAL(78)
+              BUTTON('&Change'),AT(146,152,45,14),USE(?Change:3),#LINK(?Delete:3),#ORIG(?Change), |
+                #SEQ(3),#ORDINAL(79)
+              BUTTON('&Delete'),AT(195,152,45,14),USE(?Delete:3),#LINK(?Insert:3),#ORIG(?Delete), |
+                #SEQ(3),#ORDINAL(80)
+            END
+          END
+          BUTTON('OK'),AT(101,174,45,14),USE(?OK),DEFAULT,#ORIG(?OK),#SEQ(4),#ORDINAL(81)
+          BUTTON('Cancel'),AT(150,174,45,14),USE(?Cancel),#ORIG(?Cancel),#SEQ(5),#ORDINAL(82)
+          BUTTON('Help'),AT(199,174,45,14),USE(?Help),STD(STD:Help),#ORDINAL(83)
+        END
+
+[END]
+[MODULE]
+[COMMON]
+FROM ABC GENERATED
+[PROCEDURE]
+NAME Updateinvitem
+[COMMON]
+DESCRIPTION 'Update the invitem File'
+FROM ABC Window
+CATEGORY 'Form'
+MODIFIED '2013/04/15' ' 3:25:36'
+[DATA]
+CurrentTab               STRING(80)
+!!> GUID('ff2454de-86f1-44d5-97f9-28ec133b3441'),SCOPE(1)
+ActionMessage            CSTRING(40)
+!!> GUID('8a3b45d5-1a7e-4140-9988-0a4f8c47b755'),SCOPE(1)
+[FILES]
+[PRIMARY]
+invitem
+[INSTANCE]
+2
+[PROMPTS]
+%ButtonAction DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRunName DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRunParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%ButtonThread DEPEND %Control LONG TIMES 0
+
+%ButtonThreadStack DEPEND %Control DEFAULT TIMES 0
+
+%ButtonParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonRequest DEPEND %Control DEFAULT TIMES 0
+
+%PreLookupKey DEPEND %Control KEY TIMES 0
+
+%PreLookupField DEPEND %Control COMPONENT TIMES 0
+
+%PreLookupProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%PostLookupKey DEPEND %Control KEY TIMES 0
+
+%PostLookupField DEPEND %Control COMPONENT TIMES 0
+
+%PostLookupProcedure DEPEND %Control PROCEDURE TIMES 0
+
+%ForceWindowRefresh DEPEND %Control LONG TIMES 0
+
+%ClassItem UNIQUE DEFAULT  ('Default', 'WindowToolbar')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%Parameters DEFAULT  ('')
+%ReturnValue FIELD  ()
+%WindowOperationMode DEFAULT  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('NO')
+WHEN  ('WindowToolbar') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (1)
+WHEN  ('WindowToolbar') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (1)
+WHEN  ('WindowToolbar') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 2
+WHEN  ('Default') ('')
+WHEN  ('WindowToolbar') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 2
+WHEN  ('Default') (0)
+WHEN  ('WindowToolbar') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ButtonReturnValueAssignment DEPEND %Control FIELD TIMES 0
+
+%ButtonReturnValueReferenceAssign DEPEND %Control LONG TIMES 0
+
+%ButtonThreadParameters DEPEND %Control DEFAULT TIMES 0
+
+%ButtonThreadReturnValueAssignment DEPEND %Control FIELD TIMES 0
+
+%PostLookupDuringValidate DEPEND %Control LONG TIMES 0
+
+%LookupAssign DEPEND %Control MULTI LONG TIMES 0
+
+%MoreField DEPEND %LookupAssign DEFAULT TIMES 0
+
+%MoreTarget DEPEND %LookupAssign FIELD TIMES 0
+
+%CheckedAssigns DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedAssignVariable DEPEND %CheckedAssigns FIELD TIMES 0
+
+%CheckedAssignValue DEPEND %CheckedAssigns DEFAULT TIMES 0
+
+%CheckedHides DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedControl DEPEND %CheckedHides DEFAULT TIMES 0
+
+%CheckedControlAction DEPEND %CheckedHides DEFAULT TIMES 0
+
+%CheckedEnables DEPEND %Control MULTI LONG TIMES 0
+
+%CheckedControl1 DEPEND %CheckedEnables DEFAULT TIMES 0
+
+%CheckedControl1Action DEPEND %CheckedEnables DEFAULT TIMES 0
+
+%UncheckedAssigns DEPEND %Control MULTI LONG TIMES 0
+
+%UncheckedAssignVariable DEPEND %UncheckedAssigns FIELD TIMES 0
+
+%UncheckedAssignValue DEPEND %UncheckedAssigns DEFAULT TIMES 0
+
+%UnCheckedHides DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedControl DEPEND %UnCheckedHides DEFAULT TIMES 0
+
+%UnCheckedControlAction DEPEND %UnCheckedHides DEFAULT TIMES 0
+
+%UnCheckedEnables DEPEND %Control MULTI LONG TIMES 0
+
+%UnCheckedControl1 DEPEND %UnCheckedEnables DEFAULT TIMES 0
+
+%UnCheckedControl1Action DEPEND %UnCheckedEnables DEFAULT TIMES 0
+
+[ADDITION]
+NAME ABC RecordValidation
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%ValidateOnAccept LONG  (1)
+%ValidateOnNonStopSelect LONG  (1)
+%ControlsExcluded MULTI LONG  ()
+%ControlToExclude DEPEND %ControlsExcluded DEFAULT TIMES 0
+
+%ValidateUsingColoration LONG  (0)
+%InvalidFieldColor LONG  (255)
+%InvalidPromptColor LONG  (255)
+%UseValidateMessage LONG  (0)
+%ValidationMessage DEFAULT  ('The values of Colored Fields are invalid, Please correct this information.')
+%MessageControl FIELD  ()
+[ADDITION]
+NAME ABC SaveButton
+[INSTANCE]
+INSTANCE 2
+PROCPROP
+[PROMPTS]
+%InsertAllowed LONG  (1)
+%InsertMessage DEFAULT  ('Adding a invitem Record')
+%ChangeAllowed LONG  (1)
+%ChangeMessage DEFAULT  ('Changing a invitem Record')
+%DeleteAllowed LONG  (1)
+%DeleteMessage DEFAULT  ('Deleting a invitem Record')
+%MessageHeader LONG  (0)
+%ActionOnDelete DEFAULT  ('Standard Warning')
+%PrimingFields MULTI LONG  ()
+%PrimedField DEPEND %PrimingFields FIELD TIMES 0
+
+%PrimedValue DEPEND %PrimingFields DEFAULT TIMES 0
+
+%ActionOnCancel DEFAULT  ('Confirm Cancel')
+%MessageLocation DEFAULT  ('Title Bar')
+%MessageStatusSection DEFAULT  ('0')
+%HistoryKey DEFAULT  ('734')
+%AppendToTitle LONG  (0)
+%AppendToTitleID DEFAULT  ('')
+%ViewMessage DEFAULT  ('View Record')
+%AfterGoodInsert DEFAULT  ('Return to caller')
+%AskAfterAdd LONG  (0)
+[ADDITION]
+NAME ABC CancelButton
+[INSTANCE]
+INSTANCE 3
+[ADDITION]
+NAME ABC WindowResize
+[INSTANCE]
+INSTANCE 5
+[PROMPTS]
+%UseAppStrategy DEFAULT  ('1')
+%AppStrategy DEFAULT  ('Surface')
+%RestrictMinSize LONG  (1)
+%WindowMinWidth DEFAULT  ('0')
+%WindowMaxWidth DEFAULT  ('0')
+%ClassItem UNIQUE DEFAULT  ('Default')
+%DefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ActualDefaultBaseClassType DEPEND %ClassItem DEFAULT TIMES 0
+
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 0
+
+%WindowMinHeight DEFAULT  ('')
+%RestrictMaxSize LONG  (0)
+%WindowMaxHeight DEFAULT  ('')
+%OverrideControls MULTI LONG  ()
+%OverrideControl DEPEND %OverrideControls DEFAULT TIMES 0
+
+%DisableResize DEPEND %OverrideControls LONG TIMES 0
+
+%HorizResize DEPEND %OverrideControls DEFAULT TIMES 0
+
+%VertResize DEPEND %OverrideControls DEFAULT TIMES 0
+
+%HorizPositional DEPEND %OverrideControls DEFAULT TIMES 0
+
+%VertPositional DEPEND %OverrideControls DEFAULT TIMES 0
+
+%AutoFindParents DEFAULT  ('Default')
+%DeferMoves DEFAULT  ('Default')
+%GlobalObject DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('NO')
+
+%ThisObjectName DEPEND %ClassItem DEFAULT TIMES 0
+
+%UseDefaultABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%UseABCBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (1)
+
+%ABCBaseClass DEPEND %ClassItem DEFAULT TIMES 1
+WHEN  ('Default') ('')
+
+%ExtBaseClass DEPEND %ClassItem DEFAULT TIMES 0
+
+%BaseClassIncludeFile DEPEND %ClassItem DEFAULT TIMES 0
+
+%DeriveFromBaseClass DEPEND %ClassItem LONG TIMES 1
+WHEN  ('Default') (0)
+
+%NewMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewMethodName DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewMethodPrototype DEPEND %NewMethods DEFAULT TIMES 0
+
+%NewClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%NewClassProperty DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassOtherType DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataIsRef DEPEND %NewClassPropertyItems LONG TIMES 0
+
+%NewClassDataSize DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim1 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim2 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim3 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%NewClassDataDim4 DEPEND %NewClassPropertyItems DEFAULT TIMES 0
+
+%ClassMethods DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassMethodName DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassMethodPrototype DEPEND %ClassMethods DEFAULT TIMES 0
+
+%ClassPropertyItems DEPEND %ClassItem MULTI LONG TIMES 0
+
+%ClassProperty DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassOtherType DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataIsRef DEPEND %ClassPropertyItems LONG TIMES 0
+
+%ClassDataSize DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim1 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim2 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim3 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+%ClassDataDim4 DEPEND %ClassPropertyItems DEFAULT TIMES 0
+
+[WINDOW]
+QuickWindowB WINDOW('Update the invitem File'),AT(,,316,182),FONT('MS Sans Serif',8),RESIZE, |
+          GRAY,IMM,MDI,HLP('Updateinvitem'),SYSTEM
+          SHEET,AT(4,4,308,156),USE(?CurrentTab),#ORIG(CurrentTab),#ORDINAL(1)
+            TAB('General'),USE(?Tab:1),#ORDINAL(2)
+              PROMPT('clid:'),AT(8,20),USE(?ivl:clid:Prompt),#LINK(?ivl:clid),#ORIG(?ivl:clid:Prompt), |
+                #ORDINAL(3)
+              ENTRY(@n3),AT(64,20,40,10),USE(ivl:clid),#LINK(?ivl:clid:Prompt),#ORIG(ivl:clid), |
+                #ORDINAL(4)
+              PROMPT('INVOICE:'),AT(8,34),USE(?ivl:INVOICE:Prompt),#LINK(?ivl:INVOICE),#ORIG(?ivl:INVOICE:Prompt), |
+                #ORDINAL(5)
+              ENTRY(@n-14),AT(64,34,64,10),USE(ivl:INVOICE),RIGHT(1),#LINK(?ivl:INVOICE:Prompt), |
+                #ORIG(ivl:INVOICE),#ORDINAL(6)
+              PROMPT('PARTNUM:'),AT(8,48),USE(?ivl:PARTNUM:Prompt),#LINK(?ivl:PARTNUM),#ORIG(?ivl:PARTNUM:Prompt), |
+                #ORDINAL(7)
+              ENTRY(@s20),AT(64,48,84,10),USE(ivl:PARTNUM),#LINK(?ivl:PARTNUM:Prompt),#ORIG(ivl:PARTNUM), |
+                #ORDINAL(8)
+              PROMPT('format:'),AT(8,62),USE(?ivl:format:Prompt),#LINK(?ivl:format),#ORIG(?ivl:format:Prompt), |
+                #ORDINAL(9)
+              ENTRY(@s20),AT(64,62,84,10),USE(ivl:format),#LINK(?ivl:format:Prompt),#ORIG(ivl:format), |
+                #ORDINAL(10)
+              PROMPT('FRANCHISE:'),AT(8,76),USE(?ivl:FRANCHISE:Prompt),#LINK(?ivl:FRANCHISE), |
+                #ORIG(?ivl:FRANCHISE:Prompt),#ORDINAL(11)
+              ENTRY(@n3),AT(64,76,40,10),USE(ivl:FRANCHISE),RIGHT(1),#LINK(?ivl:FRANCHISE:Prompt), |
+                #ORIG(ivl:FRANCHISE),#ORDINAL(12)
+              PROMPT('DESCIPTION:'),AT(8,90),USE(?ivl:DESCIPTION:Prompt),#LINK(?ivl:DESCIPTION), |
+                #ORIG(?ivl:DESCIPTION:Prompt),#ORDINAL(13)
+              ENTRY(@s60),AT(64,90,244,10),USE(ivl:DESCIPTION),#LINK(?ivl:DESCIPTION:Prompt), |
+                #ORIG(ivl:DESCIPTION),#ORDINAL(14)
+              PROMPT('QUANTITY:'),AT(8,104),USE(?ivl:QUANTITY:Prompt),#LINK(?ivl:QUANTITY), |
+                #ORIG(?ivl:QUANTITY:Prompt),#ORDINAL(15)
+              ENTRY(@n-7),AT(64,104,40,10),USE(ivl:QUANTITY),RIGHT(1),#LINK(?ivl:QUANTITY:Prompt), |
+                #ORIG(ivl:QUANTITY),#ORDINAL(16)
+              PROMPT('PRICE:'),AT(8,118),USE(?ivl:PRICE:Prompt),#LINK(?ivl:PRICE),#ORIG(?ivl:PRICE:Prompt), |
+                #ORDINAL(17)
+              ENTRY(@n-10.2),AT(64,118,48,10),USE(ivl:PRICE),DECIMAL(12),#LINK(?ivl:PRICE:Prompt), |
+                #ORIG(ivl:PRICE),#ORDINAL(18)
+              PROMPT('LASTINCOST:'),AT(8,132),USE(?ivl:LASTINCOST:Prompt),#LINK(?ivl:LASTINCOST), |
+                #ORIG(?ivl:LASTINCOST:Prompt),#ORDINAL(19)
+              ENTRY(@n-10.2),AT(64,132,48,10),USE(ivl:LASTINCOST),DECIMAL(12),#LINK(?ivl:LASTINCOST:Prompt), |
+                #ORIG(ivl:LASTINCOST),#ORDINAL(20)
+              PROMPT('QTYSUPP:'),AT(8,146),USE(?ivl:QTYSUPP:Prompt),#LINK(?ivl:QTYSUPP),#ORIG(?ivl:QTYSUPP:Prompt), |
+                #ORDINAL(21)
+              ENTRY(@n-7),AT(64,146,40,10),USE(ivl:QTYSUPP),RIGHT(1),#LINK(?ivl:QTYSUPP:Prompt), |
+                #ORIG(ivl:QTYSUPP),#ORDINAL(22)
+            END
+            TAB('General (cont.)'),USE(?Tab:2),#ORDINAL(23)
+              PROMPT('LOCATION:'),AT(8,20),USE(?ivl:LOCATION:Prompt),#LINK(?ivl:LOCATION), |
+                #ORIG(?ivl:LOCATION:Prompt),#ORDINAL(24)
+              ENTRY(@s6),AT(64,20,40,10),USE(ivl:LOCATION),#LINK(?ivl:LOCATION:Prompt),#ORIG(ivl:LOCATION), |
+                #ORDINAL(25)
+              PROMPT('DATE:'),AT(8,34),USE(?ivl:DATE:Prompt),#LINK(?ivl:DATE),#ORIG(?ivl:DATE:Prompt), |
+                #ORDINAL(26)
+              ENTRY(@n-14),AT(64,34,64,10),USE(ivl:DATE),RIGHT(1),#LINK(?ivl:DATE:Prompt), |
+                #ORIG(ivl:DATE),#ORDINAL(27)
+              PROMPT('TAXRATE:'),AT(8,48),USE(?ivl:TAXRATE:Prompt),#LINK(?ivl:TAXRATE),#ORIG(?ivl:TAXRATE:Prompt), |
+                #ORDINAL(28)
+              ENTRY(@n-7.2),AT(64,48,40,10),USE(ivl:TAXRATE),DECIMAL(12),#LINK(?ivl:TAXRATE:Prompt), |
+                #ORIG(ivl:TAXRATE),#ORDINAL(29)
+              PROMPT('tax:'),AT(8,62),USE(?ivl:tax:Prompt),#LINK(?ivl:tax),#ORIG(?ivl:tax:Prompt), |
+                #ORDINAL(30)
+              ENTRY(@s1),AT(64,62,40,10),USE(ivl:tax),#LINK(?ivl:tax:Prompt),#ORIG(ivl:tax), |
+                #ORDINAL(31)
+              PROMPT('recno:'),AT(8,76),USE(?ivl:recno:Prompt),#LINK(?ivl:recno),#ORIG(?ivl:recno:Prompt), |
+                #ORDINAL(32)
+              ENTRY(@n-14),AT(64,76,64,10),USE(ivl:recno),RIGHT(1),#LINK(?ivl:recno:Prompt), |
+                #ORIG(ivl:recno),#ORDINAL(33)
+              PROMPT('stockcost:'),AT(8,90),USE(?ivl:stockcost:Prompt),#LINK(?ivl:stockcost), |
+                #ORIG(?ivl:stockcost:Prompt),#ORDINAL(34)
+              ENTRY(@n-10.2),AT(64,90,48,10),USE(ivl:stockcost),DECIMAL(12),#LINK(?ivl:stockcost:Prompt), |
+                #ORIG(ivl:stockcost),#ORDINAL(35)
+              PROMPT('dailycost:'),AT(8,104),USE(?ivl:dailycost:Prompt),#LINK(?ivl:dailycost), |
+                #ORIG(?ivl:dailycost:Prompt),#ORDINAL(36)
+              ENTRY(@n-10.2),AT(64,104,48,10),USE(ivl:dailycost),DECIMAL(12),#LINK(?ivl:dailycost:Prompt), |
+                #ORIG(ivl:dailycost),#ORDINAL(37)
+              PROMPT('discount:'),AT(8,118),USE(?ivl:discount:Prompt),#LINK(?ivl:discount), |
+                #ORIG(?ivl:discount:Prompt),#ORDINAL(38)
+              ENTRY(@n-12.4),AT(64,118,56,10),USE(ivl:discount),DECIMAL(12),#LINK(?ivl:discount:Prompt), |
+                #ORIG(ivl:discount),#ORDINAL(39)
+              PROMPT('linediscrate:'),AT(8,132),USE(?ivl:linediscrate:Prompt),#LINK(?ivl:linediscrate), |
+                #ORIG(?ivl:linediscrate:Prompt),#ORDINAL(40)
+              ENTRY(@n-6.2),AT(64,132,40,10),USE(ivl:linediscrate),DECIMAL(12),#LINK(?ivl:linediscrate:Prompt), |
+                #ORIG(ivl:linediscrate),#ORDINAL(41)
+              PROMPT('forcedsupply:'),AT(8,146),USE(?ivl:forcedsupply:Prompt),#LINK(?ivl:forcedsupply), |
+                #ORIG(?ivl:forcedsupply:Prompt),#ORDINAL(42)
+              ENTRY(@n-7),AT(64,146,40,10),USE(ivl:forcedsupply),RIGHT(1),#LINK(?ivl:forcedsupply:Prompt), |
+                #ORIG(ivl:forcedsupply),#ORDINAL(43)
+            END
+          END
+          BUTTON('OK'),AT(169,164,45,14),USE(?OK),DEFAULT,#ORIG(?OK),#SEQ(2),#ORDINAL(44)
+          BUTTON('Cancel'),AT(218,164,45,14),USE(?Cancel),#ORIG(?Cancel),#SEQ(3),#ORDINAL(45)
+          BUTTON('Help'),AT(267,164,45,14),USE(?Help),STD(STD:Help),#ORDINAL(46)
+        END
+
+[END]

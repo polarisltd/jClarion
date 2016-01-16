@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JClarion Eclipse Plug-In
+Bundle-SymbolicName: clarion-ide;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: jclarion.Activator
+Bundle-Vendor: C9 Software
+Require-Bundle: org.eclipse.core.expressions,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.views,
+ org.eclipse.jface.text,
+ org.junit,
+ org.eclipse.ui.views.properties.tabbed,
+ org.eclipse.ui.navigator,
+ org.eclipse.ui.navigator.resources,
+ org.eclipse.ui.ide,
+ org.eclipse.jdt.core,
+ org.eclipse.debug.core,
+ org.eclipse.jdt.launching,
+ org.eclipse.debug.ui
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/clarion-runtime-1.115-SNAPSHOT.jar,
+ lib/clarion-sysruntime-1.17-SNAPSHOT.jar,
+ lib/clarion-appgen-1.0-SNAPSHOT.jar,
+ lib/jazzy-0.5.2-rtext-1.4.1-2.jar,
+ lib/clarion-compile-1.22-SNAPSHOT.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
