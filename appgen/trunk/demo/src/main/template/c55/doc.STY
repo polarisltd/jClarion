@@ -1,0 +1,424 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:VisualComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Alrt),DOCUMENTATION(A multi valued list of keycodes that will be used in the <CODE>ALRT</CODE> attribute of the window or control)
+  PROPERTY: NAME(At.EastOffset),DOCUMENTATION(This property allows a offset to the east of a control to be specified.)
+  PROPERTY: NAME(At.Height),DOCUMENTATION(The prefered height of the window or control. If left blank the wizatron will compute this value based upon the other properties of the visual component using the defaults specified in the run time library.)
+  PROPERTY: NAME(At.MaxHeight),DOCUMENTATION(The maximum height that the wizatron may make this window or control in an attempt to match constraints specified by other visual components. For controls the cost of stretching to this size is specified by <SAMP>AT.CostFactor</SAMP>)
+  PROPERTY: NAME(At.MaxWidth),DOCUMENTATION(The maximum width that the wizatron may make this window or control in an attempt to match constraints specified by other visual components. For controls the cost of stretching to this size is specified by <SAMP>AT.CostFactor</SAMP>)
+  PROPERTY: NAME(At.MinHeight),DOCUMENTATION(The minimum height that the wizatron may make this window or control in an attempt to match constraints specified by other visual components. For controls the cost of stretching to this size is specified by <SAMP>AT.CostFactor</SAMP>)
+  PROPERTY: NAME(At.MinWidth),DOCUMENTATION(The minimum width that the wizatron may make this window or control in an attempt to match constraints specified by other visual components. For controls the cost of stretching to this size is specified by <SAMP>AT.CostFactor</SAMP>)
+  PROPERTY: NAME(At.NorthOffset),DOCUMENTATION(This property allows a offset to the north of a control to be specified.)
+  PROPERTY: NAME(At.SouthOffset),DOCUMENTATION(This property allows a offset to the south of a control to be specified.)
+  PROPERTY: NAME(At.WestOffset),DOCUMENTATION(This property allows a offset to the west of a control to be specified.)
+  PROPERTY: NAME(At.Width),DOCUMENTATION(The prefered width of the window or control.  If left blank the wizatron will compute this value based upon the other properties of the visual component using the defaults specified in the run time library.)
+  PROPERTY: NAME(At.XPos),DOCUMENTATION(The x position of the visual component. Usually this will be left blank to be computed by the wizatron. Hints about the required x position are specified in <SAMP>allocation.xpos</SAMP>)
+  PROPERTY: NAME(At.YPos),DOCUMENTATION(The y position of the visual component. Usually this will be left blank to be computed by the wizatron. Hints about the required y position are specified in <SAMP>allocation.ypos</SAMP>)
+  PROPERTY: NAME(Color.Basic),DOCUMENTATION(This property corresponds to the first parameter of a <CODE>COLOR</CODE> attribute. Usually it refers to the default background color of a control. To change the foreground color use <SAMP>Font.Color</SAMP>)
+  PROPERTY: NAME(Color.SelectedBack),DOCUMENTATION(This property corresponds to the second parameter of a <CODE>COLOR</CODE> attribute. It refers to the background color of a control when the control is selected.)
+  PROPERTY: NAME(Color.SelectedFore),DOCUMENTATION(This property corresponds to the third parameter of a <CODE>COLOR</CODE> attribute. It refers to the foreground color of a control when the control is selected.)
+  PROPERTY: NAME(Cursor),DOCUMENTATION(A single drop that allows one of the standard built in cursor types to be chosen for this visual component. The range of cursors available can be extended by modify the <SAMP>Cursor.List</SAMP> property.)
+  PROPERTY: NAME(Cursor.List),DOCUMENTATION(A multi-valued symbol that defines all of the possible cursors that can be selected by the <SAMP>CURSOR</SAMP> property)
+  PROPERTY: NAME(DropID),DOCUMENTATION(A multi-valued list of the <CODE>DROPID</CODE>s to be specified for this visual component)
+  PROPERTY: NAME(Font.CharSet),DOCUMENTATION(This property corresponds to the fifth parameter of a <CODE>FONT</CODE> attribute. It is the character set used for the font of the control or window.)
+  PROPERTY: NAME(Font.Color),DOCUMENTATION(This property corresponds to the third parameter of a <CODE>FONT</CODE> attribute. It refers to the text or foreground color of a control or window. To change the background color use <SAMP>Color.Basic</SAMP>)
+  PROPERTY: NAME(Font.Size),DOCUMENTATION('This property corresponds to the second parameter of a <CODE>FONT</CODE> attribute. It refers to the size (in points) of the text of a control or window.')
+  PROPERTY: NAME(Font.Style),DOCUMENTATION(This property corresponds to the fourth parameter of a <CODE>FONT</CODE> attribute. It refers to the strike weight and style of the font of the control or window.)
+  PROPERTY: NAME(Font.Typeface),DOCUMENTATION(This property corresponds to the first parameter of a <CODE>FONT</CODE> attribute. It is the textual name of the font of the control or window.)
+  PROPERTY: NAME(HelpId),DOCUMENTATION(This corresponds to the <CODE>HLP</CODE> attribute of a control or window.)
+  PROPERTY: NAME(Immediate),DOCUMENTATION(This property corresponds to the <CODE>IMM</CODE> attribute of a control or window. If set to a value other than zero the <CODE>IMM</CODE> attribute will be placed on the underlying control or window)
+  PROPERTY: NAME(Message),DOCUMENTATION(This corresponds to the <CODE>MSG</CODE> attribute of a window or control and specifies the text to display in the first location of the status bar)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Control
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Functional),DOCUMENTATION(Sometimes it is necessary to populate hidden controls onto a window simply to act as a place holder for an underlying control template. As well as marking that control as hidden you can set this property so that the space allocator groups functionals together and overlays them on to window)
+  PROPERTY: NAME(Allocation.Height),DOCUMENTATION(A string identifier used to denote attributes of different controls that must be set to identical values. For example)
+  PROPERTY: NAME(Allocation.Ignore),DOCUMENTATION(This will prevent the space allocator affecting this control or any other control)
+  PROPERTY: NAME(Allocation.Output),DOCUMENTATION(This will prevent the space allocator outputting this control it will still affect the allocation of other controls unless <CODE>ALLOCATION.IGNORE</CODE> is on.)
+  PROPERTY: NAME(Allocation.Priority),DOCUMENTATION(A number to indicate the order controls should be populated on a window. A high number indicates the control is populated first.)
+  PROPERTY: NAME(Allocation.Tab),DOCUMENTATION('The tab upon which this control should be populated. Leaving this blank means the control is not place upon a tab. A value of <EM>**TOOLBAR**</EM> implies the control goes on to the toolbar. <EM>All</EM> means the control is placed upon the sheet (and thus all tabs).')
+  PROPERTY: NAME(Allocation.Width),DOCUMENTATION(A string identifier used to denote attributes of different controls that must be set to identical values. For example)
+  PROPERTY: NAME(Allocation.Xpos),DOCUMENTATION(A string identifier used to denote attributes of different controls that must be set to identical values. For example)
+  PROPERTY: NAME(Allocation.Ypos),DOCUMENTATION(A string identifier used to denote attributes of different controls that must be set to identical values. For example)
+  PROPERTY: NAME(Allocation.Zone),DOCUMENTATION('All group controls (windows / tabs etc) are split into 9 zones corresponding to points of the compass and center. This property denotes which of those nine zones the control should be placed in.')
+  PROPERTY: NAME(Allocation.Zone.List),DOCUMENTATION(The list of zones available within a group control)
+  PROPERTY: NAME(At.CostFactor),DOCUMENTATION(Ideally all controls will be populated with size <SAMP>At.Height</SAMP> x <SAMP>At.Width</SAMP>. If necessary to make all the controls fit the space allocator will shrink or expand a control towards at.minwidth/height or at.maxwidth/height. This property specifies a floating point multiplier for the cost of this control being a misfit. 1 is the default. So a value of 0.1 means this control is 10x more likely to change size than normal. A value of 10 means 10x less likely.)
+  PROPERTY: NAME(ControlType),DOCUMENTATION(This property gives the textual or Clarion name for a control.)
+  PROPERTY: NAME(Disable),DOCUMENTATION(If the value of this property is non-zero then the <CODE>DISABLE</CODE> property is set on the corresponding control)
+  PROPERTY: NAME(FocusKey),DOCUMENTATION(This property corresponds to the <CODE>KEY</CODE> attribute of a control and is used to provide a)
+  PROPERTY: NAME(FromDictionary),DOCUMENTATION(When populating a field the wizatron has the option of using the properties specified in the dictionary or not. The options are : Always - Use properties specifed in the dictionary. Never - Use wizatron defaults. IfDifferent - If the wizatron default matches the dictionary value then leave the value as default. This <EM>does</EM> make a difference! It means that if the default later changes)
+  PROPERTY: NAME(FromDictionary.List),DOCUMENTATION(The three options for whether or not control properties come from the dct. The options are : Always - Use properties specifed in the dictionary. Never - Use wizatron defaults. IfDifferent - If the wizatron default matches the dictionary value then leave the value as default. This <EM>does</EM> make a difference! It means that if the default later changes)
+  PROPERTY: NAME(Full),DOCUMENTATION(If the value of this property is non-zero then the <CODE>FULL</CODE> attribute will be set on the underlying control.)
+  PROPERTY: NAME(Hidden),DOCUMENTATION(If the value of this property is non-zero then the <CODE>HIDE</CODE> attribute will be placed on the underlying control. Screen space <B>will</B> still be allocated to the control. To suppress space allocation use Allocation.Ignore)
+  PROPERTY: NAME(Internal.FIELDS),DOCUMENTATION(An internal property used to set the <CODE>#FIELD</CODE>s attribute used by generator to tie a field list to a control.)
+  PROPERTY: NAME(Internal.LINK),DOCUMENTATION(An internal property used to set the <CODE>#LINK</CODE> attribute used by generator to define controls that are grouped together within a control template. The property value is <EM>not</EM> the one placed in the LINK)
+  PROPERTY: NAME(Internal.ORIG),DOCUMENTATION(Internal property used by generator to specify the <CODE>USE</CODE> label that the control template uses to specify this particular control. See <CODE>#ORIG</CODE> documentation.)
+  PROPERTY: NAME(Internal.SEQ),DOCUMENTATION(Internal property used by generator to link this control to a particular instance of a control template. See <CODE>#SEQ</CODE> documentation)
+  PROPERTY: NAME(Populator),DOCUMENTATION(This is a node that <I>points</I> to the TemplateComponent that populated this control. This is the field that is followed when a macro is expressed as %%^MacroName%%.)
+  PROPERTY: NAME(Scroll),DOCUMENTATION(If the value of this property is non-zero then the <CODE>SCROLL</CODE> attribute will be placed on the underlying control.)
+  PROPERTY: NAME(Skip),DOCUMENTATION(If the value of this property is non-zero then the <CODE>SKIP</CODE> attribute will be placed on the underlying control.)
+  PROPERTY: NAME(Tooltip),DOCUMENTATION(This property is used to provide the <CODE>TOOLTIP</CODE> attribute)
+  PROPERTY: NAME(Use.AltEquate),DOCUMENTATION(This corresponds to the third parameter of a <CODE>use</CODE> attribute. It is used to specify a unique field equate label where the default compiler mangling of the field name would not.)
+  PROPERTY: NAME(Use.Label),DOCUMENTATION(This corresponds to the first parameter of a <CODE>use</CODE> attribute. It is used to specify a field for the underlying control or potentially just the field equate.)
+  PROPERTY: NAME(Use.Number),DOCUMENTATION(This corresponds to the second parameter of a <CODE>use</CODE> attribute. It is used to provide a value for the field equate label generated when the default compiler numbering scheme is not adequate.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Right),DOCUMENTATION(If the value of this property is non zero then the <CODE>RIGHT</CODE> attribute is set on the menu causing it to go at the right hand end of the action bar.)
+  PROPERTY: NAME(Standard),DOCUMENTATION(This property specifies the value of the <CODE>STD</CODE> attribute to be used to be set standard behavior for this control.)
+  PROPERTY: NAME(Standard.List),DOCUMENTATION(The list of all standard actions currently defined by the RTL)
+  PROPERTY: NAME(Text),DOCUMENTATION(The text to be displayed on the menu. This may include & characters to set a hot key for the menu item.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Check),DOCUMENTATION(If this property is set to non-zero then the <CODE>CHECK</CODE> attribute is placed on the menu item specifying that it may be on or off.)
+  PROPERTY: NAME(Icon),DOCUMENTATION(This property should contain a file name that is to be used as the icon for this menu item.)
+  PROPERTY: NAME(Item.Procedure),DOCUMENTATION(This optional property specifies a procedure that should be invoked if this menu item is selected.)
+  PROPERTY: NAME(Item.Stack),DOCUMENTATION('If the procedure specified in <SAMP>Item.Procedure</SAMP>is started on a new thread, controlled by <SAMP>Item.Thread</SAMP>, this property gives the size of stack that will be allocated to it.')
+  PROPERTY: NAME(Item.Thread),DOCUMENTATION(If set to non-zero then the procedure specified in <SAMP>Item.Procedure</SAMP> will not simply be called but will be started on a new Clarion thread.)
+  PROPERTY: NAME(Menu),DOCUMENTATION(This property should give the <SAMP>TEXT</SAMP> property of the menu to which this menu item should be attached. Although caseless the match must otherwise be complete.)
+  PROPERTY: NAME(Separator),DOCUMENTATION(If this property is set to non-zero then other properties in this wizatron are ignored and a <CODE>SEPARATOR</CODE> is placed on the item)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Splash
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Item.Procedure),DOCUMENTATION(This acorn constructs the procedure to act as the about procedure for the application. By default it simply shares the splash window.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Default),DOCUMENTATION(If this property is non-zero then the <CODE>DEFAULT</CODE> attribute will be added to this button making in the target for the entry key on this window.)
+  PROPERTY: NAME(Flat),DOCUMENTATION(If this property is non-zero then the <CODE>FLAT</CODE> attribute will be added to this button)
+  PROPERTY: NAME(Icon),DOCUMENTATION(This property should contain a file name that is to be used as the icon for this button.)
+  PROPERTY: NAME(IconPosition),DOCUMENTATION('This property changes the placement of the icon relative to any text on the button. A value of Left specified the <CODE>LEFT</CODE> attribute, Right specifies the <CODE>RIGHT</CODE> attribute.')
+  PROPERTY: NAME(IconPosition.List),DOCUMENTATION(The list of possible icon positions used by the <SAMP>IconPosition</SAMP> property.)
+  PROPERTY: NAME(Item.Procedure),DOCUMENTATION(This optional property specifies a procedure that should be invoked if this button is pressed.)
+  PROPERTY: NAME(Item.Stack),DOCUMENTATION('If the procedure specified in <SAMP>Item.Procedure</SAMP>is started on a new thread, controlled by <SAMP>Item.Thread</SAMP>, this property gives the size of stack that will be allocated to it.')
+  PROPERTY: NAME(Item.Thread),DOCUMENTATION(If set to non-zero then the procedure specified in <SAMP>Item.Procedure</SAMP> will not simply be called but will be started on a new Clarion thread.)
+  PROPERTY: NAME(Required),DOCUMENTATION(If this property is non-zero then the <CODE>REQ</CODE> attribute will be added to this button meaning that when this button is pressed all required fields are checked to contain values)
+  PROPERTY: NAME(Standard),DOCUMENTATION(This property specifies the value of the <CODE>STD</CODE> attribute to be used to be set standard behavior for this control.)
+  PROPERTY: NAME(Standard.List),DOCUMENTATION(The list of all standard actions currently defined by the RTL)
+  PROPERTY: NAME(Text),DOCUMENTATION('This property gives the text, if any, that will appear on the button. & may be used to denote hot keys.')
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Entry
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Case),DOCUMENTATION(This property specifies the case sensitivity of the control. It can produce an attribute of <CODE>CAP</CODE> or <CODE>UPR</CODE>.)
+  PROPERTY: NAME(Case.List),DOCUMENTATION('List of possible case values. <CODE>CAP</CODE> for capitalize as a proper name, <CODE>UPR</CODE> means capitalize all.')
+  PROPERTY: NAME(ForceRefresh),DOCUMENTATION(If this property is non-zero then the actions are set so that the window refreshes when this control is accepted.)
+  PROPERTY: NAME(Justification),DOCUMENTATION('This property is used to set a justification attribute for the underlying control. This will produce an attribute of <CODE>LEFT</CODE>, <CODE>RIGHT</CODE>, <CODE>CENTER</CODE> or <CODE>DECIMAL</CODE> on the underlying control. An offset may also be specified, this is given by <SAMP>Justification.Offset</SAMP>)')
+  PROPERTY: NAME(Justification.List),DOCUMENTATION(List of possible justification attributes.)
+  PROPERTY: NAME(Justification.Offset),DOCUMENTATION(This property is used in conjunction with <SAMP>Justification</SAMP> and provides the offset for the attribute generated.)
+  PROPERTY: NAME(Mask),DOCUMENTATION(If this property is non-zero then the <CODE>MASK</CODE> attribute is set on the underlying control.)
+  PROPERTY: NAME(Password),DOCUMENTATION(If this property is non-zero then the <CODE>PASSWORD</CODE> attribute is set on the underlying control.)
+  PROPERTY: NAME(Picture),DOCUMENTATION('This property is the picture for the control, this is specified in the Clarion language as the parameter of the control statement.')
+  PROPERTY: NAME(PostLookupField),DOCUMENTATION(This is a component of the <SAMP>PostLookupKey</SAMP> used to verify the value in the entry control.)
+  PROPERTY: NAME(PostLookupKey),DOCUMENTATION(This property specifies a key in a related file that can be used to lookup whether or not this control contains a valid value. This property is automatically filled in for you by the wizatron if 3rd normal form attributes are used in the dictionary.)
+  PROPERTY: NAME(PostLookupProcedure),DOCUMENTATION(This is the name of a procedure to be used to <EM>select</EM> a correct value for this field if a valid one is not entered by the user. This is an acorn property which will cause a browse with selection enabled to be generated if one does not already exist. If the <SAMP>Acorn.Name</SAMP> subproperty names something <EM>other</EM> than Browse %_VALUE_% then a unique select browse will be generated. The default is to reuse the <I>standard</I> browse for the file.)
+  PROPERTY: NAME(ReadOnly),DOCUMENTATION(If this property is non-zero then the <CODE>READONLY</CODE> attribute is set on the underlying control.)
+  PROPERTY: NAME(Required),DOCUMENTATION(If this property is non-zero then the <CODE>REQ</CODE> attribute is set on the underlying control.)
+  PROPERTY: NAME(Transparent),DOCUMENTATION(If this property is non-zero then the <CODE>TRN</CODE> attribute is set on the underlying control.)
+  PROPERTY: NAME(TypingMode),DOCUMENTATION(This property specifies the typing mode of the control. It can produce an attribute of <CODE>INS</CODE> or <CODE>OVR</CODE>.)
+  PROPERTY: NAME(TypingMode.List),DOCUMENTATION('List of possible typing modes. <CODE>INS</CODE> means enter insert, <CODE>OVR</CODE> means enter overwrite mode, none means remain in current mode.),LOCKED(1')
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ListBox
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DisplayColumns),DOCUMENTATION(A multi-valued acorn giving a list of all of the columns to be populated in the list box.)
+  PROPERTY: NAME(DisplayColumns.List),DOCUMENTATION('This is the list of all fields that could potentially be populated in this listbox. By default any field in this list, with an <SAMP>Interest</SAMP> level above the current <SAMP>InterestThreshold</SAMP> and without the <CODE>NOPOPULATE(BROWSE)</CODE> attribute set will be copied into <SAMP>DisplayColumns</SAMP>. By careful selection of interest levels within the dictionary, which the dictionary wizatron will help with, it is possible to produce browses with different levels of detail simply by altering <SAMP>InterestThreshold</SAMP>. Note that <SAMP>InterestThreshold</SAMP> is (by default) a procedure level property and therefore applies to all browses in a given procedure.')
+  PROPERTY: NAME(DragID),DOCUMENTATION(This property corresponds to the <CODE>DRAGID</CODE> property of the listbox.)
+  PROPERTY: NAME(Drop.Count),DOCUMENTATION(This property corresponds to the first parameter of the <CODE>DROP</CODE> attribute.)
+  PROPERTY: NAME(Drop.Width),DOCUMENTATION(This property corresponds to the second parameter of the <CODE>DROP</CODE> attribute.)
+  PROPERTY: NAME(Format),DOCUMENTATION(The <CODE>FORMAT</CODE> string to be given to the list box. By default this is computed from the information stored in the column wizatrons.)
+  PROPERTY: NAME(From),DOCUMENTATION(This attribute is used to set the name of the queue that the listbox will use as a <CODE>FROM</CODE> attribute.)
+  PROPERTY: NAME(Scrollbars),DOCUMENTATION('This property is used to set the <CODE>HSCROLL</CODE>, <CODE>VSCROLL</CODE> or <CODE>HVSCROLL</CODE> attributes on a listbox.')
+  PROPERTY: NAME(ScrollBars.List),DOCUMENTATION(The list of attributes pertaining to the scrollbar behavior of a ListBox.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Text
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Scrollbars),DOCUMENTATION('This property is used to set the <CODE>HSCROLL</CODE>, <CODE>VSCROLL</CODE> or <CODE>HVSCROLL</CODE> attributes on a textbox.')
+  PROPERTY: NAME(ScrollBars.List),DOCUMENTATION(The list of attributes pertaining to the scrollbar behavior of a TextBox.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Control#Group
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.XSpacing),DOCUMENTATION(This property is used to specify the default horizontal spacing between controls in DLU)
+  PROPERTY: NAME(Allocation.YSpacing),DOCUMENTATION(This property is used to specify the default vertical spacing between controls in DLU)
+  PROPERTY: NAME(At.EastMargin),DOCUMENTATION(This property allows a margin between the groups constituent controls and its border on the east side.)
+  PROPERTY: NAME(At.NorthMargin),DOCUMENTATION(This property allows a margin between the groups constituent controls and its border on the north side.)
+  PROPERTY: NAME(At.SouthMargin),DOCUMENTATION(This property allows a margin between the groups constituent controls and its border on the south side.)
+  PROPERTY: NAME(At.WestMargin),DOCUMENTATION(This property allows a margin between the groups constituent controls and its border on the west side.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Image
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Image),DOCUMENTATION(This property should contain a file name that is the graphic to be used for this image.)
+  PROPERTY: NAME(ImageMode),DOCUMENTATION(This property is used to set the <CODE>CENTERED</CODE> or <CODE>TILED</CODE> attributes on a textbox.)
+  PROPERTY: NAME(Scrollbars),DOCUMENTATION('This property is used to set the <CODE>HSCROLL</CODE>, <CODE>VSCROLL</CODE> or <CODE>HVSCROLL</CODE> attributes on a textbox.')
+  PROPERTY: NAME(ScrollBars.List),DOCUMENTATION(The list of attributes pertaining to the scrollbar behavior of a Image.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Option
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Controls),DOCUMENTATION(A multi-valued acorn of radio wizatrons. This is a list of the radio items that will appear within the option structure.)
+  PROPERTY: NAME(Text),DOCUMENTATION(This property specifies the text heading for this option.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Sheet
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.ShowSingleTab),DOCUMENTATION(If this property is non-zero then a sheet and tab will be populated on the window even if there is only one tab required. If set to zero then one-tab sheets are suppressed.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.XSpacing),DOCUMENTATION(This property is used to specify the default horizontal spacing between controls in DLU)
+  PROPERTY: NAME(Allocation.YSpacing),DOCUMENTATION(This property is used to specify the default vertical spacing between controls in DLU)
+  PROPERTY: NAME(At.EastMargin),DOCUMENTATION(This property allows a margin between the windows constituent controls and its border on the east side.)
+  PROPERTY: NAME(At.NorthMargin),DOCUMENTATION(This property allows a margin between the windows constituent controls and its border on the north side.)
+  PROPERTY: NAME(At.SouthMargin),DOCUMENTATION(This property allows a margin between the windows constituent controls and its border on the south side.)
+  PROPERTY: NAME(At.WestMargin),DOCUMENTATION(This property allows a margin between the windows constituent controls and its border on the west side.)
+  PROPERTY: NAME(CostTarget),DOCUMENTATION(This specifies a threshold at which the screen evaluation wizatron defines a screen as being good. The lower the number the better the screens and the slower the wizatron. This property is used in conjunciton with <SAMP>MaxCostCycles</SAMP>)
+  PROPERTY: NAME(Label),DOCUMENTATION(This property is used to specify the label that the window will recieve in generated code.)
+  PROPERTY: NAME(MaxCostCycles),DOCUMENTATION('The space allocator will populate all controls using common-sense heuristics. Then it will go back over the screen looking for inconsistencies and ugliness according to the criteria set in the <SAMP>Allocation</SAMP> properties. If it finds any it will shuffle the controls to try to reduce these problems, then it will re-apply its evaluation criteria. This property specifies the maximum number of times the criteria are re-applied. The higher the number the better the screens and the slower the wizatrons.')
+  PROPERTY: NAME(Node.Controls),DOCUMENTATION(An internal list maintained by the Wizatron code of all of the controls appearing within a given window.)
+  PROPERTY: NAME(Node.SheetAllocator),DOCUMENTATION(An Internal node used to hold the space allocator for the sheet if there is one.)
+  PROPERTY: NAME(Node.SpaceAllocator),DOCUMENTATION(An Internal node used to hold the space allocator for the window.)
+  PROPERTY: NAME(Node.ToolAllocator),DOCUMENTATION(An Internal node used to hold the space allocator for the toolbar if there is one.)
+  PROPERTY: NAME(Resizer),DOCUMENTATION(If this property is non-zero then it becomes an acorn for the wizatron that generates the Resizer procedural extension. Setting this value to zero will disable resizing in the window. By default this property is set to true if the parent window has a frame type of resize.)
+  PROPERTY: NAME(Toolbar),DOCUMENTATION(An autonode used to point to the toolbar for the current window if there is one.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuManager
+  DESCRIPTOR: 1
+  PROPERTY: NAME(MenuGrouping),DOCUMENTATION(This property specifies the method used to order menu items within a menu. Name means sort alphabetically. Priority means sort by priority and then name.)
+  PROPERTY: NAME(MenuGrouping.List),DOCUMENTATION(The possibilities for order menu items within a menu)
+  PROPERTY: NAME(Node.Items),DOCUMENTATION(A node list of all of the menu menu items populated. This property is maintained internally by the wizatron code and should not really be edited.)
+  PROPERTY: NAME(NoMerge),DOCUMENTATION(If this property is non-zero then the <CODE>NOMERGE</CODE> attribute is set on the underlying control.)
+  PROPERTY: NAME(StandardMenuItems),DOCUMENTATION(This is a multi-valued acorn property specifying the list of default menuitems to be populated. By default it is configured so that selected xyz will cause wizatron MenuItem#xyz to be populated into the procedure. The list of possible menuitems is specified by <SAMP>standardmenuitems.list</SAMP>)
+  PROPERTY: NAME(StandardMenuItems.List),DOCUMENTATION('The list of all of the menuitem value (#) derivations currently available in the system.')
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:TemplateComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlTemplate),DOCUMENTATION(The template name of the control template being managed by this wizatron.)
+  PROPERTY: NAME(Instance),DOCUMENTATION('This property contains the template instance number as used by appgen. It is automatically computed within wizatron code, upon population of the template component, by incrementing the value of <SAMP>Next.Control.Instance</SAMP> in the parent procedure.')
+  PROPERTY: NAME(PrimaryFile),DOCUMENTATION('The primary file (as it would appear in the file schematic) that this control template is based upon.')
+  PROPERTY: NAME(PrimaryKey),DOCUMENTATION('The (optional) primary key used by this control template.')
+  PROPERTY: NAME(SecondaryFiles),DOCUMENTATION('A multi-valued list of secondary files (as they would appear in the file schematic) used by this control template. This property is automatically set by the wizatron code based upon <CODE>DISPLAY</CODE> attributes within the user options fields of the dictionary.')
+  PROPERTY: NAME(Show),DOCUMENTATION(If this property is set to non-zero then this control template will be populated on the main procedure window.)
+  PROPERTY: NAME(TemplateChain),DOCUMENTATION(The template chain of the control template being managed by this wizatron.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#Resize
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlLabels),DOCUMENTATION(All controls to be managed by the resizer)
+  PROPERTY: NAME(Controls),DOCUMENTATION(All controls to be managed by the resizer)
+  PROPERTY: NAME(ControlsResize),DOCUMENTATION(All controls to be managed by the resizer)
+  PROPERTY: NAME(EnforceMinimum),DOCUMENTATION(If set to one this property will cause the minimum size prompt to be checked on the resize template prompt screen)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ProcedureComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(InterestThreshold),DOCUMENTATION('This property is a threshold for the population of fields. By default fields in a dictionary have an interest level of 5, the <CODE>INTEREST</CODE> user option can then be used to alter that. Raising the interest threshold reduces the number of fields populated on the procedure.')
+  PROPERTY: NAME(IsProcedure),DOCUMENTATION(This property is just a replica of the internal name of this wizatron. The reason for it is to allow the parent procedure to be readily identified from within child wizatrons for the purposes of locating other wizatrons that are a known location within the procedure. It acts a little bit like the leading \ in a DOS filename.)
+  PROPERTY: NAME(Next.Control.Instance),DOCUMENTATION('The instance number (as used by appgen) of the next control template to be populated in this procedure. Primarily there to aid in the production of <SAMP>Instance</SAMP> properties in control templates.')
+  PROPERTY: NAME(Node.ChildProcedures),DOCUMENTATION(This multi-valued node list points to all of the procedures that have been created at the request of this one.)
+  PROPERTY: NAME(Node.ControlWizards),DOCUMENTATION(Internal multi-valued symbol containing a list of all of the <SAMP>TemplateComponent</SAMP> wizatrons populated in this procedure.)
+  PROPERTY: NAME(Output.Category),DOCUMENTATION(This property provides the category to be used in generated code for this procedure. Although the default here is blank most of the derived procedure types provide meaningful defaults for this property.)
+  PROPERTY: NAME(Output.Description),DOCUMENTATION(This property provides the description to be used in generated code for this procedure.)
+  PROPERTY: NAME(Output.From),DOCUMENTATION(This property provides the Template Name to be used in generated code for this procedure. By default we use ABC Window.)
+  PROPERTY: NAME(Output.ProcName),DOCUMENTATION(This property provides the Procedure Label to be used in generated code for this procedure. Although the default here is blank most of the derived procedure types provide meaningful defaults for this property.)
+  PROPERTY: NAME(WindowManager),DOCUMENTATION(Internal node used to point to the <SAMP>Window</SAMP> Wizatron active in this procedure.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Form
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ChildBrowses),DOCUMENTATION(This multi-valued acorn is a list of child browses to appear on the form.)
+  PROPERTY: NAME(ChildBrowses.List),DOCUMENTATION(These are the possible files that can be used to make a child browse for this form. By default this is a list of the MANY sides of all the 1-Many relationships that the primary file participates in.)
+  PROPERTY: NAME(Fields),DOCUMENTATION('This multi-valued acorn is a list of all of the fields populated on this form. The wizatrons pointed to are <SAMP>Component#Field</SAMP> wizatrons, these it turn will populate the prompts, controls and control templates as appropriate. By default this is all the fields in the primary file that meet the <SAMP>InterestThreshold</SAMP>.')
+  PROPERTY: NAME(Fields.List),DOCUMENTATION(This is the list of all the fields that can be populated on this file. By default this is simply all the fields in the primary file.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BrowseFiles),DOCUMENTATION(This is a list of all of the files for which browses are required from the menu. Note that there may be more browses generated if they are required by other procedures that are generated.)
+  PROPERTY: NAME(BrowseFiles.List),DOCUMENTATION(This list of all files for which it may be reasonable to produce browses. By default that is all the files in the system.)
+  PROPERTY: NAME(CIF),DOCUMENTATION(This property is used to set the frame property in the template system that causes a file to be opened in the frame procedure. Generally this should be set on if you are using SQL as it causes the connect to happen ASAP rather than being delayed until the first browse.)
+  PROPERTY: NAME(GenerateBrowses),DOCUMENTATION(Setting this property to zero will suppress the generation of browses unless they are required for 3rd normal form reasons by other procedures in the generation tree.)
+  PROPERTY: NAME(MenuManager),DOCUMENTATION(This is an acorn for the menu manager for the frame.)
+  PROPERTY: NAME(SplashWindow),DOCUMENTATION(This acorn will cause a splash window to be generated if set to non-zero.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BrowseListControl),DOCUMENTATION(This property is used to point to the list control owned by this browse control template. It is there primarily for the convenience of the wizatron code.)
+  PROPERTY: NAME(HasQuery),DOCUMENTATION(If this property is non-zero then a <SAMP>BrowseQBE</SAMP> wizatron is created to manage the browse query button.)
+  PROPERTY: NAME(HasSelect),DOCUMENTATION(If this property is non-zero then a <SAMP>SelectButtonControl</SAMP> wizatron is created to manage the browse select button.)
+  PROPERTY: NAME(HasToolbox),DOCUMENTATION(If this property is non-zero then a <SAMP>BrowseToolbox</SAMP> wizatron is created to manage the browse toolbox button.)
+  PROPERTY: NAME(HasUpdate),DOCUMENTATION(If this property is non-zero then a <SAMP>BrowseUpdate</SAMP> wizatron is created to manage the browse update buttons. By default this will be 1 unless the primary file has the READONLY user option set)
+  PROPERTY: NAME(IsChild),DOCUMENTATION('This internal property is set to one if this browse is functioning as a child browse (ie range-limited to some <SAMP>ParentFile</SAMP>)')
+  PROPERTY: NAME(LoadMethod),DOCUMENTATION(This attribute sets whether the browse is page or file loaded)
+  PROPERTY: NAME(ParentFile),DOCUMENTATION('For a child browse (where <SAMP>IsChild</SAMP> is set) this property is used to denote the file used to range-limit the browse.')
+  PROPERTY: NAME(SortOrders),DOCUMENTATION(A multi-valued acorn with an entry for each sort order to be populated in the control template. The entry is the key name.)
+  PROPERTY: NAME(SortOrders.List),DOCUMENTATION('This list of all possible (keyed) sort orders for this browse. For a child browse this will be the order that range-limits the browse, for a regular browse this is every key sequence in the file.')
+  PROPERTY: NAME(TabName),DOCUMENTATION('The name of the tab upon which you wish the <STRONG>whole</STRONG> browse to appear. This defaults to <EM>ALL</EM> which means each sort order appears on its own tab. The wizatron code automatically changes this in the case of a child browse to force the browse (including update buttons) to appear on a child tab.')
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseUpdate
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ChangeButtonControl),DOCUMENTATION(A node pointing to the wizatron that will populate the change button for this control template.)
+  PROPERTY: NAME(DeleteButtonControl),DOCUMENTATION(A node pointing to the wizatron that will populate the delete button for this control template.)
+  PROPERTY: NAME(EIP),DOCUMENTATION(If this property is set to true then the corresponding value is set in the UpdateButton control template to enable edit-in-place upon the parent browse. This property is automatically set from the EditInPlace user option in the dictionary.)
+  PROPERTY: NAME(InsertButtonControl),DOCUMENTATION(A node pointing to the wizatron that will populate the insert button for this control template.)
+  PROPERTY: NAME(UpdateProcedure),DOCUMENTATION('If this acorn is set to non-zero then it will request that a Form procedure be generated for the current primary file. By default the current primary file is simply inherited from the wizatron that owns the <SAMP>BrowseUpdate</SAMP> wizatron. Note that this wizatron asks to create a <EM>shared</EM> procedure. In other words if a procedure already exists called <CODE>UpdateMyPrimaryFile</CODE> then that will be used, a new one will not be created. If a unique procedure is required then the <SAMP>Acorn.Name</SAMP> property should be changed to create a browse specific name.')
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ButtonControl),DOCUMENTATION(A node pointing to the wizatron that will populate the actual button for this control template.)
+  PROPERTY: NAME(ButtonControlType),DOCUMENTATION('The ButtonControl wizatron is rarely populated directly, but acts as a place holder for most of the wizatron code dealing with various button control templates. This property is used by child wizatrons to identify themselves in many of the parent macros and source code. For example, the <SAMP>CancelButton</SAMP> wizatron places Cancel in this field causing the <SAMP>ControlTemplate</SAMP> property to expand to <CODE>CancelButton</CODE>.')
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Lookup
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlToLookup),DOCUMENTATION(This property specifies the control to be looked up when the lookup button is pressed. By default the <SAMP>LookupButtonControl</SAMP> assumes it has been populated from a Component#Field and uses the <SAMP>Use.Label</SAMP> of the associated Entry control.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:EditFieldClass
+  DESCRIPTOR: 1
+  PROPERTY: NAME(EditControl),DOCUMENTATION(This node is used to hold the control to be populated to edit this field.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:DropComboFieldClass
+  DESCRIPTOR: 1
+  PROPERTY: NAME(EditControl),DOCUMENTATION(This node is used to hold the combo to be populated in support of the DropComboFieldClass control template.)
+  PROPERTY: NAME(UpdateProcedure),DOCUMENTATION('If this acorn is set to non-zero then it will request that a Form procedure be generated for the current primary file. Note that this wizatron asks to create a <EM>shared</EM> procedure. In other words if a procedure already exists called <CODE>UpdateMyPrimaryFile</CODE> then that will be used, a new one will not be created. If a unique procedure is required then the <SAMP>Acorn.Name</SAMP> property should be changed to create a drop combo specific name.')
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ListBoxColumn
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Column.Colors),DOCUMENTATION(If this property is non-zero then this column has coloring enabled.)
+  PROPERTY: NAME(Column.Header),DOCUMENTATION(This specifies the header to be used for this column in the listbox)
+  PROPERTY: NAME(Column.HeaderIndent),DOCUMENTATION(Used in conjunction with <SAMP>Column.HeaderJustification</SAMP> to finely specify the justification of header within the list box column.)
+  PROPERTY: NAME(Column.HeaderJustification),DOCUMENTATION(This property specifies the justification of the header within the list box column.)
+  PROPERTY: NAME(Column.HScroll),DOCUMENTATION(If non-zero then this column is marked as having a horizontal scrollbar.)
+  PROPERTY: NAME(Column.Icon),DOCUMENTATION(If this property is non-zero then this column has icons enabled.)
+  PROPERTY: NAME(Column.ID),DOCUMENTATION(This property uniquely identifies the list box column. Currently the value used in here is the period qualified field name of the underlying variable.)
+  PROPERTY: NAME(Column.Indent),DOCUMENTATION(Used in conjunction with <SAMP>Column.Justification</SAMP> to finely specify the justification of data within the list box column.)
+  PROPERTY: NAME(Column.Justification),DOCUMENTATION(This property specifies the justification of the data within the list box column.)
+  PROPERTY: NAME(Column.MaxWidth),DOCUMENTATION(The maximum tolerated width of the column in the list box.)
+  PROPERTY: NAME(Column.Picture),DOCUMENTATION(The picture specified for this column.)
+  PROPERTY: NAME(Column.Resizable),DOCUMENTATION(If non-zero then this column is marked as resizeable.)
+  PROPERTY: NAME(Column.RightBorder),DOCUMENTATION(If non-zero then this column is marked as having a right border.)
+  PROPERTY: NAME(Column.Tree),DOCUMENTATION(If this property is non-zero then this column is used as a tree column.)
+  PROPERTY: NAME(Column.Width),DOCUMENTATION(The prefered width of the column in the list box. If left at zero then the desired width is computed as a function of the picture specified for the column.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseSortOrder
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Filter),DOCUMENTATION('The filter to be used for this sort order (not including anything generated by the range restrictions)')
+  PROPERTY: NAME(FreeElement),DOCUMENTATION(This field is computed by the wizatron code. It identifies the free element of a browse sort order. The free element of a browse is the most major component of the sort key that will vary throughout the data contained within the browse. Typically the free element is used for the locator field and / or the selection field within a select browse.)
+  PROPERTY: NAME(Key),DOCUMENTATION(The key used for this sort order. This may be left blank.)
+  PROPERTY: NAME(Locator),DOCUMENTATION(A property used to point to the node acting as the locator wizatron for this sort order.)
+  PROPERTY: NAME(LocatorType),DOCUMENTATION('Setting this property to a value other than <SAMP>None</SAMP> causes a Wizatron of type xxxxLocator to be created. These, in turn, cause the current sort order to have a locator populated of the corresponding type.')
+  PROPERTY: NAME(RangeField),DOCUMENTATION(The field of the present sort oder to be range limited)
+  PROPERTY: NAME(RangeFile),DOCUMENTATION(For a <SAMP>RangeLimitType</SAMP> of <CODE>File Relationship</CODE> this provides the file used to range limit the current one.)
+  PROPERTY: NAME(RangeHigh),DOCUMENTATION(For a <SAMP>RangeLimitType</SAMP> of <CODE>Range of Values</CODE> this provides the field acting as the high bound of the range.)
+  PROPERTY: NAME(RangeLimit),DOCUMENTATION(For a <SAMP>RangeLimitType</SAMP> of <CODE>Single Value</CODE> this provides the field to act as the limiting value.)
+  PROPERTY: NAME(RangeLimitType),DOCUMENTATION(The type of range limit to be used.)
+  PROPERTY: NAME(RangeLow),DOCUMENTATION(For a <SAMP>RangeLimitType</SAMP> of <CODE>Range of Values</CODE> this provides the field acting as the low bound of the range.)
+  PROPERTY: NAME(ScrollBehavior),DOCUMENTATION(The vertical thumb strategy to use.)
+  PROPERTY: NAME(ScrollKeyDistribution),DOCUMENTATION(For a <SAMP>ScrollBehavior</SAMP> of <CODE>Movable Thumb</CODE> this provides the distribution to use.)
+  PROPERTY: NAME(TabText),DOCUMENTATION(The text to appear on the tab for this sort order. Note that the text can be suffixed with #TabType to encourage the wizatrons to select a particular variant of the Tab wizatron default values. Specifically the wizatron code will generate <SAMP>MyTabText#ChildBrowse</SAMP> if the parent browse is populated as a child upon a form.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Field
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Field),DOCUMENTATION(This property is the period qualified field name of the data to be edited.)
+  PROPERTY: NAME(FieldPriority),DOCUMENTATION(Controls the Allocation.Priority for the controls populated from this control)
+  PROPERTY: NAME(LookupStyle),DOCUMENTATION('This property stores a value to denote the style to be used when a 3rd normal form field is encountered (typically by a <CODE>DISPLAY</CODE> in the user options).')
+  PROPERTY: NAME(LookupStyle.Child.Button),DOCUMENTATION(An acorn used to generate the wizatron to manage the field lookup button control template if the <CODE>Lookup Button</CODE> option is chosen from <SAMP>LookupStyle</SAMP>.)
+  PROPERTY: NAME(LookupStyle.Child.Combo),DOCUMENTATION(An acorn used to generate the wizatron to manage the file drop combo template if the <CODE>Combo</CODE> option is chosen from <SAMP>LookupStyle</SAMP>.)
+  PROPERTY: NAME(LookupStyle.Child.Entry),DOCUMENTATION(This acorn is used to point to the EntryField class used to create the control used by all <SAMP>lookupstyle</SAMP>s other than <CODE>Combo</CODE>.)
+  PROPERTY: NAME(LookupStyle.Child.Prompt),DOCUMENTATION(This node is used to point to the Prompt field used by all <SAMP>lookupstyle</SAMP>s other than <CODE>Combo</CODE>.)
+  PROPERTY: NAME(LookupStyle.List),DOCUMENTATION('Possible values for <SAMP>LookupStyle</SAMP> are Ignore (just use an entry), Combo (populate a file drop combo control template), Lookup on Error (populate the field options so that the field value is looked up in a select browse if it is entered wrong), Lookup Button (same as Lookup on Error except a field lookup button is populated too).')
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Locator
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Locator.Entry),DOCUMENTATION(This node points to the entry field to be used for the locator.)
+  PROPERTY: NAME(Locator.Prompt),DOCUMENTATION(This node points to the prompt field to be used for the locator.)
+  [DEFINITION]
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Node.Frame),DOCUMENTATION(A node used to point to the frame used in this application.)
+  PROPERTY: NAME(ProcsPerModule),DOCUMENTATION(How many procedure should be populated in each module. We recommend anything from 5 to 20.)
+  PROPERTY: NAME(TargetResolution),DOCUMENTATION(The wizatrons are capable of designing screens to fit a multitude of resolutions. Whichever option is chosen here the wizatrons will try to create a <I>perfect fit</I> window size. This property is used to express the maximum they can head towards.)
+  [DEFINITION]
+  [END]
+[END]

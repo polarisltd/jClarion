@@ -1,0 +1,426 @@
+  OMIT ('_EndOfInclude_', _RTF_INT_)
+
+_RTF_INT_      EQUATE(1)
+
+! -----------------------------------------------------------------------------
+
+UINT                   EQUATE(UNSIGNED)
+HWND                   EQUATE(UINT)
+HFONT                  EQUATE(UINT)
+UNDONAMEID             EQUATE(BYTE)
+BOOLEAN                EQUATE(BYTE)
+DWORD                  EQUATE(ULONG)
+
+NotAPosition           EQUATE(80000000h)
+NotAnIndent            EQUATE(80000000h)
+NotAColor              EQUATE(-1)
+NotASize               EQUATE(80000000h)
+
+! -----------------------------------------------------------------------------
+
+! Units
+
+UNIT:Default           EQUATE(0)
+UNIT:MM100             EQUATE(1)       ! Hundredths of millimeter
+UNIT:Inch1000          EQUATE(2)       ! Thousandths of inch
+UNIT:Twips             EQUATE(3)       ! 1/1440 of inch
+
+! -----------------------------------------------------------------------------
+
+! Selection types
+
+SELECT:Empty           EQUATE(0)       ! Nothing is selected
+SELECT:Text            EQUATE(1)       ! Some text
+SELECT:Object          EQUATE(2)       ! At least one COM object
+SELECT:MultiChar       EQUATE(4)       ! More than one character of text
+SELECT:MultiObject     EQUATE(8)       ! More than one COM object
+
+! -----------------------------------------------------------------------------
+
+! Bullets and numbering styles
+
+PARA:Nothing           EQUATE(0)
+PARA:Bullets           EQUATE(1)       ! Not supported for RichEdit 2.0
+PARA:ArabicNumbers     EQUATE(2)       ! Not supported for RichEdit 2.0
+PARA:LowerLetters      EQUATE(3)       ! Not supported for RichEdit 2.0
+PARA:UpperLetters      EQUATE(4)       ! Not supported for RichEdit 2.0
+PARA:LowerRoman        EQUATE(5)       ! Not supported for RichEdit 2.0
+PARA:UpperRoman        EQUATE(6)       ! Not supported for RichEdit 2.0
+
+! -----------------------------------------------------------------------------
+
+! Undo names codes
+
+UNDO:Unknown           EQUATE(0)
+UNDO:Typing            EQUATE(1)
+UNDO:Delete            EQUATE(2)
+UNDO:DragDrop          EQUATE(3)
+UNDO:Cut               EQUATE(4)
+UNDO:Paste             EQUATE(5)
+
+! -----------------------------------------------------------------------------
+
+! Find and Replace flags
+
+FIND:Back              EQUATE(0001h)
+FIND:MatchCase         EQUATE(0002h)
+FIND:WholeWord         EQUATE(0004h)
+FIND:Again             EQUATE(0008h)
+FIND:ReplaceAll        EQUATE(0010h)
+
+! -----------------------------------------------------------------------------
+
+! Changes notification codes (see RTFNotify.ChangeCallback)
+
+CHANGE:Text            EQUATE(0001h)
+CHANGE:Font            EQUATE(0002h)
+CHANGE:CharFormat      EQUATE(0004h)
+CHANGE:ParaFormat      EQUATE(0008h)
+CHANGE:Selection       EQUATE(0010h)
+CHANGE:TextMode        EQUATE(0020h)
+CHANGE:Enabling        EQUATE(0040h)
+CHANGE:Visibility      EQUATE(0080h)
+CHANGE:Everything      EQUATE(00FFh)
+CHANGE:Use             EQUATE(0100h)
+
+! -----------------------------------------------------------------------------
+
+! Notification events codes (see RTFNotify.EventCallback)
+
+NOTIFY:Dirty           EQUATE(1)
+NOTIFY:TextMode        EQUATE(2)
+NOTIFY:LoseFocus       EQUATE(3)
+NOTIFY:Undo            EQUATE(4)
+NOTIFY:NewContent      EQUATE(5)
+
+! -----------------------------------------------------------------------------
+
+! Font changing codes
+
+CHANGEFONT:Name        EQUATE(0001h)
+CHANGEFONT:Size        EQUATE(0002h)
+CHANGEFONT:Weight      EQUATE(0004h)
+CHANGEFONT:Color       EQUATE(0008h)
+CHANGEFONT:BackColor   EQUATE(0010h)
+CHANGEFONT:Charset     EQUATE(0020h)
+CHANGEFONT:Effects     EQUATE(0040h)
+CHANGEFONT:Pitch       EQUATE(0080h)
+CHANGEFONT:Italic      EQUATE(0100h)
+CHANGEFONT:Underline   EQUATE(0200h)
+
+! -----------------------------------------------------------------------------
+
+! Font technology codes
+
+FONT:OUTLINE           EQUATE(00h)
+FONT:BITMAP            EQUATE(01h)
+FONT:DEVICE            EQUATE(02h)
+FONT:TRUETYPE          EQUATE(04h)
+FONT:OPENTRUETYPE      EQUATE(10h)
+FONT:OPENPOSTSCRIPT    EQUATE(20h)
+FONT:TYPE1             EQUATE(40h)
+
+! -----------------------------------------------------------------------------
+
+! Line wrapping modes
+
+WRAP:NoWrap            EQUATE(0)
+WRAP:ToWindow          EQUATE(1)
+WRAP:ToWidth           EQUATE(2)
+WRAP:ToPage            EQUATE(3)
+
+! -----------------------------------------------------------------------------
+
+! Target device codes
+
+TARGET:Default         EQUATE(0)
+TARGET:Display         EQUATE(1)
+TARGET:Printer         EQUATE(2)
+
+! -----------------------------------------------------------------------------
+
+! Text mode codes
+
+TEXT:Default           EQUATE(0)
+TEXT:PlainText         EQUATE(1)
+TEXT:RichText          EQUATE(2)
+
+! -----------------------------------------------------------------------------
+
+! Scrollbars codes
+
+SCROLLBAR:Horizontal   EQUATE(0)
+SCROLLBAR:Vertical     EQUATE(1)
+
+! -----------------------------------------------------------------------------
+
+FontList       QUEUE,TYPE
+TypeFace         CSTRING(32)
+Icon             BYTE
+Technology       BYTE
+               END
+
+FontScriptList QUEUE,TYPE
+Script           CSTRING(32)
+Charset          BYTE
+               END
+
+! -----------------------------------------------------------------------------
+
+RTFNotify      INTERFACE
+
+ChangeCallback   PROCEDURE (LONG)
+EventCallback    PROCEDURE (LONG),LONG,PROC
+
+               END
+
+! -----------------------------------------------------------------------------
+
+SavedProperty  INTERFACE
+
+Snap             PROCEDURE ()
+Changes          PROCEDURE (),LONG
+
+               END
+
+! -----------------------------------------------------------------------------
+
+RTFFont        INTERFACE(SavedProperty)
+
+!Snap            PROCEDURE (),DERIVED
+!Changes         PROCEDURE (),LONG,DERIVED
+
+Init             PROCEDURE (HFONT hFont, LONG color = NotAColor)
+
+SetFont          PROCEDURE (CONST *CSTRING fontname)
+GetFont          PROCEDURE (*CSTRING fontname)
+FontSize         PROCEDURE (LONG size)
+FontSize         PROCEDURE (),LONG
+FontScript       PROCEDURE (BYTE charset)
+FontScript       PROCEDURE (),BYTE
+FontColor        PROCEDURE (LONG color)
+FontColor        PROCEDURE (),LONG
+FontStyle        PROCEDURE (LONG style)
+FontStyle        PROCEDURE (),LONG
+FontWeight       PROCEDURE (LONG weight)
+FontWeight       PROCEDURE (),LONG
+FontItalic       PROCEDURE (BOOLEAN onoff)
+FontItalic       PROCEDURE (),BOOLEAN
+FontUnderline    PROCEDURE (BOOLEAN onoff)
+FontUnderline    PROCEDURE (),BOOLEAN
+FontStrikeOut    PROCEDURE (BOOLEAN onoff)
+FontStrikeOut    PROCEDURE (),BOOLEAN
+FontFixed        PROCEDURE (BOOLEAN onoff)
+FontFixed        PROCEDURE (),BOOLEAN
+
+FontBackColor    PROCEDURE (LONG bkcolor)
+FontBackColor    PROCEDURE (),LONG
+FontEffects      PROCEDURE (DWORD effects)
+FontEffects      PROCEDURE (),DWORD
+               END
+
+! -----------------------------------------------------------------------------
+
+RTFSelection   INTERFACE(SavedProperty)
+
+!Snap            PROCEDURE (),DERIVED
+!Changes         PROCEDURE (),LONG,DERIVED
+
+GetSelection     PROCEDURE (<*LONG first>, <*LONG last>)
+SetSelection     PROCEDURE (LONG first, LONG last)
+SelectAll        PROCEDURE ()
+Deselect         PROCEDURE ()
+SelectionType    PROCEDURE (),LONG
+
+SelectedText     PROCEDURE (*CSTRING),LONG,PROC
+
+               END
+
+! -----------------------------------------------------------------------------
+
+RTFTabs        INTERFACE
+
+Insert           PROCEDURE (LONG pos, BYTE unit = UNIT:Default),BOOLEAN,PROC
+Change           PROCEDURE (UNSIGNED idx, LONG pos, BYTE unit = UNIT:Default)
+Remove           PROCEDURE (UNSIGNED idx)
+RemoveAll        PROCEDURE ()
+Count            PROCEDURE (),UNSIGNED
+Tab              PROCEDURE (UNSIGNED idx, BYTE unit = UNIT:Default),LONG
+Update           PROCEDURE ()
+
+               END
+
+! -----------------------------------------------------------------------------
+
+RTFScrollBar   INTERFACE
+
+Hide              PROCEDURE ()
+Unhide            PROCEDURE ()
+Hidden            PROCEDURE (),BOOLEAN
+
+GetRange          PROCEDURE (<*LONG min>, <*LONG max>)
+SetRange          PROCEDURE (LONG min = 0, LONG max = 255)
+Position          PROCEDURE (),LONG
+Position          PROCEDURE (LONG pos)
+
+               END
+
+! -----------------------------------------------------------------------------
+
+RTFPage        INTERFACE
+
+Clone            PROCEDURE (),*RTFPage
+Destroy          PROCEDURE ()
+
+SetSize          PROCEDURE (LONG width, LONG height, BYTE unit = UNIT:Default)
+GetSize          PROCEDURE (<*LONG width>, <*LONG height>, BYTE unit =  UNIT:Default)
+SetMargins       PROCEDURE (LONG left = NotASize, LONG top = NotASize, LONG right = NotASize, LONG bottom = NotASize, BYTE unit = UNIT:Default)
+GetMargins       PROCEDURE (<*LONG left>, <*LONG top>, <*LONG right>, <*LONG bottom>, BYTE unit = UNIT:Default)
+SetToTarget      PROCEDURE (BYTE target = TARGET:Default)
+
+               END
+
+! -----------------------------------------------------------------------------
+
+RTFProperty    INTERFACE
+
+Init             PROCEDURE (*RTFHandler host, HWND rtfhandle, <*RTFProperty>)
+Clone            PROCEDURE (),*RTFProperty
+Destroy          PROCEDURE ()
+
+HandleOf         PROCEDURE (),HWND
+FileName         PROCEDURE (*CSTRING name)
+
+Length           PROCEDURE (),LONG
+Value            PROCEDURE (*STRING  var, UNSIGNED mode = TEXT:Default)
+Value            PROCEDURE (*CSTRING var, UNSIGNED mode = TEXT:Default)
+Value            PROCEDURE (*PSTRING var, UNSIGNED mode = TEXT:Default)
+Value            PROCEDURE (UNSIGNED mode = TEXT:Default),STRING
+Update           PROCEDURE ()
+ReadOnly         PROCEDURE (BOOLEAN onoff)
+ReadOnly         PROCEDURE (),BOOLEAN
+CanUndo          PROCEDURE (),BOOLEAN
+Undo             PROCEDURE ()
+WhatUndo         PROCEDURE (),UNDONAMEID
+ClearUndo        PROCEDURE ()
+SetUndoLimit     PROCEDURE (UNSIGNED limit)
+CanRedo          PROCEDURE (),BOOLEAN
+Redo             PROCEDURE ()
+WhatRedo         PROCEDURE (),UNDONAMEID
+Changed          PROCEDURE (),BOOLEAN
+Touch            PROCEDURE (BOOLEAN onoff)
+
+TextMode         PROCEDURE (UNSIGNED Mode)
+TextMode         PROCEDURE (),UNSIGNED
+IsRTF            PROCEDURE (),BOOLEAN
+
+Font             PROCEDURE (BOOLEAN global = FALSE),*RTFFont
+Tabs             PROCEDURE (),*RTFTabs
+Selection        PROCEDURE (),*RTFSelection
+ScrollBar        PROCEDURE (BYTE which),*RTFScrollBar
+PageSettings     PROCEDURE (),*RTFPage
+
+Alignment        PROCEDURE (BYTE mode)
+Alignment        PROCEDURE (),BYTE
+BulletStyle      PROCEDURE (BYTE style)
+BulletStyle      PROCEDURE (),BYTE
+
+Cut              PROCEDURE ()
+Copy             PROCEDURE ()
+Paste            PROCEDURE ()
+CanPaste         PROCEDURE (UINT format = 0),BOOLEAN
+
+WrapMode         PROCEDURE (BYTE mode)
+WrapMode         PROCEDURE (),BYTE
+LineWidth        PROCEDURE (LONG width, BYTE unit = UNIT:Default)
+LineWidth        PROCEDURE (BYTE unit = UNIT:Default),LONG
+TargetDevice     PROCEDURE (BYTE device)
+TargetDevice     PROCEDURE (),BYTE
+PrinterChanged   PROCEDURE ()
+
+Boxed            PROCEDURE (BOOLEAN onoff)
+Boxed            PROCEDURE (),BOOLEAN
+Flat             PROCEDURE (BOOLEAN onoff)
+Flat             PROCEDURE (),BOOLEAN
+Transparent      PROCEDURE (BOOLEAN onoff)
+Transparent      PROCEDURE (),BOOLEAN
+URLDetect        PROCEDURE (BOOLEAN onoff)
+URLDetect        PROCEDURE (),BOOLEAN
+
+Unit             PROCEDURE (BYTE newunit)
+Unit             PROCEDURE (),BYTE
+
+SetIndent        PROCEDURE (LONG left = NotAnIndent, LONG right = NotAnIndent, LONG first = NotAnIndent, BYTE unit = UNIT:Default)
+GetIndent        PROCEDURE (<*LONG left>, <*LONG right>, <*LONG first>, BYTE unit = UNIT:Default)
+
+Hidden           PROCEDURE (),BOOLEAN
+Disabled         PROCEDURE (),BOOLEAN
+
+SetPosition      PROCEDURE (SIGNED x = NotAPosition, SIGNED y = NotAPosition, SIGNED w = NotAPosition, SIGNED h = NotAPosition)
+GetPosition      PROCEDURE (<*SIGNED x>, <*SIGNED y>, <*SIGNED w>, <*SIGNED h>)
+
+LineCount        PROCEDURE (),SIGNED
+Line             PROCEDURE (SIGNED lineno, *CSTRING buf)
+Line             PROCEDURE (SIGNED lineno),CSTRING,RAW
+
+Caret            PROCEDURE (LONG lineno, LONG pos)         ! 1-based
+CaretX           PROCEDURE (),LONG                         ! 1-based
+CaretY           PROCEDURE (),LONG                         ! 1-based
+IsCaretVisible   PROCEDURE (),BOOLEAN
+ScrollToCaret    PROCEDURE ()
+
+VisibleLines     PROCEDURE (),LONG
+FirstVisible     PROCEDURE (),LONG                         ! 1-based
+LastVisible      PROCEDURE (),LONG                         ! 1-based
+
+               END
+
+! -----------------------------------------------------------------------------
+
+RTFHandler     INTERFACE
+
+Reset            PROCEDURE ()
+Load             PROCEDURE (<CONST *CSTRING filename>)
+Save             PROCEDURE (<CONST *CSTRING filename>, UNSIGNED mode = TEXT:Default)
+
+OwnerWindow      PROCEDURE (),*WINDOW
+
+UseMode          PROCEDURE (BOOLEAN isFilename)
+UseMode          PROCEDURE (),BOOLEAN
+SetUse           PROCEDURE (*STRING var)
+SetUse           PROCEDURE (*CSTRING var)
+SetUse           PROCEDURE (*PSTRING var)
+
+SetFocus         PROCEDURE ()
+Draw             PROCEDURE ()
+PrintRTF         PROCEDURE (<STRING jobname>, BYTE device = TARGET:Printer),LONG,PROC
+
+Find             PROCEDURE (CONST *CSTRING searchtext, DWORD flags, LONG pos = -1),LONG
+FindAndReplace   PROCEDURE (CONST *CSTRING searchtext, CONST *CSTRING repltext, DWORD flags, LONG pos = -1),LONG,PROC
+FindHistory      PROCEDURE (*CSTRING textbuf),UNSIGNED,PROC
+ReplaceHistory   PROCEDURE (*CSTRING textbuf),UNSIGNED,PROC
+
+GetText          PROCEDURE (*STRING textbuf, LONG min = 0, LONG max = -1),LONG,PROC
+GetText          PROCEDURE (*CSTRING textbuf, LONG min = 0, LONG max = -1),LONG,PROC
+SetText          PROCEDURE (STRING newtext)
+SetText          PROCEDURE (CONST *CSTRING newtext)
+SelectText       PROCEDURE (LONG min = 0, LONG max = -1)
+SetCaret         PROCEDURE (LONG pos)
+
+Version          PROCEDURE (),UNSIGNED
+
+Properties       PROCEDURE (),*RTFProperty
+Properties       PROCEDURE (*RTFProperty properties)
+
+Notify           PROCEDURE (<*RTFNotify handler>)
+Notification     PROCEDURE (),*RTFNotify
+
+LoadFonts        PROCEDURE (*FontList)
+LoadScripts      PROCEDURE (*FontScriptList, CONST *CSTRING fontname)
+
+               END
+
+! -----------------------------------------------------------------------------
+
+_EndOfInclude_
+

@@ -1,0 +1,3353 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AppFilename),DESCRIPTION(Application filename),DTYPE(ENTRY),HIDDEN(1)
+  PROPERTY: NAME(AppTemplate),DESCRIPTION(Application template chain),DEVIMP(BAROQUE),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),VALIDATIONTEXT(The application template property cannot be blank)
+  PROPERTY: NAME(Author),DESCRIPTION(Program author),DEVIMP(BAROQUE),STOP('@EVAL(CHOOSE(%PROCEDUREWIZATRON%))')
+  PROPERTY: NAME(AutoProcedureDepth),DESCRIPTION(Depth to which child procedures are automactically populated),DTYPE(SPIN),TYPE(STRING)
+  PROPERTY: NAME(DbAuditing),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(DbAuditing),ACORN.WIZARD(ControlTemplate#GlobalTemplate#DbAuditing),DESCRIPTION('Enable Database Auditing?'''),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Dictionary),DESCRIPTION(Dictionary for application),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),VALIDATIONTEXT(A dictionary name must be supplied)
+  PROPERTY: NAME(FirstProc),DESCRIPTION(First procedure name),DEVIMP(BAROQUE),STOP('@EVAL(CHOOSE(%PROCEDUREWIZATRON%))'),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),VALIDATIONTEXT(The name of the first procedure must be supplied)
+  PROPERTY: NAME(HelpFile),DESCRIPTION(Help file for application),DEVIMP(COMMON),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(Help Files|*.hlp|All Files|*.*),STOP('@EVAL(CHOOSE(%PROCEDUREWIZATRON%))')
+  PROPERTY: NAME(IsApplication),DESCRIPTION('Name (but only valid for application)'),DEVIMP(INTERNAL),DTYPE(ENTRY),HIDDEN(1),MACROOWNERCONTEXT(1),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ModulesPerDLL),DESCRIPTION(Modules per DLL),DEVIMP(USEFUL),DTYPE(SPIN),STOP('@EVAL(CHOOSE(%PROCEDUREWIZATRON%))'),TYPE(NUMERIC)
+  PROPERTY: NAME(Next.Control.Instance),DESCRIPTION(Internal: instance allocated to next control wizard),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(Node.ControlWizards),DESCRIPTION(Internal application control wizard components),DTYPE(ENTRY),HIDDEN(1),MULTI(1),TYPE(NODE)
+  PROPERTY: NAME(Node.Frame),DESCRIPTION(Frame property class),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(NODE),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ProcedureWizatron),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProcsPerModule),DESCRIPTION(Procedures per module),DEVIMP(USEFUL),DTYPE(SPIN),TYPE(NUMERIC)
+  PROPERTY: NAME(QuickStart.BrowseAllFiles),DESCRIPTION('The wizatrons can automatically generate browses and update forms for all of the files in the dictionary. Setting this option to ''No'' will suppress automatic creation of these procedures, however, you may later create individual browse procedures by selecting them from the ToDo list.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.PRIORITY(200),QUICKSTART.PROMPT(Generate Browses && Forms for All Files),QUICKSTART.TABLABEL(Browses),QUICKSTART.WHENAPPLY('AutoProcedureDepth(@EVAL(CHOOSE(%_Value_% = 1, 2, %AutoProcedureDepth%))),TOPSPEED:Frame.GenerateBrowses(%_Value_%)'),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.Toolbars),DESCRIPTION('You may configure the toolbar operation mode of the application. Selecting ''Yes'' causes the application to have a navigation toolbar which can be used to navigate browses etc. Selecting ''No'' will remove the navigation toolbar from the application.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.PRIORITY(100),QUICKSTART.PROMPT(Navigation Toolbar Available),QUICKSTART.TABLABEL(Toolbars),QUICKSTART.WHENAPPLY('TOPSPEED:Application.ToolbarMode(@EVAL(CHOOSE(%_VALUE_% = 1, ''Both'', ''Button'')))'),TYPE(BOOLEAN)
+  PROPERTY: NAME(TargetOS),DESCRIPTION(Target Operating System),DEVIMP(ASK),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(TargetOS.List),DESCRIPTION(Target OS Choices),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(TargetResolution),DESCRIPTION(Target Desktop Resolution),DEVIMP(COMMON),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(TargetResolution.List),DESCRIPTION(Available target desktop resolution),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(TargetType),DESCRIPTION(Destination type),DEVIMP(ASK),DTYPE(SINGLEDROP),STOP('@EVAL(CHOOSE(%PROCEDUREWIZATRON%))')
+  PROPERTY: NAME(TargetType.List),DESCRIPTION(Available destination types),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(TodoTemplate),DESCRIPTION(Todo template),DEVIMP(BAROQUE),STOP('@EVAL(CHOOSE(%PROCEDUREWIZATRON%))'),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),VALIDATIONTEXT(ToDo template name must be supplied)
+  PROPERTY: NAME(ToolbarMode),DESCRIPTION(Use toolbar or buttons),DEVIMP(COMMON),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(ToolbarMode.List),DESCRIPTION(Available toolbar modes),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  [DEFINITION]
+    APPFILENAME()
+    APPTEMPLATE(ABC)
+    AUTHOR(TopSpeed Wizatrons)
+    AUTOPROCEDUREDEPTH(1)
+    DBAUDITING(0)
+    DICTIONARY()
+    FIRSTPROC(Main)
+    HELPFILE()
+    ISAPPLICATION(%Name%)
+    MODULESPERDLL(10)
+    NEXT.CONTROL.INSTANCE(0)
+    NODE.CONTROLWIZARDS()
+    NODE.FRAME()
+    PROCEDUREWIZATRON(0)
+    PROCSPERMODULE(10)
+    QUICKSTART.BROWSEALLFILES(1)
+    QUICKSTART.TOOLBARS(1)
+    TARGETOS(Windows - 32bit)
+    TARGETOS.LIST(Windows - 16bit,Windows - 32bit)
+    TARGETRESOLUTION(800x600 Small Fonts)
+    TARGETRESOLUTION.LIST(640x480 Small Fonts,640x480 Large Fonts,800x600 Small Fonts,800x600 Large Fonts,1024x768 Small Fonts,1024x768 Large Fonts,1280x1024 Small Fonts,1280x1024 Large Fonts)
+    TARGETTYPE(EXE)
+    TARGETTYPE.LIST(EXE,DLL,LIB)
+    TODOTEMPLATE(ABC ToDo)
+    TOOLBARMODE(Both)
+    TOOLBARMODE.LIST(Button,Toolbar,Both)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlAllocationTarget),DESCRIPTION(Destination allocation area)
+  [DEFINITION]
+    CONTROLALLOCATIONTARGET('@CONTAINER(ControlAllocationTarget)')
+    NAME(TOPSPEED:ApplicationComponent)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:VisualComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Alrt),DESCRIPTION(Alert attributes),DEVIMP(DETAILED),DTYPE(EDITLIST),HIDDEN(1),MULTI(1)
+  PROPERTY: NAME(At.EastOffset),DESCRIPTION(Control east offset),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.Height),DESCRIPTION(Control height),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.MaxHeight),DESCRIPTION(Control maximum height),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.MaxWidth),DESCRIPTION(Control maximum width),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.MinHeight),DESCRIPTION(Control minimum height),DEVIMP(DETAILED),TYPE(NUMERIC),VALIDATION('@EVAL(CHOOSE(%_Value_%<=%At.MaxHeight%))'),VALIDATIONTEXT(Minimum height must be less than or equal maximum height)
+  PROPERTY: NAME(At.MinWidth),DESCRIPTION(Control minimum width),DEVIMP(DETAILED),TYPE(NUMERIC),VALIDATION('@EVAL(CHOOSE(%_Value_%<=%At.MaxWidth%))'),VALIDATIONTEXT(Minimum width must be less than or equal maximum width)
+  PROPERTY: NAME(At.NorthOffset),DESCRIPTION(Control north offset),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.SouthOffset),DESCRIPTION(Control south offset),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.WestOffset),DESCRIPTION(Control west offset),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.Width),DESCRIPTION(Control width),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.XPos),DESCRIPTION(Control x position),DEVIMP(DETAILED),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(At.YPos),DESCRIPTION(Control y position),DEVIMP(DETAILED),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(Color.Basic),DESCRIPTION(Basic color),DEVIMP(DETAILED),DTYPE(COLOR)
+  PROPERTY: NAME(Color.SelectedBack),DESCRIPTION(Selected background color),DEVIMP(DETAILED),DTYPE(COLOR)
+  PROPERTY: NAME(Color.SelectedFore),DESCRIPTION(Selected foreground color),DEVIMP(DETAILED),DTYPE(COLOR)
+  PROPERTY: NAME(Cursor),DESCRIPTION(Cursor when over control),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Cursor.List),DESCRIPTION(Available Cursors),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(DropID),DESCRIPTION(Windows drop ID),DEVIMP(DETAILED),DTYPE(EDITLIST),HIDDEN(1),MULTI(1)
+  PROPERTY: NAME(Font.CharSet),DESCRIPTION(Font typeface),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Font.CharSet.List),DESCRIPTION(Font typeface),DEVIMP(DETAILED),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Font.Color),DESCRIPTION(Font color),DEVIMP(DETAILED),DTYPE(COLOR)
+  PROPERTY: NAME(Font.Size),DESCRIPTION(Font size),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Font.Style),DESCRIPTION(Font style),DEVIMP(DETAILED),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(Font.Typeface),DESCRIPTION(Font typeface),DEVIMP(DETAILED),DTYPE(FONT)
+  PROPERTY: NAME(HelpId),DESCRIPTION(Help Identifier),DEVIMP(DETAILED)
+  PROPERTY: NAME(Immediate),DESCRIPTION(IMM attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Message),DESCRIPTION(Windows message attribute),DEVIMP(DETAILED)
+  [DEFINITION]
+    ALRT()
+    AT.EASTOFFSET(0)
+    AT.HEIGHT(0)
+    AT.MAXHEIGHT('@BestWinHeight(70)')
+    AT.MAXWIDTH('@BestWinWidth(70)')
+    AT.MINHEIGHT(0)
+    AT.MINWIDTH(0)
+    AT.NORTHOFFSET(0)
+    AT.SOUTHOFFSET(0)
+    AT.WESTOFFSET(0)
+    AT.WIDTH(0)
+    AT.XPOS(0)
+    AT.YPOS(0)
+    COLOR.BASIC(-1)
+    COLOR.SELECTEDBACK(-1)
+    COLOR.SELECTEDFORE(-1)
+    CURSOR()
+    CURSOR.LIST(CURSOR:NoDrop,CURSOR:Zoom)
+    DROPID()
+    FONT.CHARSET()
+    FONT.CHARSET.LIST(,Charset:Default,Charset:Ansi,Charset:Symbol,Charset:Mac,Charset:ShiftJis,Charset:Handeul,Charset:Johab,Charset:Gb2312,Charset:Chinesebig5,Charset:Greek,Charset:Turkish,Charset:Hebrew,Charset:Arabic,Charset:Baltic,Charset:Cyrillic,Charset:Thai,Charset:EastEurope,Charset:Oem)
+    FONT.COLOR(-1)
+    FONT.SIZE(0)
+    FONT.STYLE()
+    FONT.TYPEFACE()
+    HELPID()
+    IMMEDIATE(0)
+    MESSAGE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Control
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Functional),DESCRIPTION(Purely functional control),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Allocation.Height),DESCRIPTION(Space allocators height handle)
+  PROPERTY: NAME(Allocation.Ignore),DESCRIPTION(Avoid screen allocation),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Allocation.NonFixedDims),DEVIMP(BAROQUE),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Allocation.Output),DESCRIPTION(Avoid screen output),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Allocation.Priority),DESCRIPTION(Population priority),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Allocation.Tab),ACORN('@EVAL(CHOOSE(UPPER(''%_Value_%'')<>''ALL'' AND UPPER(''%_Value_%'')<>''**SHEET**''))'),ACORN.CONTEXT('@EVAL(CHOOSE(UPPER(''%_Value_%'')=''**TOOLBAR**'','''',''Text(%_Value_%)''))'),ACORN.INITPRIORITY(100),ACORN.NAME('@EVAL(CHOOSE(UPPER(''%_Value_%''=''**TOOLBAR**''), ''Toolbar'', ''Tab: %_Value_%''))'),ACORN.WIZARD('+@EVAL(CHOOSE(UPPER(''%_Value_%'')=''**TOOLBAR**'',''^Toolbar'',''^(Allocation.Target)Tab''))'),DESCRIPTION(Tab name to allocate on)
+  PROPERTY: NAME(Allocation.Target),ACORN(1),ACORN.CONTEXT('Allocation.Target(%_Value_%)'),ACORN.NAME('Sheet: @EVAL(CHOOSE(INSTRING(''!'',''%_VALUE_%'',1,1)<>0, SUB(''%_VALUE_%'', INSTRING(''!'',''%_VALUE_%'',-1,LEN(''%_Value_%''))+1, -1), ''Standard''))'),ACORN.WIZARD(+^Sheet#ControlTemplateLess),DESCRIPTION(Destination allocation area)
+  PROPERTY: NAME(Allocation.Width),DESCRIPTION(Space allocators width handle)
+  PROPERTY: NAME(Allocation.Xpos),DESCRIPTION(Space allocators X handle)
+  PROPERTY: NAME(Allocation.Ypos),DESCRIPTION(Space allocators Y handle)
+  PROPERTY: NAME(Allocation.Zone),DESCRIPTION(Zone to populate control),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Allocation.Zone.List),DESCRIPTION(Available zones),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(At.CostFactor),DESCRIPTION(Resize cost),DEVIMP(BAROQUE),TYPE(NUMERIC)
+  PROPERTY: NAME(ControlType),DESCRIPTION(Control Type),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(Disable),DESCRIPTION(Disabled?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(FocusKey),DESCRIPTION(Focus hot-key),DEVIMP(DETAILED)
+  PROPERTY: NAME(FromDictionary),DESCRIPTION(Use properties of control from dictionary),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(FromDictionary.List),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(Full),DESCRIPTION(Full attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Hidden),DESCRIPTION(Control initially hidden),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Internal.FIELDS),DESCRIPTION(Internal: Controls #Fields attribute),DTYPE(ENTRY),HIDDEN(1),MULTI(1)
+  PROPERTY: NAME(Internal.LINK),DESCRIPTION(Internal: Controls #Link attribute),DTYPE(ENTRY),HIDDEN(1)
+  PROPERTY: NAME(Internal.ORIG),DESCRIPTION(Internal: Controls #ORIG attribute),DTYPE(ENTRY),HIDDEN(1)
+  PROPERTY: NAME(Internal.SEQ),DESCRIPTION(Internal: Controls #SEQ attribute),DTYPE(ENTRY),HIDDEN(1)
+  PROPERTY: NAME(Populator),DESCRIPTION(Control template parent),DTYPE(ENTRY),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(Resize),DESCRIPTION(Set to one if this control can have resize strategies),DEVIMP(BAROQUE),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Resize.Disable),DESCRIPTION(Resize disabled),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Resize.HPosition),DESCRIPTION(Horizontal position strategy),DEVIMP(USEFUL),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(Resize.HResize),DESCRIPTION(Horizontal resize strategy),DEVIMP(USEFUL),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(Resize.VPosition),DESCRIPTION(Vertical position strategy),DEVIMP(USEFUL),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(Resize.VResize),DESCRIPTION(Vertical resize strategy),DEVIMP(USEFUL),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(Scroll),DESCRIPTION(Controls scroll attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Skip),DESCRIPTION(Controls skip attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Target),DESCRIPTION(Current tied allocation.target),DEVIMP(TRANSIENT),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(Tooltip),DESCRIPTION(Controls tooltip),DEVIMP(DETAILED)
+  PROPERTY: NAME(Use.AltEquate),DESCRIPTION(Alternative field equate label),DEVIMP(DETAILED)
+  PROPERTY: NAME(Use.FeqLabel),DESCRIPTION(Actual field equate label),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(Use.Label),DESCRIPTION(Field equate label or use variable),DEVIMP(DETAILED)
+  PROPERTY: NAME(Use.Number),DESCRIPTION(Field equate value),DEVIMP(DETAILED)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:VisualComponent)
+    ALLOCATION.FUNCTIONAL(0)
+    ALLOCATION.HEIGHT()
+    ALLOCATION.IGNORE(0)
+    ALLOCATION.NONFIXEDDIMS(0)
+    ALLOCATION.OUTPUT(1)
+    ALLOCATION.PRIORITY(5)
+    ALLOCATION.TAB('@EVAL(CHOOSE(''@USER(%^Field%,TAB)''='''',''General'',''@USER(%^Field%,TAB)''))')
+    ALLOCATION.TARGET('@EVAL(CHOOSE(''%Populator%''<>'''',''%^ControlAllocationTarget%'',''Standard''))')
+    ALLOCATION.WIDTH()
+    ALLOCATION.XPOS(F)
+    ALLOCATION.YPOS(F)
+    ALLOCATION.ZONE(Zone:Center)
+    ALLOCATION.ZONE.LIST(Zone:Center,Zone:North,Zone:East,Zone:West,Zone:South,Zone:SouthEast,Zone:NorthEast,Zone:SouthWest,Zone:NorthWest)
+    AT.COSTFACTOR(1)
+    AT.MINHEIGHT(10)
+    AT.MINWIDTH(20)
+    CONTROLTYPE()
+    DISABLE(0)
+    FOCUSKEY()
+    FROMDICTIONARY(IfDifferent)
+    FROMDICTIONARY.LIST(Always,Never,IfDifferent)
+    FULL(0)
+    HIDDEN(0)
+    INTERNAL.FIELDS()
+    INTERNAL.LINK()
+    INTERNAL.ORIG(%USE.LABEL%)
+    INTERNAL.SEQ(%^Instance%)
+    POPULATOR()
+    RESIZE('@EVAL(CHOOSE(%ALLOCATION.OUTPUT% AND ''%USE.LABEL%''<>''''))')
+    RESIZE.DISABLE(0)
+    RESIZE.HPOSITION('@EVAL(CHOOSE(INLIST(UPPER(''%ALLOCATION.ZONE%''),''ZONE:CENTER'',''ZONE:EAST'',''ZONE:WEST'',''ZONE:SOUTHEAST'',''ZONE:NORTHEAST'',''ZONE:SOUTHWEST'',''ZONE:NORTHWEST''),''Fix Left'',''Fix Right'',''Fix Left'',''Fix Right'',''Fix Right'',''Fix Left'',''Fix Left'',''Fix Nearest''))')
+    RESIZE.HRESIZE('@EVAL(CHOOSE(INLIST(UPPER(''%ALLOCATION.ZONE%''),''ZONE:CENTER''), ''Constant Right Border'',''Lock Width''))')
+    RESIZE.VPOSITION('@EVAL(CHOOSE(INLIST(UPPER(''%ALLOCATION.ZONE%''),''ZONE:CENTER'',''ZONE:NORTH'',''ZONE:SOUTH'',''ZONE:SOUTHEAST'',''ZONE:NORTHEAST'',''ZONE:SOUTHWEST'',''ZONE:NORTHWEST''),''Fix Top'',''Fix Top'',''Fix Bottom'',''Fix Bottom'',''Fix Top'',''Fix Bottom'',''Fix Top'',''Fix Nearest''))')
+    RESIZE.VRESIZE('@EVAL(CHOOSE(INLIST(UPPER(''%ALLOCATION.ZONE%''),''ZONE:CENTER''), ''Constant Bottom Border'',''Lock Height''))')
+    SCROLL(0)
+    SKIP(0)
+    TARGET()
+    TOOLTIP()
+    USE.ALTEQUATE()
+    USE.FEQLABEL('@EVAL(CHOOSE(''%Use.AltEquate%''<>'''',''%Use.AltEquate%'',CHOOSE((''%Use.Label%'' = '''') OR SUB(''%Use.Label%'',1,1)=''?'',''%Use.Label%'', ''?%Use.Label%'')))')
+    USE.LABEL('?%ControlType%:@INDEX(Scope.Node.Controls,%Name%)')
+    USE.NUMBER()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Height),STOP(1)
+  PROPERTY: NAME(Allocation.Tab),STOP(1)
+  PROPERTY: NAME(Allocation.Target),STOP(1)
+  PROPERTY: NAME(Allocation.Width),STOP(1)
+  PROPERTY: NAME(Allocation.Xpos),STOP(1)
+  PROPERTY: NAME(Allocation.Ypos),STOP(1)
+  PROPERTY: NAME(Allocation.Zone),STOP(1)
+  PROPERTY: NAME(At.EastOffset),STOP(1)
+  PROPERTY: NAME(At.Height),STOP(1)
+  PROPERTY: NAME(At.MaxHeight),STOP(1)
+  PROPERTY: NAME(At.MaxWidth),STOP(1)
+  PROPERTY: NAME(At.MinHeight),STOP(1)
+  PROPERTY: NAME(At.MinWidth),STOP(1)
+  PROPERTY: NAME(At.NorthOffset),STOP(1)
+  PROPERTY: NAME(At.SouthOffset),STOP(1)
+  PROPERTY: NAME(At.WestOffset),STOP(1)
+  PROPERTY: NAME(At.Width),STOP(1)
+  PROPERTY: NAME(At.XPos),STOP(1)
+  PROPERTY: NAME(At.YPos),STOP(1)
+  PROPERTY: NAME(Cursor),STOP(1)
+  PROPERTY: NAME(FromDictionary),STOP(1)
+  PROPERTY: NAME(Full),STOP(1)
+  PROPERTY: NAME(Hidden),STOP(1)
+  PROPERTY: NAME(Immediate),STOP(1)
+  PROPERTY: NAME(Internal.ORIG),STOP(1)
+  PROPERTY: NAME(Internal.SEQ),STOP(1)
+  PROPERTY: NAME(Resize.HPosition),STOP(1)
+  PROPERTY: NAME(Resize.HResize),STOP(1)
+  PROPERTY: NAME(Resize.VPosition),STOP(1)
+  PROPERTY: NAME(Resize.VResize),STOP(1)
+  PROPERTY: NAME(Right),DESCRIPTION(Menu on right?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Scroll),STOP(1)
+  PROPERTY: NAME(Skip),STOP(1)
+  PROPERTY: NAME(Standard),DESCRIPTION(Standard action attribute),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Standard.List),DESCRIPTION(Standard actions),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(Text),DESCRIPTION(Menu Text),DEVIMP(DETAILED)
+  PROPERTY: NAME(Tooltip),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    CONTROLTYPE(MENU)
+    RESIZE(0)
+    RIGHT()
+    STANDARD()
+    STANDARD.LIST(STD:WindowList,STD:TileWindow,STD:CascadeWindow,STD:ArrangeIcons,STD:HelpIndex,STD:HelpOnHelp,STD:HelpSearch,STD:Help,STD:Cut,STD:Copy,STD:Paste,STD:Clear,STD:Undo,STD:Close,STD:PrintSetup,STD:TileHorizontal,STD:TileVertical)
+    TEXT('&@EVAL(SUB(''%USE.LABEL%'',2,LEN(''%USE.LABEL%'')-1))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Check),DESCRIPTION(Menu item chackable?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Icon),DESCRIPTION(Menu icon),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(Icon files|*.ico)
+  PROPERTY: NAME(Internal.SEQ),STOP(1)
+  PROPERTY: NAME(Item.Procedure),DESCRIPTION(Procedure to invoke from menu item),DEVIMP(DETAILED)
+  PROPERTY: NAME(Item.Request),DESCRIPTION(File action requested),DEVIMP(BAROQUE),TYPE(STRING)
+  PROPERTY: NAME(Item.Stack),DESCRIPTION(Stack to allocate new procedure),DEVIMP(BAROQUE),TYPE(NUMERIC)
+  PROPERTY: NAME(Item.Thread),DESCRIPTION(Invoke procedure on new thread),DEVIMP(BAROQUE),TYPE(NUMERIC)
+  PROPERTY: NAME(Menu),ACORN(1),ACORN.CONTEXT('USE.LABEL(?%_VALUE_%),POPULATOR(%NAME%)'),ACORN.NAME(Menu : %_Value_%),ACORN.WIZARD('+^(Scope.MenuManager)Menu#%_Value_%'),DESCRIPTION(Menu to place item on),DEVIMP(DETAILED)
+  PROPERTY: NAME(Separator),DESCRIPTION(Menu item is separator),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(50)
+    CHECK(0)
+    CONTROLTYPE(ITEM)
+    ICON()
+    ITEM.PROCEDURE()
+    ITEM.REQUEST(NONE)
+    ITEM.STACK(25000)
+    ITEM.THREAD(1)
+    MENU()
+    RIGHT(0)
+    SEPARATOR(0)
+    TEXT()
+    USE.LABEL(?%Item.Procedure%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#ArrangeIcons
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(65)
+    MENU(Window)
+    MESSAGE(Align all window icons)
+    STANDARD(STD:ArrangeIcons)
+    TEXT(&Arrange Icons)
+    USE.LABEL(?Arrange)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Browse
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ITEM.PROCEDURE(%^Output.ProcName%)
+    MENU(Browse)
+    TEXT(Browse %^PrimaryFile%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Process
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ITEM.PROCEDURE(%^Output.ProcName%)
+    MENU(Process)
+    TEXT(Process %^PrimaryFile%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Cascade
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    MENU(Window)
+    MESSAGE(Stack all open windows)
+    STANDARD(STD:CascadeWindow)
+    TEXT(&Cascade)
+    USE.LABEL(?Cascade)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Copy
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(55)
+    MENU(Edit)
+    MESSAGE(Copy item to Windows Clipboard)
+    STANDARD(STD:Copy)
+    TEXT(&Copy)
+    USE.LABEL(?Copy)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Cut
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    MENU(Edit)
+    STANDARD(STD:Cut)
+    TEXT(C&ut)
+    USE.LABEL(?Cut)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#HelpIndex
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    MENU(Help)
+    MESSAGE(View the contents of the help file)
+    STANDARD(STD:HelpIndex)
+    TEXT(&Contents)
+    USE.LABEL(?Helpindex)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#HelpOnHelp
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(60)
+    MENU(Help)
+    MESSAGE(How to use Windows Help)
+    STANDARD(STD:HelpOnHelp)
+    TEXT(&How to Use Help)
+    USE.LABEL(?HelpOnHelp)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#HelpSearch
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(55)
+    MENU(Help)
+    MESSAGE(Search for help on a subject)
+    STANDARD(STD:HelpSearch)
+    TEXT(&Search for Help On...)
+    USE.LABEL(?HelpSearch)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Paste
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(60)
+    MENU(Edit)
+    MESSAGE(Paste contents of Windows Clipboard)
+    STANDARD(STD:Paste)
+    TEXT(&Paste)
+    USE.LABEL(?Paste)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#PrintSetup
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    MENU(File)
+    MESSAGE(Setup printer)
+    STANDARD(STD:PrintSetup)
+    TEXT(&Print Setup ...)
+    USE.LABEL(?PrintSetup)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Quit
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(55)
+    MENU(File)
+    STANDARD(STD:Close)
+    TEXT(E&xit)
+    USE.LABEL(?Abort)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#SplashSeparator
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(64)
+    SEPARATOR(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Splash
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Item.Procedure),ACORN(1),ACORN.NAME(%_VALUE_%),ACORN.WIZARD(*Splash#About),DTYPE(ENTRY)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(65)
+    ITEM.PROCEDURE(AboutWindow)
+    ITEM.THREAD(0)
+    MENU(Help)
+    TEXT(&About...)
+    USE.LABEL(?About)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#TileHorizontal
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(55)
+    MENU(Window)
+    MESSAGE(Make all open windows visible)
+    STANDARD(STD:TileHorizontal)
+    TEXT(Tile &Horizontal)
+    USE.LABEL(?TileHorizontal)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#TileVertical
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ALLOCATION.PRIORITY(60)
+    MENU(Window)
+    MESSAGE(Make all open windows visible)
+    STANDARD(STD:TileVertical)
+    TEXT(Tile &Vertical)
+    USE.LABEL(?TileVertical)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Browse
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(6)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Process
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(7)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Edit
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(4)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#File
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(2)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Help
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(8)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Window
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(7)
+    STANDARD(STD:WindowList)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Report
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Default
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Default),DESCRIPTION(Button is default),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Delay),DESCRIPTION(Repeat button delay),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Flat),DESCRIPTION(Button is displayed flat?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Icon),DESCRIPTION(Button icon),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(Icon files|*.ico)
+  PROPERTY: NAME(IconPosition),DESCRIPTION(Icon placement),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(IconPosition.List),DESCRIPTION(Available icon placements),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(Item.Procedure),DESCRIPTION(Procedure to invoke from button),DEVIMP(DETAILED)
+  PROPERTY: NAME(Item.Stack),DESCRIPTION(Stack to allocate new procedure),DEVIMP(BAROQUE),TYPE(NUMERIC)
+  PROPERTY: NAME(Item.Thread),DESCRIPTION(Invoke procedure on new thread),DEVIMP(BAROQUE),TYPE(NUMERIC)
+  PROPERTY: NAME(Repeat),DESCRIPTION(Repeat button rate),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Required),DESCRIPTION(Buttons REQ attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Standard),DESCRIPTION(Standard action attribute),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Standard.List),DESCRIPTION(Standard actions),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(Text),DESCRIPTION(Text of button),DEVIMP(DETAILED)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    ALLOCATION.HEIGHT(XButtonHeight)
+    ALLOCATION.TAB()
+    ALLOCATION.WIDTH(XButtonWidth)
+    ALLOCATION.ZONE(Zone:SouthEast)
+    AT.MINHEIGHT(14)
+    AT.MINWIDTH(45)
+    CONTROLTYPE(BUTTON)
+    DEFAULT(0)
+    DELAY('@EVAL(CHOOSE(%Immediate% = 1, 50, ''''))')
+    FLAT(0)
+    ICON()
+    ICONPOSITION(None)
+    ICONPOSITION.LIST(None,Left,Right)
+    ITEM.PROCEDURE()
+    ITEM.STACK(25000)
+    ITEM.THREAD(0)
+    REPEAT(0)
+    REQUIRED(0)
+    STANDARD()
+    STANDARD.LIST(STD:WindowList,STD:TileWindow,STD:CascadeWindow,STD:ArrangeIcons,STD:HelpIndex,STD:HelpOnHelp,STD:HelpSearch,STD:Help,STD:Cut,STD:Copy,STD:Paste,STD:Clear,STD:Undo,STD:Close,STD:PrintSetup,STD:TileHorizontal,STD:TileVertical)
+    TEXT()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ITEM.PROCEDURE),STOP(1)
+  PROPERTY: NAME(ITEM.STACK),STOP(1)
+  PROPERTY: NAME(ITEM.THREAD),STOP(1)
+  PROPERTY: NAME(REPEAT),STOP(1)
+  PROPERTY: NAME(REQUIRED),STOP(1)
+  PROPERTY: NAME(STANDARD),STOP(1)
+  PROPERTY: NAME(STANDARD.LIST),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.TAB(%^TabName%)
+    ALLOCATION.ZONE(Zone:NorthWest)
+    AT.MAXHEIGHT(14)
+    AT.MAXWIDTH(16)
+    AT.MINHEIGHT(14)
+    AT.MINWIDTH(16)
+    FLAT(1)
+    INTERNAL.LINK(BrwTBar:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Top
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(13)
+    ICON(VCRFIRST.ICO)
+    INTERNAL.ORIG(?Browse:Top)
+    TOOLTIP(Go to the first page)
+    USE.LABEL(?Browse:Top:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#PageUp
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(12)
+    ICON(VCRPRIOR.ICO)
+    INTERNAL.ORIG(?Browse:PageUp)
+    TOOLTIP(Go to the prior page)
+    USE.LABEL(?Browse:PageUp:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Up
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(11)
+    ICON(VCRUP.ICO)
+    INTERNAL.ORIG(?Browse:Up)
+    TOOLTIP(Go to the prior record)
+    USE.LABEL(?Browse:Up:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Locate
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(10)
+    ICON(FIND.ICO)
+    INTERNAL.ORIG(?Browse:Locate)
+    TOOLTIP(Locate record)
+    USE.LABEL(?Browse:Locate:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Down
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(9)
+    ICON(VCRDOWN.ICO)
+    INTERNAL.ORIG(?Browse:Down)
+    TOOLTIP(Go to the next record)
+    USE.LABEL(?Browse:Down:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#PageDown
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(8)
+    ICON(VCRNEXT.ICO)
+    INTERNAL.ORIG(?Browse:PageDown)
+    TOOLTIP(Go to the next record)
+    USE.LABEL(?Browse:PageDown:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Bottom
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(7)
+    ICON(VCRNEXT.ICO)
+    INTERNAL.ORIG(?Browse:Bottom)
+    TOOLTIP(Go to the last page)
+    USE.LABEL(?Browse:Bottom:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Select
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(6)
+    DISABLE(1)
+    ICON(MARK.ICO)
+    INTERNAL.ORIG(?Browse:Select)
+    TOOLTIP(Select this record)
+    USE.LABEL(?Browse:Select:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Insert
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(5)
+    DISABLE(1)
+    ICON(INSERT.ICO)
+    INTERNAL.ORIG(?Browse:Insert)
+    TOOLTIP(Insert a new record)
+    USE.LABEL(?Browse:Insert:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Change
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(4)
+    DISABLE(1)
+    ICON(EDIT.ICO)
+    INTERNAL.ORIG(?Browse:Change)
+    TOOLTIP(Edit this record)
+    USE.LABEL(?Browse:Change:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Delete
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(3)
+    DISABLE(1)
+    ICON(DELETE.ICO)
+    INTERNAL.ORIG(?Browse:Delete)
+    TOOLTIP(Delete this record)
+    USE.LABEL(?Browse:Delete:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#History
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(2)
+    DISABLE(1)
+    ICON(DITTO.ICO)
+    INTERNAL.ORIG(?Browse:History)
+    TOOLTIP(Previous value)
+    USE.LABEL(?Browse:History:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BTB#Help
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BTB)
+    ALLOCATION.PRIORITY(1)
+    DISABLE(1)
+    ICON(HELP.ICO)
+    INTERNAL.ORIG(?Browse:Help)
+    TOOLTIP(Get help)
+    USE.LABEL(?Browse:Help:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseQBE
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.TAB(%^TabName%)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?Query)
+    TEXT(&Query)
+    USE.LABEL(?Query:%^INSTANCE%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseSelect
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?Select)
+    TEXT(&Select)
+    USE.LABEL(?Select:%^INSTANCE%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseView
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.TAB(%^TabName%)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?View)
+    TEXT(&View)
+    USE.LABEL(?View:%^INSTANCE%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseToolbox
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.FUNCTIONAL(1)
+    ALLOCATION.TAB(%^TabName%)
+    HIDDEN(1)
+    INTERNAL.ORIG(?Toolbox)
+    RESIZE.DISABLE(1)
+    TEXT(&Toolbox)
+    USE.LABEL(?Toolbox:%^INSTANCE%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Cancel
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(4)
+    INTERNAL.ORIG(?Cancel)
+    TEXT(&Cancel)
+    USE.LABEL(?Cancel)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#ProcessCancel
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(4)
+    INTERNAL.ORIG(?Progress:Cancel)
+    TEXT(Cancel)
+    USE.LABEL(?Progress:Cancel)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Pause
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(4)
+    INTERNAL.ORIG(?Pause)
+    TEXT(&Pause)
+    USE.LABEL(?Pause)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Change
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(8)
+    ALLOCATION.TAB(%^TabName%)
+    INTERNAL.LINK(BrwButtons:%^Instance%)
+    INTERNAL.ORIG(?Change)
+    TEXT(&Change)
+    USE.LABEL(?Change:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Up
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(4)
+    ALLOCATION.TAB(%^TabText%)
+    DISABLE(1)
+    INTERNAL.LINK(BrwTButtons:%^Instance%)
+    INTERNAL.ORIG(?Up)
+    TEXT(&Up)
+    USE.LABEL(?Up:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Down
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(4)
+    ALLOCATION.TAB(%^TabText%)
+    INTERNAL.LINK(BrwTButtons:%^Instance%)
+    INTERNAL.ORIG(?Down)
+    TEXT(&Down)
+    USE.LABEL(?Down:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#TreeDisplay
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String)
+    ALLOCATION.PRIORITY(8)
+    ALLOCATION.TAB(%^TabText%)
+    ALLOCATION.ZONE(Zone:NorthWest)
+    AT.MINWIDTH(140)
+    INTERNAL.LINK(BrwTButtons:%^Instance%)
+    INTERNAL.ORIG(?Display)
+    TEXT()
+    USE.LABEL(?Display:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Close
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(7)
+    INTERNAL.ORIG(?Close)
+    TEXT(&Close)
+    USE.LABEL(?Close)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Close#About
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Close)
+    ALLOCATION.TAB(General)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Delete
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(9)
+    ALLOCATION.TAB(%^TabName%)
+    INTERNAL.LINK(BrwButtons:%^Instance%)
+    INTERNAL.ORIG(?Delete)
+    TEXT(&Delete)
+    USE.LABEL(?Delete:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#FieldLookup
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(3)
+    ALLOCATION.TAB('@EVAL(CHOOSE(''@USER(%^Field%,TAB)''='''',''General'',''@USER(%^Field%,TAB)''))')
+    ALLOCATION.WIDTH(XFieldButtonWidth)
+    ALLOCATION.XPOS()
+    ALLOCATION.YPOS(%^HAlign%)
+    ALLOCATION.ZONE(Zone:Center)
+    AT.HEIGHT(12)
+    AT.MINHEIGHT(12)
+    AT.MINWIDTH(12)
+    AT.WIDTH(12)
+    INTERNAL.ORIG(?CallLookup)
+    RESIZE.HPOSITION(Fix Right)
+    RESIZE.HRESIZE(Lock Width)
+    RESIZE.VRESIZE(Lock Height)
+    TEXT(...)
+    USE.LABEL(?CallLookup:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Insert
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(7)
+    ALLOCATION.TAB(%^TabName%)
+    INTERNAL.LINK(BrwButtons:%^Instance%)
+    INTERNAL.ORIG(?Insert)
+    TEXT(&Insert)
+    USE.LABEL(?Insert:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Save
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(3)
+    DEFAULT(1)
+    INTERNAL.ORIG(?OK)
+    TEXT(&OK)
+    USE.LABEL(?OK)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar
+  DESCRIPTOR: 1
+  PROPERTY: NAME(At.Height),DESCRIPTION(Toolbar button height),DEVIMP(COMMON)
+  PROPERTY: NAME(At.Width),DESCRIPTION(Toolbar Button Width),DEVIMP(COMMON)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.TAB(**TOOLBAR**)
+    ALLOCATION.TARGET('@CONTAINER(Allocation.Target)')
+    ALLOCATION.ZONE(Zone:Center)
+    AT.HEIGHT(16)
+    AT.MAXHEIGHT(%At.Height%)
+    AT.MAXWIDTH(%At.Width%)
+    AT.MINHEIGHT(%At.Height%)
+    AT.MINWIDTH(%At.Width%)
+    AT.WIDTH(18)
+    DISABLE(1)
+    FLAT(1)
+    INTERNAL.SEQ('@EXTRACT(Scope.ToolbarControl,Instance)')
+    RESIZE(0)
+    USE.LABEL(?%USE.NUMBER%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Insert
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizIns.ico)
+    USE.NUMBER(Toolbar:Insert)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Top
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizFirst.ico)
+    USE.NUMBER(Toolbar:Top)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#PageUp
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizPgUp.ico)
+    IMMEDIATE(1)
+    USE.NUMBER(Toolbar:PageUp)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#PageDown
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizPgDn.ico)
+    IMMEDIATE(1)
+    USE.NUMBER(Toolbar:PageDown)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Bottom
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizLast.ico)
+    USE.NUMBER(Toolbar:Bottom)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Up
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizUp.ico)
+    IMMEDIATE(1)
+    USE.NUMBER(Toolbar:Up)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Down
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizDown.ico)
+    IMMEDIATE(1)
+    USE.NUMBER(Toolbar:Down)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Locate
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizFind.ico)
+    USE.NUMBER(Toolbar:Locate)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Select
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizMark.ico)
+    USE.NUMBER(Toolbar:Select)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Change
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizEdit.ico)
+    USE.NUMBER(Toolbar:Change)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Delete
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizDel.ico)
+    USE.NUMBER(Toolbar:Delete)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#History
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizDitto.ico)
+    USE.NUMBER(Toolbar:History)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Help
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#Toolbar)
+    ICON(wizHelp.ico)
+    USE.NUMBER(Toolbar:Help)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Entry
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Case),DESCRIPTION(Case of entries),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Case.List),DESCRIPTION('Available case''s'),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(ForceRefresh),DESCRIPTION(Force Refresh),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Justification),DESCRIPTION(Controls justification),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Justification.List),DESCRIPTION(Available justifications),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(Justification.Offset),DESCRIPTION(Controls offset attribute),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Mask),DESCRIPTION(Controls mask attribute),DEVIMP(DETAILED)
+  PROPERTY: NAME(Password),DESCRIPTION(Controls password attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Picture),DESCRIPTION(Controls picture attribute),DEVIMP(DETAILED)
+  PROPERTY: NAME(PostLookupField),DESCRIPTION(Field for validation lookup),DEVIMP(BAROQUE)
+  PROPERTY: NAME(PostLookupKey),DESCRIPTION(Key for validation lookup),DEVIMP(BAROQUE)
+  PROPERTY: NAME(PostLookupProcedure),ACORN(1),ACORN.CONTEXT('PrimaryFile(%_VALUE_%)'),ACORN.NAME(Browse %_VALUE_%),ACORN.WIZARD(*Browse),DESCRIPTION(Procedure for validation lookup),DEVIMP(DETAILED),TYPE(STRING)
+  PROPERTY: NAME(ReadOnly),DESCRIPTION(Controls read-only attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Required),DESCRIPTION(Controls REQ attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Transparent),DESCRIPTION(Controls transparent attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(TypingMode),DESCRIPTION(Controls typing mode),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(TypingMode.List),DESCRIPTION(Available typing modes),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    ALLOCATION.HEIGHT(XEntryHeight)
+    ALLOCATION.XPOS(FEntryXPos)
+    AT.MINHEIGHT(12)
+    CASE(NONE)
+    CASE.LIST(NONE,CAP,UPR)
+    CONTROLTYPE(ENTRY)
+    FORCEREFRESH(0)
+    JUSTIFICATION(NONE)
+    JUSTIFICATION.LIST(NONE,LEFT,RIGHT,CENTER,DECIMAL)
+    JUSTIFICATION.OFFSET(0)
+    MASK()
+    PASSWORD(0)
+    PICTURE('@SCREENPICTURE(%^Field%)')
+    POSTLOOKUPFIELD('@KEYFIELD(%PostLookupKey%)')
+    POSTLOOKUPKEY('@RELATIONKEY(%^LookupFile%,%^PrimaryFile%)')
+    POSTLOOKUPPROCEDURE(%^LookupFile%)
+    READONLY(0)
+    REQUIRED(0)
+    RESIZE.VRESIZE(Lock Height)
+    TRANSPARENT(0)
+    TYPINGMODE(NONE)
+    TYPINGMODE.LIST(NONE,INS,OVR)
+    USE.LABEL('@NAME(%^Field%)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ListBox
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Column),DESCRIPTION(List boxes column attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DisplayColumns),ACORN(1),ACORN.CONTEXT('Column.ID(%_VALUE_%)'),ACORN.NAME(Column:%_VALUE_%),ACORN.WIZARD(Column),DESCRIPTION(Fields to display),DEVIMP(DETAILED),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(DisplayColumns.List),DESCRIPTION(Available fields to display),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,NoPopulate,0)=0 AND @USER(%_VALUE_%,NoPopulate,Browse)=0 AND (''@USER(%_VALUE_%,Interest,1)''>=%Scope.InterestThreshold% OR (''@USER(%_VALUE_%,Interest,1)''=0 AND 5>=%Scope.InterestThreshold%))))'),MULTI(1)
+  PROPERTY: NAME(DragID),DESCRIPTION(List boxes drag ID),DEVIMP(DETAILED),MULTI(1)
+  PROPERTY: NAME(Drop.Count),DESCRIPTION(List boxes drop count value),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Drop.Width),DESCRIPTION(List boxes drop width value),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(ForceRefresh),STOP(1)
+  PROPERTY: NAME(Format),DESCRIPTION(List boxes format string),DEVIMP(INTERNAL)
+  PROPERTY: NAME(From),DESCRIPTION(List boxes from attribute),DEVIMP(DETAILED)
+  PROPERTY: NAME(Grid),DESCRIPTION(List boxes grid attribute),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Mark),DESCRIPTION(List boxes mark attribute),DEVIMP(DETAILED)
+  PROPERTY: NAME(NoBar),DESCRIPTION(List boxes nobar attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Picture),STOP(1)
+  PROPERTY: NAME(PostLookupField),STOP(1)
+  PROPERTY: NAME(PostLookupKey),STOP(1)
+  PROPERTY: NAME(PostLookupProcedure),STOP(1)
+  PROPERTY: NAME(Scrollbars),DESCRIPTION(List boxes scroll bars),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(ScrollBars.List),DESCRIPTION(Available scroll bars),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(VCR),DESCRIPTION(List boxes VCR attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(VCR.Field),DESCRIPTION(List boxes VCR field),DEVIMP(DETAILED),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Entry)
+    ALLOCATION.HEIGHT(B)
+    ALLOCATION.TAB(ALL)
+    ALLOCATION.WIDTH(A)
+    ALLOCATION.XPOS()
+    ALLOCATION.YPOS()
+    AT.MINHEIGHT(40)
+    AT.MINWIDTH(60)
+    COLUMN(0)
+    CONTROLTYPE(LIST)
+    DISPLAYCOLUMNS()
+    DISPLAYCOLUMNS.LIST()
+    DRAGID()
+    DROP.COUNT(0)
+    DROP.WIDTH(0)
+    FORMAT()
+    FROM('@EVAL(CHOOSE(''%^Instance%''=0,'''',''Queue:%^Instance%''))')
+    GRID(0)
+    MARK()
+    NOBAR(0)
+    SCROLLBARS(None)
+    SCROLLBARS.LIST(None,HScroll,VScroll,HVScroll)
+    VCR(0)
+    VCR.FIELD()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ComboBox
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Picture),STOP(0)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ListBox)
+    ALLOCATION.HEIGHT()
+    ALLOCATION.TAB('@EVAL(CHOOSE(''@USER(%^Field%,TAB)''='''',''General'',''@USER(%^Field%,TAB)''))')
+    ALLOCATION.WIDTH(F)
+    ALLOCATION.XPOS(FEntryXPos)
+    AT.MINHEIGHT(10)
+    AT.MINWIDTH(40)
+    CONTROLTYPE(COMBO)
+    DROP.COUNT(5)
+    PICTURE('@SCREENPICTURE(%^Field%)')
+    USE.LABEL(?FDBC:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ListBox#Browse
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ListBox)
+    ALLOCATION.TAB(%^TabName%)
+    AT.MAXHEIGHT('@EVAL(CHOOSE(''%^Owned%''=''1'',''@BestWinHeight(25)'',''@INHERIT(At.MaxHeight)''))')
+    AT.MAXWIDTH('@EVAL(CHOOSE(''%^Owned%''=''1'',''@BestWinWidth(50)'',''@INHERIT(At.MaxWidth)''))')
+    IMMEDIATE(1)
+    INTERNAL.ORIG(?List)
+    RESIZE.VRESIZE('@EVAL(CHOOSE(INLIST(UPPER(''%ALLOCATION.ZONE%''),''ZONE:CENTER''), ''Constant Bottom Border'',''Lock Height''))')
+    SCROLLBARS(VScroll)
+    USE.LABEL(?Browse:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ListBox#Drop
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ListBox)
+    ALLOCATION.HEIGHT(XEntryHeight)
+    ALLOCATION.TAB('@EVAL(CHOOSE(''@USER(%^Field%,TAB)''='''',''General'',''@USER(%^Field%,TAB)''))')
+    ALLOCATION.WIDTH()
+    AT.MAXHEIGHT(20)
+    AT.MAXWIDTH(90)
+    AT.MINHEIGHT(10)
+    AT.MINWIDTH(40)
+    DROP.COUNT(5)
+    USE.LABEL(?FDL:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Spin
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Delay),DESCRIPTION(Repeat button delay),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(From),DESCRIPTION(List boxes from attribute),DEVIMP(DETAILED)
+  PROPERTY: NAME(Password),STOP(1)
+  PROPERTY: NAME(Range.High),DESCRIPTION(Upper inclusive limit of range of values),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Range.Low),DESCRIPTION(Lower inclusive limit of range of values),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Repeat),DESCRIPTION(Repeat button rate),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Step),DESCRIPTION(Step within range),DEVIMP(DETAILED),TYPE(NUMERIC)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Entry)
+    ALLOCATION.HEIGHT()
+    CONTROLTYPE(SPIN)
+    DELAY(0)
+    FROM()
+    RANGE.HIGH(0)
+    RANGE.LOW(0)
+    REPEAT(0)
+    STEP(1.0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Text
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Tab),ACORN.CONTEXT('Text(%_Value_%),Allocation.Priority(1)')
+  PROPERTY: NAME(Memo),DESCRIPTION(Is the type of the field that populated this a memo),DEVIMP(BAROQUE),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Picture),STOP(1)
+  PROPERTY: NAME(Scrollbars),DESCRIPTION('Text''s scroll bars'),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(ScrollBars.List),DESCRIPTION(Available scroll bars),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Single),DESCRIPTION(Single line data entry?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Entry)
+    ALLOCATION.FORMTAB('@EVAL(CHOOSE(%Memo%=1,0,1))')
+    ALLOCATION.HEIGHT('@EVAL(CHOOSE(%Memo%=1,''B'',''''))')
+    ALLOCATION.TAB('@EVAL(CHOOSE(''%Memo%''=''1'',CHOOSE(''@PROMPT(%^Field%)''<>'''',''@PROMPT(%^Field%)'',''%^Field%''),''@INHERIT(Allocation.Tab)''))')
+    ALLOCATION.WIDTH('@EVAL(CHOOSE(%Memo%=1,''A'',''@INHERIT(Allocation.Width)''))')
+    AT.MINHEIGHT(30)
+    AT.MINWIDTH(40)
+    CONTROLTYPE(TEXT)
+    MEMO('@ISMEMO(%^Field%)')
+    SCROLLBARS(None)
+    SCROLLBARS.LIST(None,HScroll,VScroll,HVScroll)
+    SINGLE(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Entry#Locator
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Tab),ACORN.CONTEXT('Allocation.Priority(1),Text(%_Value_%)')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Entry)
+    ALLOCATION.PRIORITY(9)
+    ALLOCATION.TAB(%^TabText%)
+    ALLOCATION.ZONE(Zone:NorthEast)
+    INTERNAL.SEQ()
+    PICTURE('@SCREENPICTURE(%^FreeElement%)')
+    POSTLOOKUPFIELD()
+    POSTLOOKUPKEY()
+    POSTLOOKUPPROCEDURE()
+    USE.ALTEQUATE('?@NAME(%^KEY%):@NAME(%^FreeElement%)')
+    USE.LABEL('@NAME(%^FreeElement%)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Checkbox
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Flat),DESCRIPTION(Latching button is displayed flat?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Icon),DESCRIPTION(Icon of latching pushbutton),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(Icon files|*.ico)
+  PROPERTY: NAME(Text),DESCRIPTION(Text of checkbox),DEVIMP(DETAILED)
+  PROPERTY: NAME(TextPosition),DESCRIPTION(Text placement),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(TextPosition.List),DESCRIPTION(Available text placements),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Transparent),DESCRIPTION(Controls transparent attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Use.FalseValue),DESCRIPTION(False value when box is unchecked),DEVIMP(DETAILED)
+  PROPERTY: NAME(Use.TrueValue),DESCRIPTION(True value when box is checked),DEVIMP(DETAILED)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    ALLOCATION.HEIGHT(XEntryHeight)
+    ALLOCATION.WIDTH(XPromptWidth)
+    ALLOCATION.XPOS(FPromptXpos)
+    AT.MINHEIGHT(0)
+    AT.MINWIDTH(0)
+    CONTROLTYPE(CHECK)
+    FLAT(0)
+    ICON()
+    TEXT()
+    TEXTPOSITION(Right)
+    TEXTPOSITION.LIST(Left,Right)
+    TRANSPARENT(0)
+    USE.FALSEVALUE(0)
+    USE.TRUEVALUE(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Radio
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Use.FalseValue),STOP(1)
+  PROPERTY: NAME(Use.TrueValue),STOP(1)
+  PROPERTY: NAME(Use.Value),DESCRIPTION(value when button is selected),DEVIMP(DETAILED)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Checkbox)
+    ALLOCATION.XPOS(FOptionXPos)
+    CONTROLTYPE(RADIO)
+    USE.VALUE(%Text%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Angle),DESCRIPTION('String''s angle attribute'),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Justification),DESCRIPTION(Controls justification),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Justification.List),DESCRIPTION(Available control justification),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Justification.Offset),DESCRIPTION(Controls offset attribute),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Text),DESCRIPTION(Text of string),DEVIMP(DETAILED)
+  PROPERTY: NAME(Transparent),DESCRIPTION(Controls transparent attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    ANGLE(0)
+    AT.MINHEIGHT(0)
+    AT.MINWIDTH(0)
+    CONTROLTYPE(STRING)
+    JUSTIFICATION(NONE)
+    JUSTIFICATION.LIST(NONE,LEFT,RIGHT,CENTER,DECIMAL)
+    JUSTIFICATION.OFFSET(0)
+    TEXT()
+    TRANSPARENT(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Process
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Tab),HIDDEN(1),LOCKED(1)
+  [DEFINITION]
+    PARENTWIZARD(String)
+    ALLOCATION.TAB()
+    ALLOCATION.XPOS(FProcessPos)
+    ALLOCATION.ZONE(Zone:Center)
+    AT.MINWIDTH(141)
+    INTERNAL.SEQ()
+    JUSTIFICATION(CENTER)
+    TRANSPARENT(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Process#User
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#Process)
+    ALLOCATION.PRIORITY(4)
+    INTERNAL.ORIG(?Progress:UserString)
+    TEXT()
+    USE.LABEL(?Progress:UserString)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Process#Pct
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#Process)
+    ALLOCATION.PRIORITY(6)
+    INTERNAL.ORIG(?Progress:PctText)
+    JUSTIFICATION(CENTER)
+    TEXT('Processing, please wait...')
+    USE.LABEL(?Progress:PctText)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#About
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(String)
+    ALLOCATION.HEIGHT(XAboutStringHeight)
+    ALLOCATION.WIDTH(XAboutStringWidth)
+    ALLOCATION.XPOS(FAboutStringXPos)
+    ALLOCATION.ZONE(Zone:NorthEast)
+    INTERNAL.SEQ()
+    TRANSPARENT(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#About#Date
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#About)
+    TEXT(Copyright %YEAR%)
+    USE.LABEL(?CopyrightDate)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#About#Developer
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#About)
+    TEXT(Produced by %Scope.Author%)
+    USE.LABEL(?Developer)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#About#Heading
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#About)
+    TEXT(Wizatron Application)
+    USE.LABEL(?AboutHeading)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Splash
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(String)
+    ALLOCATION.HEIGHT(XSplashStringHeight)
+    ALLOCATION.WIDTH(XSplashStringWidth)
+    ALLOCATION.XPOS(FSplashStringXPos)
+    FONT.COLOR(-2147483646)
+    INTERNAL.SEQ()
+    TRANSPARENT(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Splash#Date
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#Splash)
+    ALLOCATION.XPOS(FSplashBoxBottomXPos)
+    ALLOCATION.ZONE(Zone:SouthEast)
+    TEXT(Copyright %YEAR%)
+    USE.LABEL(?CopyrightDate)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Splash#Developer
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#Splash)
+    ALLOCATION.PRIORITY(6)
+    ALLOCATION.XPOS(FSplashBoxBottomXPos)
+    ALLOCATION.ZONE(Zone:SouthEast)
+    TEXT(Produced by %Scope.Author%)
+    USE.LABEL(?Developer)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Splash#HeadingSmall
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#Splash)
+    ALLOCATION.XPOS(FSplashBoxSmallXPos)
+    FONT.COLOR(-2147483639)
+    FONT.TYPEFACE(Arial)
+    TEXT(Clarion 5)
+    USE.LABEL(?SplashHeadingSmall)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Splash#HeadingLarge
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#Splash)
+    FONT.SIZE(26)
+    FONT.STYLE(700)
+    FONT.TYPEFACE(Arial)
+    USE.LABEL(?SplashHeadingLarge)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Splash#HeadingLarge#Top
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#Splash#HeadingLarge)
+    ALLOCATION.XPOS(FSplashBoxTopXPos)
+    AT.EASTOFFSET(32)
+    AT.WESTOFFSET(32)
+    FONT.COLOR(-2147483639)
+    TEXT(Wizatron)
+    USE.LABEL(?SplashHeadingTop)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Splash#HeadingLarge#Bottom
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:String#Splash#HeadingLarge)
+    ALLOCATION.XPOS(FSplashBoxBottomXPos)
+    ALLOCATION.ZONE(Zone:East)
+    TEXT(Application)
+    USE.LABEL(?SplashHeadingBottom)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Prompt
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Justification),DESCRIPTION('Prompt''s justification'),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Justification.List),DESCRIPTION(Available prompt justification),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Text),DESCRIPTION(Text of prompt),DEVIMP(DETAILED)
+  PROPERTY: NAME(Transparent),DESCRIPTION(Controls transparent attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    ALLOCATION.HEIGHT(XEntryHeight)
+    ALLOCATION.IGNORE('@ISMEMO(%^Field%)')
+    ALLOCATION.NONFIXEDDIMS(1)
+    ALLOCATION.OUTPUT('@EVAL(~%Allocation.Ignore%)')
+    ALLOCATION.PRIORITY(8)
+    ALLOCATION.WIDTH(XPromptWidth)
+    ALLOCATION.XPOS(FPromptXpos)
+    AT.MINHEIGHT(0)
+    AT.MINWIDTH(0)
+    CONTROLTYPE(PROMPT)
+    JUSTIFICATION(NONE)
+    JUSTIFICATION.LIST(NONE,LEFT,RIGHT,CENTER)
+    TEXT('@EVAL(CHOOSE(''%^LookupFile%''='''',''@PROMPT(%^Field%)'',''%^LookupFile% ''&''@PROMPT(%^LookupFile%.@USER(%^Field%,DISPLAY,2))''))')
+    TRANSPARENT(0)
+    USE.LABEL('?Prompt:@NAME(%^Field%)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Prompt#Locator
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Tab),ACORN.CONTEXT('Allocation.Priority(1),Text(%_Value_%)')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Prompt)
+    ALLOCATION.TAB(%^TabText%)
+    ALLOCATION.ZONE(Zone:NorthEast)
+    INTERNAL.SEQ()
+    TEXT('@PROMPT(%^FreeELement%)')
+    USE.LABEL('?Prompt:@NAME(%^KEY%):@NAME(%^FreeElement%)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Prompt#About
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Prompt)
+    ALLOCATION.ZONE(Zone:SouthWest)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Prompt#About#Copyright
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Text),DTYPE(TEXT)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Prompt#About)
+    AT.HEIGHT(34)
+    AT.WIDTH(163)
+    FONT.SIZE(6)
+    FONT.TYPEFACE(Small Fonts)
+    TEXT('Warning:  This computer program is protected by copyright law and international treaties.  Unauthorised reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties. Known violators will be prosecuted to the maximum extent possible under the law.')
+    USE.LABEL(?PromptCopyright)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Control#Group
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.XSpacing),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(Allocation.YSpacing),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(At.EastMargin),DESCRIPTION(Control east margin),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.NorthMargin),DESCRIPTION(Control north margin),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.SouthMargin),DESCRIPTION(Control south margin),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.WestMargin),DESCRIPTION(Control west margin),DEVIMP(DETAILED),TYPE(NUMERIC)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    ALLOCATION.XSPACING('@CONTAINER(Allocation.XSpacing)')
+    ALLOCATION.YSPACING('@CONTAINER(Allocation.XSpacing)')
+    AT.EASTMARGIN(%Allocation.XSpacing%)
+    AT.MINHEIGHT(0)
+    AT.MINWIDTH(0)
+    AT.NORTHMARGIN(%Allocation.YSpacing%)
+    AT.SOUTHMARGIN(%Allocation.YSpacing%)
+    AT.WESTMARGIN(%Allocation.XSpacing%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Box
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Color.Basic),STOP(1)
+  PROPERTY: NAME(Color.Fill),DESCRIPTION(Fill color of box),DEVIMP(DETAILED),DTYPE(COLOR),TYPE(NUMERIC)
+  PROPERTY: NAME(Color.SelectedBack),STOP(1)
+  PROPERTY: NAME(Color.SelectedFore),STOP(1)
+  PROPERTY: NAME(Font.CharSet),STOP(1)
+  PROPERTY: NAME(Font.Color),STOP(1)
+  PROPERTY: NAME(Font.Size),STOP(1)
+  PROPERTY: NAME(Font.Style),STOP(1)
+  PROPERTY: NAME(Font.Typeface),STOP(1)
+  PROPERTY: NAME(LineWidth),DESCRIPTION('Width of the Box''s Border'),DEVIMP(USEFUL),TYPE(NUMERIC)
+  PROPERTY: NAME(ROUND),DESCRIPTION(Rounded Box Corners),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group)
+    COLOR.FILL(-1)
+    CONTROLTYPE(BOX)
+    LINEWIDTH(1)
+    ROUND(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Box#Splash
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Box)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Box#Splash#BoxTop
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Control:HeadingLargeTop),ACORN(1),ACORN.NAME(HeadingTop),ACORN.WIZARD(String#Splash#HeadingLarge#Top),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:InternalBox),ACORN(1),ACORN.NAME(InternalBox),ACORN.WIZARD(Box#Splash#BoxTopInternal),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Box#Splash)
+    ALLOCATION.ZONE(Zone:North)
+    AT.EASTMARGIN(0)
+    AT.NORTHMARGIN(0)
+    AT.SOUTHMARGIN(0)
+    AT.WESTMARGIN(0)
+    COLOR.FILL(-2147483646)
+    CONTROL:HEADINGLARGETOP(1)
+    CONTROL:INTERNALBOX(1)
+    USE.LABEL(?BoxTop)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Box#Splash#BoxTopInternal
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Control:HeadingSmall),ACORN(1),ACORN.NAME(HeadingSmall),ACORN.WIZARD(String#Splash#HeadingSmall),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Box#Splash)
+    ALLOCATION.ZONE(Zone:NorthWest)
+    AT.EASTMARGIN(4)
+    AT.NORTHMARGIN(2)
+    AT.SOUTHMARGIN(2)
+    AT.WESTMARGIN(4)
+    COLOR.FILL(-2147483640)
+    CONTROL:HEADINGSMALL(1)
+    USE.LABEL(?BoxTopInternal)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Ellipse
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Color.Fill),DESCRIPTION(Fill color of ellipse),DEVIMP(DETAILED),DTYPE(COLOR),TYPE(NUMERIC)
+  PROPERTY: NAME(LineWidth),DESCRIPTION('Width of the Ellipse''s Border'),DEVIMP(USEFUL),TYPE(NUMERIC)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group)
+    COLOR.FILL(-1)
+    CONTROLTYPE(Ellipse)
+    LINEWIDTH(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Image
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Color.Basic),STOP(1)
+  PROPERTY: NAME(Color.SelectedBack),STOP(1)
+  PROPERTY: NAME(Color.SelectedFore),STOP(1)
+  PROPERTY: NAME(DropID),STOP(1)
+  PROPERTY: NAME(FocusKey),STOP(1)
+  PROPERTY: NAME(Font.CharSet),STOP(1)
+  PROPERTY: NAME(Font.Color),STOP(1)
+  PROPERTY: NAME(Font.Size),STOP(1)
+  PROPERTY: NAME(Font.Style),STOP(1)
+  PROPERTY: NAME(Font.Typeface),STOP(1)
+  PROPERTY: NAME(HelpId),STOP(1)
+  PROPERTY: NAME(Image),DESCRIPTION(Image File),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(Image files|*.*)
+  PROPERTY: NAME(ImageMode),DESCRIPTION(Image mode attribute),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(ImageMode.List),DESCRIPTION(Available image mode attribute),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Immediate),STOP(1)
+  PROPERTY: NAME(Message),STOP(1)
+  PROPERTY: NAME(Scrollbars),DESCRIPTION('Image''s scroll bars'),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(ScrollBars.List),DESCRIPTION(Available scroll bars),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Skip),STOP(1)
+  PROPERTY: NAME(Tooltip),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group)
+    ALLOCATION.ZONE(Zone:East)
+    CONTROLTYPE(IMAGE)
+    IMAGE()
+    IMAGEMODE(NONE)
+    IMAGEMODE.LIST(NONE,CENTERED,TILED)
+    SCROLLBARS(None)
+    SCROLLBARS.LIST(None,HScroll,VScroll,HVScroll)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Image#Splash
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Image)
+    ALLOCATION.ZONE(Zone:West)
+    AT.MINHEIGHT(5)
+    AT.MINWIDTH(5)
+    IMAGE(wizsplsh.bmp)
+    INTERNAL.SEQ()
+    USE.LABEL(?Image)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Image#About
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Image)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Image#About#Icon
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Image#About)
+    ALLOCATION.PRIORITY(8)
+    ALLOCATION.ZONE(Zone:NorthWest)
+    AT.HEIGHT('@BLANK()')
+    AT.WIDTH('@BLANK()')
+    IMAGE(wizPower.gif)
+    IMAGEMODE(CENTERED)
+    USE.LABEL(?Image)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Control#Group#Bevel
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Bevel.Inner),DESCRIPTION(Width of inner edge of bevel),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Bevel.Outer),DESCRIPTION(Width of outer edge of bevel),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Bevel.Style),DESCRIPTION(Fine control of bevel),DEVIMP(DETAILED),TYPE(NUMERIC)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group)
+    BEVEL.INNER(0)
+    BEVEL.OUTER(0)
+    BEVEL.STYLE(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Boxed),DESCRIPTION(Box around group),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Text),DESCRIPTION(Prompt of group),DEVIMP(DETAILED)
+  PROPERTY: NAME(Transparent),DESCRIPTION(Controls transparent attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group#Bevel)
+    BOXED(0)
+    CONTROLTYPE(GROUP)
+    TEXT()
+    TRANSPARENT(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#Toolbar
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ToolGroups),ACORN(1),ACORN.NAME(ToolGroup : %_VALUE_%),ACORN.WIZARD(Group#Frame#%_VALUE_%),DEVIMP(DETAILED),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ToolGroups.List),DESCRIPTION(),DTYPE(HIDDEN),HIDDEN(1),LIST(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group)
+    ALLOCATION.TAB(**TOOLBAR**)
+    ALLOCATION.TARGET('@CONTAINER(Allocation.Target)')
+    ALLOCATION.XSPACING(0)
+    ALLOCATION.YSPACING(0)
+    AT.NORTHMARGIN(1)
+    AT.SOUTHMARGIN(1)
+    AT.SOUTHOFFSET(2)
+    AT.WIDTH('@BLANK()')
+    BEVEL.OUTER(1)
+    BEVEL.STYLE(1545)
+    BOXED(1)
+    FULL(1)
+    RESIZE(0)
+    TOOLGROUPS(Edit,Navigate,History,Help)
+    TOOLGROUPS.LIST(Edit,Select,Navigate,History,Help)
+    USE.LABEL(?ToolbarGroup)
+    USE.NUMBER(Toolbar:ToolbarGroup)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ToolButtons),ACORN(1),ACORN.NAME(ToolButton : %_VALUE_%),ACORN.WIZARD(Button#Toolbar#%_VALUE_%),DEVIMP(DETAILED),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ToolButtons.List),DESCRIPTION(Available toolbar placements),DTYPE(HIDDEN),HIDDEN(1),LIST(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group)
+    ALLOCATION.TAB(**TOOLBAR**)
+    ALLOCATION.TARGET('@CONTAINER(Allocation.Target)')
+    ALLOCATION.XSPACING(0)
+    ALLOCATION.YSPACING(0)
+    AT.EASTMARGIN(2)
+    AT.NORTHMARGIN(-2)
+    AT.NORTHOFFSET(2)
+    AT.SOUTHMARGIN(-2)
+    AT.SOUTHOFFSET(2)
+    BEVEL.INNER(0)
+    BEVEL.OUTER(1)
+    BEVEL.STYLE(144)
+    BOXED(1)
+    RESIZE(0)
+    TOOLBUTTONS()
+    TOOLBUTTONS.LIST(Insert,Change,Delete,Select,Top,PageUp,Up,Locate,Down,PageDown,Bottom,History,Help)
+    USE.LABEL(?FrameGroup)
+    USE.NUMBER(Toolbar:FrameGroup)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#Frame#Edit
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group#Frame)
+    TOOLBUTTONS(Insert,Change,Delete)
+    USE.LABEL(?FrameEditGroup)
+    USE.NUMBER(Toolbar:FrameEditGroup)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#Frame#Select
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group#Frame)
+    TOOLBUTTONS(Select)
+    USE.LABEL(?FrameSelectGroup)
+    USE.NUMBER(Toolbar:FrameSelectGroup)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#Frame#Navigate
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group#Frame)
+    TOOLBUTTONS(Top,PageUp,Up,Locate,Down,PageDown,Bottom)
+    USE.LABEL(?FrameNavigateGroup)
+    USE.NUMBER(Toolbar:FrameNavigateGroup)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#Frame#History
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group#Frame)
+    TOOLBUTTONS(History)
+    USE.LABEL(?FrameHistoryGroup)
+    USE.NUMBER(Toolbar:FrameHistoryGroup)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#Frame#Help
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group#Frame)
+    TOOLBUTTONS(Help)
+    USE.LABEL(?FrameHelpGroup)
+    USE.NUMBER(Toolbar:FrameHelpGroup)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Option
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Controls),ACORN(1),ACORN.CONTEXT('POPULATOR(%POPULATOR%)'),ACORN.NAME(Radio:%_VALUE_%),ACORN.WIZARD(Radio),DESCRIPTION(Controls in group),DEVIMP(COMMON),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(Text),DESCRIPTION(Text of option),DEVIMP(DETAILED)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group)
+    ALLOCATION.XPOS(FPromptXpos)
+    ALLOCATION.YSPACING(4)
+    AT.MINWIDTH(0)
+    BOXED(1)
+    CONTROLS()
+    CONTROLTYPE(OPTION)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Panel
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Color.Basic),STOP(1)
+  PROPERTY: NAME(Color.SelectedBack),STOP(1)
+  PROPERTY: NAME(Color.SelectedFore),STOP(1)
+  PROPERTY: NAME(Font.CharSet),STOP(1)
+  PROPERTY: NAME(Font.Color),STOP(1)
+  PROPERTY: NAME(Font.Size),STOP(1)
+  PROPERTY: NAME(Font.Style),STOP(1)
+  PROPERTY: NAME(Font.Typeface),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group#Bevel)
+    CONTROLTYPE(Panel)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Panel#About
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Panel)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Panel#About#Separator
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Panel#About)
+    AT.HEIGHT(4)
+    AT.MINWIDTH(215)
+    BEVEL.OUTER(1)
+    BEVEL.STYLE(1536)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Region
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Color.Fill),DESCRIPTION(Fill color of box),DEVIMP(DETAILED),DTYPE(COLOR),TYPE(NUMERIC)
+  PROPERTY: NAME(DragID),DESCRIPTION('Region''s drag ID'),DEVIMP(DETAILED)
+  PROPERTY: NAME(Transparent),DESCRIPTION(Controls transparent attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group#Bevel)
+    COLOR.FILL(-1)
+    CONTROLTYPE(REGION)
+    DRAGID()
+    TRANSPARENT(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Tab
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.FormTab),DEVIMP(BAROQUE),DTYPE(CHECK),HIDDEN(1),LOCKED(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Allocation.Target),LOCKED(1)
+  PROPERTY: NAME(Allocation.Xpos),STOP(1)
+  PROPERTY: NAME(Allocation.Ypos),STOP(1)
+  PROPERTY: NAME(Controls)
+  PROPERTY: NAME(OverflowBase),DESCRIPTION(Set by context initially equal to text and used to make new overflow tab names),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LOCKED(1),TYPE(STRING)
+  PROPERTY: NAME(OverflowTabName),DESCRIPTION(Expression used in naming created overflow tabs),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(OverflowTabNum),DESCRIPTION(Used solely by OverflowTabName to allow overflow tab names to be defined by an expression),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LOCKED(1),TYPE(NUMERIC)
+  PROPERTY: NAME(Required),DESCRIPTION('Tab''s REQ attribute'),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Text),DESCRIPTION(Text of tab),DEVIMP(DETAILED)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group)
+    ALLOCATION.FORMTAB(0)
+    ALLOCATION.TAB(**SHEET**)
+    ALLOCATION.TARGET('@CONTAINER(Allocation.Target)')
+    AT.EASTMARGIN(0)
+    AT.MINHEIGHT(0)
+    AT.MINWIDTH(0)
+    AT.NORTHMARGIN(0)
+    AT.SOUTHMARGIN(0)
+    AT.WESTMARGIN(0)
+    CONTROLS()
+    CONTROLTYPE(TAB)
+    INTERNAL.SEQ()
+    OVERFLOWBASE()
+    OVERFLOWTABNAME(%OverflowBase%-Page:%OverflowTabNum%)
+    OVERFLOWTABNUM(0)
+    REQUIRED(0)
+    RESIZE(0)
+    TEXT()
+    USE.LABEL('?Tab:@INDEX(Scope.Node.Controls,%Name%)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Toolbar
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Tab),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(Allocation.Target),LOCKED(1)
+  PROPERTY: NAME(NoMerge),DESCRIPTION(Menu merging?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Wallpaper),DESCRIPTION(Toolbar wallpaper),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(GIF Images|*.gif|JPG Images|*.jpg|Bitmaps|*.bmp|All files|*.*)
+  PROPERTY: NAME(WallpaperPlacement),DESCRIPTION(Windows wallpaper placement),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(WallpaperPlacement.List),DESCRIPTION(Available windows wallpaper placements),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group)
+    ALLOCATION.TAB()
+    ALLOCATION.TARGET()
+    ALLOCATION.XSPACING(0)
+    ALLOCATION.YSPACING(0)
+    CONTROLTYPE(TOOLBAR)
+    NOMERGE(0)
+    USE.LABEL(?Toolbar)
+    WALLPAPER()
+    WALLPAPERPLACEMENT(NONE)
+    WALLPAPERPLACEMENT.LIST(NONE,CENTERED,TILED)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Sheet
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.Delete),DTYPE(CHECK),HIDDEN(1),LOCKED(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Allocation.ShowSingleTab),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(HScroll),DESCRIPTION('Sheet''s HSCROLL attribute'),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Join),DESCRIPTION('Sheet''s JOIN attribute'),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(NoSheet),DESCRIPTION(Sheet visible),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Spread),DESCRIPTION('Sheet''s tab controls are evenly spread?'),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(TabPosition),DESCRIPTION(Text placement),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(TabPosition.List),DESCRIPTION(Available tab positions),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(TabPosition.Width),DESCRIPTION(Size of tab controls),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(TextPosition),DESCRIPTION(Text placement),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(TextPosition.List),DESCRIPTION(Available text placements),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control#Group)
+    ALLOCATION.DELETE(0)
+    ALLOCATION.SHOWSINGLETAB('@EVAL(CHOOSE(''%^IsChild%''=''1''))')
+    ALLOCATION.TAB()
+    AT.EASTMARGIN('@EVAL(@CONTAINER(ALLOCATION.XSPACING)*2)')
+    AT.NORTHMARGIN('@EVAL(@CONTAINER(ALLOCATION.YSPACING)*2)')
+    AT.SOUTHMARGIN('@EVAL(@CONTAINER(ALLOCATION.YSPACING)*2)')
+    AT.WESTMARGIN('@EVAL(@CONTAINER(ALLOCATION.XSPACING)*2)')
+    CONTROLTYPE(SHEET)
+    HSCROLL(0)
+    JOIN(1)
+    NOSHEET(0)
+    SPREAD(0)
+    TABPOSITION(ABOVE)
+    TABPOSITION.LIST(LEFT,RIGHT,ABOVE,BELOW)
+    TABPOSITION.WIDTH(0)
+    TEXTPOSITION()
+    TEXTPOSITION.LIST(Up,Down)
+    USE.LABEL(?CurrentTab)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Sheet#ControlTemplateLess
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Internal.SEQ),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Sheet)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Line
+  DESCRIPTOR: 1
+  PROPERTY: NAME(LineWidth),DESCRIPTION('Line''s Width'),DEVIMP(USEFUL),TYPE(NUMERIC)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    CONTROLTYPE(Line)
+    LINEWIDTH(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Progress
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Range.High),DESCRIPTION(Upper inclusive limit of range of values),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Range.Low),DESCRIPTION(Lower inclusive limit of range of values),DEVIMP(DETAILED),TYPE(NUMERIC)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Control)
+    ALLOCATION.HEIGHT(XProgressHeight)
+    ALLOCATION.WIDTH(XProgressWidth)
+    ALLOCATION.XPOS(FProgressXPos)
+    CONTROLTYPE(PROGRESS)
+    RANGE.HIGH(100)
+    RANGE.LOW(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TopSpeed:Progress#Process
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ALLOCATION.PRIORITY(5)
+    ALLOCATION.TAB()
+    ALLOCATION.XPOS(FProcessPos)
+    ALLOCATION.ZONE(Zone:Center)
+    AT.MINWIDTH(141)
+    INTERNAL.ORIG(Progress:Thermometer)
+    USE.LABEL(Progress:Thermometer)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Allocation.XSpacing),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(Allocation.YSpacing),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(At.EastMargin),DESCRIPTION(Control east margin),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.NorthMargin),DESCRIPTION(Control north margin),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.SouthMargin),DESCRIPTION(Control south margin),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(At.WestMargin),DESCRIPTION(Control west margin),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Auto),DESCRIPTION(Windows auto attribute),DEVIMP(DETAILED),DTYPE(ENTRY),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Center),DESCRIPTION(Windows center attribute?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(CostTarget),DESCRIPTION(Cost target to attempt to reach),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(FrameStyle),DESCRIPTION(Windows frame style),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(FrameStyle.List),DESCRIPTION(Available frame styles),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Gray),DESCRIPTION(Windows gray attribute?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Icon),DESCRIPTION(Windows icon),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(Icon files|*.ico)
+  PROPERTY: NAME(Iconize),DESCRIPTION(Windows iconize attribute?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Label),DESCRIPTION(Window label),DEVIMP(DETAILED)
+  PROPERTY: NAME(Mask),DESCRIPTION(Windows mask attribute?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Max),DESCRIPTION(Windows max attribute?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(MaxCostCycles),DESCRIPTION(Maximum number of times to interate through costing cycle),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Maximize),DESCRIPTION(Windows maximize attribute?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Menu),DESCRIPTION(Menu Pointer),DTYPE(ENTRY),HIDDEN(1)
+  PROPERTY: NAME(Modal),DESCRIPTION(Windows modal attribute?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Node.Controls),DTYPE(EDITLIST),HIDDEN(1),MULTI(1),TYPE(NODE)
+  PROPERTY: NAME(Node.SheetAllocator),DTYPE(ENTRY),HIDDEN(1),TYPE(NODE)
+  PROPERTY: NAME(Node.SpaceAllocator),DTYPE(ENTRY),HIDDEN(1),TYPE(NODE)
+  PROPERTY: NAME(Node.ToolAllocator),DTYPE(ENTRY),HIDDEN(1),TYPE(NODE)
+  PROPERTY: NAME(Palette),DESCRIPTION(Windows palette attribute),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Resizer),ACORN(1),ACORN.NAME(Resizer),ACORN.WIZARD(ControlTemplate#Resize),DESCRIPTION(Resizer Wizard),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Scrollbars),DESCRIPTION(List boxes scroll bars),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(ScrollBars.List),DESCRIPTION(Available scroll bars),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Status1),DESCRIPTION(Status element 1 width),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Status2),DESCRIPTION(Status element 2 width),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Status3),DESCRIPTION(Status element 3 width),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Status4),DESCRIPTION(Status element 4 width),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Status5),DESCRIPTION(Status element 5 width),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(System),DESCRIPTION(System menu present?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Timer),DESCRIPTION(Windows timer period),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Title),DESCRIPTION(Window title),DEVIMP(DETAILED)
+  PROPERTY: NAME(Toolbox),DESCRIPTION(Windows toolbox attribute),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Type),DESCRIPTION(Type of window),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Type.List),DESCRIPTION(Available window types),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Wallpaper),DESCRIPTION(Toolbar wallpaper),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(GIF Images|*.gif|JPG Images|*.jpg|Bitmaps|*.bmp|All files|*.*)
+  PROPERTY: NAME(WallpaperPlacement),DESCRIPTION(Windows wallpaper placement),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(WallpaperPlacement.List),DESCRIPTION(Available wallpaper placements),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:VisualComponent)
+    ALLOCATION.XSPACING(4)
+    ALLOCATION.YSPACING(4)
+    AT.EASTMARGIN(%Allocation.XSpacing%)
+    AT.MAXHEIGHT('@BestWinHeight(70)')
+    AT.MAXWIDTH('@BestWinWidth(70)')
+    AT.NORTHMARGIN(%Allocation.YSpacing%)
+    AT.SOUTHMARGIN(%Allocation.YSpacing%)
+    AT.WESTMARGIN(%Allocation.XSpacing%)
+    AUTO(0)
+    CENTER(1)
+    COSTTARGET(300)
+    FONT.CHARSET()
+    FONT.SIZE(8)
+    FONT.STYLE(FONT:Regular)
+    FONT.TYPEFACE(MS Sans Serif)
+    FRAMESTYLE(Resize)
+    FRAMESTYLE.LIST(Double,Single,NoFrame,Resize)
+    GRAY(1)
+    HELPID(~%Scope.Output.ProcName%)
+    ICON(ICON:Application)
+    ICONIZE(0)
+    LABEL(Window)
+    MASK(0)
+    MAX(1)
+    MAXCOSTCYCLES(100)
+    MAXIMIZE(0)
+    MENU()
+    MODAL(0)
+    NODE.CONTROLS()
+    NODE.SHEETALLOCATOR()
+    NODE.SPACEALLOCATOR()
+    NODE.TOOLALLOCATOR()
+    PALETTE(0)
+    RESIZER('@EVAL(CHOOSE(UPPER(''%FrameStyle%'')=''RESIZE''))')
+    SCROLLBARS(None)
+    SCROLLBARS.LIST(None,HScroll,VScroll,HVScroll)
+    STATUS1(0)
+    STATUS2(0)
+    STATUS3(0)
+    STATUS4(0)
+    STATUS5(0)
+    SYSTEM(1)
+    TIMER(0)
+    TITLE()
+    TOOLBOX(0)
+    TYPE(MDI Child)
+    TYPE.LIST(SDI Child,MDI Child,MDI Frame)
+    WALLPAPER()
+    WALLPAPERPLACEMENT(NONE)
+    WALLPAPERPLACEMENT.LIST(NONE,CENTERED,TILED)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#Browse
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Window)
+    ALLOCATION.XSPACING(2)
+    ALLOCATION.YSPACING(2)
+    AT.EASTMARGIN(5)
+    AT.NORTHMARGIN(5)
+    AT.WESTMARGIN(5)
+    TITLE(Browse %Scope.PrimaryFile% File)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#Process
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Control:CancelButton),ACORN(1),ACORN.NAME(Cancel Button),ACORN.WIZARD(Button#ProcessCancel),DESCRIPTION(Cancel button),DOCUMENTATION(Process windows cancel button),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:PctString),ACORN(1),ACORN.NAME(Percentage String),ACORN.WIZARD(String#Process#Pct),DESCRIPTION(Percentage string),DOCUMENTATION(Process windows percentage string),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:Progress),ACORN(1),ACORN.NAME(Progress bar),ACORN.WIZARD(Progress#Process),DESCRIPTION(Progress bar),DOCUMENTATION(Process windows progress bar),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:UserString),ACORN(1),ACORN.NAME(User String),ACORN.WIZARD(String#Process#User),DESCRIPTION(User string),DOCUMENTATION(Process windows user string),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Window)
+    ALLOCATION.XSPACING(2)
+    ALLOCATION.YSPACING(2)
+    AT.EASTMARGIN(5)
+    AT.NORTHMARGIN(5)
+    AT.WESTMARGIN(5)
+    CONTROL:CANCELBUTTON(1)
+    CONTROL:PCTSTRING(1)
+    CONTROL:PROGRESS(1)
+    CONTROL:USERSTRING(1)
+    FRAMESTYLE(Double)
+    ICON()
+    MAX(0)
+    TIMER(1)
+    TITLE(Progress...)
+    TYPE(SDI Child)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#Form
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Window)
+    ALLOCATION.XSPACING(2)
+    ALLOCATION.YSPACING(2)
+    AT.EASTMARGIN(5)
+    AT.NORTHMARGIN(5)
+    AT.WESTMARGIN(5)
+    TITLE(Update %Scope.PrimaryFile% File)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Gray),DTYPE(HIDDEN),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Window)
+    ALLOCATION.XSPACING(0)
+    ALLOCATION.YSPACING(0)
+    AT.HEIGHT(%At.MaxHeight%)
+    AT.MAXHEIGHT('@BestWinHeight(80)')
+    AT.MAXWIDTH('@BestWinWidth(80)')
+    AT.WIDTH(%At.MaxWidth%)
+    LABEL(AppFrame)
+    MENU('@EXTRACT(Scope.MenuManager,Name)')
+    PALETTE(256)
+    SCROLLBARS(HVScroll)
+    TITLE(Clarion5.5 - Wizatron Application Frame)
+    TYPE(MDI Frame)
+    TYPE.LIST(MDI Frame)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#Splash
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Control:BoxTop),ACORN(1),ACORN.NAME(BoxTop),ACORN.WIZARD(Box#Splash#BoxTop),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:Date),ACORN(1),ACORN.NAME(Date),ACORN.WIZARD(string#splash#date),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:Developer),ACORN(1),ACORN.NAME(Developer),ACORN.WIZARD(string#splash#developer),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:HeaderBottom),ACORN(1),ACORN.NAME(HeaderBottom),ACORN.WIZARD(String#Splash#HeadingLarge#bottom),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Window)
+    ALLOCATION.XSPACING(0)
+    ALLOCATION.YSPACING(0)
+    AT.EASTMARGIN(4)
+    AT.NORTHMARGIN(4)
+    AT.SOUTHMARGIN(4)
+    AT.WESTMARGIN(4)
+    CONTROL:BOXTOP(1)
+    CONTROL:DATE(1)
+    CONTROL:DEVELOPER(1)
+    CONTROL:HEADERBOTTOM(1)
+    FRAMESTYLE(Single)
+    GRAY(0)
+    MAX(0)
+    PALETTE(256)
+    RESIZER(0)
+    TYPE(SDI Child)
+    TYPE.LIST(SDI Child)
+    WALLPAPER(wizBck05.jpg)
+    WALLPAPERPLACEMENT(TILED)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#About
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Control:Copyright),ACORN(1),ACORN.NAME(Copyright),ACORN.WIZARD(Prompt#About#Copyright),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:Date),ACORN(1),ACORN.NAME(Date),ACORN.WIZARD(String#About#Date),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:Developer),ACORN(1),ACORN.NAME(Developer),ACORN.WIZARD(String#About#Developer),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:Heading),ACORN(1),ACORN.NAME(Heading),ACORN.WIZARD(string#about#heading),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:Icon),ACORN(1),ACORN.NAME(Icon),ACORN.WIZARD(Image#About#Icon),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Control:Separator),ACORN(1),ACORN.NAME(Separator),ACORN.WIZARD(Panel#About#Separator),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Window)
+    AT.EASTMARGIN('@eval(%Allocation.XSpacing% * 2)')
+    AT.NORTHMARGIN('@eval(%Allocation.YSpacing% * 2)')
+    AT.SOUTHMARGIN('@eval(%Allocation.YSpacing% * 2)')
+    AT.WESTMARGIN('@eval(%Allocation.XSpacing% * 2)')
+    CONTROL:COPYRIGHT(1)
+    CONTROL:DATE(1)
+    CONTROL:DEVELOPER(1)
+    CONTROL:HEADING(1)
+    CONTROL:ICON(1)
+    CONTROL:SEPARATOR(1)
+    FRAMESTYLE(Double)
+    ICON()
+    MAX(0)
+    PALETTE(256)
+    RESIZER(0)
+    SYSTEM(0)
+    TITLE(About...)
+    TYPE(SDI Child)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuManager
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlType),DESCRIPTION(Control Type),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(MenuGrouping),DESCRIPTION(Menu item grouping),DEVIMP(USEFUL),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(MenuGrouping.List),DESCRIPTION(Available menu item groupings),DTYPE(SINGLEDROP),LIST(1),MULTI(1)
+  PROPERTY: NAME(Node.Items),DESCRIPTION(Items on menu),DTYPE(EDITLIST),HIDDEN(1),MULTI(1),TYPE(NODE)
+  PROPERTY: NAME(NoMerge),DESCRIPTION(Menu merging?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Right)
+  PROPERTY: NAME(StandardMenuItems),ACORN(1),ACORN.CONTEXT('POPULATOR(%NAME%)'),ACORN.NAME(ITEM: %_VALUE_%),ACORN.WIZARD(MenuItem#%_VALUE_%),DESCRIPTION(Standard Menu Items),DEVIMP(BAROQUE),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(StandardMenuItems.List),DESCRIPTION(Available standard menu items),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),MULTI(1)
+  PROPERTY: NAME(Use.Label),DESCRIPTION(Field equate label or use variable),DEVIMP(DETAILED)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:APPLICATIONCOMPONENT)
+    CONTROLTYPE(MENUBAR)
+    MENUGROUPING(Priority)
+    MENUGROUPING.LIST(Priority,Name)
+    NODE.ITEMS()
+    NOMERGE(0)
+    RIGHT(0)
+    STANDARDMENUITEMS()
+    STANDARDMENUITEMS.LIST(Cut,PrintSetup,TileHorizontal,TileVertical,Quit,ArrangeIcons,Cascade,Copy,HelpIndex,HelpOnHelp,HelpSearch,Paste,Splash)
+    USE.LABEL(?Menubar)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:TemplateComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlTemplate),DESCRIPTION(Control Template),DEVIMP(BAROQUE),DTYPE(ENTRY)
+  PROPERTY: NAME(ControlTemplateInstance),DESCRIPTION(Control Template Instance),DOCUMENTATION(Name the instance of an existing control template to populate the prompts herein to.)
+  PROPERTY: NAME(GeneratePriority),DESCRIPTION(Template Generation Priority),DEVIMP(BAROQUE),DOCUMENTATION(Sets the order in which control templates are generated),DTYPE(SPIN),TYPE(NUMERIC)
+  PROPERTY: NAME(Instance),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(ParentInstance),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(PrimaryFile),DESCRIPTION(Primary file this wizard is based upon),DEVIMP(BAROQUE)
+  PROPERTY: NAME(PrimaryKey),DESCRIPTION(Primary key this wizard is based upon),DEVIMP(BAROQUE)
+  PROPERTY: NAME(SecondaryFiles),DTYPE(ENTRY),HIDDEN(1),MULTI(1)
+  PROPERTY: NAME(Show),DESCRIPTION(Show on procedure screen),DTYPE(CHECK),TYPE(NUMERIC)
+  PROPERTY: NAME(TemplateChain),DESCRIPTION(Template Chain),DEVIMP(BAROQUE),DTYPE(ENTRY)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:APPLICATIONCOMPONENT)
+    CONTROLTEMPLATE()
+    CONTROLTEMPLATEINSTANCE()
+    GENERATEPRIORITY(128)
+    INSTANCE(0)
+    PARENTINSTANCE('@CONTAINER(Instance)')
+    PRIMARYFILE('@CONTAINER(PrimaryFile)')
+    PRIMARYKEY()
+    SECONDARYFILES()
+    SHOW(0)
+    TEMPLATECHAIN(ABC)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:TemplateComponent)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#Toolbar
+  PROPERTY: NAME(ToolbarButtons),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(ToolbarButtons),ACORN.WIZARD(^Group#Toolbar),DTYPE(CHECK),TYPE(BOOLEAN)
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(FrameBrowseControl)
+    CONTROLALLOCATIONTARGET()
+    TOOLBARBUTTONS(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#Resize
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlDisable),DESCRIPTION(Disable resize for controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@EXTRACT(\%_value_%,Resize.Disable)'),MULTI(1),OUTPUT.DEPENDS(Controls),OUTPUT.NAME(DisableResize),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(ControlDisable.List),DESCRIPTION(All controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),LISTFILL.FUNC(%ControlsResize%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ControlHPosition),DESCRIPTION(Horizontal position strategies),DEVIMP(INTERNAL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@EXTRACT(\%_value_%,Resize.HPosition)'),MULTI(1),OUTPUT.DEPENDS(Controls),OUTPUT.NAME(HorizPositional),TYPE(STRING)
+  PROPERTY: NAME(ControlHPosition.List),DESCRIPTION(All controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),LISTFILL.FUNC(%ControlsResize%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ControlHResize),DESCRIPTION(Horizontal resize strategies),DEVIMP(INTERNAL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@EXTRACT(\%_value_%,Resize.HResize)'),MULTI(1),OUTPUT.DEPENDS(Controls),OUTPUT.NAME(HorizResize),TYPE(STRING)
+  PROPERTY: NAME(ControlHResize.List),DESCRIPTION(All controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),LISTFILL.FUNC(%ControlsResize%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ControlLabels),DESCRIPTION(Controls to Resize),DEVIMP(INTERNAL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@EVAL(CHOOSE(''@EXTRACT(\%_value_%,USE.ALTEQUATE)''<>'''',''@EXTRACT(\%_value_%,USE.ALTEQUATE)'',CHOOSE(SUB(''@EXTRACT(\%_value_%,USE.LABEL)'',1,1)=''?'',''@EXTRACT(\%_value_%,USE.LABEL)'',''?''&''@EXTRACT(\%_value_%,USE.LABEL)'')))'),MULTI(1),OUTPUT.DEPENDS(Controls),OUTPUT.NAME(OverrideControl),TYPE(STRING)
+  PROPERTY: NAME(ControlLabels.List),DESCRIPTION(All controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),LISTFILL.FUNC(%ControlsResize%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(Controls),DESCRIPTION(Controls to Resize),DEVIMP(INTERNAL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@INDEX(controls.list,%_value_%)'),MULTI(1),OUTPUT.NAME(OverrideControls),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(Controls.List),DESCRIPTION(All controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),LISTFILL.FUNC(%ControlsResize%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ControlsResize),DESCRIPTION(Controls to Resize),DEVIMP(INTERNAL),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ControlsResize.List),DESCRIPTION(All controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(''@EXTRACT(\%_value_%,Resize)''=''1''))'),LISTFILL.FUNC(%Scope.node.controls%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ControlVPosition),DESCRIPTION(Vertical position strategies),DEVIMP(INTERNAL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@EXTRACT(\%_value_%,Resize.VPosition)'),MULTI(1),OUTPUT.DEPENDS(Controls),OUTPUT.NAME(VertPositional),TYPE(STRING)
+  PROPERTY: NAME(ControlVPosition.List),DESCRIPTION(All controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),LISTFILL.FUNC(%Controls.List%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ControlVResize),DESCRIPTION(Vertical resize strategies),DEVIMP(INTERNAL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@EXTRACT(\%_value_%,Resize.VResize)'),MULTI(1),OUTPUT.DEPENDS(Controls),OUTPUT.NAME(VertResize),TYPE(STRING)
+  PROPERTY: NAME(ControlVResize.List),DESCRIPTION(All controls),DEVIMP(INTERNAL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),LISTFILL.FUNC(%Controls.List%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(EnforceMaximum),DESCRIPTION(Enforce maximum window size),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(RestrictMaxSize),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(EnforceMinimum),DESCRIPTION(Enforce minimum window size),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(RestrictMinSize),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(Strategy),DESCRIPTION(Resizing strategy),DEVIMP(DETAILED),DTYPE(SINGLEDROP),OUTPUT.NAME(AppStrategy)
+  PROPERTY: NAME(Strategy.List),DESCRIPTION(Available resize strategies),DTYPE(HIDDEN),HIDDEN(1),LIST(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLDISABLE()
+    CONTROLDISABLE.LIST()
+    CONTROLHPOSITION()
+    CONTROLHPOSITION.LIST()
+    CONTROLHRESIZE()
+    CONTROLHRESIZE.LIST()
+    CONTROLLABELS()
+    CONTROLLABELS.LIST()
+    CONTROLS()
+    CONTROLS.LIST()
+    CONTROLSRESIZE()
+    CONTROLSRESIZE.LIST()
+    CONTROLTEMPLATE(WindowResize)
+    CONTROLVPOSITION()
+    CONTROLVPOSITION.LIST()
+    CONTROLVRESIZE()
+    CONTROLVRESIZE.LIST()
+    ENFORCEMAXIMUM(0)
+    ENFORCEMINIMUM(1)
+    STRATEGY(Surface)
+    STRATEGY.LIST(Surface,Resize,Spread)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#TreeWalker
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DisplayControl),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(100),ACORN.NAME(DisplayButton),ACORN.WIZARD(^String#TreeDisplay),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DownButtonControl),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(100),ACORN.NAME(DownButton),ACORN.WIZARD(^Button#Down),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(LimitName),DESCRIPTION(Field used to provide text for range limit),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(TreeLimitName),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(INSTRING(''.'',''%LimitName%'',1,1)=0,''%LimitName%'',''@NAME(%LimitName%)''))'),TYPE(STRING)
+  PROPERTY: NAME(LimitProvidor),DESCRIPTION(Field which is the source of the range limit),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(TreeLimitProvidor),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(INSTRING(''.'',''%LimitProvidor%'',1,1)=0,''%LimitProvidor%'',''@NAME(%LimitProvidor%)''))'),TYPE(STRING)
+  PROPERTY: NAME(ModifyField),DESCRIPTION(Field being used as the single value range limit),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(TreeRangeLimit),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(INSTRING(''.'',''%ModifyField%'',1,1)=0,''%ModifyField%'',''@NAME(%ModifyField%)''))'),TYPE(STRING)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(UpButtonControl),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(100),ACORN.NAME(UpButton),ACORN.WIZARD(^Button#Up),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(BrowseTreeWalker)
+    DISPLAYCONTROL(1)
+    DOWNBUTTONCONTROL(1)
+    LIMITNAME('@EVAL(CHOOSE(''@USER(%Scope.RangeField%,DISPLAY,2)''='''','''',''@USER(%Scope.RangeField%,LIMIT,1).@USER(%Scope.RangeField%,DISPLAY,2)''))')
+    LIMITPROVIDOR('@USER(%Scope.RangeField%,LIMIT,1).@USER(%Scope.RangeField%,LIMIT,2)')
+    MODIFYFIELD(%Scope.RangeLimit%)
+    UPBUTTONCONTROL(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ProcedureComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(InterestThreshold),DESCRIPTION(Detail of field population),DEVIMP(COMMON),TYPE(NUMERIC)
+  PROPERTY: NAME(IsProcedure),DESCRIPTION('Name (but only valid for procedures)'),DEVIMP(INTERNAL),DTYPE(ENTRY),HIDDEN(1),MACROOWNERCONTEXT(1),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(LargeIcon),DESCRIPTION(Procedures large icon),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(Icon Files|*.ico|All Files|*.*)
+  PROPERTY: NAME(Next.Control.Instance),DESCRIPTION(Internal: instance allocated to next control wizard),DTYPE(ENTRY),HIDDEN(1),TYPE(NUMERIC)
+  PROPERTY: NAME(Node.ChildProcedures),DESCRIPTION(Internal procedure list),DTYPE(ENTRY),HIDDEN(1),MULTI(1),TYPE(NODE)
+  PROPERTY: NAME(Node.ControlWizards),DESCRIPTION(Internal procedure control wizard components),DTYPE(ENTRY),HIDDEN(1),MULTI(1),TYPE(NODE)
+  PROPERTY: NAME(Output.Category),DESCRIPTION(Procedure type),DEVIMP(BAROQUE),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),VALIDATIONTEXT(Output category cannont be blank)
+  PROPERTY: NAME(Output.Description),DESCRIPTION(Procedure description),DEVIMP(BAROQUE)
+  PROPERTY: NAME(Output.From),DESCRIPTION(Template Name),DEVIMP(BAROQUE),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),VALIDATIONTEXT(Output from cannot be left blank)
+  PROPERTY: NAME(Output.ProcName),DESCRIPTION(Procedure name),DEVIMP(BAROQUE),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),VALIDATIONTEXT(Output procedure name cannot be left blank)
+  PROPERTY: NAME(Prototype),DESCRIPTION(Procedure prototype),DEVIMP(BAROQUE),DOCUMENTATION(Prototype for procedure),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(SmallIcon),DESCRIPTION(Procedures small icon for use on menus),DEVIMP(DETAILED),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS(Icon Files|*.ico|All Files|*.*)
+  PROPERTY: NAME(WindowManager),ACORN(1),ACORN.INITPRIORITY(255),ACORN.NAME(Window),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:TemplateComponent)
+    CONTROLALLOCATIONTARGET(Standard)
+    INTERESTTHRESHOLD(5)
+    ISPROCEDURE(%NAME%)
+    LARGEICON()
+    NEXT.CONTROL.INSTANCE(0)
+    NODE.CHILDPROCEDURES()
+    NODE.CONTROLWIZARDS()
+    OUTPUT.CATEGORY()
+    OUTPUT.DESCRIPTION(Automatically generated procedure)
+    OUTPUT.FROM(ABC Window)
+    OUTPUT.PROCNAME()
+    PROTOTYPE()
+    SMALLICON()
+    WINDOWMANAGER(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Process
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AdditionalSortFields),DESCRPTION(Additional sort fields),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(AddSortFields),TYPE(STRING)
+  PROPERTY: NAME(ApproxRecordCount),DESCRIPTION(Record count override),DEVIMP(DETAILED),DTYPE(SPIN),OUTPUT.NAME(ApproxRecordCount),TYPE(NUMERIC)
+  PROPERTY: NAME(HighProgressLimit),DESCRIPTION(High progress bar limit),DEVIMP(DETAILED),DTYPE(SPIN),HIDDEN('@EVAL(CHOOSE(~%SetProgressLimits%))'),OUTPUT.NAME(HighLimit),TYPE(NUMERIC),VALIDATION('@EVAL(CHOOSE(%LowProgressLimit%<=%_Value_%))'),VALIDATIONTEXT(High progress limit must be greater than low progress limit)
+  PROPERTY: NAME(LowProgressLimit),DESCIRPIONT(Low progress bar limit),DEVIMP(DETAILED),DTYPE(SPIN),HIDDEN('@EVAL(CHOOSE(~%SetProgressLimits%))'),OUTPUT.NAME(LowLimit),TYPE(NUMERIC)
+  PROPERTY: NAME(MenuItem),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(Process %PrimaryFile%),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Process'),DESCRIPTION(Menu Item),DEVIMP(BAROQUE),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Output.Category),STOP(1)
+  PROPERTY: NAME(PauseButton),ACORN(1),ACORN.INITPRIORITY(100),ACORN.NAME(PauseButtonControl),ACORN.WIZARD(ButtonControl#Pause),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProcessAction),DESCRIPTION(Process action),DEVIMP(DETAILED),DOCUMENTATION(Action for each record processed),DTYPE(SINGLEDROP),OUTPUT.NAME(ProcessAction),TYPE(STRING)
+  PROPERTY: NAME(ProcessAction.LIST),DEVIMP(INTERNAL),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(QueryDelete),DESCRIPTION(Query each deletion),DEVIMP(DETAILED),DTYPE(CHECK),HIDDEN('@EVAL(CHOOSE(''%ProcessAction%''<>''DELETE record''))'),OUTPUT.NAME(QueryDelete),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickScanRecords),DESCRIPTION(Quick-scan records),DEVMP(4),DTYPE(CHECK),OUTPUT.NAME(EnableQuickScan),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(RangeField),DESCRIPTION(Key Range Limit Field),DOCUMENTATION(Field on which range limit is based.),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(RangeField),TYPE(STRING)
+  PROPERTY: NAME(RangeFile),DESCRIPTION(Range Limit File),DOCUMENTATION(Related File on which range limit is based.),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(RangeFile),TYPE(STRING)
+  PROPERTY: NAME(RangeHigh),DESCRIPTION(High Limit Value),DOCUMENTATION(Field which containes the High limit value on which range limit is based.),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(RangeHigh),TYPE(STRING)
+  PROPERTY: NAME(RangeLimit),DESCRIPTION(Range Limit Field),DOCUMENTATION(Field which containes the value on which range limit is based.),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(RangeLimit),TYPE(STRING)
+  PROPERTY: NAME(RangeLimitType),DESCRIPTION(Range Limit Type),DEVIMP(DETAILED),DOCUMENTATION(Type of Range Limit),DTYPE(SINGLEDROP),OUTPUT.NAME(RangeLimitType),TYPE(STRING)
+  PROPERTY: NAME(RangeLimitType.LIST),DEVIMP(INTERNAL),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(RangeLow),DESCRIPTION(Low Limit Value),DOCUMENTATION(Field which containes the low limit value on which range limit is based.),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(RangeLow),TYPE(STRING)
+  PROPERTY: NAME(RecordFilter),DESCRPTION(Record filter),DEVIMP(DETAILED),DTYPE(ENTRY),OUTPUT.NAME(RecordFilter),TYPE(STRING)
+  PROPERTY: NAME(RIConstraints),DESCRIPTION(Use RI constraints),DEVIMP(DETAILED),DTYPE(CHECK),HIDDEN('@EVAL(CHOOSE(''%ProcessAction%''=''No record action''))'),OUTPUT.NAME(RIProcessAction),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(SetProgressLimits),DESCRIPTION(Set progress bar limits manaually),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(ManuallySetProgressLimits),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(WindowManager),ACORN.WIZARD(Window#Process)
+  PROPERTY: NAME(WindowMessage),DESCRIPTION(Window message),DEVIMP(COMMON),DOCUMENTATION(Message to display on process window),DTYPE(ENTRY),OUPUT.NAME(WindowMessage),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ProcedureComponent)
+    ADDITIONALSORTFIELDS()
+    APPROXRECORDCOUNT(0)
+    HIGHPROGRESSLIMIT(0)
+    LOWPROGRESSLIMIT(0)
+    MENUITEM(0)
+    OUTPUT.DESCRIPTION(Process the %PrimaryFile% file)
+    OUTPUT.FROM(ABC Process)
+    OUTPUT.PROCNAME(Process%PrimaryFile%)
+    PAUSEBUTTON(0)
+    PROCESSACTION(No record action)
+    PROCESSACTION.LIST(No record action,PUT record,DELETE record)
+    QUERYDELETE(1)
+    QUICKSCANRECORDS(1)
+    RANGEFIELD()
+    RANGEFILE()
+    RANGEHIGH()
+    RANGELIMIT()
+    RANGELIMITTYPE(Current Value)
+    RANGELIMITTYPE.LIST(Current Value,Single Value,Range of Values,File Relationship)
+    RANGELOW()
+    RECORDFILTER()
+    RICONSTRAINTS(1)
+    SETPROGRESSLIMITS(0)
+    WINDOWMESSAGE('Processing %PrimaryFile%, please wait...')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Browse
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BrowseBox),ACORN(1),ACORN.CONTEXT('ParentFile(%OwnerBrowse%)'),ACORN.INITPRIORITY(100),ACORN.NAME(BrowseBox),ACORN.WIZARD(BrowseBox),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(CloseButtonControl),ACORN(1),ACORN.INITPRIORITY(100),ACORN.NAME(CloseButtonControl),ACORN.WIZARD(ButtonControl#Close),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(MenuItem),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(Browse %PrimaryFile%),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Browse'),DESCRIPTION(Menu Item),DEVIMP(BAROQUE),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(OwnerBrowse),ACORN(1),ACORN.CONTEXT('PrimaryFile(%OwnerBrowse%)'),ACORN.INITPRIORITY(100),ACORN.NAME(Parent BrowseBox),ACORN.WIZARD(BrowseBox#Parent),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.ChildProcedures),DESCRIPTION('Setting this property to ''No'' will suppress the generation of the form and child browses for each child file of the browse parent file. Setting this to ''Yes'' will generate browses and update forms for those child files and the update form for this browses parent file.'),DEVIMP(BAROQUE),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.PRIORITY(200),QUICKSTART.PROMPT(Create child procedures),QUICKSTART.WHENAPPLY('AutoProcedureDepth(@EVAL(CHOOSE(%_Value_% = 1, 2, 1))),TOPSPEED:Frame.GenerateBrowses(%_Value_%)'),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.Fields),DESCRIPTION('Select which fields will be generated into the list. If this property is set to ''ALL'', all fields will be generated. If this setting is set to ''NONE'', no fields will be selected or if this setting is ''INTERESTING'', only those felds that have a high interest level will be selected.'),DEVIMP(DETAILED),DTYPE(SINGLEDROP),QUICKSTART(TOPSPEED:Default),QUICKSTART.PRIORITY(100),QUICKSTART.PROMPT(Fields to Populate into List Box),QUICKSTART.WHENAPPLY('TOPSPEED:Browse.InterestThreshold(@EVAL(INLIST(''%_VALUE_%'',''All'',''Interesting'',''None'')))')
+  PROPERTY: NAME(QuickStart.Fields.List),DESCRIPTION('Select fields to be selected for use in the List box. This can be either ''ALL'' fields, ''NONE'' no fields or ''INTERESTING'' only Interesting fields.'),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(WindowManager),ACORN.WIZARD(Window#Browse)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ProcedureComponent)
+    BROWSEBOX(1)
+    CLOSEBUTTONCONTROL(1)
+    MENUITEM(1)
+    OUTPUT.CATEGORY(Browse)
+    OUTPUT.DESCRIPTION(Browse on the %PrimaryFile% file)
+    OUTPUT.PROCNAME(Browse%PrimaryFile%)
+    OWNERBROWSE('@RELATIONFILE(@FIND(''@RELATIONS(,%PrimaryFile%)'',`@USER(%_VALUE_%,OWNED)`))')
+    QUICKSTART.CHILDPROCEDURES(1)
+    QUICKSTART.FIELDS(Interesting)
+    QUICKSTART.FIELDS.LIST(All,Interesting,None)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Form
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BrowsesOnTabs),DEVIMP(BAROQUE),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(CancelButtonControl),ACORN(1),ACORN.INITPRIORITY(100),ACORN.NAME(CancelButtonControl),ACORN.WIZARD(ButtonControl#Cancel),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ChildBrowses),ACORN(1),ACORN.CONTEXT('PRIMARYFILE(%_VALUE_%),PARENTFILE(%PrimaryFile%)'),ACORN.INITPRIORITY(100),ACORN.NAME(Child :%_VALUE_%),ACORN.WIZARD(BrowseBox#Child),DESCRIPTION(Child Browses),DEVIMP(COMMON),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ChildBrowses.List),DESCRIPTION(Available child browses),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(%BrowsesOnTabs% = 1 AND @USER(@RELATION(%PrimaryFile%,%_VALUE_%),NoPopulate,Child)=0 AND (''@USER(@RELATION(%PrimaryFile%,%_VALUE_%),Interest,1)''>=%InterestThreshold% OR (''@USER(@RELATION(%PrimaryFile%,%_VALUE_%),Interest,1)''=0 AND 5>=%InterestThreshold%))))'),LISTFILL.FUNC('@RELATED(%PrimaryFile%)'),MULTI(1)
+  PROPERTY: NAME(Fields),ACORN(1),ACORN.CONTEXT('Field(''%_VALUE_%'')'),ACORN.INITPRIORITY(100),ACORN.NAME(FIELD: %_VALUE_%),ACORN.WIZARD(Component#Field),DESCRIPTION(Edit These Fields),DEVIMP(COMMON),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(Fields.List),DESCRIPTION(Available fields),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@ISBLOB(%_VALUE_%)=0 AND @USER(%_VALUE_%,NoPopulate,0)=0 AND @USER(%_VALUE_%,NoPopulate,Form)=0 AND (''@USER(%_VALUE_%,Interest,1)''>=%InterestThreshold% OR (''@USER(%_VALUE_%,Interest,1)''=0 AND 5>=%InterestThreshold%))))'),LISTFILL.FUNC('@FIELDS(%PrimaryFile%)'),MULTI(1)
+  PROPERTY: NAME(OwnedChildBrowses),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.BrowsesOnTabs),DESCRIPTION('Setting this property to ''N'' will suppress the generation of child browses on tabs within the Form.'),DEVIMP(BAROQUE),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.PRIORITY(200),QUICKSTART.PROMPT(Browses on Tabs),QUICKSTART.WHENAPPLY('BrowsesOnTabs(%_VALUE_%)'),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.ChildProcedures),DESCRIPTION('Setting this property to ''No'' will suppress the generation of child browses and update forms  for each child file of the forms parent file. Setting this to ''Yes'' will generate browses and update forms for those child files.'),DEVIMP(BAROQUE),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.PRIORITY(100),QUICKSTART.PROMPT(Create child procedures),QUICKSTART.WHENAPPLY('AutoProcedureDepth(@EVAL(CHOOSE(%_Value_% = 1, 2, 1))),TOPSPEED:Frame.GenerateBrowses(%_Value_%)'),TYPE(BOOLEAN)
+  PROPERTY: NAME(RecordValidation),ACORN(1),ACORN.NAME(Record Validation Options),ACORN.WIZARD(TOPSPEED:ControlTemplate#RecordValidation),DOCUMENTATION(Populate the RecordValidation template on a Form),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(SaveButtonControl),ACORN(1),ACORN.INITPRIORITY(100),ACORN.NAME(SaveButtonControl),ACORN.WIZARD(ButtonControl#Save),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ViewOnlyMode),ACORN(1),ACORN.NAME(View Only Options),ACORN.WIZARD(TOPSPEED:ControlTemplate#ViewOnlyExtension),DESCRIPTION(Configure form for View Only mode viewing),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(WindowManager),ACORN.WIZARD(Window#Form)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ProcedureComponent)
+    BROWSESONTABS(1)
+    CANCELBUTTONCONTROL(1)
+    CHILDBROWSES()
+    CHILDBROWSES.LIST()
+    CONTROLALLOCATIONTARGET(STANDARD!COMPASS!ZONE:CENTER!FORM)
+    FIELDS()
+    FIELDS.LIST()
+    OUTPUT.CATEGORY(Form)
+    OUTPUT.DESCRIPTION(Update the %PrimaryFile% file)
+    OUTPUT.PROCNAME(Update%PrimaryFile%)
+    OWNEDCHILDBROWSES(0)
+    QUICKSTART.BROWSESONTABS(1)
+    QUICKSTART.CHILDPROCEDURES(1)
+    RECORDVALIDATION(1)
+    SAVEBUTTONCONTROL(1)
+    VIEWONLYMODE(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ViewOnlyExtension
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ForceViewOnly),DESCRIPTION(Always force form into view only mode),DEVIMP(COMMON),DTYPE(CHECK),OUTPUT.NAME(ForceViewOnly),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(ViewFormActions)
+    FORCEVIEWONLY(0)
+    TEMPLATECHAIN(ABC)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BrowseFiles),ACORN(1),ACORN.CONTEXT('PrimaryFile(%_VALUE_%)'),ACORN.NAME(Browse %_VALUE_%),ACORN.WIZARD(*Browse),DESCRIPTION(Generate browses for these files),DEVIMP(ASK),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(BrowseFiles.List),DESCRIPTION(Available files),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(~%Scope.PROCEDUREWIZATRON% AND (%GENERATEBROWSES% OR ''@USER(%_VALUE_%,INTEREST)''>5)))'),LISTFILL.FUNC('@FILES()'),MULTI(1)
+  PROPERTY: NAME(CIF),DESCRIPTION(SQL Connect in frame),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(GenerateBrowses),DESCRIPTION(Generate Browses by Default),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(MenuManager),ACORN(1),ACORN.INITPRIORITY(200),ACORN.NAME(MenuManager),ACORN.WIZARD(MenuManager),DESCRIPTION(MenuManager),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Output.ProcName),STOP(%Scope.ProcedureWizatron%)
+  PROPERTY: NAME(OutputSplash),DEVIMP(INTERNAL),DTYPE(ENTRY),HIDDEN(1),LOCKED(1),OUTPUT.NAME(SplashProcedure),OUTPUT.TYPE(PROCEDURE),TYPE(STRING)
+  PROPERTY: NAME(ProcessFiles),ACORN(1),ACORN.CONTEXT('PrimaryFile(%_VALUE_%)'),ACORN.NAME(Process %_VALUE_%),ACORN.WIZARD(*Process),DESCRIPTION(Generate processes for these files),DEVIMP(ASK),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ProcessFiles.List),DESCRIPTION(Available files),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO(0),LISTFILL.FUNC('@FILES()'),MULTI(1)
+  PROPERTY: NAME(SplashWindow),ACORN(1),ACORN.NAME(SplashWindow),ACORN.WIZARD(Splash),DESCRIPTION(Show Splash Window),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ToolbarControl),ACORN(1),ACORN.NAME(Toolbar),ACORN.WIZARD(ControlTemplate#Toolbar),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(WindowManager),ACORN.WIZARD(Window#Frame)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ProcedureComponent)
+    BROWSEFILES()
+    BROWSEFILES.LIST()
+    CIF(0)
+    GENERATEBROWSES(0)
+    HIDEONDETAIL('@EVAL(CHOOSE(%Scope.ProcedureWizatron%))')
+    INTERESTTHRESHOLD(5)
+    MENUMANAGER('@EVAL(CHOOSE(~%Scope.ProcedureWizatron%))')
+    OUTPUT.CATEGORY(Frame)
+    OUTPUT.DESCRIPTION(The Application Frame)
+    OUTPUT.FROM(ABC Frame)
+    OUTPUT.PROCNAME(%Scope.FirstProc%)
+    OUTPUTSPLASH('@EVAL(CHOOSE(%SplashWindow%=1,''@EXTRACT(SplashWindow,Output.ProcName)'',''''))')
+    PROCESSFILES()
+    PROCESSFILES.LIST()
+    SPLASHWINDOW('@EVAL(CHOOSE(~%Scope.ProcedureWizatron%))')
+    TOOLBARCONTROL('@EVAL(CHOOSE(~%Scope.ProcedureWizatron% AND ''%Scope.ToolbarMode%''<>''Button''))')
+    WINDOWMANAGER('@EVAL(CHOOSE(~%Scope.ProcedureWizatron%))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Splash
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CloseOnClick),DESCRIPTION(Close window on mouse click),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DisplayTime),DESCRIPTION(Close window after time period),DEVIMP(COMMON),DTYPE(ENTRY),TYPE(NUMERIC)
+  PROPERTY: NAME(WindowManager),ACORN.WIZARD(Window#Splash)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ProcedureComponent)
+    CLOSEONCLICK(1)
+    DISPLAYTIME(3)
+    OUTPUT.CATEGORY(Splash)
+    OUTPUT.DESCRIPTION(The Splash Window)
+    OUTPUT.FROM(ABC Splash)
+    OUTPUT.PROCNAME(SplashWindow)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Splash#About
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CloseButtonControl),ACORN(1),ACORN.CONTEXT('ButtonControlType(Close#About)'),ACORN.INITPRIORITY(100),ACORN.NAME(CloseButtonControl),ACORN.WIZARD(ButtonControl#Close),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(WindowManager),ACORN.WIZARD(Window#About)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Splash)
+    CLOSEBUTTONCONTROL(1)
+    CLOSEONCLICK(0)
+    DISPLAYTIME(0)
+    OUTPUT.DESCRIPTION(The About Window)
+    OUTPUT.PROCNAME(AboutWindow)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Report
+  DESCRIPTOR: 1
+  PROPERTY: NAME(WindowManager),ACORN.WIZARD(Window#Report)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ProcedureComponent)
+    OUTPUT.CATEGORY(Report)
+    OUTPUT.DESCRIPTION(Report upon the %PrimaryFile% file)
+    OUTPUT.FROM(ABC Report)
+    OUTPUT.PROCNAME(Print%PrimaryFile%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BrowseListControl),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(200),ACORN.NAME(ListBox),ACORN.WIZARD(^List#Browse),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasBrowseToolbar),ACORN(1),ACORN.NAME(Browse Toolbar Control),ACORN.WIZARD(TOPSPEED:ControlTemplate#BrowseToolbarControl),DESCRPTION(Has browse toolbar controls),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasQuery),ACORN(1),ACORN.NAME(QBE),ACORN.WIZARD(ButtonControl#QBE),DESCRIPTION(Has QBE button),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasSelect),ACORN(1),ACORN.NAME(Select),ACORN.WIZARD(ButtonControl#Select),DESCRIPTION(Has Select Button),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasToolbox),ACORN(1),ACORN.NAME(Toolbox),ACORN.WIZARD(ButtonControl#Toolbox),DESCRIPTION(Has toolbox button),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasUpdate),ACORN(1),ACORN.INITPRIORITY(100),ACORN.NAME(Update),ACORN.WIZARD(BrowseUpdate),DESCRIPTION(Allow updates to browse),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasView),ACORN(1),ACORN.NAME(View),ACORN.WIZARD(ButtonControl#View),DESCRIPTION(Has View Button),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN),VALIDATION(%HasUpdate%),VALIDATIONTEXT(Has View can only be set when Has Update is set)
+  PROPERTY: NAME(IsChild),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(LoadMethod),DESCRIPTION(Load Method),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(LoadMethod),TYPE(STRING)
+  PROPERTY: NAME(Owned),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ParentFile)
+  PROPERTY: NAME(RecordOrder),ACORN(1),ACORN.CONTEXT('Key()'),ACORN.INITPRIORITY(120),ACORN.NAME(RecordOrder),ACORN.WIZARD(BrowseSortOrder),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(SortOrders),ACORN(1),ACORN.CONTEXT('Key(%_VALUE_%)'),ACORN.NAME(Order: %_VALUE_%),ACORN.WIZARD(BrowseSortOrder),DESCRIPTION(Browse Sort Orders),DEVIMP(ASK),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(SortOrders.List),DESCRIPTION(Available browse sort orders),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,NoPopulate,0)=0 AND @USER(%_VALUE_%,NoPopulate,Browse)=0 AND (''@USER(%_VALUE_%,Interest,1)''>=%Scope.InterestThreshold% OR (''@USER(%_VALUE_%,Interest,1)''=0 AND 5>=%Scope.InterestThreshold%))))'),LISTFILL.FUNC('@EVAL(CHOOSE(''%IsChild%''=1,''@RELATIONFOREIGNKEY(%ParentFile%,%PrimaryFile%)'',''@SORTORDERS(%PrimaryFile%)''))'),MULTI(1)
+  PROPERTY: NAME(TabName)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:TemplateComponent)
+    BROWSELISTCONTROL(1)
+    CONTROLTEMPLATE(BrowseBox)
+    HASBROWSETOOLBAR(0)
+    HASQUERY('@EVAL(CHOOSE(''%IsChild%''=0))')
+    HASSELECT('@EVAL(CHOOSE(''%IsChild%''=0))')
+    HASTOOLBOX(1)
+    HASUPDATE('@EVAL(CHOOSE(''@USER(%primaryfile%,READONLY)''=0))')
+    HASVIEW(0)
+    ISCHILD(0)
+    LOADMETHOD('@EVAL(CHOOSE(''%IsChild%''=0 AND ''@USER(%PrimaryFile%,Small)''=0,''Page'',''File''))')
+    OWNED('@EVAL(CHOOSE(@USER(@RELATION(%ParentFile%,%PrimaryFile%),OWNED)<>''''))')
+    PARENTFILE()
+    RECORDORDER('@EVAL(CHOOSE(@COUNT(SortOrders)=0))')
+    SHOW('@EVAL(CHOOSE(''%IsChild%''=0))')
+    SORTORDERS()
+    SORTORDERS.LIST()
+    TABNAME('@EVAL(CHOOSE(''%IsChild%''=0,''ALL'',CHOOSE(@COUNT(SORTORDERS)=0,''@EXTRACT(RECORDORDER,TabText)'',''@EXTRACT(SORTORDERS[1],TabText)'')))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl#Child
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:BrowseControl)
+    CONTROLALLOCATIONTARGET('@EVAL(CHOOSE(''%Owned%''=''1'',''@CONTAINER(ControlAllocationTarget)!COMPASS!ZONE:SOUTHWEST!%DisplayName%'',''@CONTAINER(ControlAllocationTarget)''))')
+    ISCHILD(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl#Parent
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:BrowseControl)
+    CONTROLALLOCATIONTARGET('@CONTAINER(ControlAllocationTarget)!COMPASS!ZONE:NORTH!%DisplayName%')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseUpdate
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ChangeButtonControl),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(100),ACORN.NAME(ChangeButton),ACORN.WIZARD(^Button#Change),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DeleteButtonControl),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(100),ACORN.NAME(DeleteButton),ACORN.WIZARD(^Button#Delete),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(EIP),DESCRIPTION(Edit via Edit-In-Place),DEVIMP(USEFUL),DTYPE(CHECK),OUTPUT.NAME(EditInPlace),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(InsertButtonControl),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(100),ACORN.NAME(InsertButton),ACORN.WIZARD(^Button#Insert),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(UpdateProcedure),ACORN(1),ACORN.CONTEXT('PrimaryFile(%PrimaryFile%)'),ACORN.INITPRIORITY(100),ACORN.NAME(Update %PrimaryFile%),ACORN.WIZARD(*Form),DESCRIPTION(Create update procedure),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:TemplateComponent)
+    CHANGEBUTTONCONTROL('@EVAL(CHOOSE(%Scope.HasView%=0,1,0))')
+    CONTROLTEMPLATE(BrowseUpdateButtons)
+    DELETEBUTTONCONTROL('@EVAL(CHOOSE(%Scope.HasView%=0,1,0))')
+    EIP('@EVAL(CHOOSE(''@USER(%PrimaryFile%,EDITINPLACE)''=1))')
+    INSERTBUTTONCONTROL('@EVAL(CHOOSE(%Scope.HasView%=0,1,0))')
+    UPDATEPROCEDURE('@EVAL(CHOOSE(''%PrimaryFile%'' AND ''%EIP%''=''0''))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#BrowseToolbarControl
+  DESCRIPTOR: 1
+  PROPERTY: NAME(TopButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarTopButton),ACORN.WIZARD(^Button#BTB#Top),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(PageUpButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarPageUpButton),ACORN.WIZARD(^Button#BTB#PageUp),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(UpButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarUpButton),ACORN.WIZARD(^Button#BTB#Up),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(LocateButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarLocateButton),ACORN.WIZARD(^Button#BTB#Locate),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DownButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarDownButton),ACORN.WIZARD(^Button#BTB#Down),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(PageDownButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarPageDownButton),ACORN.WIZARD(^Button#BTB#PageDown),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(BottomButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarBottomButton),ACORN.WIZARD(^Button#BTB#Bottom),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(SelectButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarSelectButton),ACORN.WIZARD(^Button#BTB#Select),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(InsertButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarInsertButton),ACORN.WIZARD(^Button#BTB#Insert),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ChangeButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarChangeButton),ACORN.WIZARD(^Button#BTB#Change),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DeleteButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarDeleteButton),ACORN.WIZARD(^Button#BTB#Delete),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HistoryButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarHistoryButton),ACORN.WIZARD(^Button#BTB#History),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HelpButton),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(BrowseToolbarHelpButton),ACORN.WIZARD(^Button#BTB#Help),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    TOPBUTTON(1)
+    PAGEUPBUTTON(1)
+    UPBUTTON(1)
+    LOCATEBUTTON(1)
+    DOWNBUTTON(1)
+    PAGEDOWNBUTTON(1)
+    BOTTOMBUTTON(1)
+    SELECTBUTTON(1)
+    INSERTBUTTON(1)
+    CHANGEBUTTON(1)
+    DELETEBUTTON(1)
+    HISTORYBUTTON(1)
+    HELPBUTTON(1)
+    CONTROLTEMPLATE(BrowseToolbarControl)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ButtonControl),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(100),ACORN.NAME(%ButtonControlType%Button),ACORN.WIZARD(^Button#%ButtonControlType%),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ButtonControlType),DTYPE(ENTRY)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:TemplateComponent)
+    BUTTONCONTROL(1)
+    BUTTONCONTROLTYPE()
+    CONTROLTEMPLATE('@EVAL(CHOOSE(INSTRING(''#'',''%ButtonControlType%'')=0,''%ButtonControlType%'',SUB(''%ButtonControlType%'',1,INSTRING(''#'',''%ButtonControlType%'')-1))&''Button'')')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#QBE
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AutoPopulate),DESCRIPTION(Auto Populate),DEVIMP(BAROQUE),DOCUMENTATION('Auto populate controls based on fields in a listbox or, when used in a report or process, the projected fields in a VIEW.'),DTYPE(CHECK),OUTPUT.NAME(AutoPopulate),TYPE(STRING)
+  PROPERTY: NAME(AutoShare),DESCRIPTION(Auto-share between tabs),DEVIMP(BAROQUE),DOCUMENTATION(Share the resulting query across all the Tabs on a Browse.),DTYPE(CHECK),OUTPUT.NAME(AutoShare),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(CaselessAutoPopulate),DESCRIPTION(Caseless Autopopulate),DEVIMP(BAROQUE),DOCUMENTATION('Default caseless for all fields that are autopopulated. In previous versions there was initially a bug that resulted in all the fields being caseless, in later versions you had to manually specify caseless for each control. This option now gives control over all the QBE fields case.'),DTYPE(CHECK),OUTPUT.NAME(CaselessAutoPopulate),TYPE(STRING)
+  PROPERTY: NAME(Interface),DESCRIPTION(QBE Interface),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(Interface),TYPE(STRING)
+  PROPERTY: NAME(Interface.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(QBEFamily),DESCRIPTION(Query Family),DEVIMP(BAROQUE),DOCUMENTATION(Name of the Family that queries attached to this procedure will be saved under. If two procedures share the same Query Family it allows them to share saved queries. Thus allowing for implementation of calling a report or process from a browse using the current QBE filter active on the browse.),DTYPE(ENTRY),OUTPUT.NAME(QBEFamily),PROPERTY:(),TYPE(STRING)
+  PROPERTY: NAME(QBEField),DESCRIPTION(QBEField instances - Based on QBEField),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LISTFILL.CONVERT('@NAME(%_VALUE_%)'),LISTFILL.FUNC(%QBEFieldList%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(QBEFields),OUTPUT.NAME(QBEField),TYPE(STRING)
+  PROPERTY: NAME(QBEFieldList),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(QBEField: %_Value_%),ACORN.WIZARD(Component#QBEField),DESCRIPTION(QBE Fields),DEVIMP(USEFUL),DTYPE(MULTIDROP),MULTI(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(QBEFieldList.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@NAME(%_VALUE_%)'),LISTFILL.FUNC('@Fields(%PrimaryFile%)'),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(QBEFields),DESCRIPTION(QBEField instances - Based on QBEField),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LISTFILL.CONVERT('@INDEX(QBEFields,%_VALUE_%)'),LISTFILL.FUNC(%QBEFieldList%),LOCKED(1),MULTI(1),OUTPUT.NAME(QBEFields),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(QBEForceEditPictures),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(QBEFieldList[@INDEX(QBEForceEditPictures,%_Value_%)],QBEForceEditPicture)'),LISTFILL.FUNC(%QBEFieldList%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(QBEFields),OUTPUT.NAME(QBEForceEditPicture),TYPE(STRING)
+  PROPERTY: NAME(QBENoCases),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(QBEFieldList[@INDEX(QBENoCases,%_Value_%)],QBENoCase)'),LISTFILL.FUNC(%QBEFieldList%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(QBEFields),OUTPUT.NAME(QBENoCase),TYPE(STRING)
+  PROPERTY: NAME(QBEPictures),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(QBEFieldList[@INDEX(QBEPictures,%_Value_%)],QBEPicture)'),LISTFILL.FUNC(%QBEFieldList%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(QBEFields),OUTPUT.NAME(QBEPicture),TYPE(STRING)
+  PROPERTY: NAME(QBETitles),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(QBEFieldList[@INDEX(QBETitles,%_Value_%)],QBETitle)'),LISTFILL.FUNC(%QBEFieldList%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(QBEFields),OUTPUT.NAME(QBETitle),TYPE(STRING)
+  PROPERTY: NAME(QkIcon),DESCRIPTION(Query icon),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Icon File (*.ico)|*.ico'),OUTPUT.NAME(QkIcon),TYPE(STRING)
+  PROPERTY: NAME(QkMenuIcon),DESCRIPTION(QuickQBE Menu Icon),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Icon Files (*.ico)|*.ico'),OUTPUT.NAME(QkMenuIcon),TYPE(STRING)
+  PROPERTY: NAME(QkSupport),DESCRIPTION(Quick QBE Support),DEVIMP(BAROQUE),DOCUMENTATION(Quick QBE support results in the saved queries for a browse being accessible from the right-click popup on a browse. This allows for easy access to the saved queries without having to call the QBE window. You can also use this for canned query support by turning disabling and hiding the QBE Button so that only the saved queries are accessible and the user cannot change any of the QBE Settings.),DTYPE(CHECK),OUTPUT.NAME(QkSupport),TYPE(STRING)
+  PROPERTY: NAME(QueryResultControl),DESCRIPTION(Query Result Control),DEVIMP(BAROQUE),DOCUMENTATION(Display field to display the filter string resulting from the QBE settings.),DTYPE(ENTRY),OUTPUT.NAME(QueryResultControl),TYPE(STRING)
+  PROPERTY: NAME(QueryResultControl.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@EXTRACT(\%_VALUE_%,Use.Label)'),LISTFILL.FUNC('@EXTRACT(Scope.WindowManager,node.controls)'),MULTI(1),OUTPUT.NAME(),TYPE(STRING)
+  PROPERTY: NAME(RetainQuery),DESCRIPTION(Retain Query),DEVIMP(BAROQUE),DOCUMENTATION(Save the current query as the most recently used query.),DTYPE(CHECK),OUTPUT.NAME(RetainQuery),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  PROPERTY: NAME(StartQuery),DESCRIPTION(Use on startup),DEVIMP(BAROQUE),DOCUMENTATION(Use the Query immediately as the procedure opens.),DTYPE(CHECK),OUTPUT.NAME(StartQuery),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(UseMRU),DESCRIPTION(Use most recently used Query),DEVIMP(BAROQUE),DOCUMENTATION('Use most recently used Query for the current Family. For Reports and Process templates this option can be used to default the current QBE query active on a Browse as the default query, without having to call the QBE window.'),DTYPE(CHECK),OUTPUT.NAME(UseMRU),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    AUTOPOPULATE(1)
+    AUTOSHARE(1)
+    BUTTONCONTROLTYPE(BrowseQBE)
+    CASELESSAUTOPOPULATE(1)
+    INTERFACE(LIST)
+    INTERFACE.LIST(LIST,FORM)
+    QBEFAMILY('@CONTAINER(Output.Procname)')
+    QKICON(QkLoad.ico)
+    QKMENUICON(QkQBE.ico)
+    QKSUPPORT(1)
+    QUERYRESULTCONTROL()
+    RETAINQUERY(1)
+    STARTQUERY()
+    USEMRU(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Close
+  DESCRIPTOR: 1
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    BUTTONCONTROLTYPE(Close)
+    CONTROLALLOCATIONTARGET(Standard)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Pause
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DeferOpen),DESCRIPTION(Start Paused),DTYPE(CHECK),OUTPUT.NAME(DeferOpen)
+  PROPERTY: NAME(MultiStart),DESCRIPTION(Allow multiple starts),DTYPE(CHECK),HIDDEN('@EVAL(CHOOSE(''%DeferOpen%''=''1'','''',''1''))'),OUTPUT.NAME(MultiStart)
+  PROPERTY: NAME(PauseText),DESCRIPTION(Paused Text),DTYPE(ENTRY),OUTPUT.NAME(PauseText)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(RestartText),DESCRIPTION(Restart Text),DTYPE(ENTRY),OUTPUT.NAME(RestartText)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  PROPERTY: NAME(StartText),DESCRIPTION(Start Text),DTYPE(ENTRY),HIDDEN('@EVAL(CHOOSE(''%DeferOpen%''=''1'','''',''1''))'),OUTPUT.NAME(StartText)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    BUTTONCONTROLTYPE(Pause)
+    DEFEROPEN()
+    MULTISTART(0)
+    PAUSETEXT(Pause)
+    RESTARTTEXT(Restart)
+    STARTTEXT(&Go)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Save
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AllowDeletes),DESCRIPTION(Allow Deletes),DEVIMP(USEFUL),DTYPE(CHECK),OUTPUT.NAME(DeleteAllowed),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(AllowInserts),DESCRIPTION(Allow Inserts),DEVIMP(USEFUL),DTYPE(CHECK),OUTPUT.NAME(InsertAllowed),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(AllowUpdates),DESCRIPTION(Allow Updates),DEVIMP(USEFUL),DTYPE(CHECK),OUTPUT.NAME(ChangeAllowed),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(HistoryKey),DESCRIPTION(HistoryKey),DEVIMP(COMMON),DTYPE(CHECK),OUTPUT.NAME(HistoryKey),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    ALLOWDELETES(1)
+    ALLOWINSERTS(1)
+    ALLOWUPDATES(1)
+    BUTTONCONTROLTYPE(Save)
+    CONTROLALLOCATIONTARGET(Standard)
+    HISTORYKEY(734)
+    SHOW(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Cancel
+  DESCRIPTOR: 1
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    BUTTONCONTROLTYPE(Cancel)
+    CONTROLALLOCATIONTARGET(Standard)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Select
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HideIfDisabled),DESCRIPTION(Disable select when not used),DEVIMP(USEFUL),DTYPE(CHECK),OUTPUT.NAME(HideIfDisabled),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    BUTTONCONTROLTYPE(BrowseSelect)
+    HIDEIFDISABLED(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#View
+  DESCRIPTOR: 1
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    BUTTONCONTROLTYPE(BrowseView)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Toolbox
+  DESCRIPTOR: 1
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    BUTTONCONTROLTYPE(BrowseToolbox)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Lookup
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ButtonControl),ACORN.CONTEXT('Populator(%NAME%),Allocation.Priority(`@EVAL(%^FieldPriority%*100+@INHERIT(Allocation.Priority))`)')
+  PROPERTY: NAME(ControlToLookup),DESCRIPTION(Control to perform lookup upon),DEVIMP(BAROQUE),OUTPUT.NAME(ControlToLookup)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    BUTTONCONTROLTYPE(FieldLookup)
+    CONTROLTOLOOKUP('?@EXTRACT(Scope.LookupStyle.Child.Entry^EditControl,Use.Label)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:EditFieldClass
+  DESCRIPTOR: 1
+  PROPERTY: NAME(EditControl),DESCRIPTION(Edit Control),DTYPE(ENTRY),LOCKED(1),TYPE(NODE)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:TemplateComponent)
+    EDITCONTROL()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:DropComboFieldClass
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AllowUpdates),DESCRIPTION(Allow Updates),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(EditControl),ACORN(1),ACORN.CONTEXT('Populator(%Name%),Allocation.Priority(`@EVAL(%^FieldPriority%*100+@INHERIT(Allocation.Priority))`),Allocation.Ypos(%Scope.HAlign%)'),ACORN.INITPRIORITY(200),ACORN.NAME(DropCombo : %Scope.Field%),ACORN.WIZARD(^Combo),DESCRIPTION(Combo Control),DTYPE(CHECK),LOCKED(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(UpdateProcedure),ACORN(1),ACORN.CONTEXT('PrimaryFile(%PrimaryFile%)'),ACORN.INITPRIORITY(100),ACORN.NAME(Update %PrimaryFile%),ACORN.WIZARD(*Form),DESCRIPTION(Create update procedure),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:TemplateComponent)
+    ALLOWUPDATES(1)
+    CONTROLTEMPLATE(FileDropCombo)
+    EDITCONTROL(1)
+    UPDATEPROCEDURE(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ListBoxColumn
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Column.Colors),DESCRIPTION(Column colors enabled?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Column.Header),DESCRIPTION(Column header),DEVIMP(DETAILED)
+  PROPERTY: NAME(Column.HeaderIndent),DESCRIPTION(Column header indentation),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Column.HeaderJustification),DESCRIPTION(Column header justification),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Column.HeaderJustification.List),DESCRIPTION(Available column header justifications),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Column.HScroll),DESCRIPTION(Column horizontal scroll),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Column.Icon),DESCRIPTION(Column icon enabled?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Column.ID),DESCRIPTION(Unique identifier for list box column)
+  PROPERTY: NAME(Column.Indent),DESCRIPTION(Column indentation),DEVIMP(DETAILED),TYPE(NUMERIC)
+  PROPERTY: NAME(Column.Justification),DESCRIPTION(Column justification),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(Column.Justification.List),DESCRIPTION(Available column justifications),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Column.MaxWidth),DESCRIPTION(Column maximum width),DEVIMP(BAROQUE),TYPE(NUMERIC)
+  PROPERTY: NAME(Column.Picture),DESCRIPTION(Column display picture),DEVIMP(DETAILED)
+  PROPERTY: NAME(Column.Resizable),DESCRIPTION(Column resizable),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Column.RightBorder),DESCRIPTION(Column right border),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Column.Tree),DESCRIPTION(Column tree enabled?),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Column.Width),DESCRIPTION(Column width),DEVIMP(DETAILED),TYPE(NUMERIC)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:APPLICATIONCOMPONENT)
+    COLUMN.COLORS(0)
+    COLUMN.HEADER('@HEADING(%Column.Id%)')
+    COLUMN.HEADERINDENT(1)
+    COLUMN.HEADERJUSTIFICATION(Left)
+    COLUMN.HEADERJUSTIFICATION.LIST(Left,Right,Centre,Decimal)
+    COLUMN.HSCROLL(0)
+    COLUMN.ICON(0)
+    COLUMN.ID()
+    COLUMN.INDENT(2)
+    COLUMN.JUSTIFICATION(Left)
+    COLUMN.JUSTIFICATION.LIST(Left,Right,Center,Decimal)
+    COLUMN.MAXWIDTH(80)
+    COLUMN.PICTURE('@SCREENPICTURE(%Column.Id%)')
+    COLUMN.RESIZABLE(1)
+    COLUMN.RIGHTBORDER(1)
+    COLUMN.TREE(0)
+    COLUMN.WIDTH(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseSortOrder
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AdditionalSort),DESCRIPTION(Fields to sort by in addition to the key),DEVIMP(USEFUL)
+  PROPERTY: NAME(Filter),DESCRIPTION(Filter Expression),DEVIMP(DETAILED)
+  PROPERTY: NAME(FreeElement),DESCRIPTION(Variant field of sort order),DEVIMP(DETAILED)
+  PROPERTY: NAME(HasLookup),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(Key),DESCRIPTION(Sort Key)
+  PROPERTY: NAME(KeyUse),DESCRIPTION(Sort Key to Use)
+  PROPERTY: NAME(Locator),ACORN(1),ACORN.NAME(%_VALUE_%Locator),ACORN.WIZARD(Component#Locator#%_VALUE_%),DESCRIPTION(Locator),DEVIMP(DETAILED),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(LocatorType),DESCRIPTION(Locator Type),DEVIMP(COMMON),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(LocatorType.List),DESCRIPTION(Available locator types),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(RangeField),DESCRIPTION(Range Field),DEVIMP(BAROQUE)
+  PROPERTY: NAME(RangeFile),DESCRIPTION(Range Limiting File),DEVIMP(BAROQUE)
+  PROPERTY: NAME(RangeHigh),DESCRIPTION(Range High),DEVIMP(BAROQUE)
+  PROPERTY: NAME(RangeLimit),DESCRIPTION(Range Limit),DEVIMP(BAROQUE),OUTPUT.LOCALDATA('@EVAL(CHOOSE(''%Scope.RangeLimit%''='''','''',''%Scope.RangeLimit% LONG''))')
+  PROPERTY: NAME(RangeLimitType),DESCRIPTION(Range Limit Type),DEVIMP(BAROQUE),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(RangeLimitType.List),DESCRIPTION(Available range limit types),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(RangeLow),DESCRIPTION(Range Low),DEVIMP(BAROQUE)
+  PROPERTY: NAME(ScrollBehavior),DESCRIPTION(Scroll Behavior),DEVIMP(DETAILED),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(ScrollBehavior.List),DESCRIPTION(Available scroll behaviors),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(ScrollKeyDistribution),DESCRIPTION(Scroll Key Distribution),DEVIMP(USEFUL),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(ScrollKeyDistribution.List),DESCRIPTION(Available scroll key distributions),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Sheet),ACORN(1),ACORN.CONTEXT('Allocation.Target(%_Value_%)'),ACORN.NAME('Sheet: @EVAL(CHOOSE(INSTRING(''!'',''%_VALUE_%'',1,1)<>0, SUB(''%_VALUE_%'', INSTRING(''!'',''%_VALUE_%'',-1,LEN(''%_VALUE_%''))+1, -1), ''Standard''))'),ACORN.WIZARD(+^Sheet#ControlTemplateLess),DEVIMP(INTERNAL),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(TabText),ACORN(1),ACORN.CONTEXT('Allocation.Priority(1),Text(%_Value_%)'),ACORN.NAME(Tab: %_Value_%),ACORN.WIZARD('+^(Sheet)Tab'),DESCRIPTION(Text for Tab),DEVIMP(DETAILED)
+  PROPERTY: NAME(TreeWalker),ACORN(1),ACORN.NAME(TreeWalker),ACORN.WIZARD(ControlTemplate#TreeWalker),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:APPLICATIONCOMPONENT)
+    ADDITIONALSORT('@EVAL(CHOOSE(%HasLookup%,''*@NAME(@USER(%FreeElement%,DISPLAY,1)@EVAL(CHOOSE(%HasLookup%,''.'',''''))@USER(%FreeElement%,DISPLAY,2))'',''''))')
+    FILTER('@EVAL(CHOOSE(''%Scope.IsChild%''=1 AND (''@RELATIONFOREIGNKEY(%Scope.ParentFile%,%Scope.PrimaryFile%)''='''' OR ''%KeyUse%''=''''),''@RELATIONEXPRESSION(%Scope.ParentFile%,%Scope.PrimaryFile%)'',''''))')
+    FREEELEMENT('@EVAL(CHOOSE(''%Key%''='''','''',''@KEYFIELD(%Key%,@EVAL(@KEYFIELD(%Key%,%RangeField%)+1))''))')
+    HASLOOKUP('@EVAL(CHOOSE(''@USER(%FreeElement%,DISPLAY,1)''<>''''))')
+    KEY()
+    KEYUSE(%KEY%)
+    LOCATOR('@EVAL(CHOOSE(''%LocatorType%''=''None'' OR %HasLookup%,'''',''%LocatorType%''))')
+    LOCATORTYPE('@EVAL(CHOOSE(''%FreeElement%''='''',''None'',CHOOSE(''%Scope.IsChild%''=0,''Incremental'',''Step'')))')
+    LOCATORTYPE.LIST(None,Step,Entry,Incremental,Filtered)
+    RANGEFIELD('@EVAL(CHOOSE(''%RangeLimitType%''='''','''',''@KEYFIELD(%Key%,1)''))')
+    RANGEFILE('@EVAL(CHOOSE(''@RELATIONFOREIGNKEY(%Scope.ParentFile%,%Scope.PrimaryFile%)''='''','''',''%Scope.ParentFile%''))')
+    RANGEHIGH()
+    RANGELIMIT('@EVAL(CHOOSE(''%RANGELIMITTYPE%''=''Single Value'',''Limit%Scope.Instance%'',''''))')
+    RANGELIMITTYPE('@EVAL(CHOOSE(''@RELATIONFOREIGNKEY(%Scope.ParentFile%,%Scope.PrimaryFile%)''='''',CHOOSE(''@USER(@KEYFIELD(%Key%,1),LIMIT)''<>'''',''Single Value'',''''),''File Relationship''))')
+    RANGELIMITTYPE.LIST(Current Value,File Relationship,Single Value,Range of Values)
+    RANGELOW()
+    SCROLLBEHAVIOR(Movable Thumb)
+    SCROLLBEHAVIOR.LIST(Movable Thumb,Fixed Thumb)
+    SCROLLKEYDISTRIBUTION(Runtime)
+    SCROLLKEYDISTRIBUTION.LIST(Runtime,Alpha,Last Names,Custom)
+    SHEET(%ControlAllocationTarget%)
+    TABTEXT('@EVAL(CHOOSE(%Scope.IsChild%=1,''%Scope.PrimaryFile% : @EVAL(CHOOSE(''%Key%''='''',''Record Order'',CHOOSE(''@DESCRIPTION(%Key%)''='''',''@NAME(%Key%)'',''@DESCRIPTION(%Key%)'')))'',''@EVAL(CHOOSE(''%Key%''='''',''Record Order'',CHOOSE(''@DESCRIPTION(%Key%)''='''',''@NAME(%Key%)'',''@DESCRIPTION(%Key%)'')))''))')
+    TREEWALKER('@EVAL(CHOOSE(''%RangeLimitType%''=''Single Value'' AND UPPER(''@USER(%RangeField%,LIMIT,1)'')=UPPER(''%Scope.PrimaryFile%'')))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Field
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Field),DESCRIPTION(Field being managed),DEVIMP(BAROQUE)
+  PROPERTY: NAME(FieldPriority),DESCRIPTION(Field allocation priority),DEVIMP(BAROQUE),TYPE(NUMERIC)
+  PROPERTY: NAME(HAlign),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(LookupFile),DESCRIPTION(File to lookup in),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(LookupStyle),DESCRIPTION(How to handle DISPLAY fields),DEVIMP(USEFUL),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(LookupStyle.Child.Button),ACORN(1),ACORN.NAME(%Field% - Button),ACORN.WIZARD(ButtonControl#Lookup),DEVIMP(DETAILED),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(LookupStyle.Child.Combo),ACORN(1),ACORN.CONTEXT('PrimaryFile(%LookupFile%)'),ACORN.INITPRIORITY(100),ACORN.NAME(COMBO),ACORN.WIZARD(DropComboFieldClass),DESCRIPTION(Child hook),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(LookupStyle.Child.Entry),ACORN(1),ACORN.INITPRIORITY(100),ACORN.NAME(Entry),ACORN.WIZARD(EditFieldClass),DESCRIPTION(Default EF),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(LookupStyle.Child.Prompt),ACORN(1),ACORN.CONTEXT('Populator(%Name%),Allocation.Priority(`@EVAL(%^FieldPriority%*100+@INHERIT(Allocation.Priority))`),Allocation.Ypos(%HAlign%)'),ACORN.INITPRIORITY(100),ACORN.NAME(Prompt : %Field%),ACORN.WIZARD(^Prompt),DESCRIPTION(Default PF),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(LookupStyle.List),DESCRIPTION(Available lookup styles),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:APPLICATIONCOMPONENT)
+    FIELD()
+    FIELDPRIORITY('@EVAL(@COUNT(Scope.Fields)-@INDEX(Scope.Fields,%Field%))')
+    HALIGN(FUpdateYpos%Field%)
+    LOOKUPFILE('@USER(%Field%,Display,1)')
+    LOOKUPSTYLE('@EVAL(CHOOSE(''%LOOKUPFILE%'' AND ''@USER(%LookupFile%,Small)''=1,''Combo'',''Lookup Button''))')
+    LOOKUPSTYLE.CHILD.BUTTON('@EVAL(CHOOSE(''@SCREENCONTROLTYPE(%Field%)''=''ENTRY'' AND ''%LookupFile%'' AND ''%LookupStyle%''=''Lookup Button''))')
+    LOOKUPSTYLE.CHILD.COMBO('@EVAL(CHOOSE(''%LookupFile%'' AND ''%LookupStyle%''=''Combo''))')
+    LOOKUPSTYLE.CHILD.ENTRY('@EVAL(CHOOSE(~''%LookupFile%'' OR ''%LookupStyle%''<>''Combo''))')
+    LOOKUPSTYLE.CHILD.PROMPT('@EVAL(CHOOSE(''@ISMEMO(%Field%)''=''1'','''',CHOOSE(INLIST(''@EXTRACT(LookupStyle.Child.Entry^EditControl,ControlType)'',''OPTION'',''CHECK'',''IMAGE'')=0)))')
+    LOOKUPSTYLE.LIST(Combo,Ignore,Lookup on Error,Lookup Button)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Locator
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Locator.Entry),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.NAME(Entry : %Scope.FreeElement%),ACORN.WIZARD(^Entry#Locator),DESCRIPTION(Entry Field),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Locator.Prompt),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.NAME(Prompt : %Scope.FreeElement%),ACORN.WIZARD(^Prompt#Locator),DESCRIPTION(Prompt Field),DTYPE(CHECK),HIDDEN(1),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent)
+    LOCATOR.ENTRY(1)
+    LOCATOR.PROMPT(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Locator#Step
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Locator.Entry),STOP(1)
+  PROPERTY: NAME(Locator.Prompt),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent#Locator)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Locator#Entry
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent#Locator)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Locator#Incremental
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Locator.Entry),ACORN.CONTEXT('Populator(%NAME%),IMMEDIATE(1)')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent#Locator)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Locator#Filtered
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Locator.Entry),ACORN.CONTEXT('Populator(%NAME%),IMMEDIATE(1)')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent#Locator)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#RecordValidation
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DoNotValidate),DTYPE(MULTIDROP),MULTI(1),OUTPUT.NAME(ControlsExcluded),OUTPUT.VALUE('?@EXTRACT(scope.Fields[@INDEX(scope.Fields,%_VALUE_%)]^LookupStyle.Child.Entry^EditControl,Use.Label)'),TYPE(STRING)
+  PROPERTY: NAME(DoNotValidate.List),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.FUNC(%scope.Fields%),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(InvalidFieldColour),DESCRIPTION(Field colour when invalid),DEVIMP(BAROQUE),DOCUMENTATION(Field colour when invalid),DTYPE(COLOR),OUTPUT.NAME(InvalidFieldColour),TYPE(STRING)
+  PROPERTY: NAME(InvalidPromptColour),DESCRIPTION(Prompt colour when invalid),DEVIMP(BAROQUE),DOCUMENTATION(Prompt colour when invalid),DTYPE(COLOR),OUTPUT.NAME(InvalidPromptColour),TYPE(STRING)
+  PROPERTY: NAME(UseValidateMessage),DESCRIPTION(Show Message when fields are Invalid),DTYPE(CHECK),OUTPUT.NAME(UseValidateMessage),TYPE(BOOLEAN)
+  PROPERTY: NAME(ValidateOnAccept),DTYPE(CHECK),OUTPUT.NAME(ValidateOnAccept),TYPE(BOOLEAN)
+  PROPERTY: NAME(ValidateOnNonStopSelect),DTYPE(CHECK),OUTPUT.NAME(ValidateOnNonStopSelect),TYPE(BOOLEAN)
+  PROPERTY: NAME(ValidateUsingColouration),DTYPE(CHECK),OUTPUT.NAME(ValidateUsingColouration),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(RecordValidation)
+    DONOTVALIDATE()
+    INVALIDFIELDCOLOUR(255)
+    INVALIDPROMPTCOLOUR(255)
+    USEVALIDATEMESSAGE()
+    VALIDATEONACCEPT(1)
+    VALIDATEONNONSTOPSELECT(1)
+    VALIDATEUSINGCOLOURATION()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#QBE#ReportQBE
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AutoShare),HIDDEN(1)
+  PROPERTY: NAME(QkIcon),HIDDEN(1)
+  PROPERTY: NAME(QkMenuIcon),HIDDEN(1)
+  PROPERTY: NAME(QkSupport),HIDDEN(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl#QBE)
+    AUTOSHARE(0)
+    BUTTONCONTROLTYPE(BrowseQBE#ProcessReportQBE)
+    QKSUPPORT(0)
+    USEMRU(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#QBEField
+  DESCRIPTOR: 1
+  PROPERTY: NAME(QBEForceEditPicture),DESCRIPTION(Disable begins and contains),DEVIMP(BAROQUE),DOCUMENTATION('Control over field support for begins and contains for non-string fields. For the FORM QBE interface this essentially "forces" the field picture allowing only entries valid for that picture to be entered, this effectively disables use of the magic characters for begins and contains support.'),DTYPE(CHECK),TYPE(STRING)
+  PROPERTY: NAME(QBENoCase),DESCRIPTION(Caseless),DEVIMP(BAROQUE),DOCUMENTATION(Toggle for QBE field for case sensitivity.),DTYPE(CHECK),TYPE(STRING)
+  PROPERTY: NAME(QBEPicture),DESCRIPTION(Picture),DEVIMP(BAROQUE),DOCUMENTATION(Field Data Picture for field on QBE Interface.),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(QBETitle),DESCRIPTION(Title),DEVIMP(BAROQUE),DOCUMENTATION(Prompt for field on QBE window.),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    QBEFORCEEDITPICTURE(1)
+    QBENOCASE(1)
+    QBEPICTURE()
+    QBETITLE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseQBE#ProcessReportQBE
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button#BrowseQBE)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#DbAuditing
+  DESCRIPTOR: 1
+  PROPERTY: NAME(FilesToLog),ACORN(1),ACORN.CONTEXT('LogFile(%_VALUE_%)'),ACORN.NAME(LogFile: %_VALUE_%),ACORN.WIZARD(ControlTemplate#GlobalTemplate#DbAuditFile),DESCRIPTION(Log actions on these files),DEVIMP(USEFUL),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(FilesToLog.List),DESCRIPTION(Files to Log),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,AUDIT,0)=1,1,0))'),LISTFILL.FUNC('@FILES()'),MULTI(1),OUTPUT.TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CONTROLTEMPLATE(DbAuditing)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#LogFile
+  DESCRIPTOR: 1
+  PROPERTY: NAME(UserLogField),DESCRIPTION(Username variable),DEVIMP(BAROQUE),DOCUMENTATION(Optional variable to use for logging username to log file entries.),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(UserLogHeader),DESCRIPTION(Column header for username),DEVIMP(BAROQUE),DOCUMENTATION(Column header text for username in log file entries.),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(UserLogPicture),DESCRIPTION(User column picture),DEVIMP(BAROQUE),DOCUMENTATION('Picture to use for username column (in this case since it is inevitably text it denotes the column length).'),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent)
+    USERLOGFIELD()
+    USERLOGHEADER()
+    USERLOGPICTURE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#DbAuditFile
+  DESCRIPTOR: 1
+  PROPERTY: NAME(LogFieldHeaders),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(LogFieldNames[@INDEX(LogFieldHeaders,%_Value_%)],LogFieldHeader)'),LISTFILL.FUNC(%LogFieldNames%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(LogFields),OUTPUT.NAME(LogFieldHeader),TYPE(STRING)
+  PROPERTY: NAME(LogFieldNames),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(LogFieldName %_VALUE_%),ACORN.WIZARD(Component#LogField),DESCRIPTION(Include these columns in the log),DEVIMP(USEFUL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@NAME(%_Value_%)'),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(LogFieldNames.List),DESCRIPTION(Columns to include),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,AUDIT,0)=1,1,0))'),LISTFILL.CONVERT(),LISTFILL.FUNC('@FIELDS(%LogFile%)'),MULTI(1),OUTPUT.TYPE(STRING)
+  PROPERTY: NAME(LogFieldO),DEVIMP(USEFUL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@NAME(%_VALUE_%)'),LISTFILL.FUNC(%LogFieldNames%),MULTI(1),OUTPUT.DEPENDS(LogFields),OUTPUT.NAME(LogField)
+  PROPERTY: NAME(LogFieldPictures),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(LogFieldNames[@INDEX(LogFieldPictures,%_Value_%)],LogFieldPicture)'),LISTFILL.FUNC(%LogFieldNames%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(LogFields),OUTPUT.NAME(LogFieldPicture),TYPE(STRING)
+  PROPERTY: NAME(LogFields),DESCRIPTION(LogFields instances - Based on LogFieldNames instances),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LISTFILL.CONVERT('@INDEX(LogFieldNames,%_VALUE_%)'),LISTFILL.FUNC(%LogFieldNames%),LOCKED(1),MULTI(1),OUTPUT.NAME(LogFields),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(LogFile),DESCRIPTION(LogFileName),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),OUTPUT.NAME(LogFile),TYPE(STRING)
+  PROPERTY: NAME(LogFileName),DESCRIPTION(File to Log),DEVIMP(BAROQUE),DOCUMENTATION(The name of the File to log activity on.),DTYPE(ENTRY),OUTPUT.NAME(LogFileName),TYPE(STRING)
+  PROPERTY: NAME(MiscLogFieldHeaders),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(MiscLogFieldNames[@INDEX(MiscLogFieldHeaders,%_Value_%)],MiscLogFieldHeader)'),LISTFILL.FUNC(%MiscLogFieldNames%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(MiscLogFields),OUTPUT.NAME(MiscLogFieldHeader),TYPE(STRING)
+  PROPERTY: NAME(MiscLogFieldNames),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(MiscLogFieldName %_VALUE_%),ACORN.WIZARD(Component#MiscLogField),DESCRIPTION(Include these columns in the log),DEVIMP(USEFUL),DTYPE(MULTIDROP),MULTI(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(MiscLogFieldNames.List),DESCRIPTION(Miscellaneous Columns to include),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO(),LISTFILL.CONVERT('@NAME(%_VALUE_%)'),LISTFILL.FUNC('@FIELDS(%LogFile%)'),MULTI(1),OUTPUT.TYPE(STRING)
+  PROPERTY: NAME(MiscLogFieldO),DEVIMP(USEFUL),DTYPE(MULTIDROP),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@NAME(%_VALUE_%)'),LISTFILL.FUNC(%MiscLogFieldNames%),MULTI(1),OUTPUT.DEPENDS(MiscLogFields),OUTPUT.NAME(MiscLogField)
+  PROPERTY: NAME(MiscLogFieldPictures),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(MiscLogFieldNames[@INDEX(MiscLogFieldPictures,%_Value_%)],MiscLogFieldPicture)'),LISTFILL.FUNC(%MiscLogFieldNames%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(MiscLogFields),OUTPUT.NAME(MiscLogFieldPicture),TYPE(STRING)
+  PROPERTY: NAME(MiscLogFields),DESCRIPTION(MiscLogFields instances - Based on MiscLogFieldNames instances),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LISTFILL.CONVERT('@INDEX(MiscLogFieldNames,%_VALUE_%)'),LISTFILL.FUNC(%MiscLogFieldNames%),LOCKED(1),MULTI(1),OUTPUT.NAME(MiscLogFields),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(UserLogField),DESCRIPTION(Username variable),DEVIMP(BAROQUE),DOCUMENTATION(Username variable to use when logging username to log entries.),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(UserLogHeader),DESCRIPTION(Column header text),DEVIMP(BAROQUE),DOCUMENTATION(Column header text for the username column),DTYPE(ENTRY),OUTPUT.NAME(UserLogHeader),TYPE(STRING)
+  PROPERTY: NAME(UserLogPicture),DESCRIPTION(User column picture),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(UserLogPicture),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CONTROLTEMPLATE(DbAuditFile)
+    LOGFILENAME(%LogFile%.Log)
+    USERLOGFIELD()
+    USERLOGHEADER()
+    USERLOGPICTURE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#LogField
+  DESCRIPTOR: 1
+  PROPERTY: NAME(LogFieldHeader),DESCRIPTION(Field column header),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(LogFieldPicture),DESCRIPTION(Field column picture),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent)
+    LOGFIELDHEADER()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#MiscLogField
+  DESCRIPTOR: 1
+  PROPERTY: NAME(MiscLogFieldHeader),DESCRIPTION(Field column header),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(MiscLogFieldPicture),DESCRIPTION(Field column picture),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent)
+    LOGFIELDHEADER()
+  [END]
+[END]

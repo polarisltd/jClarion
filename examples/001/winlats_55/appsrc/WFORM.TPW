@@ -1,0 +1,453 @@
+#UTILITY(FormWizard,'Create a New Record Update (Form) Procedure'),WIZARD,HLP('~TPLWizardForm')
+#!
+#SHEET
+  #TAB('Form Wizard'),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM1'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('This wizard will help you quickly create a new record update (Form) procedure.'),AT(90,8,235,24)
+    #DISPLAY('To begin creating your new Form procedure, click Next.'),AT(90)
+  #ENDTAB
+  #TAB('Form Wizard - Procedure Name'),WHERE(~%QuickProcedure),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM1'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('What name should be used as the label of this form procedure?',@S100),%QuickFormPromptProcedureName,AT(90,23,235),PROMPTAT(90,8,235)
+    #VALIDATE(%QuickFormPromptProcedureName,'You must supply a procedure name!')
+  #ENDTAB
+  #TAB('Form Wizard - File Access'),FINISH(1),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFSCH'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('Which file do you want the form to update?',FILE),%QuickFormPromptPrimaryFile,AT(90,23,235),PROMPTAT(90,8,235)
+    #VALIDATE(%QuickFormPromptPrimaryFile,'You must supply a file to update!')
+  #ENDTAB
+  #TAB('Form Wizard - Updating Records'),FINISH(1),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM2'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('A form procedure can insert a new record, change the data in a record, or delete a record from the file.  Any of these can be disabled.'),AT(90,8,235,25)
+    #PROMPT('Allow Records To Be Added',CHECK),%QuickFormPromptAllowInsert,DEFAULT(1),AT(90,,235)
+    #PROMPT('Allow Records To Be Modified',CHECK),%QuickFormPromptAllowChange,DEFAULT(1),AT(90,,235)
+    #PROMPT('Allow Records To Be Deleted',CHECK),%QuickFormPromptAllowDelete,DEFAULT(1),AT(90,,235)
+  #ENDTAB
+  #TAB('Form Wizard - Messages'),FINISH(1),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM3'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('This form procedure will be called from a button, menu, or key that requests that a record be inserted, changed, or deleted.  A message will be displayed to describe the action requested.'),AT(90,8,235,25)
+    #ENABLE(%QuickFormPromptAllowInsert)
+      #PROMPT('Insert Message:',@S40),%QuickFormPromptInsertMessage,DEFAULT('Record Will Be Added'),PROMPTAT(90),AT(200,,125)
+    #ENDENABLE
+    #ENABLE(%QuickFormPromptAllowChange)
+      #PROMPT('Change Message:',@S40),%QuickFormPromptChangeMessage,DEFAULT('Record Will Be Changed'),PROMPTAT(90),AT(200,,125)
+    #ENDENABLE
+    #ENABLE(%QuickFormPromptAllowDelete)
+      #PROMPT('Delete Message:',@S40),%QuickFormPromptDeleteMessage,DEFAULT('Record Will Be Deleted'),PROMPTAT(90),AT(200,,125)
+    #ENDENABLE
+    #PROMPT('Where do you want this message to be displayed?',DROP('Title Bar|Status Bar')),%QuickFormPromptMessageLocation,DEFAULT('Title Bar'),AT(90,88,235),PROMPTAT(90,78,235)
+  #ENDTAB
+  #TAB('Form Wizard - Active Record Display'),FINISH(1),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM4'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('A field can be displayed in the title bar that identifies the active record.',FIELD(%QuickFormPromptPrimaryFile)),%QuickFormPromptAppendToTitleID,AT(90,23,235),PROMPTAT(90,8,235,30)
+  #ENDTAB
+  #TAB('Form Wizard - Record Validation'),FINISH(1),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM5'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('The data dictionary contains validation rules for the fields used in this form procedure.  These rules can be ignored, they can be enforced when each field is entered, or they can be enforced after the entire window is completed.'),AT(90,8,235,24)
+    #PROMPT('Validate field values whenever field value changes?',CHECK),%QuickFormPromptValidateOnAccept,DEFAULT(1),AT(90,,235)
+    #PROMPT('Validate field values when the OK button is pressed?',CHECK),%QuickFormPromptValidateOnNonStopSelect,DEFAULT(1),AT(90,,235)
+  #ENDTAB
+  #TAB('Form Wizard - Child File Handling'),FINISH(1),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM6'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('If this file has one:many relationships with other files in the data dictionary, list boxes can be generated to browse the child files.  These list boxes can be placed on tabs, or they can be accessed with push buttons.'),AT(90,8,235,24)
+    #PROMPT('&Browsing Child Files',OPTION),%QuickFormPromptChildHandling,DEFAULT('Place children on tabs'),AT(90,40,235)
+    #PROMPT('&Place children on tabs',RADIO),AT(100)
+    #PROMPT('&Access children with push button',RADIO),AT(100)
+    #PROMPT('&Do not provide child access',RADIO),AT(100)
+  #ENDTAB
+  #TAB('Form Wizard - Control Model'),HLP('~TPLWizardApplication'),FINISH(1)
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM7'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('The Form procedure can use any of the following Control Models:'),AT(90,8,235,24)
+    #DISPLAY('Button: Traditional Insert, Change, Delete, OK and Cancel approach'),AT(90)
+    #DISPLAY('Toolbar: Browse controls are populated on a common toolbar'),AT(90)
+    #DISPLAY('Both: Employs both control models'),AT(90)
+    #PROMPT('Which Control Model should the Application use?',OPTION),%ControlModel,DEFAULT('Toolbar'),AT(90,75,180,30)
+    #PROMPT('Button',RADIO),AT(100,90,50)
+    #PROMPT('Toolbar',RADIO),AT(160,90,50)
+    #PROMPT('Both',RADIO),AT(220,90,50)
+  #ENDTAB
+  #TAB('Form Wizard - Finally...'),HLP('~TPLWizardForm')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFRM1'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('If you are creating new procedures with names that already exist in your application, the old procedures can be overwritten or the new procedures can be suppressed.'),AT(90,8,235,24)
+    #PROMPT('Overwrite existing procedures',CHECK),%QuickFormPromptOverwriteAll,AT(90,,235),DEFAULT(0)
+    #IMAGE('<255,1,4,127>'),AT(90,55)
+    #DISPLAY('The form procedure will always be overwritten by the form wizard!'),AT(125,54,200,20)
+  #ENDTAB
+#ENDSHEET
+#!
+#INSERT(%DeclareSymbols)
+#!
+#IF(%QuickProcedure)
+  #SET(%ValueConstruct,%QuickProcedure)
+#ELSE
+  #SET(%ValueConstruct,%QuickFormPromptProcedureName)
+#ENDIF
+#SET(%ReplaceExistingProcedures,%QuickFormPromptOverwriteAll)
+#ADD(%ProcedureList,%ValueConstruct)
+#SET(%QuickProcedurePrimary,%QuickFormPromptPrimaryFile)
+#SET(%QuickProcedureType,'Clarion Form')
+#SET(%QuickProcedureDescription,'Update the ' & %QuickProcedurePrimary & ' File')
+#SET(%QuickProcedureWindow,%True)
+#SET(%QuickFormAllowInsert,%QuickFormPromptAllowInsert)
+#SET(%QuickFormAllowChange,%QuickFormPromptAllowChange)
+#SET(%QuickFormAllowDelete,%QuickFormPromptAllowDelete)
+#SET(%QuickFormInsertMessage,%QuickFormPromptInsertMessage)
+#SET(%QuickFormChangeMessage,%QuickFormPromptChangeMessage)
+#SET(%QuickFormDeleteMessage,%QuickFormPromptDeleteMessage)
+#SET(%QuickFormMessageLocation,%QuickFormPromptMessageLocation)
+#SET(%QuickFormAppendToTitleID,%QuickFormPromptAppendToTitleID)
+#SET(%QuickFormValidateOnAccept,%QuickFormPromptValidateOnAccept)
+#SET(%QuickFormValidateOnNonStopSelect,%QuickFormPromptValidateOnNonStopSelect)
+#CASE(%QuickFormPromptChildHandling)
+#OF('Place children on tabs')
+  #SET(%QuickFormChildHandling,'Tabbed Browses')
+#OF('Access children with push button')
+  #SET(%QuickFormChildHandling,'Push Button Access')
+#ELSE
+  #SET(%QuickFormChildHandling,'None')
+#ENDCASE
+#!
+#INSERT(%GenerateProcedures)
+#!
+#!-------------------------------------------------------------
+#GROUP(%QuickFormDeclarations)
+#DECLARE(%QuickFormPrimaryFile,%ProcedureList)
+#DECLARE(%QuickFormAllowInsert,%ProcedureList)
+#DECLARE(%QuickFormAllowChange,%ProcedureList)
+#DECLARE(%QuickFormAllowDelete,%ProcedureList)
+#DECLARE(%QuickFormInsertMessage,%ProcedureList)
+#DECLARE(%QuickFormChangeMessage,%ProcedureList)
+#DECLARE(%QuickFormDeleteMessage,%ProcedureList)
+#DECLARE(%QuickFormMessageLocation,%ProcedureList)
+#DECLARE(%QuickFormAppendToTitleID,%ProcedureList)
+#DECLARE(%QuickFormValidateOnAccept,%ProcedureList)
+#DECLARE(%QuickFormValidateOnNonStopSelect,%ProcedureList)
+#DECLARE(%QuickFormChildHandling,%ProcedureList)
+#DECLARE(%QuickFormCreateChildrenProcedures,%ProcedureList)
+#DECLARE(%QuickFormNewPage,%ProcedureList)
+#!--------------------------------------------------------
+#GROUP(%ConstructQuickForm)
+#MESSAGE('Determining Secondary Procedures',3)
+#CASE(%QuickProcedureDefault)
+#OF('Update Form')
+  #INSERT(%UpdateFormDefaults)
+#ENDCASE
+#IF(%QuickFormChildHandling <> 'None')
+  #FIX(%File,%QuickProcedurePrimary)
+  #FOR(%Relation),WHERE(%FileRelationType = '1:MANY')
+    #IF(%FileKey AND %RelationKey)
+      #SET(%ValueConstruct,%Relation)
+      #IF(%QuickFormChildHandling = 'Push Button Access')
+        #INSERT(%AddSecondaryBrowse,%RelationKey)
+      #ELSIF(%QuickFormChildHandling = 'Tabbed Browses')
+        #INSERT(%AddUpdateProcedure,%Relation,'')
+      #ENDIF
+      #FIX(%File,%QuickProcedurePrimary)
+      #FIX(%Relation,%ValueConstruct)
+      #FIX(%ProcedureList,%CurrentProcedure)
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#FIX(%ProcedureList,%CurrentProcedure)
+#FIX(%FileList,%QuickProcedurePrimary)
+#FOR(%FieldListID)
+  #IF(%FieldListLookup)
+    #INSERT(%AddSelectBrowse,%FieldListLookup)
+  #ENDIF
+#ENDFOR
+#FIX(%ProcedureList,%CurrentProcedure)
+#FIX(%FileList,%QuickProcedurePrimary)
+#FOR(%FieldListID)
+  #IF(%FieldListLookup)
+    #ADD(%QuickOtherFiles,%FieldListLookup)
+  #ENDIF
+#ENDFOR
+#MESSAGE('Determining Window Size',3)
+#FIX(%ProcedureList,%CurrentProcedure)
+#ADD(%ProcedureDataItemID,ITEMS(%ProcedureDataItemID)+1)
+#SET(%ProcedureDataItem,'CurrentTab')
+#SET(%ProcedureDataItemType,'STRING(80)')
+#FIX(%FileList,%QuickProcedurePrimary)
+#SET(%WorksheetHeight,%MaximumSheetHeight)
+#SET(%WorksheetWidth,%FileListControlsWidth + (2 * %DefaultXOffset))
+#IF(%WorksheetWidth > %MaximumSheetWidth)
+  #SET(%WorksheetWidth,%MaximumSheetWidth)
+#ENDIF
+#SET(%WindowHeight,%WorksheetHeight + (3 * %DefaultYOffset) + %DefaultButtonHeight)
+#INSERT(%QuickSetRecordValidation)
+#SET(%RelationRows,0)
+#SET(%RelationCols,0)
+#SET(%WindowButtonRows,1)
+#SET(%WindowButtonColumns,2)
+#MESSAGE('Finding Relations',3)
+#IF(%QuickFormChildHandling = 'None')
+  #SET(%WindowWidth,%WorksheetWidth + (2 * %DefaultXOffset))
+  #SET(%ValueConstruct,(%WindowButtonColumns * (%DefaultXOffset + %DefaultButtonWidth)) + %DefaultXOffset)
+  #IF(%WindowWidth < %ValueConstruct)
+    #SET(%WindowWidth,%ValueConstruct)
+    #SET(%WorksheetWidth,%WindowWidth - (2 * %DefaultXOffset))
+  #ENDIF
+#ELSE
+  #FIX(%File,%QuickProcedurePrimary)
+  #FOR(%Relation),WHERE(%FileRelationType = '1:MANY')
+    #IF(%FileKey AND %RelationKey)
+      #ADD(%RelationList,%Relation)
+      #SET(%RelationCols,%RelationCols + 1)
+      #IF(%RelationCols = %MaximumRelationCols)
+        #SET(%RelationCols,0)
+      #ENDIF
+      #IF(%RelationCols = 0)
+        #SET(%RelationRows,%RelationRows + 1)
+      #ENDIF
+    #ENDIF
+  #ENDFOR
+  #IF(%RelationRows AND NOT %RelationCols)
+    #SET(%RelationRows,%RelationRows - 1)
+    #SET(%RelationCols,4)
+  #ENDIF
+  #IF(%QuickFormChildHandling = 'Tabbed Browses')
+    #IF(ITEMS(%RelationList))
+      #SET(%WorksheetButtonColumns,3)
+      #SET(%ValueConstruct,(%WorksheetButtonColumns * (%DefaultXOffset + %DefaultButtonWidth)) + %DefaultXOffset)
+      #IF(%WorksheetWidth < %ValueConstruct)
+        #SET(%WorksheetWidth,%ValueConstruct)
+      #ENDIF
+    #ENDIF
+    #SET(%WindowWidth,%WorksheetWidth + (2 * %DefaultXOffset))
+    #FOR(%RelationList)
+      #FIX(%FileList,%RelationList)
+      #IF(NOT %FileList)
+        #ADD(%FileList,%RelationList)
+        #INSERT(%AccumulateFieldList,%FileList)
+      #ENDIF
+    #ENDFOR
+  #ELSIF(%QuickFormChildHandling = 'Push Button Access')
+    #IF(%RelationRows)
+      #SET(%WindowHeight,%WindowHeight + (%RelationRows * (%DefaultYOffset + %DefaultButtonHeight)))
+      #SET(%WindowButtonColumns,7)
+    #ELSE
+      #SET(%WindowButtonColumns,%RelationCols + 3)
+    #ENDIF
+    #SET(%ValueConstruct,(%WindowButtonColumns * (%DefaultXOffset + %DefaultButtonWidth) + %DefaultXOffset))
+    #IF(%ValueConstruct > %WindowWidth)
+      #SET(%WindowWidth,%ValueConstruct)
+    #ENDIF
+    #IF(%WindowWidth > %WorksheetWidth + (2 * %DefaultXOffset))
+      #SET(%WorksheetWidth,%WindowWidth - (2 * %DefaultXOffset))
+    #ENDIF
+  #ENDIF
+#ENDIF
+#SET(%ValueConstruct,(3 * %DefaultButtonWidth) + (4 * %DefaultXOffset))
+#IF(%WindowWidth < %ValueConstruct)
+  #SET(%WindowWidth,%ValueConstruct)
+  #SET(%WorksheetWidth,%ValueConstruct - (2 * %DefaultXOffset))
+#ENDIF
+#FIX(%FileList,%QuickProcedurePrimary)
+#FOR(%FileListTab)
+  #SET(%CurrentTab,%FileListTab)
+  #SET(%CurrentY,0)
+  #SET(%InitializeTab,%True)
+  #SET(%ContCounter,0)
+  #FOR(%FieldListID),WHERE(%FieldListTab = %FileListTab)
+    #IF(%FieldListLookup)
+      #ADD(%EntryControlID,ITEMS(%EntryControlID)+1)
+      #SET(%EntryControl,%FieldList)
+      #SET(%PostLookupKey,%FieldListLookupKey)
+      #SET(%PostLookupField,%FieldListLookupField)
+      #SET(%PostLookupProcedure,'Select' & %FieldListLookup)
+    #ENDIF
+    #MESSAGE('Populating: ' & %FieldList,3)
+    #IF(%FieldListCheckColumn)
+      #SET(%CurrentY,%CurrentY - (%FieldListTotalHeight + %DefaultYOffset))
+    #ENDIF
+    #IF(%FieldListTotalHeight + %CurrentY > %WorksheetHeight)
+      #SET(%InitializeTab,%True)
+      #SET(%ContCounter,%ContCounter + 1)
+      #IF(%ContCounter > 1)
+        #SET(%CurrentTab,%FileListTab & ' (cont. ' & %ContCounter & ' )')
+      #ELSE
+        #SET(%CurrentTab,%FileListTab & ' (cont.)')
+      #ENDIF
+    #ENDIF
+    #IF(%InitializeTab)
+      #ADD(%WindowLayerID,ITEMS(%WindowLayerID) + 1)
+      #SET(%WindowLayerTabText,%CurrentTab)
+      #SET(%CurrentY,2 * %DefaultYOffset)
+    #ELSE
+      #IF(%FieldListVerticalSpace)
+        #SET(%CurrentY,%CurrentY + %DefaultYOffset)
+      #ENDIF
+    #ENDIF
+    #ADD(%WindowControlID,ITEMS(%WindowControlID) + 1)
+    #SET(%WindowControl,%FieldList)
+    #SET(%WindowControlXOffset,(2 * %DefaultXOffset))
+    #SET(%WindowControlYOffset,%CurrentY)
+    #IF(%FieldListTotalHeight = 'FULL')
+      #SET(%WindowLayerTopOffset,%MinimumTextHeight)
+    #ELSE
+      #SET(%WindowLayerTopOffset,%WindowControlYOffset + %FieldListTotalHeight)
+    #ENDIF
+    #SET(%CurrentY,%WindowLayerTopOffset + %DefaultYOffset)
+    #SET(%InitializeTab,%False)
+  #ENDFOR
+#ENDFOR
+#IF(%QuickFormChildHandling = 'Tabbed Browses')
+  #FOR(%RelationList)
+    #MESSAGE('Populating: Browse on ' & %RelationList,3)
+    #ADD(%WindowLayerID,ITEMS(%WindowLayerID) + 1)
+    #SET(%WindowLayerTabText,%RelationList)
+    #SET(%WindowLayerSpecialCase,'BROWSE')
+    #FIX(%File,%QuickProcedurePrimary)
+    #FIX(%Relation,%RelationList)
+    #INSERT(%QuickSetBrowseBox,%Relation,0,%RelationKey)
+    #SET(%PrimaryBrowseInstance,%QuickTemplateInstance)
+    #FOR(%QuickTemplateControl)
+      #ADD(%WindowControlID,ITEMS(%WindowControlID) + 1)
+      #SET(%WindowControl,%QuickTemplateControl)
+      #SET(%WindowControlYOffset,(2 * %DefaultYOffset))
+      #SET(%WindowControlXOffset,(2 * %DefaultXOffset))
+      #SET(%WindowControlWidth,%WorksheetWidth - (2 * %DefaultXOffset))
+      #SET(%WindowControlHeight,%MinimumBrowseHeight - ((3 * %DefaultYOffset) + %DefaultButtonHeight))
+    #ENDFOR
+    #INSERT(%QuickSetBrowseUpdateButton,'Update' & %RelationList,1,%False)
+    #SET(%QuickTemplateProcProp,%False)
+    #SET(%CurrentX,%WorksheetWidth - ((3 * %DefaultButtonWidth) + (2 * %DefaultXOffset)))
+    #SET(%CurrentY,%MinimumBrowseHeight - %DefaultButtonHeight)
+    #FOR(%QuickTemplateControl)
+      #ADD(%WindowControlID,ITEMS(%WindowControlID) + 1)
+      #SET(%WindowControl,%QuickTemplateControl)
+      #SET(%WindowControlYOffset,%CurrentY)
+      #SET(%WindowControlXOffset,%CurrentX)
+      #SET(%WindowControlWidth,%DefaultButtonWidth)
+      #SET(%WindowControlHeight,%DefaultButtonHeight)
+      #SET(%CurrentX,%CurrentX + %DefaultXOffset + %DefaultButtonWidth)
+    #ENDFOR
+    #SET(%WindowLayerTopOffset,%MinimumBrowseHeight)
+  #ENDFOR
+#ENDIF
+#FIX(%FileList,%QuickProcedurePrimary)
+#SET(%TabLineCount,1)
+#SET(%CurrentTabLength,0)
+#SET(%CurrentTabLineLength,0)
+#SET(%MaximumTopOffset,0)
+#FOR(%WindowLayerID)
+  #IF(INSTRING('&',%WindowLayerTabText,1,1))
+    #SET(%CurrentTabLength,(LEN(%WindowLayerTabText) * 4))
+  #ELSE
+    #SET(%CurrentTabLength,((LEN(%WindowLayerTabText) - 1) * 4))
+  #ENDIF
+  #IF(%CurrentTabLength < %MinimumTabLength)
+    #SET(%CurrentTabLength,%MinimumTabLength)
+  #ENDIF
+  #SET(%CurrentTabLength,%CurrentTabLength + %TabTextOffset)
+  #IF((%CurrentTabLength + %CurrentTabLineLength) > %WorksheetWidth)
+    #SET(%TabLineCount,%TabLineCount + 1)
+    #SET(%CurrentTabLineLength,%CurrentTabLength)
+  #ELSE
+    #SET(%CurrentTabLineLength,%CurrentTabLineLength + %CurrentTabLength)
+  #ENDIF
+  #IF(%WindowLayerTopOffset > %MaximumTopOffset)
+    #SET(%MaximumTopOffset,%WindowLayerTopOffset)
+  #ENDIF
+#ENDFOR
+#IF(%MaximumTopOffset > %MinimumBrowseHeight)
+  #SET(%ValueConstruct,%MaximumTopOffset - %MinimumBrowseHeight)
+  #FOR(%WindowLayerID),WHERE(%WindowLayerSpecialCase = 'BROWSE')
+    #FOR(%WindowControlID)
+      #IF(INSTANCE(%WindowControlID) = 1)
+        #SET(%WindowControlHeight,%WindowControlHeight + %ValueConstruct)
+      #ELSE
+        #SET(%WindowControlYOffset,%WindowControlYOffset + %ValueConstruct)
+      #ENDIF
+    #ENDFOR
+  #ENDFOR
+#ENDIF
+#SET(%InitialSheetYOffset,(%TabLineVerticalOffset * %TabLineCount) + %TabDefaultVerticalOffset)
+#SET(%WorksheetHeight,%MaximumTopOffset + %InitialSheetYOffset)
+#FOR(%WindowLayerID)
+  #FOR(%WindowControlID)
+    #SET(%WindowControlYOffset,%WindowControlYOffset + %InitialSheetYOffset)
+  #ENDFOR
+#ENDFOR
+#SET(%ValueConstruct,%WorkSheetHeight - %MaximumSheetHeight)
+#SET(%WindowHeight,%WindowHeight + %ValueConstruct)
+#ADD(%WindowLayerID,%LayerWindow)
+#SET(%CurrentY,%WindowHeight - (%DefaultYOffset + %DefaultButtonHeight))
+#SET(%CurrentX,%DefaultXOffset)
+#IF(%QuickFormChildHandling = 'Push Button Access')
+  #FIX(%File,%QuickProcedurePrimary)
+  #IF(ITEMS(%RelationList))
+    #SET(%CurrentY,%CurrentY - (%RelationRows * ((%DefaultYOffset + %DefaultButtonHeight))))
+    #FOR(%RelationList)
+      #FIX(%Relation,%RelationList)
+      #MESSAGE('Populating: ?Browse' & %RelationKey,3)
+      #ADD(%WindowControlID,ITEMS(%WindowControlID)+1)
+      #SET(%WindowControl,'?Browse' & %RelationKey)
+      #IF(LEN(%RelationList) > 12)
+        #SET(%ValueConstruct,SUB(%RelationList,1,9) & '...')
+      #ELSE
+        #SET(%ValueConstruct,%RelationList)
+      #ENDIF
+      #SET(%WindowControlStatement,'BUTTON(''' & %ValueConstruct & ''')')
+      #SET(%WindowControlXOffset,%CurrentX)
+      #SET(%WindowControlYOffset,%CurrentY)
+      #SET(%WindowControlHeight,%DefaultButtonHeight)
+      #SET(%WindowControlWidth,%DefaultButtonWidth)
+      #ADD(%ButtonControlID,ITEMS(%ButtonControlID)+1)
+      #SET(%ButtonControl,%WindowControl)
+      #SET(%ButtonAction,'Call a Procedure')
+      #SET(%ButtonProcedure,'Browse' & %RelationKey)
+      #SET(%ButtonThread,'0')
+      #SET(%ButtonThreadStack,'025000')
+      #SET(%RelationCols,%RelationCols - 1)
+      #IF(%RelationCols = 0)
+        #SET(%CurrentY,%CurrentY + %DefaultYOffset + %DefaultButtonHeight)
+        #SET(%CurrentX,%DefaultXOffset)
+        #SET(%RelationCols,4)
+      #ELSE
+        #SET(%CurrentX,%CurrentX + %DefaultXOffset + %DefaultButtonWidth)
+      #ENDIF
+    #ENDFOR
+  #ENDIF
+#ENDIF
+#SET(%CurrentX,%WindowWidth - (3 * (%DefaultXOffset + %DefaultButtonWidth)))
+#SET(%CurrentY,%WindowHeight - (%DefaultButtonHeight + %DefaultYOffset))
+#!
+#INSERT(%QuickSetSaveButton)
+#SELECT(%QuickTemplateControl,1)
+#ADD(%WindowControlID,ITEMS(%WindowControlID) + 1)
+#MESSAGE('Populating: ?OK',3)
+#SET(%WindowControl,%QuickTemplateControl)
+#SET(%WindowControlXOffset,%CurrentX)
+#SET(%WindowControlYOffset,%CurrentY)
+#SET(%WindowControlHeight,%DefaultButtonHeight)
+#SET(%WindowControlWidth,%DefaultButtonWidth)
+#SET(%CurrentX,%CurrentX + %DefaultXOffset + %DefaultButtonWidth)
+#SET(%CurrentY,%WindowHeight - (%DefaultButtonHeight + %DefaultYOffset))
+#!
+#INSERT(%QuickSetCancelButton)
+#SELECT(%QuickTemplateControl,1)
+#MESSAGE('Populating: ?Cancel',3)
+#ADD(%WindowControlID,ITEMS(%WindowControlID) + 1)
+#SET(%WindowControl,%QuickTemplateControl)
+#SET(%WindowControlXOffset,%CurrentX)
+#SET(%WindowControlYOffset,%CurrentY)
+#SET(%WindowControlHeight,%DefaultButtonHeight)
+#SET(%WindowControlWidth,%DefaultButtonWidth)
+#SET(%CurrentX,%CurrentX + %DefaultXOffset + %DefaultButtonWidth)
+#!
+#ADD(%WindowControlID,ITEMS(%WindowControlID) + 1)
+#MESSAGE('Populating: ?Help',3)
+#SET(%WindowControl,'?Help')
+#IF(%ControlModel='Toolbar')
+  #SET(%WindowControlStatement,'BUTTON(''' & %DefaultHelpControlText & '''),HIDE,STD(STD:Help)')
+  #SET(%WindowControlYOffset,4)
+#ELSE
+  #SET(%WindowControlStatement,'BUTTON(''' & %DefaultHelpControlText & '''),STD(STD:Help)')
+#SET(%WindowControlYOffset,%CurrentY)
+#ENDIF
+#SET(%WindowControlXOffset,%CurrentX)
+#SET(%WindowControlHeight,%DefaultButtonHeight)
+#SET(%WindowControlWidth,%DefaultButtonWidth)
+#!
+

@@ -1,0 +1,21 @@
+!ABCIncludeFile(LAY)
+
+OMIT('_EndOfInclude_',_LayHtml_Int_)
+_LayHtml_Int_ EQUATE(1)
+
+  INCLUDE('IBCBASE.INT'),ONCE
+
+IHtmlWriter             INTERFACE(IInterface)
+BeginSpan                 PROCEDURE(STRING name)
+EndSpan                   PROCEDURE()
+GetText                   PROCEDURE,STRING
+Write                     PROCEDURE(STRING text)
+Writeln                   PROCEDURE(STRING text)
+WritePlaceholder          PROCEDURE(STRING name, SIGNED width, SIGNED height)
+                        END
+
+  MAP; MODULE('LAYHTML')
+IHtmlWriter:Create        PROCEDURE,*IHtmlWriter,NAME('CreateHtmlWriter')
+  END; END
+
+_EndOfInclude_

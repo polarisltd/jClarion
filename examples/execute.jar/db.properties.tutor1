@@ -1,0 +1,3 @@
+db.good=localhost\:postgres\:postgres\:5432
+source.=localhost\:tutor1\:tutor1\:5432
+altsource.=127.0.0.1\:tutor1\:tutor1\:5432

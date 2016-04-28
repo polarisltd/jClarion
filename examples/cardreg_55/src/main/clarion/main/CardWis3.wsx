@@ -1,0 +1,1262 @@
+Document Type: WSE
+item: Global
+  Version=7.0
+  File Checksum=2597431901
+end
+item: Check Configuration
+  Flags=10111011
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=TRUE
+end
+item: Create Shortcut
+  Source=%MAINDIR%\cardreg.EXE
+  Destination=%GROUP%\Cardreg.lnk
+  Working Directory=%MAINDIR%
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=TRUE
+end
+item: Create Shortcut
+  Source=%MAINDIR%\CARDREG.HLP
+  Destination=%GROUP%\cards.lnk
+  Working Directory=%MAINDIR%
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Create Shortcut
+  Source=
+  Destination=
+  Working Directory=
+  Icon Number=0
+end
+item: Compiler Variable End
+end
+item: Else Statement
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=TRUE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=Cardreg
+  Command Line=%MAINDIR%\cardreg.EXE
+  Default Directory=%MAINDIR%
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=TRUE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=cards
+  Command Line=%MAINDIR%\CARDREG.HLP
+  Default Directory=%MAINDIR%
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Add ProgMan Icon
+  Group=Cardreg
+  Icon Name=
+  Command Line=
+  Default Directory=
+  Flags=01000000
+end
+item: Compiler Variable End
+end
+item: End Block
+end

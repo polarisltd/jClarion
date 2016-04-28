@@ -1,0 +1,1622 @@
+#! Generic groups used by OOP extensions
+#!
+#!
+#GROUP(%GlobalClassPrompts)
+  #BOXED(''),WHERE(%False),HIDE
+    #PROMPT('',@S3),%GlobalObject,DEFAULT('YES')
+  #ENDBOXED
+  #INSERT(%CommonClassPrompts)
+#!
+#!
+#GROUP(%ClassPrompts)
+  #BOXED(''),WHERE(%False),HIDE
+    #PROMPT('',@S3),%GlobalObject,DEFAULT('NO')
+  #ENDBOXED
+  #INSERT(%CommonClassPrompts)
+#!
+#!
+#GROUP(%CommonClassPrompts)
+  #BOXED('Class Definition'),SECTION
+    #ENABLE(%GlobalObject = 'NO')                             #!Global objects cannot have their labels changed
+      #PROMPT('&Object Name:',@S255),%ThisObjectName
+    #ENDENABLE
+    #PROMPT('Use &Default ABC: '&%DefaultBaseClassType,CHECK),%UseDefaultABCBaseClass,DEFAULT(%True),AT(10,12)
+    #ENABLE(~%UseDefaultABCBaseClass)
+      #PROMPT('Use &Application Builder Class?',CHECK),%UseABCBaseClass,DEFAULT(%True),AT(10)
+      #BOXED,SECTION
+        #BOXED,AT(0,0),WHERE(%UseABCBaseClass)
+          #PROMPT('Base &Class:',FROM(%pClassName)),%ABCBaseClass,REQ
+        #ENDBOXED
+        #BOXED,AT(0,0),WHERE(~%UseABCBaseClass)
+          #PROMPT('Base &Class:',@S64),%ExtBaseClass,REQ
+        #ENDBOXED
+      #ENDBOXED
+      #ENABLE(~%UseABCBaseClass)
+        #PROMPT('Include &File:',@S255),%BaseClassIncludeFile,REQ
+      #ENDENABLE
+    #ENDENABLE
+    #PROMPT(' &Derive?',CHECK),%DeriveFromBaseClass,DEFAULT(%False),AT(10)
+    #ENABLE(%DeriveFromBaseClass),CLEAR
+      #BOXED,SECTION
+        #BOXED,SECTION,WHERE(%UseDefaultABCBaseClass OR %UseABCBaseClass),AT(0,0)
+          #BUTTON('&New Class Methods'),AT(,,175),MULTI(%NewMethods,%NewMethodName&' '&%NewMethodPrototype),HLP('~NewClassMethods')
+            #PROMPT('&New Method Name:',@S255),%NewMethodName,REQ
+            #VALIDATE(~INSTRING(' ',%NewMethodName,1,1),'Method names cannot contain spaces')
+            #PROMPT('New Method &Prototype:',@S255),%NewMethodPrototype,REQ
+            #ENABLE(%NewMethodName AND %NewMethodPrototype)
+              #PROMPT('&Data Embed',EMBEDBUTTON(%NewMethodDataSection,%ActiveTemplateInstance,%ClassItem,%NewMethods)),AT(10,,180)
+              #PROMPT('&Code Embed',EMBEDBUTTON(%NewMethodCodeSection,%ActiveTemplateInstance,%ClassItem,%NewMethods)),AT(10,,180)
+            #ENDENABLE
+          #ENDBUTTON
+          #BUTTON('New Class &Properties'),AT(,,175),MULTI(%NewClassPropertyItems,%NewClassProperty&' - '&%NewClassDataType),HLP('~NewClassProperties')
+            #PROMPT('&Property Name:',@S64),%NewClassProperty,REQ
+            #PROMPT('Property &Type:',DROP('BYTE|SHORT|USHORT|LONG|ULONG|REAL|SREAL|STRING|CSTRING|PSTRING|Other')),%NewClassDataType
+            #ENABLE(%NewClassDataType='Other')
+              #PROMPT('&Other Data Type:',@S64),%NewClassOtherType
+            #ENDENABLE
+            #PROMPT('Is a &Reference?',CHECK),%NewClassDataIsRef
+            #ENABLE(~%NewClassDataIsRef AND(%NewClassDataType='STRING' OR %NewClassDataType='PSTRING' OR %NewClassDataType='CSTRING'))
+              #PROMPT('&Size:',SPIN(@N5,1,65535)),%NewClassDataSize,AT(,,30),REQ
+            #ENDENABLE
+            #BOXED,SECTION
+              #PROMPT('&Dimensions:',SPIN(@N3,0,255)),%NewClassDataDim1,AT(,0,30)
+              #ENABLE(%NewClassDataDim1)
+                #PROMPT('',SPIN(@N3,0,255)),%NewClassDataDim2,AT(135,0,30)
+              #ENDENABLE
+              #ENABLE(%NewClassDataDim1 AND %NewClassDataDim2)
+                #PROMPT('',SPIN(@N3,0,255)),%NewClassDataDim3,AT(170,0,30)
+              #ENDENABLE
+              #ENABLE(%NewClassDataDim1 AND %NewClassDataDim2 AND %NewClassDataDim3)
+                #PROMPT('',SPIN(@N3,0,255)),%NewClassDataDim4,AT(205,0,30)
+              #ENDENABLE
+            #ENDBOXED
+          #ENDBUTTON
+        #ENDBOXED
+        #BOXED,SECTION,WHERE(~(%UseDefaultABCBaseClass OR %UseABCBaseClass)),AT(0,0)
+          #BUTTON('&Class Methods'),AT(,,175),MULTI(%ClassMethods,%ClassMethodName&' '&%ClassMethodPrototype)
+            #PROMPT('&Method Name:',@S64),%ClassMethodName,REQ
+            #VALIDATE(~INSTRING(' ',%ClassMethodName,1,1),'Method names cannot contain spaces')
+            #PROMPT('Method &Prototype:',@s255),%ClassMethodPrototype,REQ
+          #ENDBUTTON
+          #BUTTON('Class &Properties'),AT(,,175),MULTI(%ClassPropertyItems,%ClassDataName&' - '&%ClassDataType)
+            #PROMPT('&Property Name:',@S64),%ClassProperty,REQ
+            #PROMPT('Property &Type:',DROP('BYTE|SHORT|USHORT|LONG|ULONG|REAL|SREAL|STRING|CSTRING|PSTRING|Other')),%ClassDataType
+            #ENABLE(%ClassDataType='Other')
+              #PROMPT('&Other Data Type:',@S64),%ClassOtherType
+            #ENDENABLE
+            #PROMPT('Is a &Reference?',CHECK),%ClassDataIsRef
+            #ENABLE(~%ClassDataIsRef AND(%ClassDataType='STRING' OR %ClassDataType='PSTRING' OR %ClassDataType='CSTRING'))
+              #PROMPT('&Size:',SPIN(@N5,1,65535)),%ClassDataSize,AT(,,30),REQ
+            #ENDENABLE
+            #BOXED,SECTION
+              #PROMPT('&Dimensions:',SPIN(@N3,0,255)),%ClassDataDim1,AT(,0,30)
+              #ENABLE(%ClassDataDim1)
+                #PROMPT('',SPIN(@N3,0,255)),%ClassDataDim2,AT(135,0,30)
+              #ENDENABLE
+              #ENABLE(%ClassDataDim1 AND %ClassDataDim2)
+                #PROMPT('',SPIN(@N3,0,255)),%ClassDataDim3,AT(170,0,30)
+              #ENDENABLE
+              #ENABLE(%ClassDataDim1 AND %ClassDataDim2 AND %ClassDataDim3)
+                #PROMPT('',SPIN(@N3,0,255)),%ClassDataDim4,AT(205,0,30)
+              #ENDENABLE
+            #ENDBOXED
+          #ENDBUTTON
+        #ENDBOXED
+      #ENDBOXED
+    #ENDENABLE
+    #BOXED,AT(,98),SECTION
+      #BUTTON('&Refresh Application Builder Class Information'),WHENACCEPTED(%ForceReadABCFiles()),AT(,,175)
+      #ENDBUTTON
+      #BUTTON('Application Builder Class &Viewer'),WHENACCEPTED(%ViewABCs()),AT(,,175)
+      #ENDBUTTON
+    #ENDBOXED
+  #ENDBOXED
+#!
+#!
+#GROUP(%OOPPrompts)
+  #BOXED(''),AT(0,0),WHERE(%False),HIDE
+    #INSERT(%OOPHiddenPrompts(ABC))
+  #ENDBOXED
+#!
+#!
+#GROUP(%OOPHiddenPrompts)
+  #PROMPT('',@S64),%ClassItem,MULTI(''),UNIQUE
+  #BUTTON(''),FROM(%ClassItem,'')
+    #PROMPT('',@S64),%DefaultBaseClassType
+    #PROMPT('',@S64),%ActualDefaultBaseClassType
+    #PROMPT('',@S255),%ClassLines,MULTI('')
+  #ENDBUTTON
+#!
+#!
+#GROUP(%AbcLibraryPrompts)
+  #PROMPT('Override defaults', CHECK),%OverrideAbcSettings,AT(10)
+  #ENABLE (%OverrideAbcSettings)
+    #PROMPT('Location of ABC library', DROP('Linked in[LINK]|External DLL[DLL]|External LIB[LIB]|None[NONE]')),%AbcSourceLocation,DEFAULT('LINK')
+    #ENABLE ((%AbcSourceLocation='DLL') OR (%AbcSourceLocation='LIB'))
+      #PROMPT('External library base name',@s255),%AbcLibraryName
+    #ENDENABLE
+  #ENDENABLE
+#!
+#!
+#GROUP(%MakeObjectName,*%Object,%ID)
+  #SET(%Object,%ID&%ActiveTemplateInstance)
+  #ASSERT(%Object,'%MakeObjectName: %Object being set blank')
+#!
+#!
+#GROUP(%GenerateClass, %Tag, %ClassComment = '', %AsType = %False)
+  #ASSERT(%Tag <> '', '%GenerateClass: object Tag is blank!')
+  #CALL(%SetClassItem, %Tag)
+  #CALL(%GenerateClassDefinition, %ClassLines, %ClassComment, %AsType)
+#!
+#!
+#GROUP(%GenerateClassRef, %Tag, %ClassComment = '')
+  #ASSERT(%Tag <> '', '%GenerateClass: object Tag is blank!')
+  #CALL(%SetClassItem, %Tag)
+%[20]ThisObjectName &%(%BaseClassToUse())%|
+#IF (%ClassComment)
+#<!%ClassComment
+#ELSE
+
+#END
+#IF(%UseDefaultABCBaseClass OR %UseABCBaseClass)
+  #CALL(%AddModuleIncludeFile, %BaseClassToUse())
+#ELSE
+  #CALL(%AddExternalIncludeFile)
+#ENDIF
+#!
+#!
+#GROUP(%GenerateClassDefinition, *%ClassLine, %ClassComment='', %AsType = %False)
+  #ASSERT(%ClassItem,'%GenerateClass: %ClassItem instance not found!')
+  #DECLARE(%NeedDerive,LONG)
+  #SET(%NeedDerive, 0)
+  #IF((%UseDefaultABCBaseClass OR %UseABCBaseClass) AND %DeriveFromBaseClass)
+    #SET(%NeedDerive, 1)
+  #ENDIF
+  #IF(ITEMS(%ClassLine) <> 0)
+    #SET(%NeedDerive, %NeedDerive + 2)
+  #ENDIF
+  #CALL(%MakeDeclr, 22, %OOPConstruct, %ThisObjectName, CHOOSE(%NeedDerive <> 0, 'CLASS(' & %BaseClassToUse() & ')', %BaseClassToUse()))
+  #CALL(%AppendType, %AsType, %OOPConstruct)
+  #CALL(%AppendComment, %OOPConstruct)
+%OOPConstruct
+  #IF(%UseDefaultABCBaseClass OR %UseABCBaseClass)
+    #CALL(%AddModuleIncludeFile, %BaseClassToUse())
+  #ELSE
+    #CALL(%AddExternalIncludeFile)
+  #ENDIF
+  #IF(%NeedDerive <> 0)
+    #IF(%NeedDerive > 1)
+      #FOR(%ClassLine)
+%ClassLine
+      #ENDFOR
+      #SET(%NeedDerive, %NeedDerive - 2)
+    #ENDIF
+    #IF(%NeedDerive <> 0)
+      #CALL(%GenerateNewClassData)
+      #FOR(%NewMethods)
+        #CALL(%MakeFormalDeclaration,24,%OOPConstruct,%NewMethodName&%NewMethodPrototype)
+%OOPConstruct
+      #ENDFOR
+    #ELSE
+      #CALL(%GenerateClassData)
+      #FOR(%ClassMethods),WHERE(%ClassMethodName)
+        #CALL(%MakeFormalDeclaration,24,%OOPConstruct,%ClassMethodName&%ClassMethodPrototype)
+%OOPConstruct
+      #END
+    #ENDIF
+%[20]NULL END
+%NULL
+  #ENDIF
+#!
+#!
+#GROUP(%AppendType, %AsType, *%Txt)
+  #IF(%AsType = %True)
+    #SET(%Txt, %Txt & ',TYPE')
+  #ENDIF
+#!
+#!
+#GROUP(%AppendComment, *%Txt)
+  #IF(%ClassComment)
+    #CALL(%MakeDeclr, 55, %Txt, %Txt, '!' & %ClassComment)
+  #ENDIF
+#!
+#!
+#GROUP(%AppendExternalAttribs, *%Txt)
+  #IF(%Globalexternal)
+    #SET(%Txt, %Txt & ',EXTERNAL,DLL(dll_mode)')
+  #ENDIF
+#!
+#!
+#GROUP(%GenerateClassData)
+#FOR(%ClassPropertyItems)
+  #IF(%ClassDataType='Other')
+    #IF(%ClassDataIsRef)
+      #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassProperty,'&'&%ClassOtherType)
+%OOPConstruct
+    #ELSE
+      #IF(%ClassDataSize)
+        #CALL(%ClassDataSizeDims,%ClassProperty,%ClassOtherType,%ClassDataSize,%ClassDataDim1,%ClassDataDim2,%ClassDataDim3,%ClassDataDim4)
+      #ELSE
+        #CALL(%ClassDataDims,%ClassProperty,%ClassOtherType,%ClassDataDim1,%ClassDataDim2,%ClassDataDim3,%ClassDataDim4)
+      #ENDIF
+    #ENDIF
+  #ELSE
+    #IF(%ClassDataIsRef)
+      #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassProperty,'&'&%ClassDataType)
+%OOPConstruct
+    #ELSE
+      #IF(%ClassDataSize)
+        #CALL(%ClassDataSizeDims,%ClassProperty,%ClassDataType,%ClassDataSize,%ClassDataDim1,%ClassDataDim2,%ClassDataDim3,%ClassDataDim4)
+      #ELSE
+        #CALL(%ClassDataDims,%ClassProperty,%ClassDataType,%ClassDataDim1,%ClassDataDim2,%ClassDataDim3,%ClassDataDim4)
+      #ENDIF
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!
+#!
+#GROUP(%GenerateNewClassData)
+#FOR(%NewClassPropertyItems)
+  #IF(%NewClassDataType='Other')
+    #IF(%NewClassDataIsRef)
+      #INSERT(%MakeDeclr,24,%OOPConstruct,%NewClassProperty,'&'&%NewClassOtherType)
+%OOPConstruct
+    #ELSE
+      #IF(%NewClassDataSize)
+        #CALL(%ClassDataSizeDims,%NewClassProperty,%NewClassOtherType,%NewClassDataSize,%NewClassDataDim1,%NewClassDataDim2,%NewClassDataDim3,%NewClassDataDim4)
+      #ELSE
+        #CALL(%ClassDataDims,%NewClassProperty,%NewClassOtherType,%NewClassDataDim1,%NewClassDataDim2,%NewClassDataDim3,%NewClassDataDim4)
+      #ENDIF
+    #ENDIF
+  #ELSE
+    #IF(%NewClassDataIsRef)
+      #INSERT(%MakeDeclr,24,%OOPConstruct,%NewClassProperty,'&'&%NewClassDataType)
+%OOPConstruct
+    #ELSE
+      #IF(%NewClassDataSize)
+        #CALL(%ClassDataSizeDims,%NewClassProperty,%NewClassDataType,%NewClassDataSize,%NewClassDataDim1,%NewClassDataDim2,%NewClassDataDim3,%NewClassDataDim4)
+      #ELSE
+        #CALL(%ClassDataDims,%NewClassProperty,%NewClassDataType,%NewClassDataDim1,%NewClassDataDim2,%NewClassDataDim3,%NewClassDataDim4)
+      #ENDIF
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!
+#!
+#GROUP(%ClassDataDims,%ClassDataName,%ClassType,%DataDim1,%DataDim2,%DataDim3,%DataDim4)
+#IF(%DataDim4)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&',DIM('&%DataDim1&','&%DataDim2&','&%DataDim3&','&%DataDim4&')')
+#ELSIF(%DataDim3)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&',DIM('&%DataDim1&','&%DataDim2&','&%DataDim3&')')
+#ELSIF(%DataDim2)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&',DIM('&%DataDim1&','&%DataDim2&')')
+#ELSIF(%DataDim1)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&',DIM('&%DataDim1&')')
+#ELSE
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType)
+#ENDIF
+%OOPConstruct
+#!
+#!
+#GROUP(%ClassDataSizeDims,%ClassDataName,%ClassType,%ClassDataSize,%DataDim1,%DataDim2,%DataDim3,%DataDim4)
+#IF(%DataDim4)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&'),DIM('&%DataDim1&','&%DataDim2&','&%DataDim3&','&%DataDim4&')')
+#ELSIF(%DataDim3)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&'),DIM('&%DataDim1&','&%DataDim2&','&%DataDim3&')')
+#ELSIF(%DataDim2)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&'),DIM('&%DataDim1&','&%DataDim2&')')
+#ELSIF(%DataDim1)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&'),DIM('&%DataDim1&')')
+#ELSE
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&')')
+#ENDIF
+%OOPConstruct
+#!
+#!
+#GROUP(%AddExternalIncludeFile)
+#IF(%Program=%Module)
+  #ADD(%GlobalIncludeList,%RemovePath(%BaseClassIncludeFile))
+#ELSE
+  #ADD(%ModuleIncludeList,%RemovePath(%BaseClassIncludeFile))
+#ENDIF
+#!
+#!
+#GROUP(%MakeFormalDeclaration,%Indent,*%Dest,%Src),AUTO
+#IF(INSTRING('PROCEDURE',%Src,1,1) OR INSTRING('FUNCTION',%Src,1,1))
+  #SET(%Dest,%Src)
+#ELSE
+  #EQUATE(%P,INSTRING(')',%Src,1,1))
+  #SET(%P,INSTRING('(',%Src,1,1))
+  #IF(%P)
+    #CALL(%MakeDeclr,%Indent,%Dest,SUB(%Src,1,%P-1),'PROCEDURE'&SUB(%Src,%p,LEN(%Src)-%P+1))
+  #ELSE
+    #CALL(%MakeDeclr,%Indent,%Dest,SUB(%Src,1,%P-1),'PROCEDURE')
+  #END
+#ENDIF
+#!
+#!
+#GROUP(%SetOOPDefaults,%ObjectName,%ObjectType)
+#ASSERT(%ClassItem,'%ClassItem has no instance, '&%ObjectName&' '&%ObjectType)
+#ASSERT(%ObjectName,'%SetOOPDefaults: '&%ClassItem&' %ObjectName parameter is empty')
+#ASSERT(%ObjectType,'%SetOOPDefaults: '&%ClassItem&' %ObjectType parameter is empty')
+#SET(%DefaultBaseClassType,%ObjectType)
+#IF(~%ThisObjectName)
+  #SET(%ThisObjectName,%ObjectName)
+#ENDIF
+#CLEAR(%ActualDefaultBaseClassType)
+#PURGE(%ClassLines)
+#!
+#!
+#GROUP(%SetClassDefaults, %Tag, %ObjectName, %ObjectType)
+#CALL(%SetClassItem, %Tag)
+#CALL(%SetOOPDefaults, %ObjectName, %ObjectType)
+#!
+#!
+#GROUP(%MakeDeclr,%Indent,*%Dest,%Label,%Declr)
+#IF(LEN(%Label)<%Indent-1)
+  #SET(%Dest,%Label&ALL(' ',%Indent-LEN(%Label)-1)&%Declr)
+#ELSE
+  #SET(%Dest,%Label&' '&%Declr)
+#ENDIF
+#!
+#!
+#GROUP(%GenerateDeclr,%Indent,%Label,%Declr)
+%[%Indent-2]Label %Declr
+#!
+#!
+#GROUP(%PrototypeCheck,%FunctionName,%FunctionStatement,*%ClassLine)
+#IF(%IncludePrototype)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%FunctionName,%FunctionStatement)
+  #ADD(%ClassLine,%OOPConstruct)
+  #RELEASE
+#ENDIF
+#!
+#!
+#GROUP(%AddModuleIncludeFile,%ClassToInclude,%ForceGlobal=0)
+  #CALL(%ReadABCFiles)
+  #CALL(%FixClassName,%ClasstoInclude)
+  #IF(%ForceGlobal OR (%Module AND %Program AND %Module = %Program))
+    #ADD(%GlobalIncludeList,%RemovePath(%pClassIncFile))
+  #ELSE
+    #ADD(%ModuleIncludeList,%RemovePath(%pClassIncFile))
+  #ENDIF
+#!
+#!
+#GROUP(%MethodNameForEXP,%BaseClass,%MethodName,%MethodPrototype)
+#RETURN(%MethodName&'('&%BaseClass&','&SUB(%MethodPrototype,2,LEN(%MethodPrototype)-1))
+#!
+#!
+#GROUP(%MethodEmbedPointValid, %MustBeVirtual = %True)
+  #IF(UPPER(%pClassName) = UPPER(%BaseClassToUse()) AND ~%pClassMethodPrivate AND ~%pClassMethodFinal)
+    #IF(%pClassMethodExtends OR ~%MustBeVirtual OR (%MustBeVirtual AND %pClassMethodVirtual))             #!Extends methods included regardless of Virtual state
+      #RETURN(%True)
+    #ENDIF
+  #ENDIF
+  #RETURN(%False)
+#!
+#!
+#!
+#GROUP(%MakeDeclarationPrototype),AUTO
+#DECLARE(%RVal)
+#SET(%RVal,'PROCEDURE'&%pClassMethodPrototype)
+#IF(%pClassMethodProcAttribute)
+  #SET(%RVal,%RVal&',PROC')
+#ENDIF
+#IF(%pClassMethodVirtual)
+  #SET(%RVal, %RVal&',DERIVED')       #!All virtuals based on ABC base classes should be DERIVED
+#ENDIF
+#RETURN(%RVal)
+#!
+#!
+#GROUP(%MakeImplementationPrototype),AUTO
+#EQUATE(%Sp,INSTRING(')',%pClassMethodPrototype,1,1))
+#EQUATE(%Cp,INSTRING(',',%pClassMethodPrototype,1,%Sp))
+#IF(%Cp)
+  #EQUATE(%ThisPrototype, SUB(%pClassMethodPrototype,1,%Sp))
+#ELSE
+  #EQUATE(%ThisPrototype, %pClassMethodPrototype)
+#END
+#IF(%ThisPrototype = '()')
+  #RETURN('PROCEDURE')
+#ELSE
+  #RETURN('PROCEDURE' & %ThisPrototype)
+#ENDIF
+#!
+#!
+#GROUP(%SetupMethodCheck,%GenerateReturnType=%True,%OverrideObjectName='')
+#SET(%IncludePrototype,%False)
+#SET(%ByteCount,%BytesOutput)
+#SUSPEND(ParentCall)
+#?%NULL
+#IF(%OverrideObjectName)
+#?%OverrideObjectName.%pClassMethod %(%MakeImplementationPrototype())
+#ELSE
+#?%ThisObjectName.%pClassMethod %(%MakeImplementationPrototype())
+#ENDIF
+#?%NULL
+#IF(%GenerateReturnType AND %pClassMethodReturnType)
+  #IF(SLICE(%pClassMethodReturnType, 1, 1) = '*')
+    #SET(%OOPConstruct, '&' & SLICE(%pClassMethodReturnType, 2, LEN(%pClassMethodReturnType)))
+  #ELSE
+    #SET(%OOPConstruct, CHOOSE(%pClassMethodReturnType='STRING','ANY',%pClassMethodReturnType&',AUTO'))
+  #ENDIF
+  #CALL(%MakeDeclr,22,%OOPConstruct,'ReturnValue',%OOPConstruct)
+#?%OOPConstruct
+#?%NULL
+#ENDIF
+#!
+#!
+#GROUP(%CheckAddMethodPrototype,*%ClassLines,%GenerateReturn=%True)
+#IF(%GenerateReturn AND %pClassMethodReturnType)
+  #?RETURN ReturnValue
+#ENDIF
+#?%NULL
+#RESUME
+#IF(%ByteCount NOT=%BytesOutput)
+  #SET(%OOPConstruct,%MakeDeclarationPrototype())
+  #CALL(%MakeDeclr,24,%OOPConstruct,%pClassMethod,%OOPConstruct)
+  #ADD(%ClassLines,%OOPConstruct)
+#ENDIF
+#!
+#!
+#GROUP(%FixBaseClassToUse,%FixTo)
+#ASSERT(%FixTo,'%FixBaseClassToUse: FixTo parameter empty '&%FixTo)
+#CALL(%SetClassItem,%FixTo)
+#RETURN(%BaseClassToUse())
+#!
+#!
+#GROUP(%GetBaseClassType, %Tag = '')
+#IF(%Tag <> '')
+  #CALL(%SetClassItem, %Tag)
+#ENDIF
+#ASSERT(%ClassItem,'%GetBaseClassType: ClassItem has no instance')
+#RETURN(%BaseClassToUse())
+#!
+#!
+#GROUP(%BaseClassToUse)
+#IF(%UseDefaultABCBaseClass)
+  #IF(%ActualDefaultBaseClassType)
+    #RETURN(%ActualDefaultBaseClassType)
+  #ELSE
+    #ASSERT(%DefaultBaseClassType <> '','%BaseClassToUse: Symbol %DefaultBaseClassType is being returned empty ['&%ClassItem&']')
+    #RETURN(%DefaultBaseClassType)
+  #ENDIF
+#ELSIF(%UseABCBaseClass)
+  #RETURN(%ABCBaseClass)
+#ELSIF(~%UseABCBaseClass)
+  #RETURN(%ExtBaseClass)
+#ENDIF
+#ASSERT(%False,'%BaseClassToUse: IF clauses all missed')
+#!
+#!
+#GROUP(%FileManagerToUse)
+#RETURN(%GetBaseClassType('FileManager:' & %File))
+#!
+#!
+#GROUP(%InitFileManagerCache)
+#FOR (%File)
+  #CALL (%FileManagerToUse),%CacheFileManager
+  #CALL (%RelationManagerToUse),%CacheRelationManager
+  #CALL (%FileIsUsed),%CacheFileUsed
+  #CALL (%FileIsExternal),%CacheFileExternal
+#ENDFOR
+#CALL (%BCModulesNeeded),%CacheBCModulesNeeded
+#!
+#GROUP(%RelationManagerToUse)
+#RETURN(%GetBaseClassType('RelationManager:' & %File))
+#!
+#!
+#GROUP(%RemovePath,%InPath),AUTO
+#EQUATE(%start,1)
+#DECLARE(%Next,LONG)
+#LOOP
+  #SET(%Next,INSTRING('\',%InPath,1,%Start))
+  #IF (%Next=0)
+    #RETURN(CLIP(SUB(%InPath,%Start)))
+  #ENDIF
+  #SET(%Start,%Next+1)
+#ENDLOOP
+#!
+#!
+#GROUP(%FixClassName,%ToUse)
+#ASSERT(%ToUse,'%FixClassName: ToUse parameter empty')
+#CALL(%ReadABCFiles)
+#CALL(%NoCaseFix,%pClassName,%ToUse)
+#ASSERT(UPPER(%pClassName)=UPPER(%ToUse),'%FixClassName: Cannot find class '&%ToUse)
+#!
+#!
+#GROUP(%NoCaseFix,*%Symbol,%FixValue),AUTO
+#DECLARE(%i,LONG)
+#FIX(%Symbol,%FixValue)
+#IF(%Symbol <> %FixValue)
+  #LOOP,FOR(%i,1,ITEMS(%Symbol))
+    #SELECT(%Symbol,%i)
+    #IF(UPPER(%Symbol)=UPPER(%FixValue))
+      #BREAK
+    #ENDIF
+  #ENDLOOP
+#ENDIF
+#!
+#!
+#GROUP(%MethodMatch,%MethodName,%MethodPrototype)
+#IF(%pClassMethod=%MethodName AND %pClassMethodPrototype=%MethodPrototype)
+  #RETURN(%True)
+#ENDIF
+#RETURN(%False)
+#!
+#GROUP(%ReplaceCharacter,%OldCharacter,%NewCharacter)
+#DECLARE(%CharacterLocation)
+#DECLARE(%StringLength)
+#DECLARE(%RemainderLength)
+#DECLARE(%ConstructedString)
+#SET(%CharacterLocation,INSTRING(%OldCharacter,%ValueConstruct,1,1))
+#IF(%CharacterLocation)
+  #SET(%StringLength,%CharacterLocation-1)
+  #SET(%RemainderLength,LEN(%ValueConstruct) - %CharacterLocation)
+  #SET(%ConstructedString,SUB(%ValueConstruct,1,%StringLength) & %NewCharacter & SUB(%ValueConstruct,%CharacterLocation+1,%RemainderLength))
+  #SET(%ValueConstruct,%ConstructedString)
+  #INSERT(%ReplaceCharacter,%OldCharacter,%NewCharacter)
+#ENDIF
+#!
+#GROUP(%CleanDimensions)
+#INSERT(%ReplaceCharacter,'[','_')
+#INSERT(%ReplaceCharacter,',','_')
+#INSERT(%ReplaceCharacter,']','')
+#!
+#!
+#!
+#!
+#GROUP(%MethodDeclaration,%Proto),AUTO
+  #DECLARE(%Bp)
+  #DECLARE(%Cp)
+  #SET(%Bp,INSTRING(')',%Proto,1,1))
+  #SET(%Cp,INSTRING(',',%Proto,1,%Bp))
+  #IF(~%Cp)
+    #SET(%Cp,LEN(CLIP(%Proto))+1)
+  #ENDIF
+  #RETURN('PROCEDURE'&SUB(%Proto,1,%Cp-1))
+#!
+#!-------------------------------------------------------------------------
+#GROUP(%ComputeFieldSyntax,*%Target,STRING %NameOfField,STRING %NameOfFile),PRESERVE
+#FIX(%File,%NameOfFile)
+#DECLARE(%GroupName),MULTI
+#SET(%Target,%NameOfField)
+#FOR (%Field)
+  #IF (%FieldId = %NameOfField)
+    #FOR (%GroupName)
+      #SET(%Target,%GroupName & '.' & %Target)
+    #ENDFOR
+    #BREAK
+  #ENDIF
+  #IF (%FieldType = 'GROUP')
+    #ADD(%GroupName,%FieldId,1)
+  #ELSIF(%FieldStatement = 'END')
+    #DELETE(%GroupName,1)
+  #ENDIF
+#ENDFOR
+#FREE(%GroupName)
+#!-------------------------------------------------------------------------
+#GROUP(%FieldNumber,STRING %NameOfField,STRING %NameOfFile),PRESERVE,AUTO
+#FIX(%File,%NameOfFile)
+#DECLARE(%Target)
+#SET(%Target,1)
+#FOR (%Field)
+  #IF (%Field = %NameOfField)
+    #BREAK
+  #ENDIF
+  #IF(%FieldStatement <> 'END')
+    #SET(%Target,%Target + 1)
+  #ENDIF
+#ENDFOR
+#RETURN(%Target)
+#!--------------------------------------------------------------------------
+#GROUP(%FieldRecordNumber,STRING %NameOfField,STRING %NameOfFile),PRESERVE,AUTO
+#FIX(%File,%NameOfFile)
+#DECLARE(%Target)
+#SET(%Target,1)
+#FOR (%Field),WHERE(%FieldType<>'MEMO')
+  #IF (%Field = %NameOfField)
+    #BREAK
+  #ENDIF
+  #IF(%FieldStatement <> 'END')
+    #SET(%Target,%Target + 1)
+  #ENDIF
+#ENDFOR
+#RETURN(%Target)
+#!--------------------------------------------------------------------------
+#GROUP(%LocalMapCheck),AUTO,PRESERVE              #!Checks which modules are called by the current procedure
+#DECLARE(%CalloutProcedures),UNIQUE
+#IF(%CreateLocalMap)
+  #FOR(%ProcedureCalled)
+    #ADD(%CalloutProcedures,%ProcedureCalled)
+  #ENDFOR
+  #FOR(%CalloutProcedures)
+    #FIND(%ModuleProcedure,%CalloutProcedures)
+    #FIX(%Procedure,%CalloutProcedures)
+    #IF(~%ProcedureIsGlobal)
+      #IF(%ProgramExtension NOT='DLL')
+        #ADD(%CalloutModules,%Module)
+      #ELSE
+        #IF(~%ProcedureExported)                  #!Exported procedures implicitely global so don't add module to callout list
+          #ADD(%CalloutModules,%Module)
+        #ENDIF
+      #ENDIF
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#!----------------------------------------------------------------------------
+#GROUP(%StandardFormula,%RequestedClass)
+  #FOR(%Formula),WHERE(%FormulaClass = %RequestedClass)
+#INSERT(%ExpandFormula,1)
+  #ENDFOR
+#!-------------------------------------------------------------------------
+#GROUP(%ExpandFormula,%CurrentElement)
+  #DECLARE(%LastElement)
+  #SET(%LastElement,INSTANCE(%FormulaExpression))
+  #SELECT(%FormulaExpression,%CurrentElement)
+  #CASE(%FormulaExpressionType)
+  #OF('=')
+    #IF(%FormulaExpression)
+%Formula = %FormulaExpression
+    #ELSE
+CLEAR(%Formula)
+    #ENDIF
+  #OF('IF')
+IF (%FormulaExpression)
+  #INSERT(%ExpandFormula,%FormulaExpressionTrue)
+ELSE
+  #INSERT(%ExpandFormula,%FormulaExpressionFalse)
+END
+  #OF('CASE')
+CASE (%FormulaExpression)
+#INSERT(%ExpandFormulaCase,%FormulaExpressionCase)
+END
+  #ENDCASE
+#SELECT(%FormulaExpression,%LastElement)
+#!-------------------------------------------------------------------------
+#GROUP(%ExpandFormulaCase,%CurrentElement)
+  #SELECT(%FormulaExpression,%CurrentElement)
+  #LOOP WHILE(%CurrentElement)
+    #IF(%CurrentElement=0)
+      #BREAK
+    #ENDIF
+    #SET(%CurrentElement,%FormulaExpressionCase)
+    #IF(%FormulaExpression)
+OF %FormulaExpression
+    #ELSE
+ELSE
+    #ENDIF
+  #INSERT(%ExpandFormula,%FormulaExpressionOf)
+#SELECT(%FormulaExpression,%FormulaExpressionCase)
+  #ENDLOOP
+#!-------------------------------------------------------------------------
+#GROUP(%StandardThreadInitialize,%ThreadProcedure,%InitThreadName)
+  #IF(%InitThreadName)
+    #FIND(%ThreadName,%InitThreadName)
+  #ENDIF
+START(%ThreadProcedure)
+#!-------------------------------------------------------------------------
+#GROUP(%StandardProgressWindow)
+Progress:Thermometer BYTE
+ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+       PROGRESS,USE(Progress:Thermometer),AT(15,15,111,12),RANGE(0,100)
+       STRING(''),AT(0,3,141,10),USE(?Progress:UserString),CENTER
+       STRING(''),AT(0,30,141,10),USE(?Progress:PctText),CENTER
+       BUTTON('Cancel'),AT(45,42,50,15),USE(?Progress:Cancel)
+     END
+#!-------------------------------------------------------------------------
+#GROUP(%StandardValueAssignment,%AssignTo,%AssignValue)
+#IF(%AssignValue)
+%AssignTo = %(%StripPling(%AssignValue))
+#ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%StripPling,%Incoming)
+  #IF(SUB(%Incoming,1,1)='!')
+    #RETURN(SUB(%Incoming,2))
+  #ELSIF(SUB(%Incoming,1,1)='=')
+    #RETURN('EVALUATE(' & %StripPling(SUB(%Incoming, 2)) & ')')
+  #ELSE
+    #RETURN( '''' & QUOTE(%Incoming) & '''' )
+  #ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%StandardGlobalSetup),AUTO
+#INSERT(%FileControlSetFlags)
+#DECLARE(%VBXClassString)
+#DECLARE(%EndOfConstruct)
+#IF(%Window)
+  #FOR(%Control),WHERE(%ControlType='VBX')
+    #SET(%VBXClassString,EXTRACT(%ControlStatement,'CLASS'))
+    #SET(%VBXClassString,SUB(%VBXClassString,8,LEN(%VBXClassString)))
+    #SET(%VBXClassString,SUB(%VBXClassString,1,INSTRING(',',%VBXClassString,1,1)-2))
+    #ADD(%VBXList,%VBXClassString)
+  #ENDFOR
+  #FOR(%Control),WHERE(%ControlType='OLE')
+    #SET(%OLENeeded,%True)
+    #SET(%ValueConstruct,EXTRACT(%ControlStatement,'CREATE',1))
+    #INSERT(%StandardOLEExtraction)
+    #SET(%ValueConstruct,EXTRACT(%ControlStatement,'CREATE',2))
+    #INSERT(%StandardOLEExtraction)
+    #SET(%ValueConstruct,EXTRACT(%ControlStatement,'OPEN',1))
+    #INSERT(%StandardOLEExtraction)
+    #SET(%ValueConstruct,EXTRACT(%ControlStatement,'DOCUMENT',1))
+    #INSERT(%StandardOLEExtraction)
+  #ENDFOR
+#ENDIF
+#IF(%Report)
+  #FOR(%ReportControl),WHERE(%ReportControlType='VBX')
+    #SET(%VBXClassString,EXTRACT(%ReportControlStatement,'CLASS'))
+    #SET(%VBXClassString,SUB(%VBXClassString,8,LEN(%VBXClassString)))
+    #SET(%VBXClassString,SUB(%VBXClassString,1,INSTRING(',',%VBXClassString,1,1)-2))
+    #ADD(%VBXList,%VBXClassString)
+  #ENDFOR
+  #FOR(%ReportControl),WHERE(%ReportControlType='OLE')
+    #SET(%OLENeeded,%True)
+    #SET(%ValueConstruct,EXTRACT(%ControlStatement,'CREATE',1))
+    #INSERT(%StandardOLEExtraction)
+    #SET(%ValueConstruct,EXTRACT(%ControlStatement,'CREATE',2))
+    #INSERT(%StandardOLEExtraction)
+    #SET(%ValueConstruct,EXTRACT(%ControlStatement,'OPEN',1))
+    #INSERT(%StandardOLEExtraction)
+    #SET(%ValueConstruct,EXTRACT(%ControlStatement,'DOCUMENT',1))
+    #INSERT(%StandardOLEExtraction)
+  #ENDFOR
+#ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%StandardOLEExtraction)
+#IF(%ValueConstruct)
+  #SET(%EndOfConstruct,INSTRING('\!',%ValueConstruct,1,1))
+  #IF(%EndOfConstruct)
+    #SET(%ValueConstruct,SUB(%ValueConstruct,1,%EndOfConstruct-1))
+  #ENDIF
+  #IF(SUB(%ValueConstruct,1,1) = '''')
+    #SET(%ValueConstruct,SUB(%ValueConstruct,2,LEN(%ValueConstruct)-1))
+  #ENDIF
+  #IF(SUB(%ValueConstruct,LEN(%ValueConstruct),1) = '''')
+    #SET(%ValueConstruct,SUB(%ValueConstruct,1,LEN(%ValueConstruct)-1))
+  #ENDIF
+  #ADD(%OCXList,%ValueConstruct)
+#ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%StandardAddIconToProject,%CurrentIcon)
+#IF(UPPER(SUB(%CurrentIcon,1,5)) = 'ICON:')
+#ELSIF(SUB(%CurrentIcon,1,1) = '!')
+#ELSIF(SUB(%CurrentIcon,1,1) = '~')
+#ELSE
+  #PROJECT(%CurrentIcon)
+#ENDIF
+#!
+#!
+#GROUP(%BRWISAMDefaults)
+#SET(%ActiveInvisible,%False)
+#SET(%AllowUnFilled,%False)
+#SET(%RetainRow,%True)
+#!
+#GROUP(%BRWSQLDefaults)
+#SET(%ActiveInvisible,%False)
+#SET(%AllowUnFilled,%False)
+#SET(%RetainRow,%False)
+#!
+#GROUP(%BRWSystemDefaults)
+#SET(%ActiveInvisible,%SysActiveInvisible)
+#SET(%AllowUnFilled,%SysAllowUnFilled)
+#SET(%RetainRow,%SysRetainRow)
+#!
+#!
+#GROUP(%AppContainsExternalLibs)  #!,PRESERVE
+#FOR(%Module),WHERE(%ModuleTemplate='ExternalLIB(ABC)' OR %ModuleTemplate='ExternalDLL(ABC)')
+  #RETURN(%True)
+#ENDFOR
+#RETURN(%False)
+#!
+#!
+#GROUP(%SetClassItem,%Instance)
+#IF(%Instance AND %ClassItem <> %Instance)
+  #CALL(%NoCaseFix, %ClassItem, %Instance)
+  #ASSERT(UPPER(%ClassItem) = UPPER(%Instance), '%SetClassItem, instance not found: ' & %Instance & ' -- ' & %Procedure & '[' & %ActiveTemplate & ']')
+#ENDIF
+#!
+#!
+#GROUP(%GenerateParentCall)
+#IF(%ParentCallValid())
+  #IF(%pClassMethodReturnType)
+    #IF(SLICE(%pClassMethodReturnType, 1, 1) = '*' )
+      #QUERY(ParentCall,'ReturnValue &= ' & %pClassMethodParentCall)
+    #ELSE
+      #QUERY(ParentCall,'ReturnValue = ' & %pClassMethodParentCall)
+    #ENDIF
+  #ELSE
+    #QUERY(ParentCall,%pClassMethodParentCall)
+  #ENDIF
+#ENDIF
+#!
+#!
+#GROUP(%GenerateMapStructure),PRESERVE
+  #IF(%CreateLocalMap)
+    #SET(%ValueConstruct,%Module)
+                       INCLUDE('%(UPPER(%Modulebase)&'.INC')'),ONCE        !Local module procedure declarations
+    #FOR(%CalloutModules),WHERE(%CalloutModules <> '' AND %CalloutModules <> %ValueConstruct)
+      #FIX(%Module,%CalloutModules)
+      #IF(~%ModuleExternal)
+                       INCLUDE('%(UPPER(SUB(%CalloutModules,1,INSTRING('.',%CalloutModules)))&'INC')'),ONCE        !Req'd for module callout resolution
+      #ENDIF
+    #ENDFOR
+  #ENDIF
+  #FIX(%CustomModuleMapModule,'CURRENT MODULE')
+  #FOR(%CustomModuleMapProcedure)
+%[22]CustomModuleMapProcedure %CustomModuleMapProcedurePrototype
+  #ENDFOR
+  #FOR(%CustomModuleMapModule),WHERE(%CustomModuleMapModule <> 'CURRENT MODULE')
+                       MODULE(%CustomModuleMapModule)
+    #FOR(%CustomModuleMapProcedure)
+%[24]CustomModuleMapProcedure %CustomModuleMapProcedurePrototype
+    #ENDFOR
+                       END
+  #ENDFOR
+#!
+#!
+#GROUP(%GetObjectName,%Flag,%Instance=0),AUTO
+#ALIAS(%LocalClassItem,%ClassItem,%Instance)
+#ALIAS(%LocalObjectName,%ThisObjectName,%Instance)
+#EQUATE(%OldClassItem,INSTANCE(%LocalClassItem))
+#CALL(%NoCaseFix,%LocalClassItem,%Flag)
+#EQUATE(%RetVal,%LocalObjectName)
+#SELECT(%LocalClassItem,%OldClassItem)
+#RETURN(%RetVal)
+#!
+#!
+#GROUP(%GetObjectEmbedDesc,%EmbedType),AUTO
+#DECLARE(%RVal)
+#IF(%ShowBaseClassOnEmbeds)
+  #CASE(UPPER(%EmbedType))
+  #OF('FILE MANAGER')
+    #SET(%RVal,%ThisObjectName&'  ('&%CacheFileManager&')')
+  #OF('RELATION MANAGER')
+    #SET(%RVal,%ThisObjectName&'  ('&%CacheRelationManager&')')
+  #OF('ERROR MANAGER')
+    #SET(%RVal,'GlobalErrors  ('&%ErrorManagerType&')')
+  #OF('INI MANAGER')
+    #SET(%RVal,'INIMgr  ('&%INIClass&')')
+  #OF('TRANSLATOR')
+    #SET(%RVal,'Translator  ('&%RunTimeTranslatorType&')')
+  #OF('FUZZYMATCHER')
+    #SET(%RVal,'Fuzzy Matcher  ('&%FuzzyMatcherClass&')')
+  #ELSE
+    #SET(%RVal,%ThisObjectName&'  ('&%BaseClassToUse()&')')
+  #ENDCASE
+#ENDIF
+#IF(%ShowDescriptionOnEmbeds)
+  #CASE(UPPER(%EmbedType))
+  #OF('FILE MANAGER')
+    #SET(%RVal,%RVal&'  File Manager for '&%File)
+  #OF('RELATION MANAGER')
+    #SET(%RVal,%RVal&'  Relation Manager for '&%File)
+  #OF('ERROR MANAGER')
+    #SET(%RVal,%Rval&'  Global Error Manager')
+  #OF('INI MANAGER')
+    #SET(%RVal,%RVal&'  Global INI Manager')
+  #OF('TRANSLATOR')
+    #SET(%RVal,%RVal&'  Global Run-Time Translator')
+  #OF('FUZZYMATCHER')
+    #SET(%RVal,%RVal&'  Global Fuzzy Matcher')
+  #OF('DEFAULT BROWSE LOCATOR')
+    #SET(%RVal,%RVal&'  Default Locator for '&%ActiveTemplateInstanceDescription)
+  #OF('BROWSE LOCATOR')
+    #SET(%RVal,%RVal&'  Conditional Locator for '&%ActiveTemplateInstanceDescription)
+  #OF('DEFAULT BROWSE STEP')
+    #SET(%RVal,%RVal&'  Default Step Manager for '&%ActiveTemplateInstanceDescription)
+  #OF('BROWSE STEP')
+    #SET(%RVal,%RVal&'  Conditional Step Manager for '&%ActiveTemplateInstanceDescription)
+  #OF('EDIT IN PLACE')
+    #SET(%RVal,%RVal&'  Edit-in-Place Manager')
+  #OF('TOOLBAR MANAGER')
+    #SET(%RVal,%RVal&'  Toolbar Manager')
+  #OF('WINDOW MANAGER')
+    #SET(%RVal,%RVal&'  Window Manager')
+  #OF('BROWSE EIP MANAGER')
+    #SET(%RVal, %RVal & ' Browse EIP Manager for ' & %ActiveTemplateInstanceDescription)
+  #ELSE
+    #SET(%Rval,%Rval&'  '&%ActiveTemplateInstanceDescription)
+  #ENDCASE
+#ENDIF
+#IF(%ShowDetailsOnEmbeds)
+  #CASE(UPPER(%EmbedType))
+  #OF('BROWSE LOCATOR')
+    #SET(%RVal,%RVal&'  [Condition: '&%SortCondition&']')
+  #OF('BROWSE STEP')
+    #SET(%RVal,%RVal&'  [Condition: '&%SortCondition&']')
+  #OF('EDIT IN PLACE')
+    #SET(%RVal,%RVal&'  [Field: '&%EditInPlaceField&']')
+  #ENDCASE
+#ENDIF
+#ASSERT(%RVal,'%GetObjectEmbedDesc: Description being returned blank')
+#RETURN(CLIP(LEFT(%RVal)))
+#!
+#!
+#GROUP(%GetObjectEmbedPrototype),AUTO
+#EQUATE(%RVal,%pClassMethod)
+#IF(%ShowPROCEDUREonEmbeds)
+  #SET(%RVal,%RVal&' PROCEDURE')
+#ENDIF
+#IF(%pClassMethodPrototype<>'()')
+  #SET(%RVal,%RVal&%pClassMethodPrototype)
+#ENDIF
+#IF(%ShowVIRTUALonEmbeds AND %pClassMethodVirtual)
+  #SET(%RVal,%RVal&',VIRTUAL')
+#ENDIF
+#IF(%ShowPROTECTEDonEmbeds AND %pClassMethodProtected)
+  #SET(%RVal,%RVal&',PROTECTED')
+#ENDIF
+#IF(%ColorEntriesOnEmbeds)
+  #IF(%pClassMethodVirtual)
+    #SET(%RVal,%RVal&'{{COLOR('&%ColorVirtualMethod&')}')
+  #ELSIF(%pClassMethodProtected)
+    #SET(%RVal,%RVal&'{{COLOR('&%ColorProtectedMethod&')}')
+  #ENDIF
+#ENDIF
+#RETURN(%RVal)
+#!
+#!
+#GROUP(%ParentCallValid)
+#IF(UPPER(%pClassMethod)='CONSTRUCT' OR UPPER(%pClassMethod)='DESTRUCT' OR %pClassMethod='')
+  #RETURN(%False)
+#ENDIF
+#RETURN(%True)
+#!
+#!
+#GROUP(%GetEmbedTreeDesc,%EmbedType,%ProcedureSection,%AdditionalLevels=''),AUTO
+#DECLARE(%EmbedDesc)
+#CASE(UPPER(%EmbedType))
+#OF('FILE MANAGER')
+  #SET(%EmbedDesc,'Global Objects|Abc Objects|File Managers|')
+#OF('RELATION MANAGER')
+  #SET(%EmbedDesc,'Global Objects|Abc Objects|Relation Managers|')
+#OF('ERROR MANAGER')
+#OROF('INI MANAGER')
+#OROF('TRANSLATOR')
+#OROF('GLOBAL ADDRESSES')
+#OROF('ENCODER')
+#OROF('TRANSPORT')
+#OROF('FUZZYMATCHER')
+  #SET(%EmbedDesc,'Global Objects|Abc Objects|')
+#ELSE
+  #SET(%EmbedDesc,'Local Objects{{PRIORITY(2000)}|Abc Objects|')
+#ENDCASE
+#IF(%AdditionalLevels)
+  #SET(%EmbedDesc,%EmbedDesc&%AdditionalLevels&'|')
+#ENDIF
+#SET(%EmbedDesc,%EmbedDesc&%GetObjectEmbedDesc(%EmbedType)&'|'&%GetObjectEmbedPrototype())
+#CASE(UPPER(%ProcedureSection))
+#OF('DATA')
+  #SET(%EmbedDesc,%EmbedDesc&'|DATA')
+  #IF(%ColorEntriesOnEmbeds)
+    #SET(%EmbedDesc,%EmbedDesc&'{{COLOR('&%ColorDataSection&')}')
+  #ENDIF
+#OF('CODE')
+  #SET(%EmbedDesc,%EmbedDesc&'|CODE')
+  #IF(%ColorEntriesOnEmbeds)
+    #SET(%EmbedDesc,%EmbedDesc&'{{COLOR('&%ColorCodeSection&'),PRIORITY(5000)}')
+  #ELSE
+    #SET(%EmbedDesc,%EmbedDesc&'{{PRIORITY(5000)}')
+  #ENDIF
+#ELSE
+  #ASSERT(%False,'%GetEmbedTreeDesc: Unknown ProcedureSection')
+#ENDCASE
+#RETURN(%EmbedDesc)
+#!
+#!
+#GROUP(%StandardGlobalLocals)
+#IF(%EnableRunTimeTranslator)
+#INSERT(%GenerateClass, 'Translator')
+#ENDIF
+#IF(%FuzzyMatchingEnabled)
+#INSERT(%GenerateClass, 'FuzzyMatcher')
+#ENDIF
+#IF(%ProgramExtension='DLL')
+  #CALL(%MakeDeclr, 22, %OOPConstruct,'LocalErrors', %GetBaseClassType('ErrorManager'))
+%OOPConstruct
+  #CALL(%MakeDeclr, 22, %OOPConstruct, 'LocalINIMgr', %GetBaseClassType('INIManager'))
+%OOPConstruct
+  #CALL(%GenerateClassRef, 'ErrorManager')
+  #CALL(%GenerateClassRef, 'INIManager')
+  #CALL(%MakeDeclr, 22, %OOPConstruct, 'DLLInitializer', 'CLASS')
+%[55]OOPConstruct !This object is used to trigger initialization of the dll
+  #CALL(%MakeDeclr, 24, %OOPConstruct, 'Construct', 'PROCEDURE')
+%OOPConstruct
+  #CALL(%MakeDeclr, 24, %OOPConstruct, 'Destruct','PROCEDURE')
+%OOPConstruct
+  #CALL(%MakeDeclr, 22, %OOPConstruct, '', 'END')
+%OOPConstruct
+#ELSE
+#INSERT(%GenerateClass, 'ErrorManager')
+#INSERT(%GenerateClass, 'INIManager')
+#ENDIF
+#!
+#!
+#GROUP(%GetQueueDataType, %FLabel, *%FComment),AUTO,PRESERVE
+#DECLARE(%Declr)
+#DECLARE(%RVal)
+#IF(INLIST(%FLabel, %LocalData))
+  #FIX(%LocalData, %FLabel)
+  #SET(%Declr, %LocalDataStatement)
+  #SET(%FComment, %FComment & ' - type derived from local data')
+#ELSIF(INLIST(%FLabel, %GlobalData))
+  #FIX(%GlobalData, %FLabel)
+  #SET(%Declr, %GlobalDataStatement)
+  #SET(%FComment, %FComment & ' - type derived from global data')
+#ELSIF(INLIST(%FLabel, %ModuleData))
+  #FIX(%ModuleData, %FLabel)
+  #SET(%Declr, %ModuleDataStatement)
+  #SET(%FComment, %FComment & '- type derived from module data')
+#ELSE
+  #FIND(%Field, %FLabel)
+  #IF(%Field = %FLabel)
+    #IF(SUB(%FieldType, 1, 5) = 'GROUP')
+      #SET(%FComment, %FComment & ' - STRING defined to hold GROUP''s contents')
+    #ELSIF(%FieldType = 'MEMO')
+      #SET(%FComment, %FComment & ' - STRING defined to hold MEMO''s contents')
+    #ELSE
+      #SET(%FComment, %FComment & ' - type derived from field')
+    #END
+    #SET(%Declr, %FieldStatement)
+  #ENDIF
+#ENDIF
+#IF(%Declr)
+  #IF(SUB(%Declr, 1, 5) = 'GROUP')                        #!Groups and memos have a string populated into the queue
+    #IF(EXTRACT(%Declr, 'DIM'))
+      #SET(%FComment, %FComment & ' (Array Component)')
+      #SET(%RVal, 'STRING(SIZE(' & %FLabel & '[1]))')
+    #ELSE
+      #SET(%RVal, 'STRING(SIZE(' & %FLabel & '))')
+    #ENDIF
+  #ELSIF(SUB(%Declr, 1, 4) = 'MEMO')
+    #SET(%RVal, 'STRING(SIZE(' & %FLabel & '))')
+  #ELSIF(EXTRACT(%Declr, 'DIM'))
+    #EQUATE(%i, INSTRING(',DIM', %Declr, 1, 1))           
+    #ASSERT(%i > 0, 'Could not find DIM in ' & %Declr)
+    #SET(%FComment, %FComment & ' (Array Component)')
+    #SET(%RVal, SUB(%Declr, 1, %i - 1))                   #!DIM is always first attribute
+  #ELSE
+    #SET(%RVal, 'LIKE(' & %FLabel & ')')                  #!A non-dimensioned 'flat' field so ok to use LIKE in queue
+  #ENDIF
+#ELSE
+  #SET(%FComment, %FComment & ' - unable to determine correct data type')
+  #SET(%RVal, 'STRING(1)')
+#ENDIF
+#RETURN(%RVal)
+#!
+#!
+#GROUP(%DebugDumpABCPrompts),PRESERVE          #!Use this group for DEBUG only
+OMIT('_EndOfABCSymbols_')
+
+--->Classes
+  #FOR(%pClassName)
+pClassName:                     |%pClassName|
+pClassCategory:                 |%pClassCategory|
+pClassIncFile:                  |%pClassIncFile|
+    #FOR(%pClassImplements)
+  pClassImplements              |%pClassImplements|
+    #ENDFOR
+    #FOR(%pClassMethod)
+  pClassMethod:                 |%pClassMethod|
+      #FOR(%pClassMethodPrototype)
+    pClassMethodPrototype       |%pClassMethodPrototype|
+    pClassMethodPrivate         |%pClassMethodPrivate|
+    pClassMethodVirtual         |%pClassMethodVirtual|
+    pClassMethodProtected       |%pClassMethodProtected|
+    pClassMethodProcAttribute   |%pClassMethodProcAttribute|
+    pClassMethodInherited       |%pClassMethodInherited|
+    pClassMethodDefined         |%pClassMethodDefined|
+    pClassMethodReturnType      |%pClassMethodReturnType|
+    pClassMethodParentCall      |%pClassmethodParentCall|
+    pClassMethodDll             |%pClassMethodDll|
+    pClassMethodExtName         |%pClassMethodExtName|
+    pClassMethodCallConv        |%pClassMethodCallConv|
+    LINKNAME                    |%(LINKNAME(%pClassMethod & %pClassMethodPrototype & ',' & %pClassMethodCallConv, %pClassName))|
+      #ENDFOR
+    #ENDFOR
+    #FOR(%pClassProperty)
+  pClassProperty                |%pClassProperty|
+  pClassPropertyPrototype       |%pClassPropertyPrototype|
+  pClassPropertyPrivate         |%pClassPropertyPrivate|
+  pClassPropertyProtected       |%pClassPropertyProtected|
+  pClassPropertyInherited       |%pClassPropertyInherited|
+  pClassPropertyDefined         |%pClassPropertyDefined|
+    #ENDFOR
+  #ENDFOR
+
+---> Interfaces
+  #FOR(%pInterface)
+pInterface                      |%pInterface|
+pInterfaceCategory              |%pInterfaceCategory|
+pInterfaceIncFile               |%pInterfaceIncFile|
+    #FOR(%pInterfaceMethod)
+  pInterfaceMethod              |%pInterfaceMethod|
+      #FOR(%pInterfaceMethodPrototype)
+    pInterfaceMethodPrototype   |%pInterfaceMethodPrototype|
+    pInterfaceMethodInherited   |%pInterfaceMethodInherited|
+    pInterfaceMethodDefined     |%pInterfaceMethodDefined|
+    pInterfaceMethodReturnType  |%pInterfaceMethodReturnType|
+    pInterfaceMethodDll         |%pInterfaceMethodDll|
+    pInterfaceMethodExtName     |%pInterfaceMethodExtName|
+    pInterfaceMethodCallConv    |%pInterfaceMethodCallConv|
+      #ENDFOR
+    #ENDFOR
+  #ENDFOR
+
+---> Exported Procedures
+  #FOR(%pProcedure)
+pProcedure                      |%pProcedure|
+pProcedureCategory              |%pProcedureCategory|
+pProcedureIncFile               |%pProcedureIncFile|
+    #FOR(%pProcedurePrototype)
+  pProcedurePrototype           |%pProcedurePrototype|
+  pProcedureDll                 |%pProcedureDll|
+  pProcedureExtName             |%pProcedureExtName|
+  pProcedureCallConv            |%pProcedureCallConv|
+    #ENDFOR
+  #ENDFOR
+_EndOfABCSymbols_
+#!
+#!
+#GROUP(%AddObjectList, %Tag, %OvrBaseClass = ''),AUTO
+#EQUATE(%Preserve, %ClassItem)
+#CALL(%SetClassItem, %Tag)
+#CALL(%AddObjectListDirect, %ThisObjectName, CHOOSE(%OvrBaseClass = '', %GetBaseClassType(), %OvrBaseClass))
+#IF(%Preserve <> '')
+  #CALL(%SetClassItem, %Preserve)
+#ENDIF
+#!
+#!
+#GROUP(%AddObjectListDirect, %ObjName, %ObjType)
+#ADD(%ObjectList, %ObjName)
+#SET(%ObjectListType, %ObjType)
+#!
+#!
+#GROUP(%SetupGlobalObjects)
+  #CALL(%SetClassDefaults, 'ErrorManager', 'GlobalErrors', %ErrorManagerType)
+  #CALL(%SetClassDefaults, 'INIManager', 'INIMgr', %INIClass)
+  #CALL(%SetClassDefaults, 'Translator', 'Translator', %RunTimeTranslatorType)
+  #CALL(%SetClassDefaults, 'FuzzyMatcher', 'FuzzyMatcher', %FuzzyMatcherClass)
+  #FOR(%File)
+    #CALL(%SetClassDefaults, 'FileManager:' & %File, 'Hide:Access:' & %File, %FileManagerType)
+    #CALL(%SetClassDefaults, 'RelationManager:' & %File, 'Hide:Relate:' & %File, %RelationManagerType)
+  #ENDFOR
+#!
+#!
+#GROUP(%ConstructView),AUTO
+#DECLARE(%PreviouslyProjectedField),MULTI
+#FIX(%File,%Primary)
+%[20]ListView VIEW(%Primary)
+#CALL(%ProjectQueueFields)
+#CALL(%ConstructSecondaries, %Primary)
+%[20]Null END
+#!
+#!
+#GROUP(%ConstructSecondaries, %To)
+#FOR(%Secondary),WHERE(%SecondaryTo = %To)
+  #FIX(%File,%Secondary)
+  #FIX(%Relation,%To)
+  #FOR(%RelationKeyField),WHERE(%RelationKeyFieldLink <> '' AND %RelationKeyField <> '' AND INLIST(%RelationKeyField, %QueueField) = 0 AND %PreviouslyProjected(%RelationKeyField) = 0)
+%[22]Null PROJECT(%RelationKeyField)
+  #ENDFOR
+#ENDFOR
+#FOR(%Secondary),WHERE(%SecondaryTo = %To)
+  #INSERT(%ConstructViewJoinSecondary, %To, %Secondary, %SecondaryInner)
+#ENDFOR
+#!
+#!
+#GROUP(%ProjectQueueFields)
+  #DECLARE(%Lb,LONG)
+  #DECLARE(%QField)
+  #FOR(%QueueField)
+    #SET(%Lb, INSTRING ('[',%QueueFieldAssignment,1,1))
+    #IF(%Lb > 1)
+      #SET(%QField, SLICE(%QueueFieldAssignment,1,%Lb-1))
+    #ELSE
+      #SET(%QField, %QueueFieldAssignment)
+    #ENDIF
+    #IF(INLIST(%QField, %Field) > 0 AND %PreviouslyProjected(%QField) = 0)
+%[22]Null PROJECT(%QField)
+    #ENDIF
+  #ENDFOR
+#!
+#!
+#GROUP(%PreviouslyProjected, %Fld)
+  #EQUATE(%RVal, INLIST(%Fld, %PreviouslyProjectedField))
+  #IF(~%RVal)
+    #ADD(%PreviouslyProjectedField, %Fld)
+  #ENDIF
+  #RETURN(%RVal)
+#!
+#!
+#GROUP(%ConstructViewJoinSecondary,%CurrentPrimary,%CurrentSecondary,%IsInner)
+#EQUATE(%JoinDeclaration, 'JOIN(')
+#FIX(%File,%CurrentSecondary)
+#IF(%SecondaryCustomJoin)
+  #SET(%JoinDeclaration,%JoinDeclaration&%CurrentSecondary&','''&QUOTE(%SecondaryCustomText)&'''')
+#ELSE
+  #FIX(%Relation,%CurrentPrimary)
+  #SET(%JoinDeclaration,%JoinDeclaration & %FileKey)
+  #FOR(%RelationKeyField),WHERE(%RelationKeyFieldLink AND %RelationKeyField)
+    #SET(%JoinDeclaration,%JoinDeclaration & ',' & %RelationKeyField)
+    #IF(%FileRelationType = '1:MANY')
+      #IF(%InstancePrefix)
+        #SET(%ValueConstruct,%RelationKeyFieldLink)
+        #IF(~INLIST(%ValueConstruct,%QueueField))
+          #ADD(%QueueField,%ValueConstruct)
+          #SET(%QueueFieldAssignment,%RelationKeyFieldLink)
+          #SET(%QueueFieldComment,'Related join file key field')
+        #ENDIF
+      #ENDIF
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#IF(%JoinDeclaration = 'JOIN(')
+  #ASSERT(%False, %Procedure & ': Bad JOIN statement generated between ' & %CurrentPrimary & ' and ' & %CurrentSecondary & ', section will be omitted from generated code. Check file relationships for NOLINKS!')
+#ELSE
+  #SET(%JoinDeclaration,%JoinDeclaration & CHOOSE(%IsInner = %True,'),INNER',')'))
+%[20]Null %JoinDeclaration
+#CALL(%ProjectQueueFields)
+#CALL(%ConstructSecondaries, %CurrentSecondary)
+%[20]Null END
+#ENDIF
+#!
+#!
+#GROUP(%GenerateVirtuals, %WhichClassItem, %EmbedTreeText, %VirtualGroup, %GlobalObject = %False),AUTO
+  #CALL(%SetClassItem(ABC), %WhichClassItem)
+  #EQUATE(%BaseClass, %BaseClassToUse())
+  #IF(%BaseClass)
+    #EQUATE(%Indent, %OutputIndent)
+    #CALL(%FixClassName(ABC), %BaseClass)
+    #FOR(%pClassMethod)
+      #FOR(%pClassMethodPrototype), WHERE(~%pClassMethodPrivate AND ~%pClassMethodFinal AND (UPPER(%pClassMethod) = 'DESTRUCT' OR UPPER(%pClassMethod) = 'CONSTRUCT' OR %pClassMethodExtends OR %pClassMethodVirtual))
+        #SET(%IncludePrototype,%False)
+        #SET(%ByteCount,%BytesOutput)
+        #SUSPEND(ParentCall)
+#?%NULL
+#?%ThisObjectName.%pClassMethod %(%MakeImplementationPrototype())
+#?%NULL
+        #IF(%pClassMethodReturnType)
+          #IF(SLICE(%pClassMethodReturnType, 1, 1) = '*')
+            #SET(%OOPConstruct, '&' & SLICE(%pClassMethodReturnType, 2, LEN(%pClassMethodReturnType)))
+          #ELSE
+            #SET(%OOPConstruct, CHOOSE(%pClassMethodReturnType='STRING','ANY',%pClassMethodReturnType&',AUTO'))
+          #ENDIF
+          #CALL(%MakeDeclr,22,%OOPConstruct,'ReturnValue',%OOPConstruct)
+#?%OOPConstruct
+#?%NULL
+        #ENDIF
+        #INDENT(-%Indent)
+#INVOKE(%VirtualGroup, %GetTreeTextToClass(%EmbedTreeText, %BaseClass) & %GetObjectEmbedPrototype(), %GetDataText(), %GetCodeText())
+        #INDENT(%Indent)
+        #IF(%pClassMethodReturnType)
+  #?RETURN ReturnValue
+        #ENDIF
+#?%NULL
+        #RESUME
+        #IF(%ByteCount <> %BytesOutput)
+          #SET(%OOPConstruct,%MakeDeclarationPrototype())
+          #CALL(%MakeDeclr,24,%OOPConstruct,%pClassMethod,%OOPConstruct)
+          #ADD(%ClassLines,%OOPConstruct)
+        #ENDIF
+      #ENDFOR
+    #ENDFOR
+    #IF(%DeriveFromBaseClass)
+      #FOR(%NewMethods)
+%ThisObjectName.%NewMethodName %(%MethodDeclaration(%NewMethodPrototype))
+        #SUSPEND
+#?%NULL
+          #IF(%GlobalObject)
+#EMBED(%NewMethodDataSection,'New Class Method Data Section'),%ClassItem,%NewMethods,LABEL,DATA,TREE(%GetTreeTextToClass(%EmbedTreeText, %BaseClass) & %GetNewMethodText(%NewMethodName, %NewMethodPrototype) & %GetDataText()),WHERE(%GlobalObject = %True)
+          #ELSE
+#EMBED(%NewMethodDataSection,'New Class Method Data Section'),%ActiveTemplateInstance,%ClassItem,%NewMethods,LABEL,DATA,TREE(%GetTreeTextToClass(%EmbedTreeText, %BaseClass) & %GetnewMethodText(%NewMethodName, %NewMethodPrototype) & %GetDataText()),WHERE(%GlobalObject = %False)
+          #ENDIF
+        #RESUME
+#?%NULL
+  CODE
+        #SUSPEND
+          #IF(%GlobalObject)
+  #EMBED(%NewMethodCodeSection,'New Class Method Code Section'),%ClassItem,%NewMethods,TREE(%GetTreeTextToClass(%EmbedTreeText, %BaseClass) & %GetNewMethodText(%NewMethodName, %NewMethodPrototype) & %GetCodeText()),WHERE(%GlobalObject = %True)
+          #ELSE
+  #EMBED(%NewMethodCodeSection,'New Class Method Code Section'),%ActiveTemplateInstance,%ClassItem,%NewMethods,TREE(%GetTreeTextToClass(%EmbedTreeText, %BaseClass) & %GetNewMethodText(%NewMethodName, %NewMethodPrototype) & %GetCodeText()),WHERE(%GlobalObject = %False)
+          #ENDIF
+#?%NULL
+#?%NULL
+        #RESUME
+      #ENDFOR
+    #ENDIF
+  #ENDIF
+#!
+#!
+#GROUP(%GetNewMethodText, %MethodName, %MethodPrototype)
+  #RETURN(%MethodName & CHOOSE(%ShowPROCEDUREonEmbeds = %True, ' PROCEDURE' & %MethodPrototype, %MethodPrototype))
+#!
+#!
+#GROUP(%GetTreeTextToClass, %EmbedTreeText, %BaseClass)
+  #RETURN(%EmbedTreeText & CHOOSE(%ShowBaseClassOnEmbeds = %True, ' (' & %BaseClass & ') |', '|'))
+#!
+#!
+#GROUP(%GetCodeText)
+  #RETURN(CHOOSE(%ColorEntriesOnEmbeds = %True, '|CODE{{COLOR(' & %ColorCodeSection & '),PRIORITY(5000)}', '|CODE{{PRIORITY(5000)}'))
+#!
+#!
+#GROUP(%GetDataText)
+  #RETURN(CHOOSE(%ColorEntriesOnEmbeds = %True, '|DATA{{COLOR(' & %ColorDataSection & ')}', '|DATA'))
+#!
+#!
+#GROUP (%AddCategory, %NewCategory, %NewCategoryDllInit='', %NewCategoryDllKill='')
+#ADD (%Category, %NewCategory)
+#SET (%CategoryDllInit, %NewCategoryDllInit)
+#SET (%CategoryDllKill, %NewCategoryDllKill)
+#!
+#!
+#GROUP(%SetCategoryLocation, %ThisName, %DllModePrefix, %IsLinked='?', %IsDll='?', %LibraryName='')
+#ADD(%Category, %ThisName)
+#SET (%CategoryDllModePrefix, %DllModePrefix)
+#IF (%IsLinked='?')
+  #SET (%CategoryLinkMode,~%GlobalExternal)
+#ELSE
+  #SET (%CategoryLinkMode,%IsLinked)
+#END
+#IF (%IsDll='?')
+  #SET (%CategoryDllMode,  (%GlobalExternal AND (%ExternalSource='Dynamic Link Library (DLL)')))
+#ELSE
+  #SET (%CategoryDllMode,%IsDll)
+#END
+#SET(%CategoryLibName, %LibraryName)
+#!
+#!
+#GROUP(%SetCategoryLocationFromPrompts, %ThisName, %DllModePrefix, %BaseName)
+#IF (%OverrideAbcSettings)
+  #CALL(%SetCategoryLocation, %ThisName, %DllModePrefix, (%AbcSourceLocation='LINK'), (%AbcSourceLocation='DLL'))
+  #IF ((%AbcSourceLocation='LIB') OR (%AbcSourceLocation='DLL'))
+    #SET(%CategoryLibName, %AbcLibraryName)
+    #IF (%CategoryLibName='' AND %BaseName)
+      #SET (%CategoryLibName,'C%V%' & %BaseName & '%X%')
+    #ENDIF
+  #ENDIF
+#ELSE
+  #CALL(%SetCategoryLocation, %ThisName, %DllModePrefix)
+#ENDIF
+#!
+#!
+#GROUP (%AddCategoryGlobal, %Tag, %Type='')
+#CALL(%SetClassItem(ABC), %Tag)
+#CALL (%AddCategoryInitParam, 'cur' & %ThisObjectName, %BaseClassToUse(), %ThisObjectName)
+#!
+#!
+#GROUP (%AddCategoryInitParam, %Param, %Type, %Target)
+#ADD (%CategoryGlobal, %Target)
+#SET (%CategoryGlobalType, %Type)
+#SET (%CategoryDllInitParam, %Param)
+#!
+#!
+#GROUP (%GenerateCategoryCallInit)
+#FOR(%Module),WHERE(%ModuleExternal AND %ModuleTemplate='ExternalDLL(ABC)' AND %StandardExternalModule)
+  #FOR (%Category),WHERE(%CategoryDllInit)
+%(%ModuleBaseRemovePath()):%CategoryDllInit(%|
+    #FOR (%CategoryGlobal)
+    #IF (INSTANCE(%CategoryGlobal)<>1)
+, %|
+    #ENDIF
+%CategoryGlobal%|
+    #ENDFOR
+)#<! Initialise dll (%Category)
+  #ENDFOR
+#ENDFOR
+#!
+#GROUP (%DefineCategoryPragmas)
+  #FOR (%Category)
+    #IF (%CategoryDllModePrefix)
+      #PDEFINE('_' & %CategoryDllModePrefix & 'DllMode_',%CategoryDllMode+0)
+      #PDEFINE('_' & %CategoryDllModePrefix & 'LinkMode_',%CategoryLinkMode+0)
+    #ENDIF
+    #IF (~%CategoryLinkMode AND %CategoryLibName)
+      #PROJECT (%CategoryLibName & '.LIB')
+    #END
+  #ENDFOR
+#!
+#!
+#GROUP (%GetCategoryInitPrototype),AUTO
+#DECLARE (%Text)
+#SET (%Text, '(')
+#FOR (%CategoryGlobal)
+  #IF (INSTANCE(%CategoryGlobal)<>1)
+    #SET(%Text, %Text & ', ')
+  #ENDIF
+  #SET (%Text, %Text & '<<' & %CategoryGlobalType & ' ' & %CategoryDllInitParam & '>')
+#ENDFOR
+#RETURN (%Text & ')')
+#!
+#!
+#GROUP (%GenerateCategoryCallKill)
+#FOR(%Module),WHERE(%ModuleExternal AND %ModuleTemplate='ExternalDLL(ABC)' AND %StandardExternalModule)
+  #FOR (%Category),WHERE(%CategoryDllKill)
+%(%ModuleBaseRemovePath()):%CategoryDllKill()
+  #ENDFOR
+#ENDFOR
+#!
+#!
+#!-------------------------------------------------------
+#GROUP(%GenerateCategoryFunctions)
+#IF (NOT %NoGenerateGlobals)
+!These procedures are used to initialize the DLL. It must be called by the main executable when it starts up
+  #FOR (%Category), WHERE(%CategoryDllInit)
+%Application:%CategoryDllInit PROCEDURE%(%GetCategoryInitPrototype())
+
+  CODE
+  #EMBED(%BeforeCategoryDLLInitCode,'Before DLL Initialization code'),%Category
+    #FOR (%CategoryGlobal)
+  IF ~%CategoryDllInitParam &= NULL
+    %CategoryGlobal &= %CategoryDllInitParam
+  END
+    #ENDFOR
+  #EMBED(%AfterCategoryDLLInitCode,'After DLL Initialization code'),%Category
+
+  #ENDFOR
+
+!This procedure is used to shutdown the DLL. It must be called by the main executable before it closes down
+
+  #FOR (%Category), WHERE(%CategoryDllKill)
+%Application:%CategoryDllKill PROCEDURE
+
+  CODE
+  #EMBED(%CategoryDLLKillCode,'DLL Initialization code'),%Category
+
+  #ENDFOR
+#ENDIF
+#!
+#!
+#GROUP(%GenerateCategoryDeclareFunctions),AUTO
+#IF (NOT %NoGenerateGlobals)
+  #EQUATE (%IndentRequired, %OutputIndent)
+  #INDENT(-%IndentRequired)
+  #IF (%ProgramExtension='DLL')
+    #!
+    #! Declare functions defined in this DLL
+    #!
+    #FOR (%Category), WHERE(%CategoryDllInit)
+%Application:%CategoryDllInit PROCEDURE%(%GetCategoryInitPrototype())
+    #ENDFOR
+    #FOR (%Category), WHERE(%CategoryDllKill)
+%Application:%CategoryDllKill PROCEDURE
+    #ENDFOR
+  #ELSE
+    #!
+    #! Declare init functions defined in a different dll
+    #!
+    #DECLARE (%ExtraAttributes)
+    #FOR(%Module),WHERE(%ModuleExternal AND (%ModuleTemplate='ExternalDLL(ABC)' OR %ModuleTemplate='ExternalLIB(ABC)'))
+      #SUSPEND
+      #IF(%ModuleTemplate='ExternalDLL(ABC)')
+        #?MODULE('%(UPPER(%ModuleBase)).DLL')
+      #ELSE
+        #?MODULE('%(UPPER(%ModuleBase)).LIB')
+      #ENDIF
+      #IF(%StandardExternalModule)
+        #IF(%ExternalSource='Dynamic Link Library (DLL)')
+          #SET (%ExtraAttributes,',DLL')
+        #ELSE
+          #SET (%ExtraAttributes,'')
+        #END
+        #FOR (%Category)
+          #IF (%CategoryDllInit)
+            #CALL(%GenerateDeclr(ABC),24,%ModuleBaseRemovePath()&':'&%CategoryDllInit,'PROCEDURE' & %GetCategoryInitPrototype() & %ExtraAttributes)
+          #END
+          #IF (%CategoryDllKill)
+            #CALL(%GenerateDeclr(ABC),24,%ModuleBaseRemovePath()&':'&%CategoryDllKill,'PROCEDURE' & %ExtraAttributes)
+          #END
+        #END
+      #ENDIF
+        #?END
+      #RESUME
+    #ENDFOR
+  #ENDIF
+  #INDENT(%IndentRequired)
+#ENDIF
+#!
+#!
+#GROUP(%GetBrowseFilter),AUTO
+#EQUATE(%FilterExpression, %BrowseFilterStatement)
+#EMBED(%AppendFilterExpression, ''),%ActiveTemplateInstance,HIDE
+#RETURN(%FilterExpression)
+#!
+#!
+#GROUP(%FindGlobalTemplateInstance, %LookFor),PRESERVE
+  #FOR(%ApplicationTemplate),WHERE(%ApplicationTemplate = %LookFor)
+    #FOR(%ApplicationTemplateInstance)
+      #RETURN(%ApplicationTemplateInstance)
+    #ENDFOR
+  #ENDFOR
+  #RETURN(0)
+#!
+#!
+#GROUP(%FindLocalTemplateInstance, %LookFor),PRESERVE
+  #FOR(%ActiveTemplate),WHERE(%ActiveTemplate = %LookFor)
+    #FOR(%ActiveTemplateInstance)
+      #RETURN(%ActiveTemplateInstance)
+    #ENDFOR
+  #ENDFOR
+  #RETURN(0)
+#!
+#!
+#GROUP(%ParentInstanceFind, %Lookfor, %Me = -1),PRESERVE
+  #IF(%Me = -1)
+    #IF(%ActiveTemplateParentInstance)
+      #SET(%Me, %ActiveTemplateParentInstance)        #! omitted so use current active template parent instance
+    #ELSE
+      #ASSERT(%False, 'Omitted parameter to %TemplateInstanceFind with no active template parent instance!')
+    #ENDIF
+  #ENDIF
+  #IF(%Me > 0)
+    #FOR(%ActiveTemplate)
+      #FOR(%ActiveTemplateInstance),WHERE(%ActiveTemplateInstance=%Me)
+        #RETURN(CHOOSE(UPPER(%ActiveTemplate) = UPPER(%LookFor), %ActiveTemplateInstance, %ParentInstanceFind(%LookFor, %ActiveTemplateParentInstance)))
+      #ENDFOR
+    #END
+  #ENDIF
+  #RETURN(0)
+#!
+#!
+#GROUP(%AddGlobalMapInclude, %ProcedureName),PRESERVE
+  #FOR(%Module)
+    #FOR(%ModuleProcedure),WHERE(UPPER(%ModuleProcedure) = UPPER(%ProcedureName))
+      #ADD(%CustomGlobalMapIncludes, UPPER(SLICE(%Module, 1, INSTRING('.', %Module, 1, 1))) & 'INC')
+    #ENDFOR
+  #ENDFOR
+#!
+#!
+#GROUP(%DeclareClassGlobals)
+#DECLARE (%pClassName),UNIQUE
+#DECLARE (%pClassCategory, %pClassName)
+#DECLARE (%pClassIncFile,%pClassName)
+#DECLARE (%pClassImplements, %pClassName),UNIQUE                        #! List of interfaces implmented by the class
+#DECLARE (%pClassMethod,%pClassName),UNIQUE
+#DECLARE (%pClassMethodPrototype,%pClassMethod),UNIQUE
+#DECLARE (%pClassMethodFinal, %pClassMethodPrototype)
+#DECLARE (%pClassMethodPrivate,  %pClassMethodPrototype)
+#DECLARE (%pClassMethodVirtual,  %pClassMethodPrototype)
+#DECLARE (%pClassMethodProtected,%pClassMethodPrototype)
+#DECLARE (%pClassMethodProcAttribute,%pClassMethodPrototype)
+#DECLARE (%pClassMethodInherited,%pClassMethodPrototype)
+#DECLARE (%pClassMethodDefined, %pClassMethodPrototype)
+#DECLARE (%pClassMethodReturnType,%pClassMethodPrototype)
+#DECLARE (%pClassMethodParentCall,%pClassMethodPrototype)
+#DECLARE (%pClassMethodDll, %pClassMethodPrototype)
+#DECLARE (%pClassMethodExtName, %pClassMethodPrototype)
+#DECLARE (%pClassMethodCallConv, %pClassMethodPrototype)
+#DECLARE (%pClassMethodExtends, %pClassMethodPrototype)
+#DECLARE (%pClassProperty,%pClassName),UNIQUE
+#DECLARE (%pClassPropertyPrototype,%pClassProperty)
+#DECLARE (%pClassPropertyPrivate,  %pClassProperty)
+#DECLARE (%pClassPropertyProtected,%pClassProperty)
+#DECLARE (%pClassPropertyInherited,%pClassProperty)
+#DECLARE (%pClassPropertyDefined, %pClassProperty)
+#!
+#DECLARE (%pInterface),UNIQUE
+#DECLARE (%pInterfaceCategory, %pInterface)
+#DECLARE (%pInterfaceIncFile, %pInterface)
+#DECLARE (%pInterfaceMethod, %pInterface),UNIQUE
+#DECLARE (%pInterfaceMethodPrototype, %pInterfaceMethod),UNIQUE
+#DECLARE (%pInterfaceMethodInherited, %pInterfaceMethodPrototype)
+#DECLARE (%pInterfaceMethodDefined, %pInterfaceMethodPrototype)
+#DECLARE (%pInterfaceMethodReturnType, %pInterfaceMethodPrototype)
+#DECLARE (%pInterfaceMethodDll, %pInterfaceMethodPrototype)
+#DECLARE (%pInterfaceMethodExtName, %pInterfaceMethodPrototype)
+#DECLARE (%pInterfaceMethodCallConv, %pInterfaceMethodPrototype)
+#!
+#DECLARE (%pProcedure),UNIQUE                                           #! Procedures 'exported' from header file MAPs
+#DECLARE (%pProcedureCategory, %pProcedure)
+#DECLARE (%pProcedureIncFile, %pProcedure)
+#DECLARE (%pProcedurePrototype, %pProcedure),UNIQUE
+#DECLARE (%pProcedureDll, %pProcedurePrototype)
+#DECLARE (%pProcedureExtName, %pProcedurePrototype)
+#DECLARE (%pProcedureCallConv, %pProcedurePrototype)
+#!
+#DECLARE (%ClassMethodList),UNIQUE
+#DECLARE (%PropertyList),UNIQUE              #!These variables are used by the SetABCProperty and CallABCMethod CODE templates
+#DECLARE (%MethodList),UNIQUE
+#DECLARE (%ObjectList),UNIQUE
+#DECLARE (%ObjectListType,%ObjectList)
+#!
+#!

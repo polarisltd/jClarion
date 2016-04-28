@@ -415,6 +415,14 @@ public abstract class AbstractControl extends PropertyObject implements RemoteWi
         return this;
     }
 
+    public AbstractControl setCrsor(String cursor)  // robertsp160208 added support for CURSOR()
+    {
+        setProperty(Prop.CURSOR,cursor);
+        return this;
+    }
+    
+    
+    
     public AbstractControl setHelp(String help)
     {
         setProperty(Prop.HLP,help);

@@ -1,0 +1,18 @@
+!ABCIncludeFile(IBC)
+
+  OMIT('_EndOfInclude_',_ArrayInterfacePresent_)
+_ArrayInterfacePresent_ EQUATE(1)
+
+  INCLUDE('IBARRAY.INC'),ONCE
+
+ICInterfaceCompare  INTERFACE
+doCompare             PROCEDURE(CInterface cLeft, CInterface cRight),SIGNED
+                    END
+
+
+IIInterfaceCompare  INTERFACE
+doCompare             PROCEDURE(IInterface cLeft, IInterface cRight),SIGNED
+                    END
+
+
+  _EndOfInclude_

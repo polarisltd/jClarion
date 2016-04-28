@@ -1,0 +1,17 @@
+!ABCIncludeFile(ABL)
+
+  OMIT('_EndOfInclude_',_WebWinManInterface_)
+_WebWinManInterface_ EQUATE(1)
+
+IPageCreator            INTERFACE
+CreatePage                PROCEDURE(STRING Filename),BOOL,PROC
+!CreateJslData             PROCEDURE(JslManagerClass Target)
+                        END
+
+IWebResponseProcessor   INTERFACE
+BeforeResponses           PROCEDURE(BOOL partial)
+TakeResponse              PROCEDURE(STRING Name, STRING Value)
+AfterResponses            PROCEDURE(BOOL partial)
+                        END
+
+  _EndOfInclude_

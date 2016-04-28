@@ -1,0 +1,8 @@
+DefaultInsertName   EQUATE('&Insert')
+DefaultDeleteName   EQUATE('&Delete')
+DefaultChangeName   EQUATE('&Change')
+DefaultViewName     EQUATE('&View')
+DefaultSelectName   EQUATE('&Select')
+DefaultPrintName    EQUATE('&Print')
+DefaultToolName     EQUATE('&Toolbox')
+DefaultQueryName    EQUATE('&Query')

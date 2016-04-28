@@ -1,0 +1,72 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#WebApplicationHitManager
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HitsDataFile),DESCRIPTION(Target file for hits data),DEVIMP(2),DTYPE(7),OUTPUT.NAME(HitsDataFile),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  PROPERTY: NAME(UpdateThreshold),DESCRIPTION(File update threshold),DEVIMP(4),DTYPE(14),OUTPUT.NAME(HitsUpdatetThreshold),TYPE(2),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CONTROLTEMPLATE(WebHitManager)
+    HITSDATAFILE(Hits.Log)
+    TEMPLATECHAIN(Web)
+    UPDATETHRESHOLD(10)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HitCounterEnabled),ACORN(1),ACORN.NAME(Web Application Hit Manager),ACORN.WIZARD(ControlTemplate#GlobalTemplate#WebApplicationHitManager),DESCRIPTION(Web hit counter enabled?),DEVIMP(1),DTYPE(2),STOP(%PROCEDUREWIZATRON%),TYPE(7),VALIDATION('@EVAL(CHOOSE(''%_Value_%''=''0'' OR (''%_Value_%''=''1'' AND ''%GenerateWebApp%''=''1'')))')
+  [DEFINITION]
+    HITCOUNTERENABLED(%GenerateWebApp%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ProcedureHitCounter
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CountedControls),ACORN(1),ACORN.CONTEXT('TargetControl(%_Value_%)'),ACORN.NAME('Control Hit Counter @EXTRACT(\%_Value_%,DisplayName)'),ACORN.WIZARD(TOPSPEED:ControlTemplate#ControlHitCounter),DESCRIPTION(Counted Controls),DEVIMP(2),DTYPE(10),MULTI(1),TYPE(8)
+  PROPERTY: NAME(CountedControls.List),DESCRIPTION(All controls),DEVIMP(2),DTYPE(10),HIDDEN(1),LIST(1),LISTFILL.FUNC('@EXTRACT(Scope.WindowManager,node.controls)'),LOCKED(1),MULTI(1),TYPE(8)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(ProcedureEntryTag),DESCRIPTION(Procedure entry tag),DEVIMP(4),DTYPE(5),OUTPUT.NAME(ProcedureEntryTag),TYPE(3)
+  PROPERTY: NAME(ProcedureInstanceID),DESCRIPTION(Instance name for this procedure),DEVIMP(4),DTYPE(5),OUTPUT.NAME(ProcedureID),TYPE(3)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(WebHitProc)
+    COUNTEDCONTROLS()
+    COUNTEDCONTROLS.LIST()
+    PROCEDUREENTRYTAG(Entered)
+    PROCEDUREINSTANCEID(%Scope.Output.ProcName%)
+    TEMPLATECHAIN(Web)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ControlHitCounter
+  DESCRIPTOR: 1
+  PROPERTY: NAME(LinkTag),BLOCKER(1),DESCRIPTION(Link Tag),DEVIMP(1),DTYPE(5),OUTPUT.NAME(LinkTag),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  PROPERTY: NAME(TargetControl),DESCRIPTION(Target Control),DEVIMP(6),DTYPE(5),HIDDEN(1),LOCKED(1),TYPE(3)
+  PROPERTY: NAME(TriggerControl),DESCRIPTION(Link Trigger Control),DEVIMP(4),DTYPE(5),HIDDEN(1),LOCKED(1),OUTPUT.NAME(LinkControl),TYPE(3)
+  PROPERTY: NAME(TriggerEvent),BLOCKER(1),DESCRIPTION(Link Trigger Event),DEVIMP(1),DTYPE(5),OUTPUT.NAME(LinkEvent),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(WebHitCtrl)
+    LINKTAG('@EVAL(SUB(''%TriggerControl%'',2,LEN(''%TriggerControl%'')-1))_Accepted')
+    TARGETCONTROL()
+    TEMPLATECHAIN(Web)
+    TRIGGERCONTROL('@EXTRACT(\%TargetControl%,Use.Label)')
+    TRIGGEREVENT(Accepted)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ProcedureComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ProcedureHitCountEnabled),ACORN(1),ACORN.NAME(Procedure Hit Counter),ACORN.WIZARD(TOPSPEED:ControlTemplate#ProcedureHitCounter),DESCRIPTION(Enable procedure hit counter),DEVIMP(2),DTYPE(2),TYPE(7)
+  [DEFINITION]
+    PROCEDUREHITCOUNTENABLED(%Scope.HitCounterEnabled%)
+  [END]
+[END]

@@ -1,0 +1,82 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#DynImage
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Image),ACORN(1),ACORN.NAME('Image: %_Value_%'),ACORN.CONTEXT('Populator(%Name%)'),ACORN.WIZARD('^(Scope.Group)Image#Grid'),DESCRIPTION(Image control),DEVIMP(5)
+  PROPERTY: NAME(ImageField),OUTPUT.NAME(ImageField)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(DynamicImage)
+    IMAGEFIELD('@NAME(%Image%)')
+    IMAGE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GridBrowse
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Fields),ACORN(1),ACORN.CONTEXT('Field(%_Value_%),Use.Label(''@NAME(%_VALUE_%)'')'),ACORN.NAME(String :%_VALUE_%),ACORN.WIZARD('^(Group)String#Grid'),DESCRIPTION(Fields to populate),DEVIMP(5),DTYPE(10),MULTI(1),TYPE(8)
+  PROPERTY: NAME(Fields.List),DESCRIPTION(All fields),DEVIMP(5),DTYPE(10),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(''@USER(%_VALUE_%,IMAGEFILE)''=0))'),LISTFILL.FUNC('@EXTRACT(Scope.BrowseListControl,displaycolumns)'),MULTI(1),TYPE(8)
+  PROPERTY: NAME(ForwardClick),DESCRIPTION(Forward click to another control),DEVIMP(4),DOCUMENTATION(When a group is selected it is possible to forward that event to another control. This can be used to select the element and then automatically 'press' a button.),DTYPE(2),OUTPUT.NAME(ForwardClick),OUTPUT.TYPE(LONG),TYPE(2)
+  PROPERTY: NAME(ForwardClickControl),DESCRIPTION(Control to forward click to),DEVIMP(4),DOCUMENTATION(This property names the control that the selection event is forwarded too),DTYPE(5),OUTPUT.NAME(GroupPress1),TYPE(3)
+  PROPERTY: NAME(Group),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.NAME(GridGroup),ACORN.WIZARD(^Group#Grid),DEVIMP(3),DTYPE(2),TYPE(7)
+  PROPERTY: NAME(GroupSelectable),DESCRIPTION(Make the group selectable),DEVIMP(4),DOCUMENTATION('On a grid browse it is possible to make a given record the current record by clicking on it. This option enables that functionality, probably unwise on a slow-link internet application'),DTYPE(2),OUTPUT.NAME(GroupSelect),OUTPUT.TYPE(LONG),TYPE(2)
+  PROPERTY: NAME(Images),ACORN(1),ACORN.NAME('Dynamic Image: %_Value_%'),ACORN.CONTEXT('Image(%_Value_%)'),ACORN.WIZARD(ControlTemplate#DynImage),DESCRIPTION(Images to populate),DEVIMP(5),DTYPE(10),MULTI(1),TYPE(8)
+  PROPERTY: NAME(Images.List),DESCRIPTION(All images),DEVIMP(5),DTYPE(10),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,IMAGEFILE)=1))'),LISTFILL.FUNC(%Scope.Pics%),LOCKED(1),MULTI(1),TYPE(8)
+  PROPERTY: NAME(SelectedColor),DESCRIPTION(Colour for selected group),DEVIMP(3),DOCUMENTATION(When a group in the grid browse is selected it is possible to provide a new default colour for the group title and enclosed controls. Unselected groups will be the colour of the populated group),DTYPE(3),OUTPUT.NAME(GroupColor),OUTPUT.TYPE(LONG),TYPE(2)
+  PROPERTY: NAME(Title),DESCRIPTION(Group title),DEVIMP(3),DOCUMENTATION('This can be an arbritary clarion expression (although all fields used must be bound). It is evaluated on a record by record basis to provide the text of the group that surrounds each element of the grid. If left blank no text will be populated.'),DTYPE(5),OUTPUT.NAME(GroupTitle),TYPE(3)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(BrowseGrid)
+    FORWARDCLICK(0)
+    FORWARDCLICKCONTROL()
+    GROUP(1)
+    GROUPSELECTABLE(1)
+    SELECTEDCOLOR(8454143)
+    TITLE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HasGrid),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(Grid),ACORN.WIZARD(ControlTemplate#GridBrowse),DESCRIPTION(Does the browse use a grid),DEVIMP(3),DOCUMENTATION(Drive the browse as a grid control),DTYPE(2),TYPE(7)
+  PROPERTY: NAME(Pics),DESCRIPTION(Images to populate),DEVIMP(5),DTYPE(10),HIDDEN(1),LOCKED(1),MULTI(1),TYPE(8)
+  PROPERTY: NAME(Pics.List),DESCRIPTION(All images),DEVIMP(5),DTYPE(10),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,IMAGEFILE)=1))'),LISTFILL.FUNC('@EXTRACT(BrowseListControl,displaycolumns)'),LOCKED(1),MULTI(1),TYPE(8)
+  [DEFINITION]
+    HASGRID('@EVAL(CHOOSE(@COUNT(Pics)>0))')
+    IMAGES()
+    IMAGES.LIST()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#Grid
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group)
+    ALLOCATION.IGNORE(1)
+    ALLOCATION.TAB()
+    USE.LABEL(?Grid:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Image#Grid
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Image)
+    ALLOCATION.YPOS(FGrid)
+    ALLOCATION.ZONE(Zone:Center)
+    AT.WIDTH(40)
+    AT.HEIGHT(40)
+    USE.LABEL(?DynImage:%^ImageField%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:String#Grid
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Field),DEVIMP(5),LOCKED(1)
+  [DEFINITION]
+    PARENTWIZARD(String)
+    ALLOCATION.YPOS(FGrid)
+    ALLOCATION.ZONE(Zone:Center)
+    FIELD()
+    TEXT('@SCREENPICTURE(%Field%)')
+  [END]
+[END]

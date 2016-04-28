@@ -1,0 +1,17 @@
+<assembly>
+  <id>bin</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/</outputDirectory>
+      <scope>runtime</scope>
+      <excludes>
+              <exclude>bouncycastle*</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
+

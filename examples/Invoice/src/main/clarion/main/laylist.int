@@ -1,0 +1,41 @@
+!ABCIncludeFile(LAY)
+
+OMIT('_EndOfInclude_',_ListboxInterface_)
+_ListboxInterface_ EQUATE(1)
+
+!!Internal interfaces to the list boxes - not supported
+
+IListboxContents        INTERFACE
+GetSingle                 PROCEDURE(SIGNED index),ANY                 ! Do not call this function - clarion will free the result!!
+GetCloneSingle            PROCEDURE(SIGNED index),ANY
+NumFields                 PROCEDURE(),SIGNED
+SetPos                    PROCEDURE(SIGNED pos)
+NumRecords                PROCEDURE(),UNSIGNED
+SetWidth                  PROCEDURE(SIGNED width)
+BuildFROMStr              PROCEDURE(DynStr Target)
+RealRecord                PROCEDURE(SIGNED position),SIGNED
+GetRealList               PROCEDURE(),*IListboxContents
+GetProc                   PROCEDURE,LONG
+GetUserVal                PROCEDURE,LONG
+SetUserVal                PROCEDURE(LONG value)
+qchanged                  PROCEDURE(),SIGNED
+GetWidth                  PROCEDURE(),SIGNED
+!duplicate                PROCEDURE(),*IListboxContents
+                        END
+
+PROP:fromptr            EQUATE(07A0EH)
+
+
+IMappedListContents     INTERFACE(IInterface)
+GetCellBackColor          PROCEDURE(signed Column, signed Row),LONG
+GetCellColor              PROCEDURE(signed Column, signed Row),LONG
+GetCellText               PROCEDURE(SIGNED Column, SIGNED Row),STRING
+GetNumColumns             PROCEDURE(),SIGNED
+GetNumRows                PROCEDURE(),SIGNED
+                        END
+
+        MAP; MODULE('LAYLIST')
+CreateListboxContents     PROCEDURE(SIGNED Feq),*IMappedListContents,NAME('_CreateListboxContents@Fi')
+        END; END
+
+_EndOfInclude_

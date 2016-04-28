@@ -1,0 +1,862 @@
+#PROGRAM(ABC,'Default Program'),HLP('~TPLProgram')
+#!
+#!
+#DECLARE(%TranslatorFiles),UNIQUE
+#DECLARE(%CustomGlobalMapProcedureLabel)
+#!
+#SECTION
+#CREATE('PBDY.$$$')
+%NULL
+  CODE
+  #EMBED(%AfterEntryPointCodeStatement,'After PROGRAM code statement')
+  #CASE(%ProgramExtension)
+  #OF('DLL')
+    #IF(%GlobalExternal)                              #!A DLL with global data external
+#INSERT(%MakeDLLExternalGlobals)
+    #ELSE                                             #!A DLL with export global data
+    PRAGMA('define(init_priority=>3)')
+#INSERT(%MakeDLLExportGlobals)
+    #ENDIF
+  #OF('LIB')
+    #IF(%GlobalExternal)                              #!A LIB with global data external
+#INSERT(%MakeLIBExternalGlobals)
+    #ELSE                                             #!A LIB with global data local
+#INSERT(%MakeLIBExportGlobals)
+    #ENDIF
+  #OF('EXE')
+    #IF(%GlobalExternal)                              #!An EXE with global data external
+#INSERT(%MakeEXEExternalGlobals)
+    #ELSE                                             #!An EXE with global data local
+#INSERT(%MakeEXE)
+    #ENDIF
+  #ENDCASE
+  #EMBED(%EndOfMainCode,'End of main code section'),HIDE
+  #IF(%ProgramExtension='EXE')
+    #SUSPEND
+    #?%NULL
+#EMBED(%ProgramRoutines,'Program Routines'),DATA,WHERE(%ProgramExtension='EXE')
+    #RESUME
+    #SUSPEND
+    #?%NULL
+#EMBED(%ProgramProcedures,'Program Procedures'),DATA,WHERE(%programExtension='EXE')
+    #RESUME
+  #ENDIF
+
+
+#AT(%ErrorManagerCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%INIManagerCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%TranslatorCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%EnableRunTimeTranslator AND %ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%FuzzyMatcherMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%FuzzyMatchingEnabled AND %ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT (%CustomGlobalDeclarations)
+  #CALL(%DefineCategoryPragmas)
+#ENDAT
+#!
+#!
+#AT (%ProgramProcedures), WHERE(%ProgramExtension='DLL')
+#CALL(%GenerateCategoryFunctions)
+#ENDAT
+#!
+#!
+#IF(%ProgramExtension<>'DLL')
+  #CALL(%GenerateVirtuals, 'ErrorManager', 'Global Objects|Abc Objects|Error Manager', '%ErrorManagerVirtuals(ABC)', %True)
+  #CALL(%GenerateVirtuals, 'INIManager', 'Global Objects|Abc Objects|INI Manager', '%INIManagerVirtuals(ABC)', %True)
+#ENDIF
+#IF(%EnableRunTimeTranslator)
+  #CALL(%GenerateVirtuals, 'Translator', 'Global Objects|Abc Objects|Run-Time Translator', '%TranslatorVirtuals(ABC)', %True)
+#ENDIF
+#IF(%FuzzyMatchingEnabled)
+  #CALL(%GenerateVirtuals, 'FuzzyMatcher', 'Global Objects|Abc Objects|Fuzzy Matcher', '%FuzzyMatcherVirtuals(ABC)', %True)
+#ENDIF
+#!
+#!
+#!
+#!
+#!
+#CLOSE('PBDY.$$$')
+#ENDSECTION
+#!
+#!
+#!
+#SECTION
+#OPEN('PROG02.$$$')
+#IF(%EnableRunTimeTranslator)
+
+  #FOR(%TranslationGroups)
+    #ADD(%TranslatorFiles,%TranslationFile)
+  #ENDFOR
+  #EQUATE(%AbutilPresent,%False)
+  #FOR(%TranslatorFiles)
+   INCLUDE('%(UPPER(%TranslatorFiles))')
+   #IF(UPPER(%TranslatorFiles) = 'ABUTIL.TRN')
+    #SET(%AbutilPresent, %True)
+   #ENDIF
+  #ENDFOR
+  #IF(%ProgramExtension = 'DLL' AND %AbutilPresent = %False)    #!ABUTIL.TRN is required in DLL's with run-time translation
+   INCLUDE('ABUTIL.TRN')
+  #ENDIF
+#ENDIF
+#!
+#EMBED(%AfterGlobalIncludes,'After Global INCLUDEs'),DATA
+#!
+#! Generate MAP
+#!
+#MESSAGE('Generating MAP',3)
+
+   MAP
+  #IF(~%GlobalExternal AND ~%NoGenerateGlobals)
+     MODULE('%(%MakeMainBCFilename())')
+DctInit     PROCEDURE
+DctKill     PROCEDURE
+     END
+   #ENDIF
+#FOR(%Module),WHERE(%ModuleExternal AND (%ModuleTemplate='ExternalDLL(ABC)' OR %ModuleTemplate='ExternalLib(ABC)'))
+  #SUSPEND
+  #IF(%ModuleTemplate='ExternalDLL(ABC)')
+    #?MODULE('%(UPPER(%ModuleBase)).DLL')
+  #ELSE
+    #?MODULE('%(UPPER(%ModuleBase)).LIB')
+  #ENDIF
+  #FOR(%ModuleProcedure),WHERE(~%ModuleInclude)
+    #FIX(%Procedure,%ModuleProcedure)
+    #IF(%ExternalSource='Dynamic Link Library (DLL)')
+%[22]Procedure %ProcedureType%Prototype,DLL   #<!%ProcedureDescription
+    #ELSE
+%[22]Procedure %ProcedureType%Prototype   #<!%ProcedureDescription
+    #ENDIF
+  #ENDFOR
+    #?END
+  #RESUME
+#ENDFOR
+#!
+#FIX(%Module,%Program)
+#FOR(%ModuleProcedure)
+  #FIX(%Procedure,%ModuleProcedure)
+%[22]Procedure %ProcedureType%Prototype   #<!%ProcedureDescription
+#ENDFOR
+#!
+#IF(%ModuleInclude)
+     INCLUDE('%ModuleInclude')
+#ENDIF
+#FOR(%CustomGlobalMapModule)
+     MODULE('%CustomGlobalMapModule')
+  #FOR(%CustomGlobalMapProcedure)
+    #SET(%CustomGlobalMapProcedureLabel, CLIP(LEFT(%CustomGlobalMapProcedure)))  #!Removes leading spaces avoiding potential compile errors
+%[22]CustomGlobalMapProcedureLabel PROCEDURE%CustomGlobalMapProcedurePrototype
+  #ENDFOR
+     END
+#ENDFOR
+#IF(%CreateLocalMap)
+#INSERT(%MakeLocalMaps)
+#ELSE
+#INSERT(%MakeGlobalMap)
+#ENDIF
+#FOR(%CustomGlobalMapIncludes)
+     INCLUDE('%CustomGlobalMapIncludes')
+#ENDFOR
+     #EMBED(%GlobalMap,'Inside the Global Map')
+     #CALL(%GenerateCategoryDeclareFunctions)
+   END
+#FOR(%CustomGlobalDeclarationIncludes)
+   INCLUDE('%CustomGlobalDeclarationIncludes')
+#ENDFOR
+
+#MESSAGE('Generating Global Data',3)
+#IF (NOT %NoGenerateGlobals)
+  #FOR(%GlobalData), WHERE(%GlobalDataLast ~= %True)
+    #IF(%GlobalDataInDictionary AND %GlobalExternal AND %GlobalDataLevel = 1 AND %GlobalData ~= '')
+%[20]GlobalData %GlobalDataStatement,EXTERNAL,DLL(_ABCDllMode_)
+    #ELSE
+%[18 + (%GlobalDataLevel * 2)]GlobalData %GlobalDataStatement
+    #ENDIF
+  #ENDFOR
+  #FOR(%CustomGlobalData),WHERE(%CustomGlobalDataBeforeFiles)
+%[20]CustomGlobalData %CustomGlobalDataDeclaration
+    #FOR(%CustomGlobalDataComponent)
+%[20 + (%CustomGlobalDataComponentIndent * 2)]CustomGlobalDataComponent %CustomGlobalDataComponentDeclaration
+    #ENDFOR
+  #ENDFOR
+SilentRunning        BYTE(0)                         !Set true when application is running in silent mode
+
+#EMBED(%BeforeFileDeclarations,'Before File Declarations'),DATA
+  #CALL(%GenerateFileDeclarations)
+
+#!
+#!
+  #FOR(%CustomGlobalData),WHERE(NOT %CustomGlobalDataBeforeFiles)
+%[20]CustomGlobalData %CustomGlobalDataDeclaration
+    #FOR(%CustomGlobalDataComponent)
+%[20 + (%CustomGlobalDataComponentIndent * 2)]CustomGlobalDataComponent %CustomGlobalDataComponentDeclaration
+    #ENDFOR
+  #ENDFOR
+  #MESSAGE('Generating Global Data',3)
+  #FOR(%GlobalData), WHERE(%GlobalDataLast = %True)
+    #IF(%GlobalDataInDictionary AND %GlobalExternal AND %GlobalDataLevel = 1 AND %GlobalData ~= '')
+%[20]GlobalData %GlobalDataStatement,EXTERNAL,DLL(_ABCDllMode_)
+    #ELSE
+%[18 + (%GlobalDataLevel * 2)]GlobalData %GlobalDataStatement
+    #ENDIF
+  #ENDFOR
+#EMBED(%AfterFileDeclarations,'After File Declarations'),DATA
+#EMBED(%GlobalData,'Global Data'),DATA
+#!
+#!
+  #CASE(%ProgramExtension)
+  #OF('DLL')
+    #IF(%GlobalExternal)
+      #CALL(%DLLGlobalsExternal)
+    #ELSE
+      #CALL(%DLLGlobalsInternal)
+    #ENDIF
+  #OF('LIB')
+    #IF(%GlobalExternal)
+      #CALL(%LIBGlobalsExternal)
+    #ELSE
+      #CALL(%LIBGlobalsInternal)
+    #ENDIF
+  #OF('EXE')
+    #IF(%GlobalExternal)
+      #CALL(%EXEGlobalsExternal)
+    #ELSE
+      #CALL(%EXEGlobalsInternal)
+    #ENDIF
+  #ENDCASE
+#ENDIF
+#!
+#!
+#CLOSE('PROG02.$$$')
+#ENDSECTION
+#!
+#!
+#!
+#!    **** This section is done last, so that %GlobalIncludeList is filled correctly ****
+#!
+#!
+#SECTION
+#CREATE('PROG01.$$$')
+
+#FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+  #CALL(%AddModuleIncludeFile, %CacheFileManager, 1)
+  #CALL(%AddModuleIncludeFile, %CacheRelationManager, 1)
+#ENDFOR
+#EMBED(%BeforeGlobalIncludes,'Before Global INCLUDEs'),DATA
+
+#FOR(%GlobalIncludeList)
+   INCLUDE('%(UPPER(CLIP(%GlobalIncludeList)))'),ONCE
+#ENDFOR
+#!
+#CLOSE('PROG01.$$$')
+#ENDSECTION
+#!
+#!
+#!---- Main Program Generation Starts Here -----------------------------------------
+#!
+#!
+   PROGRAM
+
+#APPEND('PROG01.$$$'),SECTION
+#REMOVE('PROG01.$$$')
+#APPEND('PROG02.$$$'),SECTION
+#REMOVE('PROG02.$$$')
+#APPEND('PBDY.$$$'),SECTION
+#REMOVE('PBDY.$$$')
+#!
+#!
+#IF(~%GlobalExternal AND ~%NoGenerateGlobals)
+  #CALL(%WriteBCModules)
+#ENDIF
+#!
+#!-----------------------------------------------------------------------------------------
+#!-----------------------------------------------------------------------------------------
+#!
+#AT(%RelationManagerCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(~%GlobalExternal AND %ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%RelationManagerCodeSection,,'Kill','()'),PRIORITY(2000)
+Hide:Access:%File.Kill
+#ENDAT
+#!
+#!
+#AT(%RelationManagerCodeSection,,'Kill','()'),PRIORITY(8000)
+Relate:%File &= NULL
+#ENDAT
+#!
+#!
+#AT(%FileManagerCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(~%GlobalExternal AND %ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%FileManagerCodeSection,,'Kill','()'),PRIORITY(8000)
+Access:%File &= NULL
+#ENDAT
+#!
+#!
+#AT(%FileManagerCodeSection,,'PrimeFields','()'),WHERE(~%AliasFile),PRIORITY(2500)
+  #SUSPEND
+  #FOR(%Field),WHERE(%FieldInitial)
+    #RELEASE
+%Field = %FieldInitial
+  #ENDFOR
+#EMBED(%RecordPriming,'Record Priming'),%File,LEGACY
+  #RESUME
+#ENDAT
+#!
+#AT(%FileManagerCodeSection,,'BindFields','()'),WHERE(~%AliasFile),PRIORITY(7500)
+  #FOR(%Field),WHERE(%FieldType = 'MEMO')
+BIND('%Field',%Field)
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%FileManagerDataSection,,'ValidateFieldServer','(UNSIGNED Id,BYTE HandleErrors),BYTE'),WHERE(~%AliasFile),PRIORITY(5000),AUTO
+#FOR(%Field),WHERE(%FieldLookup)
+  #CALL(%MakeDeclr,20,%ValueConstruct,'Save:'&%FieldLookup&%FieldNumber(%Field,%File),'USHORT,AUTO')
+%ValueConstruct
+#ENDFOR
+#ENDAT
+#!
+#AT(%FileManagerCodeSection,,'ValidateFieldServer','(UNSIGNED Id,BYTE HandleErrors),BYTE'),WHERE(~%AliasFile),PRIORITY(6000),AUTO
+#DECLARE(%CDList)
+#SUSPEND
+#?CASE Id
+#FOR(%Field),WHERE(%FieldDimension1<=1 AND %FieldID <> '')
+  #SUSPEND
+#?OF %(%FieldNumber(%Field,%File))
+  #IF (%FieldDescription)
+  #?GlobalErrors.SetField('%'FieldDescription')
+  #ELSE
+  #?GlobalErrors.SetField('%Field')
+  #ENDIF
+  #EMBED(%FieldLevelValidation,'Field level validation'),%File,%Field,WHERE(%FieldID <> '')
+  #RESUME
+#ENDFOR
+#?END
+#RESUME
+#ENDAT
+#!
+#AT(%FieldLevelValidation),PRIORITY(7500)
+#SUSPEND
+#?IF ReturnValue <> Level:Benign
+  #EMBED(%FieldLevelValidationFail,'Upon field validation failure'),%File,%Field,LEGACY
+#PRIORITY(8000)
+#SUSPEND
+#?ELSE
+#PRIORITY(8500)
+#RESUME
+#?END
+#RESUME
+#ENDAT
+#!
+#AT(%FieldLevelValidation),WHERE(ITEMS(%FieldValues) AND (%FieldValidation = 'INLIST')),PRIORITY(6000)
+#SET(%CDList,'')
+#FOR(%FieldValues)
+  #SET(%CDList,%CDList&CHOOSE(%CDList='','''',',''')&QUOTE(%FieldValues)&'''')
+#ENDFOR
+IF ~INLIST(%Field,%CDList) THEN ReturnValue = Level:Notify .
+#PRIORITY(7750)
+#IF (ITEMS(%FieldChoices))
+  #SET(%CDList,'')
+  #FOR(%FieldChoices)
+    #SET(%CDList,%CDList&CHOOSE(%CDList='','''',',''')&QUOTE(%FieldChoices)&'''')
+  #ENDFOR
+#ENDIF
+  IF HandleErrors
+    ReturnValue = GlobalErrors.ThrowMessage(Msg:FieldNotInList,'%'CDList')
+  END
+#ENDAT
+#!
+#AT(%FieldLevelValidation),WHERE(%FieldLookup AND (%FieldValidation = 'INFILE')),PRIORITY(6000)
+  #FIX(%Relation,%FieldLookup)
+Save:%FieldLookup%(%FieldNumber(%Field,%File)) = Access:%Relation.SaveFile()
+  #FOR(%FileKeyField)
+%FileKeyFieldLink = %FileKeyField
+  #ENDFOR
+ReturnValue = Access:%Relation.TryFetch(%RelationKey)
+#PRIORITY(7750)
+  IF HandleErrors
+    ReturnValue = GlobalErrors.ThrowMessage(Msg:FieldNotInFile,'%Relation')
+  END
+#PRIORITY(9000)
+Access:%Relation.RestoreFile(Save:%FieldLookup%(%FieldNumber(%Field,%File)))
+#ENDAT
+#!
+#AT(%FieldLevelValidation),WHERE((%FieldRangeLow OR %FieldRangeHigh) AND (%FieldValidation = 'INRANGE')),PRIORITY(6000)
+#IF(%FieldRangeLow AND %FieldRangeHigh)
+IF NOT INRANGE(%Field,%FieldRangeLow,%FieldRangeHigh)
+#ELSIF(%FieldRangeLow)
+IF %Field < %FieldRangeLow
+#ELSE
+IF %Field > %FieldRangeHigh
+#ENDIF
+  ReturnValue = Level:Notify
+END
+#PRIORITY(7750)
+  IF HandleErrors
+#IF(%FieldRangeLow AND %FieldRangeHigh)
+    ReturnValue = GlobalErrors.ThrowMessage(Msg:FieldOutOfRange,'%FieldRangeLow .. %FieldRangeHigh')
+#ELSIF(%FieldRangeLow)
+    ReturnValue = GlobalErrors.ThrowMessage(Msg:FieldOutOfRangeLow,'%FieldRangeLow')
+#ELSE
+    ReturnValue = GlobalErrors.ThrowMessage(Msg:FieldOutOfRangeHigh,'%FieldRangeHigh')
+#ENDIF
+  END
+#ENDAT
+#!
+#AT(%INIManagerCodeSection,'Fetch','()'),PRIORITY(2500),WHERE(%ProgramExtension='EXE')
+#FOR(%PreserveVars)
+%PreserveVar = SELF.TryFetch('Preserved','%PreserveVar')
+#ENDFOR
+#ENDAT
+#!
+#AT(%INIManagerCodeSection,'Update','()'),PRIORITY(7500),WHERE(%ProgramExtension='EXE')
+#FOR(%PreserveVars)
+SELF.Update('Preserved','%PreserveVar',%PreserveVar)
+#ENDFOR
+#ENDAT
+#!
+#!
+#AT (%BeforeCategoryDLLInitCode,'ABC')
+  #EMBED(%DLLInitCode,'DLL Initialization code')
+#END
+#!
+#!
+#AT (%AfterCategoryDLLInitCode,'ABC')
+  #EMBED(%AfterInitGlobalDllObjects, 'DLL Initialization code after configuring global objects')
+#END
+#!
+#!
+#AT (%CategoryDLLKillCode,'ABC')
+  #EMBED(%DLLKillCode, 'DLL Killing code')
+#END
+#!
+#!
+#!------------------------------------------------
+#!
+#!
+#GROUP(%ErrorManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ErrorManagerDataSection,'Error Manager Data Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('ErrorManager'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%ErrorManagerCodeSection,'Error Manager Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('ErrorManager'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%INIManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%INIManagerDataSection,'INI Manager Data Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('INIManager'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%INIManagerCodeSection,'INI Manager Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('INIManager'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%TranslatorVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%TranslatorDataSection,'Translator Data Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Translator'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%TranslatorCodeSection,'Translator Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Translator'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%FuzzyMatcherVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%FuzzyMatcherMethodDataSection,'Fuzzy Matcher Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('FuzzyMatcher'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%FuzzyMatcherMethodCodeSection,'Fuzzy Matcher Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('FuzzyMatcher'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!-------------------------------------------------
+#GROUP(%MakeEXE)
+  #IF(%HelpFile)
+  HELP('%HelpFile')
+  #ENDIF
+  GlobalErrors.Init
+  #INSERT(%InitCode)
+  #INSERT(%CallFirstProcedure)
+  INIMgr.Update
+  #INSERT(%KillCode)
+  GlobalErrors.Kill
+#!-------------------------------------------------------
+#GROUP(%MakeEXEExternalGlobals)
+  #IF(%HelpFile)
+  HELP('%HelpFile')
+  #ENDIF
+  GlobalErrors.Init
+  #INSERT(%InitCode)
+  #!
+  #!-- Initialize external dll's
+  #INSERT(%GenerateCategoryCallInit)
+  #!
+  #INSERT(%CallFirstProcedure)
+  #!
+  #!-- Kill external dll's
+  #INSERT(%GenerateCategoryCallKill)
+  #!
+  #INSERT(%KillCode)
+  GlobalErrors.Kill
+#!
+#!
+#GROUP(%CallFirstProcedure)
+#EMBED(%BeforeCallingFirstProcedure),HIDE
+%FirstProcedure
+#EMBED(%AfterCallingFirstProcedure),HIDE
+#!
+#!
+#!-------------------------------------------------------
+#GROUP(%MakeDLLExportGlobals)
+#INSERT(%MainDLLCode)
+#!-------------------------------------------------------
+#GROUP(%MakeDLLExternalGlobals)
+#INSERT(%MainDLLCode)
+#!-------------------------------------------------------
+#GROUP(%MainDLLCode)
+  #IF (NOT %NoGenerateGlobals)
+DLLInitializer.Construct PROCEDURE
+
+  CODE
+  LocalErrors.Init
+  LocalINIMgr.Init(%(%StripPling(%INIFileName)))
+  GlobalErrors &= LocalErrors
+  INIMgr &= LocalINIMgr
+  #INSERT(%InitCode)
+
+
+DLLInitializer.Destruct PROCEDURE
+
+  CODE
+  #INSERT(%KillCode)
+  LocalINIMgr.Kill
+  LocalErrors.Kill
+
+  #ENDIF
+#!-------------------------------------------------------
+#GROUP(%MakeLIBExportGlobals)
+#!-------------------------------------------------------
+#GROUP(%MakeLIBExternalGlobals)
+#!-------------------------------------------------------
+#GROUP(%EXEGlobalsInternal)
+#FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+  #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager)
+%OOPConstruct
+  #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager)
+%OOPConstruct
+#SUSPEND
+#?%NULL
+#EMBED(%FileObjectDeclarations, ''),%File,HIDE
+#?%NULL
+#RESUME
+#ENDFOR
+#INSERT(%StandardGlobalLocals)
+GlobalRequest        BYTE(0),THREAD
+GlobalResponse       BYTE(0),THREAD
+VCRRequest           LONG(0),THREAD
+#!9.1.00
+#IF( %WindowFrameDragging = 1 )
+lCurrentFDSetting    LONG
+lAdjFDSetting        LONG
+#ENDIF
+#!9.1.00
+#!-------------------------------------------------------
+#GROUP(%EXEGlobalsExternal)
+#IF(%ExternalSource='Dynamic Link Library (DLL)')
+  #FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager&',EXTERNAL,DLL(dll_mode)')
+%OOPConstruct
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager&',EXTERNAL,DLL(dll_mode)')
+%OOPConstruct
+  #ENDFOR
+#ELSE
+  #FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager&',EXTERNAL')
+%OOPConstruct
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager&',EXTERNAL')
+%OOPConstruct
+  #ENDFOR
+#ENDIF
+#INSERT(%StandardGlobalLocals)
+  #IF(%ExternalSource='Dynamic Link Library (DLL)')
+GlobalRequest        BYTE,EXTERNAL,DLL(dll_mode)
+GlobalResponse       BYTE,EXTERNAL,DLL(dll_mode)
+VCRRequest           LONG,EXTERNAL,DLL(dll_mode)
+  #ELSE
+GlobalRequest        BYTE,EXTERNAL
+GlobalResponse       BYTE,EXTERNAL
+VCRRequest           LONG,EXTERNAL
+  #ENDIF
+#!9.1.00
+#IF( %WindowFrameDragging = 1 )
+lCurrentFDSetting    LONG
+lAdjFDSetting        LONG
+#ENDIF
+#!9.1.00
+#!-------------------------------------------------------
+#GROUP(%DLLGlobalsInternal)
+#FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+  #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager)
+%OOPConstruct
+  #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager)
+%OOPConstruct
+#SUSPEND
+#?%NULL
+#EMBED(%FileObjectDeclarations, ''),%File,HIDE
+#?%NULL
+#RESUME
+#ENDFOR
+GlobalRequest        BYTE(0),THREAD
+GlobalResponse       BYTE(0),THREAD
+VCRRequest           LONG(0),THREAD
+#INSERT(%StandardGlobalLocals)
+#!-------------------------------------------------------
+#GROUP(%DLLGlobalsExternal)
+#IF(%ExternalSource='Dynamic Link Library (DLL)')
+  #FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager&',EXTERNAL,DLL')
+%OOPConstruct
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager&',EXTERNAL,DLL')
+%OOPConstruct
+  #ENDFOR
+#ELSE
+  #FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager&',EXTERNAL')
+%OOPConstruct
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager&',EXTERNAL')
+%OOPConstruct
+  #ENDFOR
+#ENDIF
+  #IF(%ExternalSource='Dynamic Link Library (DLL)')
+GlobalRequest        BYTE,EXTERNAL,DLL
+GlobalResponse       BYTE,EXTERNAL,DLL
+VCRRequest           LONG,EXTERNAL,DLL
+  #ELSE
+GlobalRequest        BYTE,EXTERNAL
+GlobalResponse       BYTE,EXTERNAL
+VCRRequest           LONG,EXTERNAL
+  #ENDIF
+#INSERT(%StandardGlobalLocals)
+#!-------------------------------------------------------
+#GROUP(%LIBGlobalsInternal)
+#FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+  #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager)
+%OOPConstruct
+  #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager)
+%OOPConstruct
+#SUSPEND
+#?%NULL
+#EMBED(%FileObjectDeclarations, ''),%File,HIDE
+#?%NULL
+#RESUME
+#ENDFOR
+#INSERT(%StandardGlobalLocals)
+GlobalRequest        BYTE(0),THREAD
+GlobalResponse       BYTE(0),THREAD
+VCRRequest           LONG(0),THREAD
+#!-------------------------------------------------------
+#GROUP(%LIBGlobalsExternal)
+#IF(%ExternalSource='Dynamic Link Library (DLL)')
+  #FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager&',EXTERNAL,DLL(dll_mode)')
+%OOPConstruct
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager&',EXTERNAL,DLL(dll_mode)')
+%OOPConstruct
+  #ENDFOR
+#ELSE
+  #FOR(%File),WHERE(%CacheFileUsed AND %GetFileDeclareMode() = 'FILE')
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Access:'&%File,'&'&%CacheFileManager&',EXTERNAL')
+%OOPConstruct
+    #CALL(%MakeDeclr,22,%OOPConstruct,'Relate:'&%File,'&'&%CacheRelationManager&',EXTERNAL')
+%OOPConstruct
+  #ENDFOR
+#ENDIF
+#INSERT(%StandardGlobalLocals)
+  #IF(%ExternalSource='Dynamic Link Library (DLL)')
+GlobalRequest        BYTE,EXTERNAL,DLL(dll_mode)
+GlobalResponse       BYTE,EXTERNAL,DLL(dll_mode)
+VCRRequest           LONG,EXTERNAL,DLL(dll_mode)
+  #ELSE
+GlobalRequest        BYTE,EXTERNAL
+GlobalResponse       BYTE,EXTERNAL
+VCRRequest           LONG,EXTERNAL
+  #ENDIF
+#!9.1.00
+#!-------------------------------------------------------
+#GROUP(%InitCode)
+#EQUATE(%SaveIndent,%OutputIndent)
+#IF(~%GlobalExternal)
+  #IF(%DefaultErrorCategory <> 'ABC')
+GlobalErrors.SetCategory( , %DefaultErrorCategory)
+  #ENDIF
+  #IF(%StoreErrorHistory)
+    #IF(%LimitStoredHistory)
+GlobalErrors.HistoryThreshold = %ErrorHistoryThreshold
+    #ELSE
+GlobalErrors.HistoryThreshold = -1
+    #ENDIF
+    #IF(%HistoryViewTrigger <> 'Level:Fatal')
+GlobalErrors.HistoryViewLevel = %HistoryViewTrigger
+    #ENDIF
+  #ENDIF
+DctInit
+#ENDIF
+#EMBED(%BeforeInitializingGlobalObjects),HIDE
+#IF(%EnableRunTimeTranslator)
+#INSERT(%InitTranslator)
+#ENDIF
+#IF(%FuzzyMatchingEnabled)
+FuzzyMatcher.Init
+FuzzyMatcher.SetOption(MatchOption:NoCase, %IgnoreCase)
+FuzzyMatcher.SetOption(MatchOption:WordOnly, %WordOnly)
+#ENDIF
+#IF(%ProgramExtension = 'EXE')
+INIMgr.Init(%(%StripPling(%INIFileName)))
+#ENDIF
+#EMBED(%ProgramSetup,'Program Setup')
+#!9.1.00
+#IF( %ProgramExtension = 'EXE' AND %Target32)
+  #IF( %WindowFrameDragging = 1 )
+SystemParametersInfo( 38, 0, lCurrentFDSetting, 0 )
+IF lCurrentFDSetting = 1
+  SystemParametersInfo( 37, 0, lAdjFDSetting, 3 )
+END
+  #ENDIF
+#ENDIF
+#!9.1.00
+#IF(%ProgramExtension NOT='EXE')
+  #INDENT(-%OutputIndent)
+  #SUSPEND
+  #?%NULL
+#EMBED(%ProgramRoutines,'Program Routines'),DATA
+  #?%NULL
+  #RESUME
+  #SUSPEND
+  #?%NULL
+#EMBED(%ProgramProcedures,'Program Procedures'),DATA
+  #?%NULL
+  #RESUME
+  #INDENT(%SaveIndent)
+#ENDIF
+#!--------------------------
+#GROUP(%KillCode)
+#EMBED(%ProgramEnd,'Program End')
+#IF(%ProgramExtension = 'EXE' AND %Target32)
+#!9.1.00
+#IF( %WindowFrameDragging = 1 )
+IF lCurrentFDSetting = 1
+  SystemParametersInfo( 37, 1, lAdjFDSetting, 3 )
+END
+#ENDIF
+#!9.1.00
+INIMgr.Kill
+#ENDIF
+#IF(%FuzzyMatchingEnabled)
+FuzzyMatcher.Kill
+#ENDIF
+#IF(%EnableRunTimeTranslator)
+Translator.Kill
+#ENDIF
+#EMBED(%AfterKillingGlobalObjects),HIDE
+#IF(~%GlobalExternal)
+DctKill
+#ENDIF
+#!-------------------------------------------------------
+#GROUP(%InitTranslator)
+Translator.Init
+  #FOR(%TranslationGroups)
+Translator.AddTranslation(%TranslationGroup)
+  #ENDFOR
+  #IF(%ExtractionFilename)
+Translator.ExtractText=%(%StripPling(%ExtractionFilename))
+  #ENDIF
+#!
+#!
+#GROUP(%MakeGlobalMap)
+#MESSAGE('Declaring Generated Procedures',3)
+#FOR(%Module),WHERE (%Module <> %Program)
+     MODULE('%(UPPER(%Module))')
+  #IF(%ModuleExternal)
+    #IF(%ModuleInclude)
+       INCLUDE('%(UPPER(%ModuleInclude))')
+    #ELSE
+      #FOR(%ModuleProcedure)
+        #FIX(%Procedure,%ModuleProcedure)
+#INSERT(%MakeProcedurePrototype)
+      #ENDFOR
+    #ENDIF
+  #ELSE
+    #FOR(%ModuleProcedure)
+      #FIX(%Procedure,%ModuleProcedure)
+#!%[22]Procedure %ProcedureType%Prototype   !%ProcedureDescription
+#INSERT(%MakeProcedurePrototype)
+    #ENDFOR
+  #ENDIF
+     END
+#ENDFOR
+#!
+#!
+#GROUP(%MakeLocalMaps)                             #!Generate globals when otherwise making local maps
+#MESSAGE('Declaring Procedures in Global Map',1)
+!--- Application Global and Exported Procedure Definitions --------------------------------------------
+#FOR(%Module),WHERE(%Module<>%Program)
+  #IF(%ModuleExternal)
+    #IF(%ModuleInclude)
+     MODULE('%(UPPER(%Module))')
+       INCLUDE('%(UPPER(%ModuleInclude))')
+     END
+    #ELSE
+      #SUSPEND
+     #?MODULE('%(UPPER(%Module))')
+      #FOR(%ModuleProcedure)
+        #FIX(%Procedure,%ModuleProcedure)
+        #IF(%ProcedureIsGlobal OR %Procedure=%FirstProcedure OR (%ProgramExtension='DLL' AND %ProcedureExported))         #!Apps first procedure must be global
+#INSERT(%MakeProcedurePrototype)
+          #RELEASE
+        #ENDIF
+      #ENDFOR
+     #?END
+      #RESUME
+    #ENDIF
+  #ELSE
+    #SUSPEND
+     #?MODULE('%(UPPER(%Module))')
+      #FOR(%ModuleProcedure)
+        #FIX(%Procedure,%ModuleProcedure)
+        #IF(%ProcedureIsGlobal OR %Procedure=%FirstProcedure OR (%ProgramExtension='DLL' AND %ProcedureExported))
+#!%[22]Procedure %ProcedureType%Prototype   !%ProcedureDescription
+#INSERT(%MakeProcedurePrototype)
+          #RELEASE
+        #ENDIF
+      #ENDFOR
+     #?END
+    #RESUME
+  #ENDIF
+#ENDFOR
+#!
+#!
+#GROUP(%MakeProcedurePrototype)
+#IF(~%ModuleExternal)
+%[22]Procedure %ProcedureType%Prototype   !%ProcedureDescription
+#ENDIF
+#!
+#!
+#GROUP(%ModuleBaseRemovePath),AUTO
+#DECLARE(%RVal)
+#SET(%RVal,%ModuleBase)
+#LOOP
+  #IF(INSTRING('\',%RVal,1,1))
+    #SET(%RVal,SUB(%RVal,INSTRING('\',%RVal,1,1)+1,LEN(%RVal)))
+  #ELSE
+    #BREAK
+  #ENDIF
+#ENDLOOP
+#RETURN(%RVal)
+#!
+#!
+#!

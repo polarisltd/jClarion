@@ -1,0 +1,32 @@
+!File Manager Equates
+
+InsertRecord            EQUATE (1)             !  Add a record to table
+ChangeRecord            EQUATE (2)             !  Change the current record
+DeleteRecord            EQUATE (3)             !  Delete the current record
+SelectRecord            EQUATE (4)             !  Select the current record
+ProcessRecord           EQUATE (5)             !  Process the current record
+ViewRecord              EQUATE (6)             !  View the current record
+SaveRecord              EQUATE (7)             !  Save the current record
+
+RequestCompleted        EQUATE (1)             !  Update Completed
+RequestCancelled        EQUATE (2)             !  Update Aborted
+
+! Template Defined Record Status Flags
+! The ViewManager class
+
+Record:OK               EQUATE(0)              !  Record passes range and filter
+Record:OutOfRange       EQUATE(1)              !  Record fails range test
+Record:Filtered         EQUATE(2)              !  Record fails filter tests
+
+
+! File Access Modes
+
+ReadOnly                EQUATE (0H)
+WriteOnly               EQUATE (1H)
+ReadWrite               EQUATE (2H)
+
+AnyAccess               EQUATE (0H)
+DenyAll                 EQUATE (10H)
+DenyWrite               EQUATE (20H)
+DenyRead                EQUATE (30H)
+DenyNone                EQUATE (40H)

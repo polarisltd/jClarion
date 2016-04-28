@@ -1,0 +1,319 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#CyberCash
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AccountCurrency),ACORN(1),ACORN.NAME(Currency: %_Value_%),ACORN.WIZARD(Component#CyberCashAccount),DESCRIPTION(Accounts),DEVIMP(BAROQUE),DTYPE(MULTIDROP),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccCurrency),TYPE(STRING)
+  PROPERTY: NAME(AccountCurrency.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AutoMarks),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(AutoMarks,%_Value_%)],AutoMark)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccMark),TYPE(STRING)
+  PROPERTY: NAME(AutoSettles),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(AutoSettles,%_Value_%)],AutoSettle)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccSettle),TYPE(STRING)
+  PROPERTY: NAME(CyberAccounts),DESCRIPTION(Account instances - Based on AccountCurrency),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(0),LISTFILL.CONVERT('@INDEX(AccountCurrency,%_VALUE_%)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.NAME(CyberAccounts),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(EmulateHostModes),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(EmulateHostModes,%_Value_%)],EmulateHostMode)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccEmulateHostMode),TYPE(STRING)
+  PROPERTY: NAME(Logins),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(Logins,%_Value_%)],Login)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccLogin),TYPE(STRING)
+  PROPERTY: NAME(MerchantKeys),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(MerchantKeys,%_Value_%)],MerchantKey)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccMerchantKey),TYPE(STRING)
+  PROPERTY: NAME(Passwords),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(Passwords,%_Value_%)],Password)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccPassword),TYPE(STRING)
+  PROPERTY: NAME(ProcessorURLs),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(ProcessorURLs,%_Value_%)],ProcessorURL)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccProcessorURL),TYPE(STRING)
+  PROPERTY: NAME(ProxyHosts),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(ProxyHosts,%_Value_%)],ProxyHost)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccProxyHost),TYPE(STRING)
+  PROPERTY: NAME(ProxyPorts),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(ProxyPorts,%_Value_%)],ProxyPort)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccProxyPort),TYPE(STRING)
+  PROPERTY: NAME(Timeouts),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.CONVERT('@EXTRACT(AccountCurrency[@INDEX(Timeouts,%_Value_%)],Timeout)'),LISTFILL.FUNC(%AccountCurrency%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(CyberAccounts),OUTPUT.NAME(ccTimeout),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    ACCOUNTCURRENCY.LIST(United_States,United_Kingdom,European_Monetary_Unit,Euro_Unit_of_Acct_9,Euro_Unit_of_Acct_17,International_Monetary_Fund,Euro_Monetary_Cooperation_Fund_EMCF,South_Africa_Financial,South_Africa,Argentina)
+    CONTROLTEMPLATE(CyberCashSettings)
+    NAME(TOPSPEED:ControlTemplate#GlobalTemplate#CyberCash)
+    TEMPLATECHAIN(CyberCash)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AllFields),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@FIELDS(%_VALUE_%)'),LISTFILL.FUNC('@FILES()'),LOCKED(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(CyberCash),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(CyberCash),ACORN.WIZARD(ControlTemplate#GlobalTemplate#CyberCash),DESCRIPTION(Include CyberCash Functionality),DEVIMP(ASK),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(CyberCash.Application),DESCRIPTION(Cybercash application name),DEVIMP(BAROQUE),DOCUMENTATION(Application name to be passed to Cybercash along with the OrderID when processing credit cards),DTYPE(ENTRY)
+  PROPERTY: NAME(QuickStart.AccountCurrency),DOCUMENTATION(What currency is the CyberCash account configured to be billed in?),DTYPE(SINGLEDROP),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(198),QUICKSTART.PROMPT(Billing Currency),QUICKSTART.TABLABEL(Card Processing),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#GlobalTemplate#CyberCash.AccountCurrency(%Quickstart.AccountCurrency%)'),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.AccountCurrency.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.AddCyberCash),DESCRIPTION(Add Cybercash Card Processing?),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''@FIND(''%AllFields%'',`@USER(%_Value_%,CARDNAME)`)''='''',0,1))'),QUICKSTART.PRIORITY(200),QUICKSTART.PROMPT(Add Cybercash Credit Card Processing),QUICKSTART.TABLABEL(Card Processing),QUICKSTART.WHENAPPLY('TOPSPEED:Application.CyberCash(%_Value_%)'),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.AutoMark),DEVIMP(BAROQUE),DOCUMENTATION(Auto-Mark means the transactions are automatically captured by CyberCash.),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(197),QUICKSTART.PROMPT(Auto-Mark Transactions),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.AutoSettle),DEVIMP(BAROQUE),DOCUMENTATION(Default CyberCash account setting to match how the CyberCash account is configured. Auto-Settle means that once captured CyberCash automatically will submit the transactions.),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(196),QUICKSTART.PROMPT(Auto-Settle),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.EmulateHostMode),DEVIMP(BAROQUE),DOCUMENTATION(Default CyberCash Host Mode setting to specify that the CyberCash functionality will automatically capture the transaction when it does an authorise.),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(195),QUICKSTART.PROMPT(Emulate Host Mode),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.Login),DEVIMP(BAROQUE),DOCUMENTATION('CyberCash Login ID (CCID).'),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(195),QUICKSTART.PROMPT(Cybercash Login ID),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_VALUE_%''<>''''))'),VALIDATIONTEXT(Cybercash login ID cannot be blank)
+  PROPERTY: NAME(QuickStart.MerchantKey),DEVIMP(BAROQUE),DOCUMENTATION(Default CyberCash Merchant Key.),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(194),QUICKSTART.PROMPT(CyberCash Merchant ID),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.Password),DEVIMP(BAROQUE),DOCUMENTATION(Default CyberCash Password.),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(193),QUICKSTART.PROMPT(CyberCash Account Password),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.ProcessorURL),DEVIMP(BAROQUE),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(192),QUICKSTART.PROMPT(CyberCash Processor URL),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.ProxyHost),DEVIMP(BAROQUE),DOCUMENTATION(Domain name or IP Address of proxy host if being used.),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(191),QUICKSTART.PROMPT(Proxy Host),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING)
+  PROPERTY: NAME(QuickStart.ProxyPort),DEVIMP(BAROQUE),DOCUMENTATION(ProxyHost to use when connecting to CyberCash.),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS(%QuickStart.AddCyberCash%),QUICKSTART.PRIORITY(190),QUICKSTART.PROMPT(Proxy Host Port),QUICKSTART.TABLABEL(Card Processing),TYPE(STRING)
+  [DEFINITION]
+    CYBERCASH('@EVAL(CHOOSE(''@FIND(''%AllFields%'',`@USER(%_Value_%,CARDNAME)`)''='''',0,1))')
+    FILEACORN(1)
+    QUICKSTART.ACCOUNTCURRENCY(United_States)
+    QUICKSTART.ACCOUNTCURRENCY.LIST(United_States,United_Kingdom,European_Monetary_Unit,Euro_Unit_of_Acct_9,Euro_Unit_of_Acct_17,International_Monetary_Fund,Euro_Monetary_Cooperation_Fund_EMCF,South_Africa_Financial,South_Africa,Argentina)
+    QUICKSTART.ADDCYBERCASH('@EVAL(CHOOSE(''@FIND(''%AllFields%'',`@USER(%_Value_%,CARDNAME)`)''='''',0,1))')
+    QUICKSTART.LOGIN(hostauthcapture-50)
+    QUICKSTART.MERCHANTKEY(YSwLDyB6SuHuTs2UWYrUrPaxYdnNjt)
+    QUICKSTART.NAME(TOPSPEED:ApplicationComponent#CyberCashAccount)
+    QUICKSTART.PASSWORD(5xf8cThEJTlCvButtRa9OiEmqUPKeH)
+    QUICKSTART.PROCESSORURL(http://cr.cybercash.com/cgi-bin/)
+    QUICKSTART.PROXYHOST()
+    QUICKSTART.PROXYPORT()
+    TARGETOS(Windows - 32bit)
+    TARGETOS.LIST(Windows - 32bit)
+    TARGETTYPE(EXE)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#CyberCashAccount
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AutoMark),DESCRIPTION(Cybercash account is Auto Mark),DEVIMP(BAROQUE),DOCUMENTATION(This property depends on how the matching Cybercash account is setup.),DTYPE(CHECK),TYPE(STRING)
+  PROPERTY: NAME(AutoSettle),DESCRIPTION(Auto Settle),DEVIMP(BAROQUE),DOCUMENTATION(Depends on how the cybercash account has been setup.),DTYPE(CHECK),TYPE(STRING)
+  PROPERTY: NAME(EmulateHostMode),DESCRIPTION(Emulate Host Mode),DEVIMP(BAROQUE),DOCUMENTATION(Specifies that the CyberCash functionality automatically captures the transaction during the authorise.),DTYPE(CHECK),TYPE(STRING)
+  PROPERTY: NAME(Login),DESCRIPTION(Login),DEVIMP(BAROQUE),DOCUMENTATION(Login value for this account),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(MerchantKey),DESCRIPTION(Merchant Key),DEVIMP(BAROQUE),DOCUMENTATION(Merchant Key for this account.),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(Password),DESCRIPTION(Password for this account),DEVIMP(BAROQUE),DOCUMENTATION(Password for this account login.),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(ProcessorURL),DESCRIPTION(Processor URL for this account.),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(ProxyHost),DESCRIPTION(ProxyHost),DEVIMP(BAROQUE),DOCUMENTATION(Domain name or IP Address of proxy host if one is being used.),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(ProxyPort),DESCRIPTION(Proxy Host Port),DEVIMP(BAROQUE),DOCUMENTATION(Proxy Host port),DTYPE(ENTRY),TYPE(STRING)
+  PROPERTY: NAME(Timeout),DESCRIPTION(Account Timeout),DEVIMP(BAROQUE),DOCUMENTATION(Time out value for this account.),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent)
+    AUTOMARK(%^QuickStart.AutoMark%)
+    AUTOSETTLE(%^QuickStart.AutoSettle%)
+    EMULATEHOSTMODE(%^QuickStart.EmulateHostMode%)
+    LOGIN(%^QuickStart.Login%)
+    MERCHANTKEY(%^QuickStart.MerchantKey%)
+    NAME(TOPSPEED:ApplicationComponent#CyberCashAccount)
+    PASSWORD(%^QuickStart.Password%)
+    PROCESSORURL(%^QuickStart.ProcessorURL%)
+    PROXYHOST(%^QuickStart.ProxyHost%)
+    PROXYPORT(%^QuickStart.ProxyPort%)
+    TIMEOUT(60)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#CapturePayment
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Authorisation),DESCRIPTION(Authorisation),DEVIMP(BAROQUE),DOCUMENTATION(Authorisation ID of an previously authorised amount to be used for capturing or submitting an amount for payment.),DTYPE(ENTRY),OUTPUT.NAME(ccAuthorisation),TYPE(STRING)
+  PROPERTY: NAME(AuthorisationAmount),DESCRIPTION(Authorisation Amount),DEVIMP(BAROQUE),DOCUMENTATION(Amount that you want to authorise against the credit card.),DTYPE(ENTRY),OUTPUT.NAME(ccAuthorisationAmount),TYPE(STRING)
+  PROPERTY: NAME(AuthoriseButton),ACORN(1),ACORN.CONTEXT('Use.Label(?Authorise)'),ACORN.NAME(Authorise Button),ACORN.WIZARD(^Button#CyberCashAuthorise),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(AuthoriseControl),DESCRIPTION(Authorisation Control),DEVIMP(BAROQUE),DOCUMENTATION(Button that will invoke credit card authorisation.),DTYPE(ENTRY),OUTPUT.NAME(ccAuthoriseControl),TYPE(STRING)
+  PROPERTY: NAME(CaptureAmount),DESCRIPTION(Captured Amount),DEVIMP(BAROQUE),DOCUMENTATION(Variable that contains the capture amount to be debited.),DTYPE(ENTRY),OUTPUT.NAME(ccCaptureAmount),TYPE(STRING)
+  PROPERTY: NAME(CaptureButton),ACORN(1),ACORN.CONTEXT('Use.Label(?Capture)'),ACORN.NAME(Capture Button),ACORN.WIZARD(^Button#CyberCashCapture),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(CaptureControl),DESCRIPTION(Capture Control),DEVIMP(BAROQUE),DOCUMENTATION(Button that will capture  a credit card transaction.),DTYPE(ENTRY),OUTPUT.NAME(ccCaptureControl),TYPE(STRING)
+  PROPERTY: NAME(CapturedTotal),DESCRIPTION(Captured Total),DEVIMP(BAROQUE),DOCUMENTATION(Variable that must be incremented by the capture amount if the capture is successful..),DTYPE(ENTRY),OUTPUT.NAME(ccCapturedTotal),TYPE(STRING)
+  PROPERTY: NAME(CardAddress),DESCRIPTION(Card Address),DEVIMP(BAROQUE),DOCUMENTATION('Variable that contains the name of the card holder''s address.'),DTYPE(ENTRY),OUTPUT.NAME(CardAddress),TYPE(STRING)
+  PROPERTY: NAME(CardCity),DESCRIPTION(Card City),DEVIMP(BAROQUE),DOCUMENTATION('Variable that contains the card holder''s city.'),DTYPE(ENTRY),OUTPUT.NAME(CardCity),TYPE(STRING)
+  PROPERTY: NAME(CardCountry),DESCRIPTION(Card Country),DEVIMP(BAROQUE),DOCUMENTATION('Variable that contains the card holder''s country.'),DTYPE(ENTRY),OUTPUT.NAME(CardCountry),TYPE(STRING)
+  PROPERTY: NAME(CardName),DESCRIPTION(Card Name),DEVIMP(BAROQUE),DOCUMENTATION(Variable that contains the name on the credit card.),DTYPE(ENTRY),OUTPUT.NAME(CardName),TYPE(STRING)
+  PROPERTY: NAME(CardNumber),DESCRIPTION(Card Number),DEVIMP(BAROQUE),DOCUMENTATION(Variable that contains the credit card number to be debited),DTYPE(ENTRY),OUTPUT.NAME(CardNumber),TYPE(STRING)
+  PROPERTY: NAME(CardState),DESCRIPTION(Card State),DEVIMP(BAROQUE),DOCUMENTATION('Variable that contains the card holder''s State.'),DTYPE(ENTRY),OUTPUT.NAME(CardState),TYPE(STRING)
+  PROPERTY: NAME(CardZip),DESCRIPTION(Card Zip),DEVIMP(BAROQUE),DOCUMENTATION('Variable that contains the card holder''s zip or postal code.'),DTYPE(ENTRY),OUTPUT.NAME(CardZip),TYPE(STRING)
+  PROPERTY: NAME(CurrencyVariable),DESCRIPTION(Currency),DEVIMP(BAROQUE),DOCUMENTATION('Currency, could be a file variable that determines the currency and directly which cybercash account to use.'),DTYPE(ENTRY),OUTPUT.NAME(ccCurrencyVariable),TYPE(STRING)
+  PROPERTY: NAME(DateBilled),DESCRIPTION(Date successfully billed),DEVIMP(BAROQUE),DOCUMENTATION(Variable that receives the date that the transaction is successfully billed.),DTYPE(ENTRY),OUTPUT.NAME(ccDateBilled),TYPE(STRING)
+  PROPERTY: NAME(ExpiryDate),DESCRIPTION(Card Expiry Date),DEVIMP(BAROQUE),DOCUMENTATION(Variable that contains the credit card expiry date.),DTYPE(ENTRY),OUTPUT.NAME(CardExpiryDate),TYPE(STRING)
+  PROPERTY: NAME(InvoiceNumber),DESCRIPTION(Invoice Number),DEVIMP(BAROQUE),DOCUMENTATION(Unique transaction orderid passed to CyberCash.),DTYPE(ENTRY),OUTPUT.NAME(ccInvoiceNumber),TYPE(STRING)
+  PROPERTY: NAME(ResponseField),DESCRIPTION(Response Field),DEVIMP(BAROQUE),DOCUMENTATION(Variable to which all credit card errors and processing responses should be returned to.),DTYPE(ENTRY),OUTPUT.NAME(ccErrorField),TYPE(STRING)
+  PROPERTY: NAME(ReturnButton),ACORN(1),ACORN.CONTEXT('Use.Label(?Return)'),ACORN.NAME(Return Button),ACORN.WIZARD(^Button#CyberCashReturn),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ReturnControl),DESCRIPTION(Return Control),DEVIMP(BAROQUE),DOCUMENTATION(Button that will Return a credit card transaction.),DTYPE(ENTRY),OUTPUT.NAME(ccReturnControl),TYPE(STRING)
+  PROPERTY: NAME(SubmitButton),ACORN(1),ACORN.CONTEXT('Use.Label(?Submit)'),ACORN.NAME(Submit Button),ACORN.WIZARD(^Button#CyberCashSubmit),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(SubmitControl),DESCRIPTION(Submit Control),DEVIMP(BAROQUE),DOCUMENTATION(Button that will Submit a credit card transaction.),DTYPE(ENTRY),OUTPUT.NAME(ccSubmitControl),TYPE(STRING)
+  PROPERTY: NAME(TransactionName),DESCRIPTION(Transaction Name),DEVIMP(BAROQUE),DOCUMENTATION(Transaction description that prepends to the orderid passed to CyberCash.),DTYPE(ENTRY),OUTPUT.NAME(ccTransactionName),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    AUTHORISATION('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,AUTHORISATIONID)`))')
+    AUTHORISATIONAMOUNT('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,AUTHORISATIONAMOUNT)`))')
+    AUTHORISEBUTTON(1)
+    CAPTUREAMOUNT('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CAPTUREAMOUNT)`))')
+    CAPTUREBUTTON(1)
+    CAPTUREDTOTAL('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CAPTUREDTOTAL)`))')
+    CARDADDRESS('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDADDRESS)`))')
+    CARDCITY('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDCITY)`))')
+    CARDCOUNTRY('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDCOUNTRY)`))')
+    CARDNAME('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNAME)`))')
+    CARDNUMBER('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`))')
+    CARDSTATE('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDSTATE)`))')
+    CARDZIP('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDZIP)`))')
+    CONTROLTEMPLATE(CapturePayment)
+    CURRENCYVARIABLE('@EVAL(CHOOSE(''@FIND(''%^AllFields%'',`@USER(%_Value_%,DEBITCURRENCY)`)''='''',''United_States'',''@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,DEBITCURRENCY)`))''))')
+    DATEBILLED('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,DATEBILLED)`))')
+    EXPIRYDATE('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDEXPIRYDATE)`))')
+    INVOICENUMBER('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,ORDERID)`))')
+    RESPONSEFIELD('@NAME(@FIND(''%^AllFields%'',`@USER(%_Value_%,AUTHORISERESPONSE)`))')
+    RETURNBUTTON(1)
+    SUBMITBUTTON(1)
+    TEMPLATECHAIN(CyberCash)
+    TRANSACTIONNAME(%AppFilename%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#CyberCashAuthorise
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(2)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?Authorise)
+    TEXT(&Authorise)
+    USE.LABEL(?Authorise)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#CyberCashCapture
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(2)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?Capture)
+    TEXT(Ca&pture)
+    USE.LABEL(?Capture)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#CyberCashSubmit
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(2)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?Submit)
+    TEXT(&Submit)
+    USE.LABEL(?Submit)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#CyberCashReturn
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(2)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?Return)
+    TEXT(&Return)
+    USE.LABEL(?Return)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Form
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CapturePayment),ACORN(1),ACORN.CONTEXT('AuthoriseControl(?Authorise),CaptureControl(?Capture),ReturnControl(?Return),SubmitControl(?Submit)'),ACORN.NAME(Capture Payment),ACORN.WIZARD(ControlTemplate#CapturePayment),DESCRIPTION(Cybercash Capture functionality),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    CAPTUREPAYMENT('@EVAL(CHOOSE(''@FIND(''@FIELDS(%PrimaryFile%)'',`@USER(%_Value_%,ACCEPTED)`)''='''' OR ''%Scope.Cybercash%''=''0'',0,1))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Process#Cybercash
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CapturePayment),ACORN(1),ACORN.CONTEXT('AuthoriseButton(0),CaptureButton(0),SubmitButton(0),ReturnButton(0)'),ACORN.NAME(Capture Payment),ACORN.WIZARD(ControlTemplate#CapturePayment),DESCRIPTION(Cybercash Capture functionality),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(CardDetailFile),DESCRIPTION(Card Details file.),DEVIMP(DETAILED),DOCUMENTATION(Names the file with Credit Card Details.),DTYPE(ENTRY),HIDDEN(1),OUTPUT.SECONDARYFILE(%CardDetailFile%),TYPE(STRING)
+  PROPERTY: NAME(MenuItem),ACORN(1),ACORN.CONTEXT('Populator(%Name%),Item.Procedure(BillOutstanding%PrimaryFile%)'),ACORN.NAME(CyberCashProcessing),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Process'),DESCRIPTION(Menu Item),DEVIMP(BAROQUE),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Output.Category),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Process)
+    CAPTUREPAYMENT(1)
+    CARDDETAILFILE('@EVAL( CHOOSE(''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)''<>'''',SUB(''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)'',1,INSTRING(''.'',''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)'',1,1)-1),'''') )')
+    MENUITEM(1)
+    OUTPUT.DESCRIPTION(Auto Process outstanding transactions in the %PrimaryFile% file)
+    OUTPUT.PROCNAME(BillOutstanding%PrimaryFile%)
+    PRIMARYFILE('@FIND(''@FILES()'',`@USER(%_Value_%,INVOICE)`)')
+    PRIMARYKEY('@NAME(@FIND(''@SORTORDERS(%PrimaryFile%)'',`@USER(%_Value_%,BILLING)`))')
+    PROCESSACTION(PUT record)
+    RANGEFIELD('@NAME(@KEYFIELD(@FIND(''@SORTORDERS(%PrimaryFile%)'',`@USER(%_Value_%,BILLING)`)))')
+    WINDOWMESSAGE('Cybercash Processing %PrimaryFile%, please wait...')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CyberCashAutoProcess),ACORN(1),ACORN.NAME(CyberCashAutoProcess),ACORN.WIZARD(*TOPSPEED:Process#CyberCash),DESCRIPTION(Process Outstanding transactions),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DialogWindowItem),ACORN(1),ACORN.CONTEXT('Item.Procedure(StandardDialogWindow)'),ACORN.NAME(Dialog Window),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Dialog'),DESCRIPTION(Acorn to create Dialog window.),DEVIMP(BAROQUE),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DialogWindowProcedure),ACORN(1),ACORN.CONTEXT('PrimaryFile(Invoice)'),ACORN.NAME(DialogWindowProcedure),ACORN.WIZARD(*TOPSPEED:ProcedureComponent#DialogWindow),DESCRIPTION(Dialog Window),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(SuccessfulBillingNotification),ACORN(1),ACORN.NAME(SuccessfulBillingNotification),ACORN.WIZARD(*TOPSPEED:Process#CybercashBilled),DESCRIPTION(Notifiy recipients of successful billing),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    CYBERCASHAUTOPROCESS(%Scope.CyberCash%)
+    DIALOGWINDOWITEM(1)
+    DIALOGWINDOWPROCEDURE(1)
+    SUCCESSFULBILLINGNOTIFICATION(%Scope.CyberCash%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Process#CybercashBilled
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BillingReport),ACORN(1),ACORN.CONTEXT('OUTPUT.PROCNAME(%PrimaryFile%BillingReport)'),ACORN.NAME(BillingReport),ACORN.WIZARD(*TOPSPEED:Process#BillingProcessReport),DESCRIPTION(Create a merged report for each transaction),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(CardDetailFile),DESCRIPTION(Card Details file.),DEVIMP(DETAILED),DOCUMENTATION(Names the file with Credit Card Details.),DTYPE(ENTRY),HIDDEN(1),OUTPUT.SECONDARYFILE(%CardDetailFile% %PrimaryFile%),TYPE(STRING)
+  PROPERTY: NAME(MenuItem),ACORN(1),ACORN.CONTEXT('Populator(%Name%),Item.Procedure(ProcessBilled%PrimaryFile%s)'),ACORN.NAME(CyberCash %PrimaryFile% Billed Report),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Process'),DESCRIPTION(%PrimaryFile% Billed Item),DEVIMP(BAROQUE),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProcessProcedure),ACORN.CONTEXT('ProcToCall(%PrimaryFile%BillingReport)')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Process)
+    BILLINGREPORT(1)
+    CARDDETAILFILE('@EVAL( CHOOSE(''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)''<>'''',SUB(''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)'',1,INSTRING(''.'',''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)'',1,1)-1),'''') )')
+    MENUITEM(1)
+    OUTPUT.DESCRIPTION(Process transactions in the %PrimaryFile% file that have been successfully billed)
+    OUTPUT.PROCNAME(ProcessBilled%PrimaryFile%s)
+    PRIMARYFILE('@FIND(''@FILES()'',`@USER(%_Value_%,INVOICE)`)')
+    PRIMARYKEY('@NAME(@FIND(''@KEYS(%PrimaryFile%)'',`@USER(%_Value_%,BILLING)`))')
+    PROCESSPROCEDURE(1)
+    RANGEFIELD('@NAME(@KEYFIELD(@FIND(''@KEYS(%PrimaryFile%)'',`@USER(%_Value_%,BILLING)`)))')
+    WINDOWMESSAGE('Processing %PrimaryFile%, please wait...')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Process#BillingProcessReport
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CardDetailFile),DESCRIPTION(Card Details file.),DEVIMP(DETAILED),DOCUMENTATION(Names the file with Credit Card Details.),DTYPE(ENTRY),HIDDEN(1),OUTPUT.SECONDARYFILE(%CardDetailFile% %PrimaryFile%),TYPE(STRING)
+  PROPERTY: NAME(InvoiceLineFile),DESCRIPTION(Card Details file.),DEVIMP(DETAILED),DOCUMENTATION(Names the file with Credit Card Details.),DTYPE(ENTRY),HIDDEN(1),OUTPUT.SECONDARYFILE(%InvoiceLineFile% %PrimaryFile% INNER),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Process)
+    CARDDETAILFILE('@EVAL( CHOOSE(''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)''<>'''',SUB(''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)'',1,INSTRING(''.'',''@FIND(''%^AllFields%'',`@USER(%_Value_%,CARDNUMBER)`)'',1,1)-1),'''') )')
+    INVOICELINEFILE('@FIND(''@FILES()'',`@USER(%_Value_%,INVOICELINE)`)')
+    OUTPUT.DESCRIPTION(Billing Report on %PrimaryFile% for a single transaction)
+    PRIMARYFILE('@FIND(''@FILES()'',`@USER(%_Value_%,INVOICE)`)')
+    PRIMARYKEY('@NAME(@FIND(''@KEYS(%PrimaryFile%)'',`@USER(%_Value_%,IDKEY)`))')
+    PROCESSREPORTFUNCTIONALITY(1)
+    RANGEFIELD('@NAME(@KEYFIELD(@FIND(''@KEYS(%PrimaryFile%)'',`@USER(%_Value_%,BILLING)`)))')
+    WINDOWMESSAGE('Processing %PrimaryFile%, please wait...')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ProcedureComponent#DialogWindow
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CloseButtonControl),ACORN(1),ACORN.INITPRIORITY(100),ACORN.NAME(CloseButtonControl),ACORN.WIZARD(ButtonControl#Close),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Fields),ACORN(1),ACORN.CONTEXT('Field(''%_VALUE_%'')'),ACORN.INITPRIORITY(100),ACORN.NAME(FIELD: %_VALUE_%),ACORN.WIZARD(Component#Field),DESCRIPTION(Edit These Fields),DEVIMP(COMMON),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(Fields.List),DESCRIPTION(Available fields),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(@USER(%_Value_%,REPORTSETUP)`)'),LISTFILL.FUNC('@FIELDS(%PrimaryFile%)'),MULTI(1)
+  PROPERTY: NAME(WindowManager),ACORN.WIZARD(Window#DialogWindow)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ProcedureComponent)
+    CLOSEBUTTONCONTROL(1)
+    OUTPUT.CATEGORY(Dialog Window)
+    OUTPUT.DESCRIPTION(A Dialog Window.)
+    OUTPUT.FROM(ABC Window)
+    OUTPUT.PROCNAME(StandardDialogWindow)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Dialog
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem)
+    ITEM.PROCEDURE(%^Output.ProcName%)
+    MENU(Report)
+    TEXT(Report %^PrimaryFile%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#DialogWindow
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Window)
+    ALLOCATION.XSPACING(0)
+    ALLOCATION.YSPACING(0)
+    AT.EASTMARGIN(4)
+    AT.NORTHMARGIN(4)
+    AT.SOUTHMARGIN(4)
+    AT.WESTMARGIN(4)
+    FRAMESTYLE(Double)
+    GRAY(1)
+    MAX(0)
+    PALETTE(256)
+    RESIZER(0)
+    TITLE(Standard Dialog Window)
+    TYPE(SDI Child)
+    TYPE.LIST(SDI Child)
+  [END]
+[END]

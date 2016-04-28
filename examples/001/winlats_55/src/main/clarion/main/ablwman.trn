@@ -1,0 +1,4 @@
+SplashContinueText   EQUATE('Continue')
+CloseButtonText      EQUATE('Close the window')
+DefaultBtnLeftText   EQUATE('[ ')
+DefaultBtnRightText  EQUATE(' ]')

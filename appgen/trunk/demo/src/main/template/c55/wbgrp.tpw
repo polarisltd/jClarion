@@ -1,0 +1,903 @@
+#GROUP (%IndividualControlPrompts)
+#SHEET
+  #TAB ('&Display'),HLP('~ICProcedureExt_ControlDisplay'),WHERE(%InitClassQueue())
+    #BOXED ('General')
+      #BOXED(''),WHERE(%False),HIDE
+        #PROMPT ('', CHECK), %CtlSetOnDisabled,DEFAULT(0),AT(10,,10),WHENACCEPTED(%CascadeControlOption())
+        #ENABLE (%CtlSetOnDisabled)
+          #PROMPT ('If control disabled:', DROP('Hide control[Hide]|Hide if cannot disable[OptHide]|Show control[Show]')), %CtlOnDisabled,DEFAULT('Hide'),PROMPTAT(20,,77),AT(97,,87)
+        #END
+      #END
+      #PROMPT ('Hide if launched from browser', CHECK), %CtlDisableFromBrowser,AT(10)
+      #BOXED ('Skeleton Selection')
+        #PROMPT ('Skeleton to use:', @s255), %CtlSkeletonName
+        #ENABLE (NOT %CtlSkeletonName)
+          #PROMPT ('Theme:', @s255), %CtlSkeletonStyle
+          #PROMPT ('Extra capabilities:', @s255), %CtlSkeletonCapabilities
+          #PROMPT ('Type of field:', @s255), %CtlSkeletonType
+        #END
+      #END
+    #END
+    #BOXED('Image'), WHERE(%ControlType = 'IMAGE'), HIDE
+      #PROMPT ('Alternative text:', @s255), %CtlAltText
+    #END
+    #BOXED(''),WHERE(%False),HIDE
+      #BOXED('Strings'), WHERE(%ControlType = 'STRING'),HIDE
+        #PROMPT ('Allow dynamic update', CHECK), %CtlStringDynamic,AT(10,,180)
+        #PROMPT ('Autospot hyperlinks', CHECK), %CtlStringAutoSpot,AT(10,,180)
+      #END
+      #BOXED('Listboxes'), WHERE(%ControlType = 'LIST'),HIDE
+        #PROMPT ('Autospot hyperlinks', CHECK), %CtlListAutoSpot,AT(10)
+        #ENABLE (EXTRACT(%ControlStatement, 'DROP')), HIDE
+          #PROMPT ('', CHECK), %CtlSetJavaDropList,DEFAULT(0),AT(10,,10)
+          #ENABLE (%CtlSetJavaDropList)
+            #PROMPT ('Replace with Java non-drop list', CHECK), %CtlJavaDropList,AT(20)
+          #END
+        #END
+      #END
+      #BOXED('Sheet'), WHERE(%ControlType = 'SHEET'), HIDE
+        #PROMPT ('', CHECK), %CtlSetBorderWidth,DEFAULT(0),AT(10,,10)
+        #ENABLE (%CtlSetBorderWidth)
+          #PROMPT ('Border width:', SPIN(@n2,0,99)),%CtlBorderWidth,PROMPTAT(20,,77),AT(97,,87)
+        #END
+      #END
+    #ENDBOXED
+  #END
+  #TAB ('Html'),HLP('~ICProcedureExt_ControlHtml')
+    #BOXED ('HTML before control')
+      #PROMPT ('', TEXT), %CtlHtmlHeader,AT(,,,100)
+    #END
+    #BOXED ('HTML after control')
+      #PROMPT ('', TEXT), %CtlHtmlFooter,AT(,,,100)
+    #END
+  #END
+  #TAB ('Events'),HLP('~ICProcedureExt_ControlEvents')
+    #PROMPT ('Refresh when changed', CHECK), %CtlSubmitOnChange,AT(10)
+  #END
+  #TAB ('Properties'),HLP('~ICProcedureExt_ControlProperties')
+    #BOXED ('Overridden properties')
+      #BUTTON('Properties'),MULTI(%CtlProperty,%CtlPropertyName & ' =  ' & %CtlPropertyValue),INLINE,HLP('~TPLControlBrowseBox_Conditional_Behavior')
+        #PROMPT ('Name of property:', @s255),%CtlPropertyName
+        #PROMPT ('Type of property:', DROP('Bool|Integer|String|Reference')),%CtlPropertyType,DEFAULT('String')
+        #PROMPT ('Value:', @s255),%CtlPropertyValue
+      #ENDBUTTON
+    #ENDBOXED
+  #END
+  #TAB('C&lasses'),HLP('~ICProcedureExt_ControlClasses')
+    #WITH(%ClassItem, %Control)
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #END
+#END
+#!
+#!
+#GROUP(%ControlSettingsChanged)
+#IF (%CtlDisableFromBrowser)
+#ELSIF (%CtlSkeletonName OR %CtlSkeletonStyle OR %CtlSkeletonCapabilities OR %CtlSkeletonType)
+#ELSIF (%CtlAltText)
+#ELSIF (%CtlHtmlHeader OR %CtlHtmlFooter)
+#ELSIF (%CtlSubmitOnChange OR ITEMS(%CtlProperty))
+#ELSIF (NOT %UseDefaultABCBaseClass)
+#ELSE
+  #RETURN (%False)
+#END
+#RETURN (%True)
+#!
+#!
+#GROUP(%PrepareOverrideControls),AUTO
+  #DECLARE(%CtrlBaseClass)
+  #FOR(%Control),WHERE(%ControlValidForOverride() AND INLIST(%Control, %ClassItem))
+    #SET(%CtrlBaseClass, %GetClassName(%ControlType))
+    #CALL(%SetClassDefaults(ABC), %Control, 'Web:' & SLICE(%Control, 2, LEN(%Control)), %CtrlBaseClass)
+  #ENDFOR
+#!
+#!
+#GROUP (%InitControlTypes)
+  #CALL (%InitControl, 'Prompt', 'WebHtmlPromptClass')
+  #CALL (%InitControl, 'String', 'WebHtmlStringClass')
+  #CALL (%InitControl, 'SString', 'WebJavaStringClass')
+  #CALL (%InitControl, 'Entry',  'WebHtmlEntryClass')
+  #CALL (%InitControl, 'Combo',  'WebHtmlEntryClass')
+  #CALL (%InitControl, 'Spin',   'WebHtmlEntryClass')
+  #CALL (%InitControl, 'Text',   'WebHtmlTextClass')
+  #CALL (%InitControl, 'Check',  'WebHtmlCheckClass')
+  #CALL (%InitControl, 'Option', 'WebHtmlOptionClass')
+  #CALL (%InitControl, 'Radio',  'WebHtmlRadioClass')
+  #CALL (%InitControl, 'List',   'WebJavaListClass')
+  #CALL (%InitControl, 'DropList','WebHtmlListClass')
+  #CALL (%InitControl, 'Sheet',  'WebHtmlSheetClass')
+  #CALL (%InitControl, 'Tab',    'WebHtmlTabClass')
+  #CALL (%InitControl, 'Button', 'WebJavaButtonClass')
+  #CALL (%InitControl, 'Menu',   'WebHtmlMenuClass')
+  #CALL (%InitControl, 'Item',   'WebHtmlItemClass')
+  #CALL (%InitControl, 'Image',  'WebHtmlImageClass')
+  #CALL (%InitControl, 'Group',  'WebHtmlGroupClass')
+  #CALL (%InitControl, 'Region', 'WebHtmlRegionClass')
+  #CALL (%InitControl, 'TextButton', 'WebHtmlButtonClass')
+  #CALL (%InitControl, 'ToolButton', 'WebJavaToolButtonClass')
+  #CALL (%InitControl, 'Caption', 'WebCaptionClass')
+  #CALL (%InitControl, 'Toolbar', 'WebToolbarClass')
+  #CALL (%InitControl, 'Menubar', 'WebMenubarClass')
+  #CALL (%InitControl, 'ClientArea',  'WebClientAreaClass')
+  #CALL (%InitControl, 'Close',  'WebCloseButtonClass')
+  #CALL (%InitControl, 'Progress', 'WebWhat')
+  #CALL (%InitControl, 'Panel', 'WebWhat')
+  #CALL (%InitControl, 'Box', 'WebWhat')
+  #CALL (%InitControl, 'Line', 'WebWhat')
+  #CALL (%InitControl, 'Ellipse', 'WebWhat')
+#!
+#!
+#GROUP (%InitControl, %Type, %Class)
+  #ADD (%AppControlType, %Type)
+  #SET (%AppControlTypeClassDefault, %Class)
+  #SET (%AppControlTypeClassDefault, 'WbControlHtmlProperties')
+  #!IF (NOT %AppSetControlTypeClass)
+    #SET (%AppControlTypeClassName, %AppControlTypeClassDefault)
+  #!END
+#!
+#!
+#GROUP (%Quote, %Text)
+#IF (SUB(%Text, 1, 1) = '!')
+  #RETURN (SUB(%Text, 2))
+#END
+#RETURN '''' & QUOTE(%Text) & ''''
+#!
+#!
+#GROUP (%HasGoodStdAttr), AUTO
+#EQUATE (%StdAttr, UPPER(EXTRACT(%ControlUnsplitStatement, 'STD', 1)))
+#IF ((%StdAttr='') OR (%StdAttr='STD:CLOSE'))
+  #RETURN %True
+#END
+#RETURN %False
+#!
+#!
+#GROUP (%IsFrame)
+#IF (EXTRACT(%WindowStatement, 'APPLICATION'))
+  #RETURN (%True)
+#END
+#RETURN (%False)
+#!
+#!
+#GROUP(%HasQBE)
+  #RETURN(%FindControlTemplate('BrowseQBEButton(ABC)'))
+#!
+#!
+#GROUP (%NeedControl)
+#IF (%CtlStringDynamic OR %CtlStringAutoSpot OR %CtlSetJavaDropList OR %CtlDynamicUpdateImage)
+  #RETURN (%True)
+#END
+#CASE (%ControlType)
+#OF ('BUTTON')
+  #FOR (%ControlEvent)
+    #IF (%CtlSetEventAction)
+      #RETURN %True
+    #END
+  #END
+#END
+#RETURN %False
+#!
+#!
+#GROUP (%GetClassName, %WhichType, %WhichControl='')
+#IF (%WhichControl)
+  #!FIX (%Control, %WhichControl)
+  #!IF (%CtlSetClass)
+    !#RETURN %CtlClassName
+  #!END
+  #IF (%CtlStringDynamic OR %CtlStringAutoSpot)
+    #RETURN 'WebJavaStringClass'
+  #END
+  #IF (%CtlSetJavaDropList)
+    #RETURN 'WebJavaListClass'
+  #END
+  #IF (%CtlDynamicUpdateImage)
+    #RETURN 'WebJavaImageClass'
+  #END
+  #CASE (%ControlType)
+  #OF ('STRING')
+    #IF (SUB(%ControlParameter,1,1)='@')
+      #RETURN 'WebJavaStringClass'
+    #END
+  #OF ('BUTTON')
+    #IF (%CtlSetEventAction)
+      #RETURN 'WebJavaButtonClass'
+    #END
+  #END
+#END
+#FIX (%AppControlType, %WhichType)
+#IF (%AppControlType)
+  #IF (%AppSetControlTypeClass)
+    #RETURN %AppControlTypeClassName
+  #END
+  #RETURN %AppControlTypeClassDefault
+#END
+#SET (%WhichType, UPPER(%WhichType))
+#FOR (%AppControlType), WHERE(UPPER(%AppControlType) = %WhichType)
+  #IF (%AppSetControlTypeClass)
+    #RETURN %AppControlTypeClassName
+  #END
+  #RETURN %AppControlTypeClassDefault
+#END
+#!
+#!
+#GROUP (%GetControlInstanceName)
+#RETURN 'Web:' & SUB(%ControlFeq(), 2)
+#!
+#!
+#GROUP (%GetIsStandardToolbarButton)
+#RETURN (SUB(UPPER(%Control), 1, 8)='?TOOLBAR')
+#!
+#!
+#GROUP (%ControlFeq)
+#IF (%Control)
+  #RETURN (%Control)
+#END
+#RETURN ('?Anon:' & INSTANCE(%Control))
+#!
+#!
+#GROUP (%OutputClassInclude),AUTO
+  #DECLARE(%AppControlIncludes),UNIQUE
+  #FOR(%AppControlType), WHERE(%AppSetControlTypeClass)
+    #CALL(%FixClassName(ABC), %AppControlType)
+    #IF(UPPER(%pClassName) = UPPER(%AppControlType))
+      #ADD(%AppControlIncludes, %pClassIncFile)
+    #ENDIF
+  #ENDFOR
+  #FOR(%AppControlIncludes)
+INCLUDE('%(UPPER(CLIP(%AppControlIncludes)))')
+  #ENDFOR
+#!
+#!
+#GROUP (%CalculateFrameControls),AUTO
+#PURGE (%FrameControlInstance)
+#PURGE (%FrameControlCopyCode)
+#EQUATE (%DoMenuCopy, %MenuCopy)
+#EQUATE (%DoMenuCopyCode, NOT %MenuIgnoreCode)
+#IF (%DoMenuCopy = 'Default')
+  #SET (%DoMenuCopy, %AppMenuCopy)
+  #SET (%DoMenuCopyCode, NOT %AppMenuIgnoreCode)
+#END
+#IF (%DoMenuCopy <> 'None')
+  #FOR (%Control), WHERE(%ControlMenu)
+    #IF (%HasGoodStdAttr() AND NOT EXTRACT(%ControlUnsplitStatement, 'SEPARATOR'))
+      #IF (%DoMenuCopy = 'Some')
+        #FIX (%FrameMenu, %Control)
+        #IF (%MenuControlIgnore)
+          #CYCLE
+        #END
+        #ADD (%FrameControlInstance, INSTANCE(%Control))
+        #SET (%FrameControlCopyCode, NOT %MenuControlIgnoreCode)
+      #ELSE
+        #ADD (%FrameControlInstance, INSTANCE(%Control))
+        #SET (%FrameControlCopyCode, %DoMenuCopyCode)
+      #END
+    #END
+  #END
+#END
+#EQUATE (%DoToolCopy, %ToolCopy)
+#EQUATE (%DoToolCopyCode, NOT %ToolIgnoreCode)
+#IF (%DoToolCopy = 'Default')
+  #SET (%DoToolCopy, %AppToolCopy)
+  #SET (%DoToolCopyCode, NOT %AppToolIgnoreCode)
+#END
+#IF (%DoToolCopy <> 'None')
+  #FOR (%Control), WHERE(%ControlTool AND (%ControlType='BUTTON'))
+    #IF (%HasGoodStdAttr())
+      #CASE (UPPER(%Control))
+      #OF ('?TBARBRWHISTORY')
+      #OF ('?TOOLBAR:HISTORY')
+      #ELSE
+        #IF (%DoToolCopy = 'Standard')
+          #IF (%GetIsStandardToolbarButton())
+            #ADD (%FrameControlInstance, INSTANCE(%Control))
+          #END
+        #ELSIF (%DoToolCopy = 'Some')
+          #FIX (%FrameTool, %Control)
+          #IF (%ToolControlIgnore)
+            #CYCLE
+          #END
+          #ADD (%FrameControlInstance, INSTANCE(%Control))
+          #SET (%FrameControlCopyCode, NOT %ToolControlIgnoreCode)
+        #ELSE
+          #ADD (%FrameControlInstance, INSTANCE(%Control))
+          #SET (%FrameControlCopyCode, %DoToolCopyCode)
+        #END
+      #END
+    #END
+  #END
+#END
+#GROUP (%SingleControlHandling)
+  #SUSPEND
+#?OF %(%ControlFeq())
+  #EMBED(%ControlPreEventCaseHandling,'Control Handling, before event handling'),%Control
+  #?CASE EVENT()
+    #FOR(%ControlEvent)
+      #SUSPEND
+  #?OF EVENT:%ControlEvent
+    #EMBED(%ControlPreEventHandling,'Control Event Handling, before generated code'),%Control,%ControlEvent
+    #INSERT(%FieldTemplateStandardHandling(Clarion))
+    #EMBED(%ControlEventHandling,'Internal Control Event Handling'),%Control,%ControlEvent,HIDE
+    #EMBED(%ControlPostEventHandling,'Control Event Handling, after generated code'),%Control,%ControlEvent
+      #IF (UPPER(EXTRACT(%ControlUnsplitStatement, 'STD', 1))= 'STD:CLOSE')
+    WebServer.Quit
+      #END
+      #RESUME
+    #ENDFOR
+    #SUSPEND
+  #?ELSE
+    #EMBED(%ControlOtherEventHandling,'Other Control Event Handling'),%Control
+    #RESUME
+  #?END
+  #EMBED(%ControlPostEventCaseHandling,'Control Handling, after event handling'),%Control
+  #RESUME
+#!
+#!
+#GROUP (%SplitTextIntoLines, %Text, *%Target)
+#EQUATE (%Index, 1)
+#DECLARE (%Next)
+#LOOP
+  #SET (%Next, INSTRING('<13><10>', %Text, 1, %Index))
+  #IF (%Next = 0)
+    #BREAK
+  #END
+  #ADD(%Target, SUB(%Text, %Index, %Next-%Index))
+  #SET (%Index, %Next + 2)
+#END
+#IF (%Index < LEN(%Text))
+  #ADD(%Target, SUB(%Text, %Index))
+#END
+#!
+#!
+#GROUP (%GenerateLiteralHtml, %Text)
+#DECLARE (%Lines), MULTI
+#CALL (%SplitTextIntoLines, %Text, %Lines)
+#FOR (%Lines)
+Target.Writeln('%'Lines')
+#END
+#!
+#!
+#!
+#!
+#!
+#!
+#!
+#!
+#GROUP (%GetBoolText, %Expr)
+#IF (%Expr)
+  #RETURN 'TRUE'
+#END
+#RETURN 'FALSE'
+#!
+#!
+#GROUP(%WriteBaseMethods),AUTO
+#MESSAGE('Generating Module:    ' & %ICFileName, 1)
+  #CREATE(%BuildFile)
+  MEMBER
+#if (0)
+_ABCDllMode_        EQUATE(0)
+
+  INCLUDE('WBSTD.EQU')
+  INCLUDE('ABLWIN.INC')
+  INCLUDE('ABLPROP.INC')
+  #INSERT(%OutputClassInclude)
+
+  MAP
+    WebControlFactory(SIGNED Feq),*WebControlClass
+  END
+
+WebControlFactory PROCEDURE(SIGNED Type)
+
+NewControl      &WebControlClass           ! Initialised to NULL
+
+  CODE
+  CASE (Type)
+  OF 0
+  OROF 23
+#FOR (%AppControlType)
+  OF CREATE:%AppControlType
+  #IF (%AppSetControlTypeClass)
+    NewControl &= NEW %AppControlTypeClassName
+  #ELSE
+    NewControl &= NEW %AppControlTypeClassDefault
+  #END
+#END
+  END
+  IF (~NewControl &= NULL)
+    NewControl.IsDynamic = TRUE
+  END
+  RETURN NewControl
+#endif
+  #CLOSE(%BuildFile)
+  #REPLACE(%ICFileName,%BuildFile)
+#!
+#!
+#GROUP (%InitClassQueue)
+#FREE (%AppClassQueue)
+#ADD (%AppClassQueue, 'WbControlHtmlProperties')
+#RETURN (%True)
+#!!!GH!!!
+#CASE (%ControlType)
+#OF ('PROMPT')
+  #ADD (%AppClassQueue, 'WebHtmlPromptClass')
+#OF ('STRING')
+  #ADD (%AppClassQueue, 'WebHtmlStringClass')
+  #ADD (%AppClassQueue, 'WebJavaStringClass')
+#OF ('ENTRY')
+#OROF ('COMBO')
+#OROF ('SPIN')
+#OROF ('TEXT')
+  #ADD (%AppClassQueue, 'WebHtmlEntryClass')
+  #ADD (%AppClassQueue, 'WebHtmlTextClass')
+  #ADD (%AppClassQueue, 'WebJavaStringClass')
+#OF ('CHECK')
+  #ADD (%AppClassQueue, 'WebHtmlCheckClass')
+#OF ('OPTION')
+  #ADD (%AppClassQueue, 'WebHtmlOptionClass')
+#OF ('RADIO')
+  #ADD (%AppClassQueue, 'WebHtmlRadioClass')
+#OF ('LIST')
+#OROF ('DROPLIST')
+  #ADD (%AppClassQueue, 'WebJavaListClass')
+  #ADD (%AppClassQueue, 'WebHtmlListClass')
+#OF ('SHEET')
+  #ADD (%AppClassQueue, 'WebHtmlSheetClass')
+#OF ('TAB')
+  #ADD (%AppClassQueue, 'WebHtmlTabClass')
+#OF ('BUTTON')
+#OROF ('TEXTBUTTON')
+  #ADD (%AppClassQueue, 'WebJavaButtonClass')
+  #ADD (%AppClassQueue, 'WebHtmlButtonClass')
+#OF ('MENU')
+  #ADD (%AppClassQueue, 'WebHtmlMenuClass')
+#OF ('ITEM')
+  #ADD (%AppClassQueue, 'WebHtmlItemClass')
+#OF ('IMAGE')
+  #ADD (%AppClassQueue, 'WebHtmlImageClass')
+  #ADD (%AppClassQueue, 'WebJavaImageClass')
+#OF ('GROUP')
+  #ADD (%AppClassQueue, 'WebHtmlGroupClass')
+#OF ('REGION')
+  #ADD (%AppClassQueue, 'WebHtmlRegionClass')
+#END
+#RETURN (%True)
+#!
+#!
+#GROUP (%InitFrameControls),AUTO,PRESERVE
+#IF (EXTRACT(%WindowStatement, 'APPLICATION'))
+  #!
+  #! Need to be careful when building the list of frame controls that we don't
+  #! delete existing entries - otherwise dependant prompts will be freed
+  #!
+  #FOR (%Control), WHERE((%ControlType = 'ITEM') AND NOT EXTRACT(%ControlUnsplitStatement, 'SEPARATOR'))
+    #IF (%HasGoodStdAttr())
+      #ADD (%FrameMenu, %Control)
+    #END
+  #END
+  #FOR (%Control), WHERE(%ControlType = 'BUTTON')
+    #IF (%HasGoodStdAttr())
+      #ADD (%FrameTool, %Control)
+    #END
+  #END
+  #FOR (%FrameMenu), WHERE(NOT INLIST(%FrameMenu, %Control))
+    #DELETE (%FrameMenu)
+  #END
+  #FOR (%FrameTool), WHERE(NOT INLIST(%FrameTool, %Control))
+    #DELETE (%FrameTool)
+  #END
+#ELSE
+  #FREE (%FrameMenu)
+  #FREE (%FrameTool)
+#END
+#!
+#!
+#GROUP (%CascadeGlobalOption)
+#CALL (%CascadeWindowOption)
+#FOR (%Control),WHERE(%Control)
+  #CALL (%CascadeControlOption)
+#END
+#!
+#!
+#GROUP (%CascadeWindowOption)
+#IF (NOT %WinOverrideSkeleton)
+  #SET (%WinSkeletonStyle, %AppSkeletonStyle)
+  #SET (%WinSkeletonName, %AppWinSkeletonName)
+  #SET (%WinSkeletonCapabilities, %AppWinSkeletonCapabilities)
+#END
+#IF (NOT %WinOverridePage)
+  #SET (%WinCenterWindow, %AppCenterWindow)
+  #SET (%WinPageBackColor, %AppPageBackColor)
+  #SET (%WinPageBackImage, %AppPageBackImage)
+#END
+#IF (NOT %WinOverrideWindow)
+  #SET (%WinWindowBackColor, %AppWindowBackColor)
+  #SET (%WinWindowBackImage, %AppWindowBackImage)
+  #SET (%WinWindowBorderWidth, %AppWindowBorderWidth)
+#END
+#IF (NOT %WinOverrideHelp)
+  #SET (%WinHelpRelative, %AppHelpRelative)
+  #SET (%WinHelpDocument, %AppHelpDocument)
+  #SET (%WinHelpURL, %AppHelpURL)
+  #SET (%WinHelpStyle, %AppHelpStyle)
+#END
+#IF (NOT %WinOverrideCaption)
+  #SET (%WinDisplayCaption, %AppDisplayCaption)
+  #SET (%WinCaptionBackColor, %AppCaptionBackColor)
+  #SET (%WinCaptionBackImage, %AppCaptionBackImage)
+  #SET (%WinCaptionAlign, %AppCaptionAlign)
+  #SET (%WinCaptionFontFace, %AppCaptionFontFace)
+  #SET (%WinCaptionFontSize, %AppCaptionFontSize)
+  #SET (%WinCaptionFontColor, %AppCaptionFontColor)
+#END
+#IF (NOT %WinOverrideMenu)
+  #SET (%WinMenuBackColor, %AppMenuBackColor)
+  #SET (%WinMenuBackImage, %AppMenuBackImage)
+  #SET (%WinMenuAlign, %AppMenuAlign)
+#END
+#IF (NOT %WinOverrideToolbar)
+  #SET (%WinToolbarBackColor, %AppToolbarBackColor)
+  #SET (%WinToolbarBackImage, %AppToolbarBackImage)
+#END
+#IF (NOT %WinOverrideClose)
+  #SET (%WinToolbarCloseImage, %AppToolbarCloseImage)
+#END
+#IF (NOT %WinOverrideClientArea)
+  #SET (%WinClientAreaBackColor, %AppClientAreaBackColor)
+  #SET (%WinClientAreaBackImage, %AppClientAreaBackImage)
+#END
+#IF (NOT %WinSetAppMenubar)
+  #SET (%MenuCopy, %AppMenuCopy)
+  #SET (%MenuIgnoreCode, %AppMenuIgnoreCode)
+#END
+#IF (NOT %WinSetAppToolbar)
+  #SET (%ToolCopy, %AppToolCopy)
+  #SET (%ToolIgnoreCode, %AppToolIgnoreCode)
+#END
+#IF (NOT %WinSetOnDisabled)
+  #SET (%WinOnDisabled, %AppOnDisabled)
+#END
+#IF (NOT %WinSetJavaDropList)
+  #SET (%WinJavaDropList, %AppJavaDropList)
+#END
+#IF (NOT %WinSetSheetBorderWidth)
+  #SET (%WinSheetBorderWidth, %AppSheetBorderWidth)
+#END
+#IF (NOT %WinSetOptionBorderWidth)
+  #SET (%WinOptionBorderWidth, %AppOptionBorderWidth)
+#END
+#IF (NOT %WinSetGroupBorderWidth)
+  #SET (%WinGroupBorderWidth, %AppGroupBorderWidth)
+#END
+#IF (NOT %WinOverrideFormat)
+  #SET (%WinPixelsPerCharX, %AppPixelsPerCharX)
+  #SET (%WinPixelsPerCharY, %AppPixelsPerCharY)
+  #SET (%WinGridSnapDeltaX, %AppGridSnapDeltaX)
+  #SET (%WinGridSnapDeltaY, %AppGridSnapDeltaY)
+#END
+#!
+#!
+#GROUP (%CascadeControlOption)
+#IF (NOT %CtlSetOnDisabled)
+  #SET (%CtlOnDisabled, %WinOnDisabled)
+#END
+#IF (NOT %CtlSetJavaDropList)
+  #SET (%CtlJavaDropList, %WinJavaDropList)
+#END
+#IF (NOT %CtlSetBorderWidth)
+  #CASE (%ControlType)
+  #OF ('SHEET')
+     #SET (%CtlBorderWidth, %WinSheetBorderWidth)
+  #OF ('OPTION')
+     #SET (%CtlBorderWidth, %WinOptionBorderWidth)
+  #OF ('GROUP')
+     #SET (%CtlBorderWidth, %WinGroupBorderWidth)
+  #END
+#END
+#!
+#!
+#GROUP (%ICClassDisplayText)
+#IF (%AppSetControlTypeClass)
+  #RETURN %AppControlType & ' - ' & %AppControlTypeClassName
+#END
+#RETURN %AppControlType & ' - Default (' & %AppControlTypeClassDefault & ')'
+#!
+#!
+#GROUP (%ICEventDisplayText)
+#IF (%CtlSetEventAction)
+  #RETURN (%ControlEvent & ' - Update:' & %CtlEventAction)
+#END
+#RETURN (%ControlEvent)
+#!
+#!
+#GROUP (%OnCaptionChange)
+#CASE (%WinDisplayCaption3)
+#OF ('Default')
+ #SET (%WinDisplayCaption, %DisplayCaption)
+#OF ('Yes')
+ #SET (%WinDisplayCaption, %True)
+#ELSE
+ #SET (%WinDisplayCaption, %False)
+#END
+#RETURN (%False)
+#!
+#!
+#GROUP (%FirstLine, %Text)
+#DECLARE (%Next)
+#SET (%Next, INSTRING('<13><10>', %Text, 1, 1))
+#IF (%Next = 0)
+  #RETURN %Text
+#END
+#RETURN (SUB(%Text, 1, %Next-1) & '...')
+#!
+#!
+#GROUP (%ValidateHtmlEmbedPoint)
+#WHERE (%WebBeforeControl, %WebAfterControl)
+#WHERE (%WebTitleContentsVirtual, %WebBodyHeaderVirtual, %WebBodyFooterVirtual)
+#WHERE (%WebMetaTagsVirtual, %WebHeadFooterVirtual, %WebBeforeBodyVirtual)
+#WHERE (%WebFormHeaderVirtual, %WebFormFooterVirtual, %WebHtmlFooterVirtual)
+#REJECT
+#!
+#!
+#GROUP(%HtmlPreviewHookData)
+HtmlPreview          WebReportClass
+#!
+#!
+#GROUP(%HtmlPreviewHookStart)
+IF WebServer.IsEnabled()
+  IF ~SELF.Preview &= NULL AND SELF.Response = RequestCompleted
+    ENDPAGE(SELF.Report)
+    HtmlPreview.Init( WebServer, HtmlManager, SELF.PreviewQueue )
+    HtmlPreview.Preview
+    HtmlPreview.Kill
+    FREE(SELF.PreviewQueue)
+  END
+ELSE
+  #INDENT(2)
+#!
+#!
+#GROUP(%HtmlPreviewHookEnd)
+END
+  #INDENT(-2)
+#!
+#GROUP(%ProcedureHasWebWindow)
+  #IF (%WinProgressTimerSet() OR (%ProcedureTemplate <> 'Report') OR %WinProgressTimer)
+    #RETURN %True
+  #ELSE
+    #RETURN %False
+  #END
+#!
+#GROUP(%SetWinProgressTimer)
+  #CALL(%WinProgressTimerSet),%WinProgressTimer
+  #RETURN %WinProgressTimer
+#!
+#GROUP(%WinProgressTimerSet)
+  #RETURN ((%ProcedureTemplate='Process') OR ((%ProcedureTemplate='Report') AND (INLIST('PauseButton(ABC)', %ActiveTemplate))))
+#!
+#GROUP(%WebWindowInit, %WebWindowManagerName, %WebWindowName)
+  #DECLARE (%InstanceName)
+  #IF (%WinDisableFromBrowser)
+IF (WebServer.IsEnabled())
+  POST(EVENT:CloseWindow)
+END
+  #ENDIF
+IF (WebServer.IsEnabled())
+  %WebWindowName.Init()
+  %WebWindowManagerName.Init(WebServer, %WebWindowName.IPageCreator, %WebWindowName.IWebResponseProcessor, 0{PROP:text} & ' (%'Procedure)')
+  SELF.AddItem(%WebWindowName.WindowComponent)
+  SELF.AddItem(%WebWindowManagerName.WindowComponent)
+END
+#!
+#!
+#GROUP(%WebWindowInitMethod, %IsMainWindow),AUTO
+#DECLARE(%InstanceName)
+SELF.SetFormatOptions(%WinGridSnapDeltaX, %WinGridSnapDeltaY, %WinPixelsPerCharX, %WinPixelsPerCharY)
+  #IF (%IsMainWindow)
+    #EQUATE(%Pres,%ClassItem)
+    #!
+    #CALL(%SetClassItem(ABC), 'WebWindowProperty')
+    #IF(ITEMS(%ClassLines))
+%ThisObjectName.Init()
+SELF.AddControl(%ThisObjectName.IControlToHtml)
+    #ENDIF
+    #!
+    #FOR(%Control),WHERE(%ControlValidForOverride())
+      #CALL(%SetClassItem(ABC), %Control)
+      #IF(ITEMS(%ClassLines) AND %ActualDefaultBaseClassType <> %HTMLGridManager)
+%ThisObjectName.Init(%Control, FEQ:Unknown)
+SELF.AddControl(%ThisObjectName.IControlToHtml)
+      #ENDIF
+    #ENDFOR
+    #!
+    #CALL(%SetClassItem(ABC), %Pres)
+  #ENDIF
+#!
+#!
+#GROUP(%WebWindowInitFrame, %IsMainWindow),AUTO
+  #IF (%IsFrame())
+SetWebActiveFrame(%(%GetObjName('WebFrameManager')))
+  #ELSIF (EXTRACT(%WindowStatement,'MDI') AND (%ProcedureTemplate<>'Splash'))
+    #EQUATE (%MergeMenu, %GetBoolText(%WinMergeMenu AND NOT EXTRACT(%MenubarStatement, 'NOMERGE')))
+    #EQUATE (%MergeTool, %GetBoolText(%WinMergeTool AND NOT EXTRACT(%ToolbarStatement, 'NOMERGE')))
+IF (WebServer.IsEnabled())
+  Web:CurFrame &= GetWebActiveFrame()
+  Web:CurFrame.CopyControlsToWindow(%MergeMenu, %MergeTool)
+END
+  #ENDIF
+#!
+#!
+#GROUP(%WebWindowManagerInitMethod),AUTO
+  #IF (%WinAuthorize)
+SELF.SetPassword(%(%Quote(%WinAuthorizePassword)), %(%GetBoolText(%WinAuthorizeCaseSensitive)))
+  #END
+  #IF (%WinSecure)
+SELF.IsSecure = True
+  #END
+#!
+#!
+#GROUP(%GetObjName, %Tag),AUTO
+  #EQUATE(%Pres, %ClassItem)
+  #DECLARE(%RVal)
+  #CALL(%SetClassItem(ABC), %Tag)
+  #SET(%RVal, %ThisObjectName)
+  #CALL(%SetClassItem(ABC), %Pres)
+  #RETURN(%RVal)
+#!
+#!
+#GROUP(%WebWindowKill)
+  #IF (%IsFrame())
+SetWebActiveFrame()
+  #END
+IF (WebServer.IsEnabled())
+  POST(EVENT:NewPage)
+END
+#!
+#!
+#GROUP(%FindControlTemplate, %CTName),PRESERVE
+  #FIX(%ActiveTemplate, %CTName)
+  #IF (%ActiveTemplate = %CTName)
+    #RETURN %True
+  #ELSE
+    #RETURN %False
+  #ENDIF
+#!
+#!
+#GROUP(%CheckQBEList),PRESERVE
+  #FIX(%ActiveTemplate, 'BrowseQBEButton(ABC)')
+  #IF (%ActiveTemplate='BrowseQBEButton(ABC)')
+    #FOR (%ActiveTemplateInstance)
+      #CALL(%QBEIsList)
+    #ENDFOR
+  #ENDIF
+#!
+#!
+#GROUP(%QBEIsList),AUTO
+  #ALIAS(%IsList,%Interface,%ActiveTemplateInstance)
+  #IF (%IsList='LIST')
+    #ERROR ('Internet templates cannot use the QBE List interface since it used EIP. Procedure: '&%Procedure)
+  #ENDIF
+#!
+#!
+#!
+#GROUP(%BaseClassToUse),AUTO
+#DECLARE(%RVal)
+#CALL(%BaseClassToUse(ABC)),%RVal
+#RETURN(%RVal)
+#!
+#!
+#!
+#!
+#GROUP(%FixBaseClassToUse, %FixTo),AUTO
+#DECLARE(%Rval)
+#CALL(%FixBaseClassToUse(ABC), %FixTo),%RVal
+#RETURN(%RVal)
+#!
+#!
+#GROUP(%FixClassName, %ToUse),AUTO
+#DECLARE(%Rval)
+#CALL(%FixClassName(ABC), %ToUse),%RVal
+#RETURN(%RVal)
+#!
+#!
+#GROUP(%MethodEmbedPointValid, %MustBeVirtual = %True),AUTO
+#DECLARE(%RVal)
+#CALL(%MethodEmbedPointValid(ABC), %MustBeVirtual),%RVal
+#RETURN(%RVal)
+#!
+#!
+#GROUP(%ParentCallValid),AUTO
+#DECLARE(%RVal)
+#CALL(%ParentCallValid(ABC)),%RVal
+#RETURN(%RVal)
+#!
+#!
+#GROUP(%StripPling, %Txt, %UpperConstant = %False),AUTO
+#DECLARE(%RVal)
+#CALL(%StripPling(ABC), %Txt),%RVal
+#IF(%UpperConstant = %True AND SUB(%Txt, 1, 1) = '''')
+  #SET(%RVal, UPPER(%RVal))
+#ENDIF
+#RETURN(%RVal)
+#!
+#!
+#GROUP(%SetupGlobalObjects)
+  #CALL(%SetClassDefaults(ABC), 'Broker', 'Broker', %BrokerClass)
+  #CALL(%SetClassDefaults(ABC), 'HTMLManager', 'HtmlManager', %HTMLManagerClass)
+  #!CALL(%SetClassDefaults(ABC), 'JavaEventsManager', 'JavaEvents', %JslEventsClass)
+  #CALL(%SetClassDefaults(ABC), 'WebFilesManager', 'WebFilesManager', %WebFilesClass)
+  #CALL(%SetClassDefaults(ABC), 'WebServer', 'WebServer', %WebServerClass)
+  #CALL(%SetClassDefaults(ABC), 'ShutdownManager', 'ShutDownManager', %ShutDownClass)
+  #CALL(%SetClassDefaults(ABC), 'CookieManager', 'INIMgr', %CookieClass)
+  #CALL(%SetClassDefaults(ABC), 'WebFileAccess', 'WebFileAccess', %WebFileAccess)
+#!
+#!
+#GROUP(%ValidStringField, %aFile, %Fld),PRESERVE
+  #FIX(%File, %aFile)
+  #IF(%File = %aFile)
+    #FIX(%Field, %Fld)
+    #IF(%Field = %Fld AND (%FieldType = 'STRING' OR %FieldType = 'PSTRING' OR %FieldType = 'CSTRING'))
+      #RETURN(%True)
+    #ENDIF
+  #ENDIF
+  #RETURN(%False)
+#!
+#!
+#GROUP(%ControlValidForOverride),AUTO
+  #RETURN(%Control AND %GetClassName(%ControlType))
+#!
+#!
+#GROUP(%QueryGenerateClass, %Tag, %ClassComment = '', %AsType = %False)
+  #ASSERT(%Tag <> '', '%QueryGenerateClass: object Tag is blank!')
+  #CALL(%SetClassItem(ABC), %Tag)
+  #IF(ITEMS(%ClassLines) OR NOT %UseDefaultABCBaseClass OR %ActualDefaultBaseClassType = %HTMLGridManager)
+    #CALL(%GenerateClassDefinition(ABC), %ClassLines, %ClassComment, %AsType)
+  #ENDIF
+#!
+#!
+#GROUP(%PrepareProcedureClassDefaults)
+#CALL(%SetClassDefaults(ABC), 'WebWindowManager', 'WebWindowManager', %WebWindowManagerClass)
+#CALL(%SetClassDefaults(ABC), 'WebWindow', 'WebWindow', %WebWindowClass)
+#CALL(%SetClassDefaults(ABC), 'WebWindowProperty', 'WebWindowProperty', %WebWindowPropertyClass)
+#CALL(%SetClassDefaults(ABC), 'WebFrameManager', 'WebFrame', %WebFrameClass)
+#CALL(%SetClassDefaults(ABC), 'QBEWebWindowManager', 'QBEWebWindowManager', %WebWindowManagerClass)
+#CALL(%SetClassDefaults(ABC), 'QBEWebWindow', 'QBEWebWindow', %WebWindowClass)
+#!
+#!
+#GROUP(%GetObjectName,%Flag,%Instance=0),AUTO
+#DECLARE (%RetValue)
+#CALL (%GetObjectName(ABC),%Flag,%Instance),%RetValue
+#RETURN (%RetValue)
+#!
+#!
+#! This group is here to apply changes to web prompts if certain extensions
+#! are present
+#GROUP(%AdaptToExistingExtensions)
+#FOR (%ActiveTemplate)
+  #FOR (%ActiveTemplateInstance)
+    #CASE (%ActiveTemplate)
+    #OF ('BrowseToolbarControl(ABC)')
+      #CALL (%AdaptToBrowseToolbar)
+    #END
+  #ENDFOR
+#ENDFOR
+#!
+#!
+#GROUP(%AdaptToBrowseToolbar),AUTO
+#!Find the browse control, and override the
+#FIND (%ControlInstance,%ActiveTemplateParentInstance,%Control)
+#CALL (%ChangeControlProperty,'NavigationControls','Bool','false')
+#!
+#! If the property exists leave it alone, otherwise add it...
+#GROUP(%ChangeControlProperty,%Name,%Type,%Value)
+#EQUATE(%Max,0)
+#FOR(%CtlProperty)
+  #IF (%CtlPropertyName=%Name)
+    #RETURN
+  #ENDIF
+  #IF (%CtlProperty>%Max)
+    #SET(%Max,%CtlProperty)
+  #ENDIF
+#ENDFOR
+#ADD(%CtlProperty,%Max+1)
+#SET(%CtlPropertyName,%Name)
+#SET(%CtlPropertyType,%Type)
+#SET(%CtlPropertyValue,%Value)
+#!
+#!

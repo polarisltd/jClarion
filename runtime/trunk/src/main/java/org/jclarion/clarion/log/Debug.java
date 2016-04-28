@@ -21,7 +21,8 @@ public class Debug
     @SuppressWarnings("deprecation")
     public Debug()
     {
-        Properties p = new Properties();
+        System.out.println("*** Enabling debug!");
+    	Properties p = new Properties();
         p.setProperty("handlers","java.util.logging.ConsoleHandler");
         p.setProperty(".level","INFO");
         p.setProperty("org.jclarion.level","FINEST");
@@ -31,7 +32,7 @@ public class Debug
         SharedOutputStream sos = new SharedOutputStream();
         p.save(sos,"temp");
         try {
-            LogManager.getLogManager().readConfiguration(sos.getInputStream());
+            LogManager.getLogManager().readConfiguration(sos.getInputStream()); // first we create logger config file and then write it out!!
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (IOException e) {

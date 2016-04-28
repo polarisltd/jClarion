@@ -1,0 +1,57 @@
+!ABCIncludeFile(LAY)
+
+OMIT('_EndOfInclude_',_LayBuildInterface_)
+_LayBuildInterface_ EQUATE(1)
+
+  INCLUDE('IBCBASE.INT'),ONCE
+  INCLUDE('LAYVALUE.INT'),ONCE
+
+SkeletonElementId       EQUATE(LONG)
+
+!!-- Interfaces that are implemented by the glueing code --
+
+ISkeletonPageBuilder    INTERFACE(IInterface)
+AddElement                PROCEDURE(IHtmlElementProperties properties, SkeletonElementId Container),SkeletonElementId
+ClearContents             PROCEDURE()
+GenerateSkeleton          PROCEDURE(STRING Filename, SkeletonElementId id),BOOL,PROC
+Init                      PROCEDURE(CONST * CSTRING phase, CBOOL IsFinal)
+RemoveElement             PROCEDURE(SkeletonElementId id)
+                        END
+
+!!-- Interfaces required by the gluing code --
+
+IProperties             INTERFACE
+GetProperty               PROCEDURE(ASTRING name, UNSIGNED idx1=0, UNSIGNED idx2=0),*IValue
+SetProperty               PROCEDURE(ASTRING name, STRING value)
+                        END
+
+                        ITEMIZE,PRE(SkeletonAttr)
+Capabilities              EQUATE
+Control                   EQUATE
+Name                      EQUATE
+Theme                     EQUATE
+Style                     EQUATE(SkeletonAttr:Theme)    ! backward compatibility
+Type                      EQUATE
+                        END
+
+IHtmlElementProperties  INTERFACE(IProperties)
+GetExpandNow              PROCEDURE(),CBOOL
+GetName                   PROCEDURE(),STRING
+GetSkeletonAttr           PROCEDURE(SIGNED whichAttr),STRING
+GetTargetZone             PROCEDURE(),STRING
+GetPosition               PROCEDURE(* SIGNED x, * SIGNED y, * SIGNED w, * SIGNED h, <* SIGNED nowidth>, <* SIGNED noheight>)
+IsHidden                  PROCEDURE(),BOOL
+                        END
+
+ MAP
+   MODULE('LAYBUILD.CLW')
+CreatePageBuilder       PROCEDURE(),*ISkeletonPageBuilder
+AddSkeletonDirectory    PROCEDURE(STRING rootDir)
+   END
+   MODULE('LAYUTIL')
+GetSkeletonThemes       PROCEDURE(CONST * CSTRING skeletonDir),STRING,NAME('_GetSkeletonThemes@FPCc')
+   END
+ END
+
+
+_EndOfInclude_

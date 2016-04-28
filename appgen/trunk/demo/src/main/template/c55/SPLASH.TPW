@@ -1,0 +1,97 @@
+#PROCEDURE(Splash,'Splash Window'),WINDOW,HLP('~TPLProcSplash')
+#LOCALDATA
+LocalRequest         LONG
+OriginalRequest      LONG
+LocalResponse        LONG
+FilesOpened          LONG
+WindowOpened         LONG
+WindowInitialized    LONG
+ForceRefresh         LONG
+#ENDLOCALDATA
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','Refresh Window ROUTINE, before lookups')
+#CLASS('After Lookups','Refresh Window ROUTINE, after lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#PROMPT('P&arameters:',@s255),%Parameters
+#ENABLE(%ProcedureType='FUNCTION')
+  #PROMPT('Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#PROMPT('Window Operation Mode:',DROP('Use WINDOW setting|Normal|MDI|Modal')),%WindowOperationMode
+#BOXED('Splash Window Closing')
+  #DISPLAY('The Splash Window will automatically close when the user makes a selection on the frame. You can customize any other ways to close the window.'),AT(10,,150,32)
+  #PROMPT('Display Time (in seconds):',SPIN(@N3,0,999,1)),%DisplayTime,PROMPTAT(10)
+  #PROMPT('Close when the user clicks on the splash window.',CHECK),%CloseOnClick,AT(10),DEFAULT(1)
+  #ENABLE(%INIActive)
+    #BOXED('INI File Settings')
+      #PROMPT('Save and Restore Window Location',CHECK),%INISaveWindow,DEFAULT(1),AT(10,,150)
+    #ENDBOXED
+  #ENDENABLE
+#ENDBOXED
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#AT(%AfterWindowOpening)
+  #IF(%DisplayTime)
+  #SET(%ValueConstruct,%DisplayTime * 100)
+TARGET{Prop:Timer} = %ValueConstruct
+  #ENDIF
+  #IF(%CloseOnClick)
+TARGET{Prop:Alrt,255} = MouseLeft
+TARGET{Prop:Alrt,254} = MouseLeft2
+TARGET{Prop:Alrt,253} = MouseRight
+  #ENDIF
+#ENDAT
+#AT(%PostWindowEventHandling,'TIMER')
+  #IF(%DisplayTime)
+POST(Event:CloseWindow)
+  #ENDIF
+#ENDAT
+#AT(%PostWindowEventHandling,'ALERTKEY')
+  #IF(%CloseOnClick)
+CASE KEYCODE()
+OF MouseLeft
+OROF MouseLeft2
+OROF MouseRight
+  POST(Event:CloseWindow)
+END
+  #ENDIF
+#ENDAT
+#AT(%WindowOtherEventHandling)
+  #IF(%DisplayTime)
+IF EVENT() = Event:Timer
+  POST(Event:CloseWindow)
+END
+  #ENDIF
+  #IF(%CloseOnClick)
+IF EVENT() = Event:AlertKey
+  CASE KEYCODE()
+  OF MouseLeft
+  OROF MouseLeft2
+  OROF MouseRight
+    POST(Event:CloseWindow)
+  END
+END
+  #ENDIF
+#ENDAT
+#INSERT(%StandardWindowCode)
+#!---------------------------------------------------------
+#DEFAULT
+NAME DefaultSplash
+[COMMON]
+DESCRIPTION 'Default Splash Window'
+FROM Clarion Splash
+[PROMPTS]
+%DisplayTime LONG  (5)
+%WindowOperationMode DEFAULT  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+[WINDOW]
+window WINDOW,AT(,,204,94),FONT('MS Sans Serif',8,,FONT:regular),CENTER,GRAY,NOFRAME,MDI
+       PANEL,AT(0,0,204,95),BEVEL(6)
+       PANEL,AT(7,6,191,83),BEVEL(-2,1)
+       STRING('This is your application!'),AT(13,12,182,10),USE(?String2),CENTER,#ORIG(?String2)
+       IMAGE('TopSpeed.WMF'),AT(15,61,178,26),USE(?Image1),#ORIG(?Image1)
+       PANEL,AT(12,33,182,12),BEVEL(-1,1,09H)
+       STRING('Written using Clarion for Windows 2.0'),AT(13,48,182,10),USE(?String1),CENTER,#ORIG(?String1)
+     END
+
+#ENDDEFAULT

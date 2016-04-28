@@ -8,7 +8,7 @@ public class JavaSysConfigTest extends TestCase
 {
 	public void testRead()
 	{
-		assertEquals("Sun Microsystems Inc.",CConfigStore.getProperty("java","specification.vendor","","java-syscfg.properties"));
+		assertEquals("Oracle Corporation",CConfigStore.getProperty("java","specification.vendor","","java-syscfg.properties"));
 		assertEquals("",CConfigStore.getProperty("java","specification.vendorx","","java-syscfg.properties"));
 	}
 

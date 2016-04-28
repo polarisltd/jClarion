@@ -1,0 +1,555 @@
+Document Type: WSE
+item: Global
+  Version=7.0
+  File Checksum=646309025
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=TRUE
+end
+item: Install File
+  Source=C:\Documents and Settings\Administrator\My Documents\Dropbox\C55\Examples\CARDREG\cardreg.EXE
+  Destination=%MAINDIR%\cardreg.EXE
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=TRUE
+end
+item: Install File
+  Source=C:\DOCUME~1\ADMINI~1\MYDOCU~1\DROPBOX\C55\bin\C55RUNX.DLL
+  Destination=%MAINDIR%\C55RUNX.DLL
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=TRUE
+end
+item: Install File
+  Source=C:\DOCUME~1\ADMINI~1\MYDOCU~1\DROPBOX\C55\bin\C55TPSX.DLL
+  Destination=%MAINDIR%\C55TPSX.DLL
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=TRUE
+end
+item: Install File
+  Source=C:\Documents and Settings\Administrator\My Documents\Dropbox\C55\Examples\CARDREG\CARDREG.HLP
+  Destination=%MAINDIR%\CARDREG.HLP
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end
+item: Compiler Variable If
+  Variable=_TRUE_
+  Value=FALSE
+end
+item: Install File
+  Source=
+  Destination=
+  Flags=0000000010000010
+end
+item: Compiler Variable End
+end

@@ -1,0 +1,222 @@
+#CONTROL(BrowseToHTML,'Create a HTML page from a CW browse box'),PROCEDURE,REQ(BrowseBox(Clarion)),HLP('~TPLControlBrowseToHTML')
+ CONTROLS
+   BUTTON('Publish'),USE(?PublishToHTML),TIP('Generate an HTML of listed records'),AT(,,42,12)
+ END
+#BOXED('Browse to HTML')
+  #PROMPT('&Use variable for HTML name',CHECK),%VariableHTMLName,AT(10)
+  #BOXED,WHERE(%VariableHTMLName),AT(,18)
+    #PROMPT('&Default HTML Name:',FIELD),%VarHTMLFileName,REQ
+  #ENDBOXED
+  #BOXED,WHERE(NOT %VariableHTMLName),AT(,18)
+    #PROMPT('&Default HTML Name:',SAVEDIALOG('HTML Files','HTML Files|*.HTM')),%HTMLFileName,DEFAULT('TEMP.HTM'),REQ
+  #ENDBOXED
+  #PROMPT('&Use Grid Lines',CHECK),%HTMLGrid,DEFAULT(1)
+  #ENABLE(%HTMLGrid)
+    #PROMPT('Grid &Line Width:',SPIN(@n1,1,9,1)),%HTMLGridWidth,DEFAULT(1),REQ
+  #ENDENABLE
+  #PROMPT('&HTML Title:',@S80),%HTMLTitle
+  #PROMPT('&Table Heading:',@S80),%HTMLHeading
+  #PROMPT('Background &Graphic',OPENDIALOG('Pick a Graphic','JPEG Files|*.JPG')),%HTMLBackground
+#ENDBOXED
+#ATSTART
+  #DECLARE(%PublishControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #SET(%PublishControl,%Control)
+  #ENDFOR
+#ENDAT
+#AT(%CustomGlobalDeclarations)
+  #FIX(%Driver,'ASCII')
+  #ADD(%UsedDriverDLLs,%DriverDLL)
+  #PROJECT(%DriverLIB)
+  #PROJECT('CWHTML01.ICO')
+  #PROJECT('CWHTML02.ICO')
+  #PROJECT('CWHTML03.ICO')
+  #PROJECT('CWHTML04.ICO')
+  #PROJECT('CWHTML05.ICO')
+  #PROJECT('CWHTML06.ICO')
+  #PROJECT('CWHTML07.ICO')
+  #PROJECT('CWHTML08.ICO')
+  #PROJECT('CWHTML09.ICO')
+  #PROJECT('CWHTML10.ICO')
+  #PROJECT('CWHTML11.ICO')
+  #PROJECT('CWHTML12.ICO')
+  #PROJECT('CWHTML13.ICO')
+  #PROJECT('CWHTML14.ICO')
+  #PROJECT('CWHTML15.ICO')
+#ENDAT
+#AT(%GlobalData)
+  #FIX(%CustomFlags,'CWHTML')
+  #IF(NOT %CustomFlags)
+    #ADD(%CustomFlags,'CWHTML')
+HTMLLineCounter                 LONG
+HTMLRecordsRead                 LONG
+HTMLBuildMode                   BYTE
+HTMLCurrentImage                BYTE
+HTMLOutputFileName              STRING(80)
+HTMLProgressString              STRING(30)
+HTMLOutputFile                  FILE,DRIVER('ASCII'),NAME(HTMLOutputFileName),CREATE
+                                  RECORD,PRE()
+Line                                STRING(255)
+                                  END
+                                END
+
+HTMLPropWindow WINDOW('Generate an HTML document'),AT(,,317,35),FONT('MS Sans Serif',8,,FONT:regular), |
+         CENTER,GRAY
+       BOX,AT(85,2,211,13),USE(?Box1),COLOR(00H)
+       STRING('HTML Name:'),AT(36,4),USE(?HTMLOutputFilePrompt)
+       IMAGE('CWHTML15.ICO'),AT(4,6,25,22),USE(?HTMLImage)
+       STRING(@s80),AT(87,4,206,10),USE(HTMLOutputFileName)
+       BUTTON('...'),AT(297,2,13,13),FONT(,,00H,FONT:bold),USE(?HTMLMoreButton)
+       BUTTON('&Displayed records only'),AT(36,17),USE(?HTMLGenerateDisplayed)
+       BUTTON('&All records'),AT(131,17,83,14),USE(?HTMLGenerateAll)
+       BUTTON('&Cancel'),AT(227,17,83,14),USE(?HTMLCancel)
+       STRING(@s30),AT(36,18,116,10),USE(HTMLProgressString),HIDE
+     END
+  #ENDIF
+#ENDAT
+#AT(%ControlEventHandling,%PublishControl,'Accepted')
+   #IF(%VariableHTMLName)
+HTMLOutputFileName = %VarHTMLFileName
+  #ELSE
+HTMLOutputFileName = CLIP(PATH()) & '\%HTMLFileName'
+  #ENDIF
+OPEN(HTMLPropWindow)
+HTMLRecordsRead = 0
+ACCEPT
+  CASE EVENT()
+  OF Event:Timer
+    DO %InstancePrefix:ReadNextPage
+  OF Event:Accepted
+    CASE FIELD()
+    OF ?HTMLCancel
+      IF HTMLRecordsRead
+        TARGET{Prop:Timer} = 0
+        DO %InstancePrefix:CloseHTML
+      END
+      POST(Event:CloseWindow)
+    OF ?HTMLMoreButton
+      FILEDIALOG('Enter the name of your HTML File',HTMLOutputFileName,'HTML Files|*.HTM|All Files|*.*',1)
+    OF ?HTMLGenerateDisplayed
+      DO %InstancePrefix:BuildHTMLHeader
+      DO %InstancePrefix:BuildCurrentHTMLPage
+      DO %InstancePrefix:CloseHTML
+      POST(Event:CloseWindow)
+    OF ?HTMLGenerateAll
+      DO %InstancePrefix:BuildHTMLHeader
+      HTMLCurrentImage = 1
+      DO %InstancePrefix:Reset
+      TARGET{Prop:Timer} = 1
+    END
+  END
+END
+CLOSE(HTMLPropWindow)
+#ENDAT
+#AT(%ProcedureRoutines)
+#FIX(%Control,%ListControl)
+%InstancePrefix:BuildHTMLHeader ROUTINE
+  HIDE(?HTMLMoreButton,?HTMLGenerateAll)
+  UNHIDE(?HTMLCancel,?HTMLProgressString)
+  HTMLProgressString = 'Building Header'
+  DISPLAY(?HTMLProgressString)
+  CREATE(HTMLOutputFile)
+  IF ERRORCODE() THEN STOP(ERROR()).
+  OPEN(HTMLOutputFile)
+  IF ERRORCODE() THEN STOP(ERROR()).
+  HTMLOutputFile:Line = '<<HTML>'
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = ''
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = '<<HEAD><<TITLE>%HTMLTitle<</TITLE><</HEAD>'
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = ''
+  ADD(HTMLOutputFile)
+  #IF(%HTMLBackground)
+  HTMLOutputFile:Line = '<<BODY background=%HTMLBackground>'
+  #ELSE
+  HTMLOutputFile:Line = '<<BODY>'
+  #ENDIF
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = ''
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = '<<H1>%HTMLHeading<</H1><<P>'
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = '<<HR>'
+  ADD(HTMLOutputFile)
+  #IF(%HTMLGrid)
+  HTMLOutputFile:Line = '<<TABLE BORDER=%HTMLGridWidth>'
+  ADD(HTMLOutputFile)
+  #ELSE
+  HTMLOutputFile:Line = '<<TABLE BORDER=0>'
+  ADD(HTMLOutputFile)
+  #ENDIF
+  HTMLOutputFile:Line = '<<TR> %|
+#FOR(%ControlField)
+<<TD>%ControlFieldHeader<</TD> %|
+#ENDFOR
+<</TR>'
+  ADD(HTMLOutputFile)
+
+
+%InstancePrefix:BuildCurrentHTMLPage ROUTINE
+  
+  LOOP HTMLLineCounter = 1 TO RECORDS(%ListQueue)
+    GET(%ListQueue,HTMLLineCounter)
+    REGET(%ListView,%InstancePrefix:Position)
+    IF ERRORCODE()
+      BREAK
+    END
+    DO %InstancePrefix:FillHTMLLine
+  END
+
+%InstancePrefix:FillHTMLLine ROUTINE
+  #EMBED(%FormatHTMLLine,'Format a line of the HTML output'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+  HTMLOutputFile:Line = '<<TR> %|
+#FOR(%ControlField)
+<<TD>' & CLIP(FORMAT(%ControlField,%ControlFieldPicture)) & '<</TD> %|
+#ENDFOR
+<</TR>'
+  ADD(HTMLOutputFile)
+
+%InstancePrefix:ReadNextPage ROUTINE
+  LOOP HTMLLineCounter = 1 TO 10
+    NEXT(%ListView)
+    IF ERRORCODE()
+      DO %InstancePrefix:CloseHTML
+      TARGET{Prop:Timer} = 0
+      POST(Event:CloseWindow)
+      BREAK
+    END
+    #IF(%UseValidateRoutine)
+    DO %InstancePrefix:ValidateRecord
+    EXECUTE(%InstancePrefix:RecordStatus)
+      BREAK
+      CYCLE
+    END
+    #ENDIF
+    DO %InstancePrefix:FillQueue
+    HTMLRecordsRead += 1
+    DO %InstancePrefix:FillHTMLLine
+  END
+  HTMLProgressString = 'Processing. Record Read: ' & HTMLRecordsRead
+  HTMLCurrentImage += 1
+  IF HTMLCurrentImage = 16
+    HTMLCurrentImage = 1
+  END
+  ?HTMLImage{Prop:Text} = '~CWHTML' & FORMAT(HTMLCurrentImage,@N02) & '.ICO'
+
+%InstancePrefix:CloseHTML ROUTINE
+  HTMLOutputFile:Line = ''
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = '<</TABLE>'
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = ''
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = '<</BODY>'
+  ADD(HTMLOutputFile)
+  HTMLOutputFile:Line = '<</HTML>'
+  ADD(HTMLOutputFile)
+  IF ERRORCODE() THEN STOP(ERROR()).
+  CLOSE(HTMLOutputFile)
+  IF ERRORCODE() THEN STOP(ERROR()).
+
+#ENDAT

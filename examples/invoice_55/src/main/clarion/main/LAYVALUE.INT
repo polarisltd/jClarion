@@ -1,0 +1,69 @@
+!ABCIncludeFile(LAY)
+
+OMIT('_EndOfInclude_',_LayValue_Interface_)
+_LayValue_Interface_ EQUATE(1)
+
+   INCLUDE('IBCBASE.INT'),ONCE
+   INCLUDE('DYNSTR.INC'),ONCE
+
+!!--------------------------------------------------------------------------
+
+IValue                  INTERFACE(IInterface)
+toString                  PROCEDURE(IStringVal ret),*CSTRING,PASCAL,proc
+toInt                     PROCEDURE(*SIGNED ret),CBOOL,PASCAL,proc
+toBool                    PROCEDURE(*CBOOL ret),CBOOL,PASCAL,proc
+Select                    PROCEDURE(IId name),*IValue,PASCAL
+DoIndex                   PROCEDURE(SIGNED index),*IValue,PASCAL
+Call                      PROCEDURE(),*IFunction,PASCAL
+
+isString                  PROCEDURE,CBOOL,PASCAL
+isInt                     PROCEDURE,CBOOL,PASCAL
+isBool                    PROCEDURE,CBOOL,PASCAL
+Evaluate                  PROCEDURE(),*IValue,PASCAL
+                        END
+
+IId                     INTERFACE(IInterface)
+toString                  PROCEDURE(IStringVal ret),*CSTRING        ! debug only!
+                        END
+
+IPrivateId              INTERFACE(IId)
+getA                      PROCEDURE(),ASTRING
+                        END
+
+IEvaluateContext        INTERFACE(IInterface)
+Lookup                    PROCEDURE(IId Name),*IValue
+CreateId                  PROCEDURE(CONST * CSTRING Name),*IId
+createInt                 PROCEDURE(SIGNED intval),*IValue
+createBool                PROCEDURE(CBOOL boolval),*IValue
+createString              PROCEDURE(CONST * CSTRING strval),*IValue
+ReportError               PROCEDURE(SIGNED code, CONST *CSTRING extra)
+                        END
+
+IFunction               INTERFACE(IInterface)
+addParam                  PROCEDURE(IValue parm)
+Result                    PROCEDURE(),*IValue
+                        END
+
+IPrivateEvaluateContext INTERFACE
+GetCurrent                PROCEDURE,*IHtmlElementProperties
+GetProperty               PROCEDURE(ASTRING name, UNSIGNED idx1=0,UNSIGNED idx2=0),*IValue
+GetLocalValue             PROCEDURE(ASTRING Name),*IValue
+                        END
+
+IValueFactory           INTERFACE
+Lookup                    PROCEDURE(IId Name, IPrivateEvaluateContext ctx),*IValue
+CreateId                  PROCEDURE(CONST * CSTRING Name),*IId
+createInt                 PROCEDURE(SIGNED intval),*IValue
+createBool                PROCEDURE(CBOOL boolval),*IValue
+createString              PROCEDURE(CONST * CSTRING strval),*IValue
+createCompound            PROCEDURE(IProperties properties, <ASTRING sub>),*IValue
+                        END
+
+  MAP; MODULE('LayValue')
+GetValueFactory           PROCEDURE(),*IValueFactory,NAME('_13IValueFactory__Get@F')
+RegisterGlobalProperties  PROCEDURE(ASTRING name, IProperties properties),NAME('_11SymbolValue__RegisterGlobal@FPCcR11IProperties')
+  END; END
+
+_EndOfInclude_
+
+

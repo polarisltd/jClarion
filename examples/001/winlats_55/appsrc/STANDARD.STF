@@ -1,0 +1,3 @@
+[Style Folio]
+1=NAME(TopSpeed Standard Style File),FILE(standard.sty)
+2=NAME(TopSpeed Documentation),FILE(doc.sty),REQUIRES(TopSpeed Standard Style File)

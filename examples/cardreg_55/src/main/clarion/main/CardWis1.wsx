@@ -1,0 +1,20 @@
+Document Type: WSE
+item: Global
+  Version=7.0
+  File Checksum=2735908643
+end
+item: Set Variable
+  Variable=APPTITLE
+  Value=Cardreg
+  Flags=10000000
+end
+item: Set Variable
+  Variable=GROUP
+  Value=Cardreg
+  Flags=10000000
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=Cardreg
+  Flags=10000000
+end

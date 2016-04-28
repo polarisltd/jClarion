@@ -64,17 +64,27 @@ public class AppProject {
 			
 			chain.finalise();
 			
-			IFile dict = locate(project,"dict");
+			IFile dict = locate(project,"dict"); // find file with given extension inside any directory
+			System.out.println("locating dict");
 			if (dict!=null) {
+				System.out.println("located dict: "+dict.getName());
+				System.out.println("----- loading dict ----" );
 				this.dict = (new TextDictLoad()).load(dict.getContents());	
 			}
 			
-			IFile app = locate(project,"app");
+			IFile app = locate(project,"app");  // find file with given extension inside any directory
+			System.out.println("locating app");
 			if (app != null) {
+				System.out.println("located app: "+app.getFullPath()+" "+app.getName());
+				System.out.println("getting appsrc");
 				appsrc=app.getParent();
+				System.out.println("appsrc: "+appsrc.getFullPath());
 				appsrc.refreshLocal(IContainer.DEPTH_INFINITE,null);
+				System.out.println("---- loading app ---");
 				this.app = (new TextAppLoad(chain)).load(new ProjectAppLoader(appsrc));
+				System.out.println("getting libsrc");
 				this.libsrc= project.getFolder("libsrc");
+				System.out.println("got libsrc: "+this.libsrc.getFullPath());
 			} else {
 				Activator.getDefault().logWarning("app folder not found");
 			}
@@ -102,16 +112,18 @@ public class AppProject {
 	
 	private IFile locate(IContainer container,String extension)
 	{
+        System.out.println("locate(IContainer) ENTRY ext:"+extension+" name:"+container.getName());
 		try {
 			for (IResource r : container.members()) {
 				if (r instanceof IContainer) {
+					
 					IFile result = locate((IContainer)r,extension);
-					if (result!=null) return result;
+					if (result!=null){  System.out.println("located file "+result.getName());return result;}
 					continue;
 				}
 				if (r.getFileExtension()==null) continue;
 				if (r instanceof IFile) {
-					if (r.getFileExtension().equals(extension)) return (IFile)r;
+					if (r.getFileExtension().equals(extension)) {System.out.println("located file "+((IFile)r).getName());return (IFile)r;};
 				}
 			}
 		} catch (CoreException e) {
@@ -130,7 +142,9 @@ public class AppProject {
 			}
 			if (r.getFileExtension()==null) continue;
 			if (r.getFileExtension().equals("tpl")) {
+				System.out.println("located tpl "+r.getFullPath()+" "+r.getName());
 				parent.refreshLocal(IContainer.DEPTH_INFINITE,null);
+				System.out.println("--- loading template ---");
 				tl.load(new ProjectTemplateLoader(parent),r.getName());
 			}
 		}		
@@ -200,6 +214,7 @@ public class AppProject {
 	
 	public ExecutionEnvironment newEnvironment()
 	{
+		System.out.println("ExecutionEnvironment app:"+app.getName()+" dict "+dict.getLongDesc()+" listFiles");
 		ExecutionEnvironment result = new ExecutionEnvironment(chain,app,dict);
 		if (libsrc!=null) {
 			result.setLibSrc(new ProjectAppLoader(libsrc));

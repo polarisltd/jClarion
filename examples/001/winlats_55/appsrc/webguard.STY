@@ -1,0 +1,173 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#WebApplicationGuard
+  DESCRIPTOR: 1
+  PROPERTY: NAME(GuardCapabilityField),DESCRIPTION(Field in GuardDataFile containing the customers capabilities.),DEVIMP(4),DTYPE(5),OUTPUT.NAME(GuardCapabilityField),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),DOCUMENTATION(This property indicates the field containing the customer's CAPABILITIES in the CUSTOMER file. In the dictionary, this field must be tagged using a boolean property USERCAPABILITY in the field's user options. USERCAPABILITY must be set to TRUE.),OUTPUT.Value('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))')
+  PROPERTY: NAME(GuardDataFile),DESCRIPTION(Data file that includes web guard security information),DEVIMP(4),DTYPE(5),OUTPUT.NAME(GuardDataFile),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),DOCUMENTATION(This property names the CUSTOMER file in the dictionary which contains security information for each customer. This file must be tagged in the dictionary using a boolean property USERS in the file's user options. USERS must be set to TRUE.)
+  PROPERTY: NAME(GuardDataFileKey),DESCRIPTION(Key on name field of GuardDataFile),DEVIMP(4),DTYPE(5),OUTPUT.NAME(GuardDataFileKey),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),DOCUMENTATION(This property indicates a key on CUSTOMER NAME in the CUSTOMER file. In the dictionary, the key must be tagged using a boolean property USERKEY in the key's user options. USERKEY must be set to TRUE.),OUTPUT.Value('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))')
+  PROPERTY: NAME(GuardDefaultCapabilities),DESCRIPTION(Default capabilities given to all new customers.),DEVIMP(4),DTYPE(5),MULTI(1),OUTPUT.NAME(GuardDefaultCapabilities),TYPE(3),DOCUMENTATION(This property contains a comma delimited list of default capabilities that are given to all new customers. The default capabilities are also used for customers that haven't logged on yet.)
+  PROPERTY: NAME(GuardIgnoreCase),DESCRIPTION(Case insensitive capabilities?),DEVIMP(4),DTYPE(2),OUTPUT.NAME(GuardIgnoreCase),OUTPUT.TYPE(LONG),TYPE(7)
+  PROPERTY: NAME(GuardPasswordField),DESCRIPTION(Field in GuardDataFile containing the password.),DEVIMP(4),DTYPE(5),OUTPUT.NAME(GuardPasswordField),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),DOCUMENTATION(This property indicates the field containing the customer's PASSWORD in the CUSTOMER file. In the dictionary, this field must be tagged using a boolean property USERPASSWORD in the field's user options. USERPASSWORD must be set to TRUE.),OUTPUT.Value('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))')
+  PROPERTY: NAME(GuardUserField),DESCRIPTION(Field in GuardDataFile containing the customer name. customer name must be unique.),DEVIMP(4),DTYPE(5),OUTPUT.NAME(GuardUserField),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),DOCUMENTATION(This property indicates the field containing the CUSTOMER NAME in the CUSTOMER file. In the dictionary, this field must be tagged using a boolean property USERID in the field's user options. USERID must be set to TRUE.),OUTPUT.Value('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))')
+  PROPERTY: NAME(GuardIDField),DESCRIPTION(Field in GuardDataFile containing the customer ID. Customer ID must be unique.),DEVIMP(4),DTYPE(5),OUTPUT.NAME(GuardIDField),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),DOCUMENTATION(This property indicates the field containing the CUSTOMER ID in the CUSTOMER file. In the dictionary, this field must be tagged using a boolean property ID in the field's user options.),OUTPUT.Value('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))')
+  PROPERTY: NAME(GuardLogonFailuresField),DESCRIPTION(Field in GuardDataFile containing unsuccessful logon attempts.),DEVIMP(5),DTYPE(5),OUTPUT.NAME(GuardCountFailureField),TYPE(3),DOCUMENTATION(This property indicates the field in the CUSTOMER file containing the customer's failed logon attempts. In the dictionary, this field must be tagged using a boolean property USERLOGON in the field's user options. USERLOGON must be set to TRUE.),OUTPUT.Value('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))')
+  PROPERTY: NAME(GuardLockedField),DESCRIPTION(Field in GuardDataFile that indicates whether the customer's account is locked.),DEVIMP(5),DTYPE(5),OUTPUT.NAME(GuardLockedField),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''='''' OR ''%GuardLogonFailuresField%''<>''''))'),DOCUMENTATION(Indicates the field in the CUSTOMER file containing the LOCKED state. In the dictionary, this field must be tagged using a boolean property USERLOCKED in the field's user options. USERLOCKED must be set to TRUE.),OUTPUT.Value('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))')
+  PROPERTY: NAME(GuardLockedUntilField),DESCRIPTION(Field in GuardDataFile containing the number of days to lock the account.),DEVIMP(5),DTYPE(5),OUTPUT.NAME(GuardLockedUntilField),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''='''' OR ''%GuardLockedField%''<>''''))'),DOCUMENTATION(Indicates the field in the CUSTOMER file containing the date to unlock the account. This field must be tagged using a boolean property USERLOCKEDUNTIL in the field's user options. USERLOCKEDUNTIL must be set to TRUE.),OUTPUT.Value('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))')
+  PROPERTY: NAME(PasswordReminder),DESCRIPTION(Remind customer of password?),DEVIMP(4),DTYPE(2),OUTPUT.NAME(PasswordReminder),OUTPUT.TYPE(LONG),TYPE(7),VALIDATION('@EVAL(CHOOSE(''%_Value_%''=''0'' OR ''%GuardLockedField%''<>''''))')
+  PROPERTY: NAME(ForceLogonAtStart),DESCRIPTION(Logon window at startup?),DEVIMP(2),DTYPE(2),OUTPUT.NAME(ForceLogonAtStart),OUTPUT.TYPE(LONG),TYPE(7)
+  PROPERTY: NAME(GuardDaysToLock),DESCRIPTION(Number of days to lock the customer's account in case of repeated logon failure.),DEVIMP(5),DTYPE(5),OUTPUT.NAME(GuardDaysToLock),TYPE(2),VALIDATION('@EVAL(CHOOSE(~%_Value_% OR ''%GuardLockedUntilField%''<>''''))')
+  PROPERTY: NAME(GuardMaxLogonAttempts),DESCRIPTION(Maximum number of attempts to logon before the account gets locked.),DEVIMP(5),DTYPE(5),OUTPUT.NAME(GuardMaxLogonAttempts),TYPE(2),VALIDATION('@EVAL(CHOOSE(~%_Value_% OR ''%GuardLogonFailuresField%''<>''''))')
+  PROPERTY: NAME(AdminLogon),DESCRIPTION(Default logon name for administrator.),DEVIMP(4),DTYPE(5),OUTPUT.NAME(AdminLogon),TYPE(3),DOCUMENTATION(This admin account will utomatically be created.)
+  PROPERTY: NAME(AdminPassword),DESCRIPTION(Default password for admin logon.),DEVIMP(4),DTYPE(5),OUTPUT.NAME(AdminPassword),TYPE(3)
+  PROPERTY: NAME(AdminCapabilities),DESCRIPTION(Default logon name for administrator.),DEVIMP(4),DTYPE(5),OUTPUT.NAME(AdminCapabilities),TYPE(3),DOCUMENTATION(This admin account will automatically be created.)
+  PROPERTY: NAME(DefaultGuardFailureAction),DESCRIPTION(Action to take when guard fails.),DTYPE(12),OUTPUT.NAME(DefaultGuardFailureAction)
+  PROPERTY: NAME(DefaultGuardFailureAction.List),DESCRIPTION(Available default failure actions),DTYPE(5),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(DefaultGuardProcedureToRun),DESCRIPTION(Procedure to run if default failure action is Run Procedure),DEVIMP(2),OUTPUT.NAME(DefaultGuardProcedureToRun),VALIDATION('@EVAL(CHOOSE(''%DefaultGuardFailureAction%''<>''Run Procedure'' AND ''%_Value_%''='''' OR ''%DefaultGuardFailureAction%''=''Run Procedure'' AND ''%_Value_%''<>''''))')
+  PROPERTY: NAME(GuardPositionFile),DESCRIPTION(Position security file to current customer?),DEVIMP(4),DTYPE(2),OUTPUT.NAME(PositionFile),OUTPUT.TYPE(LONG),TYPE(7)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CONTROLTEMPLATE(Webguard)
+    GUARDCAPABILITYFIELD('@FIND(''@FIELDS(%GuardDataFile%)'',`@USER(%_Value_%,USERCAPABILITY)`)')
+    GUARDDATAFILE('@FIND(''@FILES()'',`@USER(%_Value_%,USERS)`)')
+    GUARDDATAFILEKEY('@FIND(''@KEYS(%GuardDataFile%)'',`@USER(%_Value_%,USERKEY)`)')
+    GUARDDEFAULTCAPABILITIES()
+    GUARDIGNORECASE(1)
+    GUARDPASSWORDFIELD('@FIND(''@FIELDS(%GuardDataFile%)'',`@USER(%_Value_%,USERPASSWORD)`)')
+    GUARDUSERFIELD('@FIND(''@FIELDS(%GuardDataFile%)'',`@USER(%_Value_%,USERID)`)')
+    GUARDIDFIELD('@FIND(''@FIELDS(%GuardDataFile%)'',`@USER(%_Value_%,ID)`)')
+    GUARDLOGONFAILURESFIELD('@FIND(''@FIELDS(%GuardDataFile%)'',`@USER(%_Value_%,USERLOGON)`)')
+    GUARDLOCKEDFIELD('@FIND(''@FIELDS(%GuardDataFile%)'',`@USER(%_Value_%,USERLOCKED)`)')
+    GUARDLOCKEDUNTILFIELD('@FIND(''@FIELDS(%GuardDataFile%)'',`@USER(%_Value_%,USERLOCKEDUNTIL)`)')
+    PASSWORDREMINDER(0)
+    FORCELOGONATSTART(0)
+    GUARDMAXLOGONATTEMPTS(0)
+    GUARDDAYSTOLOCK(0)
+    ADMINLOGON(ADMIN)
+    ADMINPASSWORD(ADMIN)
+    ADMINCAPABILITIES(Admin)
+    DEFAULTGUARDFAILUREACTION(Show Message)
+    DEFAULTGUARDFAILUREACTION.LIST(Show Message,Run Procedure)
+    DEFAULTGUARDPROCEDURETORUN()
+    GUARDPOSITIONFILE(1)
+    TEMPLATECHAIN(Web)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(GuardEnabled),ACORN(1),ACORN.NAME(Web Application Guard),ACORN.WIZARD(ControlTemplate#GlobalTemplate#WebApplicationGuard),DESCRIPTION(Web guard enabled?),DEVIMP(1),DTYPE(2),LOCKED('@EVAL(CHOOSE(~%GenerateWebApp%))'),STOP(%PROCEDUREWIZATRON%),TYPE(7),DOCUMENTATION(IF set to TRUE, this property enables customer profiling for the current application.)
+  [DEFINITION]
+    GUARDENABLED(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#WebProcedureGuard
+  DESCRIPTOR: 1
+  PROPERTY: NAME(GuardedControls),ACORN(1),ACORN.CONTEXT('GuardControl(@EXTRACT(\%_Value_%,Use.Label)),GuardControlCapability(@EXTRACT(\%_Value_%,Secure))'),ACORN.NAME('Control Guard for @EXTRACT(\%_Value_%,Use.Label)'),ACORN.WIZARD(TOPSPEED:ControlTemplate#WebControlGuard),DESCRIPTION(Guarded Controls),DEVIMP(2),DTYPE(10),MULTI(1),TYPE(8),DOCUMENTATION(This property should contain all controls to be guarded.)
+  PROPERTY: NAME(GuardedControls.List),DESCRIPTION(All controls),DEVIMP(2),DTYPE(10),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(''@EXTRACT(\%_Value_%,Secure)''='''',0,1))'),LISTFILL.CONVERT('@EXTRACT(\%_Value_%,Use.Label)'),LISTFILL.FUNC('@EXTRACT(Scope.WindowManager,node.controls)'),MULTI(1),TYPE(8)
+  PROPERTY: NAME(GuardProcEntry),DESCRIPTION(Guard page entry?),DEVIMP(2),DTYPE(2),HIDDEN(1),OUTPUT.NAME(GuardProcEntry),OUTPUT.TYPE(LONG),TYPE(7)
+  PROPERTY: NAME(GuardProcEntryCapability),DESCRIPTION(Capabilities that are required to enter this page.),DEVIMP(2),DTYPE(5),OUTPUT.NAME(ProcEntryCapability),TYPE(3),DOCUMENTATION(This property contains the capabilities needed to enter the current page. In the dictionary, the file that this page is based on must be tagged using SECURITY in the file's user options. SECURITY is a string property which may contain a comma delimited list of capabilities.)
+  PROPERTY: NAME(GuardFailureAction),DESCRIPTION(Action to take when guard fails on current page.),DTYPE(12),OUTPUT.NAME(GuardFailureAction)
+  PROPERTY: NAME(GuardFailureAction.List),DESCRIPTION(Available failure actions),DTYPE(5),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(GuardProcedureToRun),DESCRIPTION(Procedure to run if failure action is Run Procedure),DEVIMP(2),OUTPUT.NAME(GuardProcedureToRun),VALIDATION('@EVAL(CHOOSE(''%GuardFailureAction%''<>''Run Procedure'' AND ''%_Value_%''='''' OR ''%GuardFailureAction%''=''Run Procedure'' AND ''%_Value_%''<>''''))'),DOCUMENTATION(Contains the procedure to be executed if GuardFailureAction is set to Run Procedure.)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(WebGuardProc)
+    GUARDEDCONTROLS()
+    GUARDEDCONTROLS.LIST()
+    GUARDPROCENTRY('@EVAL(CHOOSE(''@USER(%PrimaryFile%,SECURITY)'' <> '''' OR ''@USER(%PrimaryFile%,SECURITYUPDATE)'' <> '''',1,0))')
+    GUARDPROCENTRYCAPABILITY('@EVAL(CHOOSE(''@USER(%PrimaryFile%,SECURITY,-1)''<>'''',''@USER(%PrimaryFile%,SECURITY,-1)'',''@USER(%PrimaryFile%,SECURITYUPDATE,-1)''))')
+    GUARDFAILUREACTION(Default Action)
+    GUARDFAILUREACTION.LIST(Default Action,Show Message,Run Procedure)
+    GUARDPROCEDURETORUN()
+    TEMPLATECHAIN(Web)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ProcedureComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Guard),ACORN(1),ACORN.NAME(Guard),ACORN.WIZARD(TOPSPEED:ControlTemplate#WebProcedureGuard),DESCRIPTION(Should this page be guarded?),DEVIMP(5),DTYPE(2),TYPE(7)
+  [DEFINITION]
+    GUARD('@EVAL(CHOOSE(%Scope.GuardEnabled% AND (''@USER(%PrimaryFile%,SECURITY)'' <> '''' OR ''@USER(%PrimaryFile%,SECURITYUPDATE)'' <> ''''),1,0))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Form
+  DESCRIPTOR: 1
+  [DEFINITION]
+    GUARD('@EVAL(CHOOSE(%Scope.GuardEnabled% AND ''@USER(%PrimaryFile%,SECURITY)'' <> '''',1,0))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#WebControlGuard
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlGuardType),DESCRIPTION(Action to take if customer does not have required capability for this control.),DTYPE(12),OUTPUT.NAME(ControlGuardType),DOCUMENATION(If the customer's capabilities are insufficient to allow access to the current control, then the control can either be hidden, or a failure action can be triggert.)
+  PROPERTY: NAME(ControlGuardType.List),DESCRIPTION(Available control guard types),DTYPE(5),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(GuardControl),DEVIMP(4),DTYPE(5),HIDDEN(1),OUTPUT.NAME(GuardControl),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(GuardControlCapability),DESCRIPTION(Capability that is required for this control.),DEVIMP(2),DTYPE(5),OUTPUT.NAME(ControlCapability),TYPE(3),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),DOCUMENTATION(A comma-delimited list of capabilities to be used to guard this control.)
+  PROPERTY: NAME(GuardFailureAction),DESCRIPTION(Action to take when guard fails on current control.),DTYPE(12),OUTPUT.NAME(GuardFailureAction),STOP('@EVAL(CHOOSE(''%ControlGuardType%''<>''Trigger''))'))'),DOCUMENTATION(The action to take if the customer's capabilities are insufficient to access the current control. This only applies if ControlGuardType equals Trigger.)
+  PROPERTY: NAME(GuardFailureAction.List),DESCRIPTION(Available failure actions),DTYPE(5),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(GuardProcedureToRun),DESCRIPTION(Procedure to run if controls failure action is Run Procedure),DEVIMP(2),OUTPUT.NAME(GuardProcedureToRun),VALIDATION('@EVAL(CHOOSE(''%GuardFailureAction%''<>''Run Procedure'' AND ''%_Value_%''='''' OR ''%GuardFailureAction%''=''Run Procedure'' AND ''%_Value_%''<>''''))'),STOP('@EVAL(CHOOSE(''%ControlGuardType%''<>''Trigger''))'))')
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLGUARDTYPE(Hide)
+    CONTROLGUARDTYPE.LIST(Hide,Trigger)
+    CONTROLTEMPLATE(WebGuardControl)
+    GUARDCONTROL()
+    GUARDCONTROLCAPABILITY()
+    GUARDFAILUREACTION(Default Action)
+    GUARDFAILUREACTION.LIST(Default Action,Show Message,Run Procedure)
+    GUARDPROCEDURETORUN()
+    TEMPLATECHAIN(Web)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#WebGuardLogon
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?Logon)
+    TEXT(Logon)
+    USE.LABEL(?Logon:%^INSTANCE%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Logon
+  DESCRIPTOR: 1
+  PROPERTY: NAME(RunProcedureAfterLogon),DESCRIPTION(Run procedure if Logon successful?),DEVIMP(3),DTYPE(2),OUTPUT.NAME(RunProcedureAfterLogon),OUTPUT.TYPE(LONG),TYPE(7)
+  PROPERTY: NAME(ProcedureToRunAtLogon),DESCRIPTION(Procedure to run if Logon is successful.),DEVIMP(3),OUTPUT.NAME(ProcedureToRunAtLogon),VALIDATION('@EVAL(CHOOSE(~%RunProcedureAfterLogon% AND ''%_Value_%''='''' OR %RunProcedureAfterLogon% AND ''%_Value_%''<>''''))'),DOCUMENTATION(Names the procedure to be executed after logon is successful. This only applies if RunProcedureAfterLogon is set to TRUE.)
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+    BUTTONCONTROLTYPE(WebGuardLogon)
+    RUNPROCEDUREAFTERLOGON(0)
+    PROCEDURETORUNATLOGON()
+    TEMPLATECHAIN(Web)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HasLogon),ACORN(1),ACORN.NAME(Logon),ACORN.WIZARD(ButtonControl#Logon),DESCRIPTION(Has Logon Button),DEVIMP(2),DTYPE(2),TYPE(7),VALIDATION('@EVAL(CHOOSE(~%_Value_% OR ''%Scope.GuardEnabled%''=''1''))'),DOCUMENTATION(If set to TRUE, a logon button will be created for the current browse.)
+  [DEFINITION]
+    HASLOGON(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Control
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Secure),DEVIMP(4),DTYPE(5),TYPE(3),DESCRIPTION('Capabilities required to access this control')
+  [DEFINITION]
+    SECURE()
+  [END]
+[END]

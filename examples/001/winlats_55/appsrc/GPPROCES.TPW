@@ -1,0 +1,153 @@
+#!--------------------------------------------
+#GROUP(%ProcessDeclarations)
+#EMBED(%DeclarationSection,'Declaration Section'),DATA
+  #FOR(%LocalData)
+%[20]LocalData %LocalDataStatement
+  #ENDFOR
+!-----------------------------------------------------------------------------
+#GROUP(%ProcessEndOfProcedure)
+#IF(%EnableQuickScan)
+#EMBED(%BeforeTurnQuickScanOff,'Before Turning QuickScan Off'),WHERE(%EnableQuickScan)
+IF SEND(%Primary,'QUICKSCAN=off').
+#FOR(%Secondary),WHERE(%SecondaryType = '1:MANY')
+IF SEND(%Secondary,'QUICKSCAN=off').
+#ENDFOR
+#EMBED(%AfterTurnQuickScanOff,'After Turning QuickScan Off'),WHERE(%EnableQuickScan)
+#ENDIF
+#!---------------------------------------------------
+#GROUP(%ProcessSaveLimits),AUTO
+#EMBED(%WindowEventOpenWindowBefore,'Window Event: Open Window, before setting up for reading')
+#EMBED(%BeforeKeySet,'Before SET() issued')
+  #IF(%PrimaryKey)
+SET(%PrimaryKey)
+  #ELSE
+SET(%Primary)
+  #ENDIF
+#INSERT(%StandardWriteViewFilter,%ProcessFilter)
+IF ERRORCODE()
+  StandardWarning(Warn:ViewOpenError)
+END
+OPEN(%ListView)
+IF ERRORCODE()
+  StandardWarning(Warn:ViewOpenError)
+END
+#EMBED(%BeforeInitialGet,'Before first record retrieval')
+LOOP
+  DO GetNextRecord
+  DO ValidateRecord
+  CASE RecordStatus
+    OF Record:Ok
+      BREAK
+    OF Record:OutOfRange
+      LocalResponse = RequestCancelled
+      BREAK
+  END
+END
+IF LocalResponse = RequestCancelled
+  POST(Event:CloseWindow)
+  CYCLE
+END
+#EMBED(%AfterInitialGet,'After first record retrieval')
+#EMBED(%WindowEventOpenWindowAfter,'Window Event: Open Window, after setting up for read')
+#!---------------------------------------------------
+#GROUP(%ProcessGetRecords)
+GetNextRecord ROUTINE
+!|
+!| This routine is used to retrieve the next record from the VIEW.
+!|
+!| After the record has been retrieved, the PROGRESS control on the
+!| Progress window is updated.
+!|
+  #EMBED(%TopOfGetNextRecord,'Top of GetNextRecord ROUTINE')
+  NEXT(%ListView)
+  #EMBED(%GetNextRecordAfterNext,'GetNextRecord ROUTINE, after NEXT')
+  IF ERRORCODE()
+    IF ERRORCODE() <> BadRecErr
+      StandardWarning(Warn:RecordFetchError,'%File')
+    END
+    LocalResponse = RequestCancelled
+    #EMBED(%GetNextRecordNextFails,'GetNextRecord ROUTINE, NEXT failed')
+    EXIT
+  ELSE
+    LocalResponse = RequestCompleted
+    #EMBED(%GetNextRecordNextSucceeds,'GetNextRecord ROUTINE, NEXT succeeds')
+  END
+  #IF(%PrimaryKey)
+  RecordsProcessed += 1
+  RecordsThisCycle += 1
+  #ELSE
+  RecordsProcessed += BYTES(%Primary)
+  RecordsThisCycle += BYTES(%Primary)
+  #ENDIF
+  IF PercentProgress < 100
+    PercentProgress = (RecordsProcessed / RecordsToProcess)*100
+    IF PercentProgress > 100
+      PercentProgress = 100
+    END
+    IF PercentProgress <> Progress:Thermometer THEN
+      Progress:Thermometer = PercentProgress
+      ?Progress:PctText{Prop:Text} = FORMAT(PercentProgress,@N3) & '% Completed'
+      DISPLAY()
+    END
+  END
+
+#!---------------------------
+#GROUP(%ProcessValidateRecord)
+!-----------------------------------------------------------------------------
+ValidateRecord       ROUTINE
+#?!|
+#?!| This routine is used to provide for complex record filtering and range limiting. This
+#?!| routine is only generated if you've included your own code in the EMBED points provided in
+#?!| this routine.
+#?!|
+  RecordStatus = Record:OutOfRange
+  IF LocalResponse = RequestCancelled THEN EXIT.
+  #SUSPEND
+  #?RejectRecord = False
+  #INSERT(%StandardFormula,'Before Range Check')
+  #?IF RejectRecord THEN EXIT.
+  #RESUME
+  #EMBED(%RecordOutOfRange,'Validate Record: Range Checking')
+  #SUSPEND
+  #?RecordStatus = Record:Filtered
+    #SUSPEND
+  #?RejectRecord = False
+  #INSERT(%StandardFormula,'Before Filter Check')
+  #?IF RejectRecord THEN EXIT.
+    #RESUME
+    #EMBED(%RecordFilter,'Validate Record: Filter Checking')
+  #RESUME
+  RecordStatus = Record:OK
+  EXIT
+#!---------------------------
+#GROUP(%ProcessEventTimer)
+#INSERT(%StandardFormula,'Before Lookups')
+#INSERT(%StandardFormula,'After Lookups')
+#EMBED(%ProcessActivity,'Activity for each record')
+#CASE(%ProcessAction)
+#OF('PUT record')
+  #IF(%RIProcessAction)
+IF RIUpdate:%Primary()
+  #ELSE
+PUT(%ListView)
+IF ERRORCODE()
+  #ENDIF
+  IF StandardWarning(Warn:ProcessActionError,'Put','%ListView')
+    LocalResponse = RequestCompleted
+    BREAK
+  END
+END
+#OF('DELETE record')
+  #IF(%RIProcessAction)
+IF RIDelete:%Primary()
+  #ELSE
+DELETE(%ListView)
+IF ERRORCODE()
+  #ENDIF
+  IF StandardWarning(Warn:ProcessActionError,'Delete','%ListView')
+    LocalResponse = RequestCompleted
+    BREAK
+  END
+END
+#ENDCASE
+#EMBED(%ProcessError,'Error checking after record Action')

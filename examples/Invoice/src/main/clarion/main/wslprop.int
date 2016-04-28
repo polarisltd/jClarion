@@ -1,0 +1,25 @@
+
+OMIT('_EndOfInclude_',_WslProp_Interface_)
+_WslProp_Interface_ EQUATE(1)
+
+                        ITEMIZE(0),PRE(WslPropType)
+unknown                   EQUATE
+string                    EQUATE
+integer                   EQUATE
+boolean                   EQUATE
+variable                  EQUATE
+queue                     EQUATE
+mask                      EQUATE(00FFH)
+
+array                     EQUATE(0100H)
+system_only               EQUATE(0200H)
+write_only                EQUATE(0400H)
+                        END
+
+! NB: Both are compatible, hence same NAME() attribute...
+  MAP; MODULE('RUNTIME')
+GetPropertyType         PROCEDURE(CONST * CSTRING propName),SIGNED,NAME('Wsl$GetPropType')
+GetPropertyType         PROCEDURE(ASTRING propName),SIGNED,NAME('Wsl$GetPropType')
+  END; END
+
+_EndOfInclude_

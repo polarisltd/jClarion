@@ -10,12 +10,18 @@
  */
 package org.jclarion.clarion.file;
 
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+
+import org.jclarion.clarion.ClarionReport;
 
 public class MemoryFileSystem 
 {
-    private static byte[] EMPTY = new byte[0];
+    private static Logger log = Logger.getLogger(MemoryFileSystem.class.getName());	
+
+	private static byte[] EMPTY = new byte[0];
     private static Map<String, MemoryFileSystem> storedFiles = new HashMap<String, MemoryFileSystem>();
     private static int storedFileCount = 1;
 
@@ -102,6 +108,20 @@ public class MemoryFileSystem
     	}
     	lastModified=System.currentTimeMillis();
     }
+
+    
+    public void writeToFile(String strFilePath){   // %%%%%% save memory file into file system file.
+
+    	try{
+          FileOutputStream fos = new FileOutputStream(strFilePath);
+          fos.write(content);
+          log.fine("content written");
+    	}catch(Exception e){
+    	   log.fine("error writing file");	
+    	}
+    	
+    }
+    
     
     public String getStoreName()
     {

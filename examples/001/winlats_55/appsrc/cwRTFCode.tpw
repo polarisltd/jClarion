@@ -1,0 +1,636 @@
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (HideUnhideRTF, 'Hide or Unhide the RTF Control'),REQ(RTFControl),DESCRIPTION( 'Hide or Unhide the RTF Control'),HLP('~TPLHideUnhideRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#PROMPT('UnHide (show) Control?', CHECK ), %RTFHide 
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.ShowControl( %RTFHide )
+#! -------------------------------------------------------------------------
+#CODE (LimitTextSize, 'Limit the amount of text an RTF control will accept'),REQ(RTFControl),DESCRIPTION( 'Limit the amount of text an RTF control will accept'),HLP('~TPLLimitTextSize')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Amount of text in' )
+#PROMPT( ' characters (bytes): ', @n6 ), %RTFTextSize, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.LimitTextSize( %RTFTextSize )
+#! -------------------------------------------------------------------------
+#CODE (NewRTFFile, 'Start a new RTF File'),REQ(RTFControl),DESCRIPTION( 'Start a new RTF File'),HLP('TPLNewRTFFile')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.NewFile()
+#! -------------------------------------------------------------------------
+#CODE (LoadRTFFile, 'Load an existing RTF File'),REQ(RTFControl),DESCRIPTION( 'Load an existing RTF File'),HLP('~TPLLoadRTFFile')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('File name or ')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFile
+#DECLARE( %RTFObj )
+#DECLARE( %TmpName )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+#IF( SUB(%RTFFile, 1, 1 ) = '!' )
+  #SET( %TmpName, CLIP( SUB(%RTFFile, 2, LEN( %RTFFile ) ) ) )
+%RTFObj.LoadFile( %TmpName )
+#ELSE
+%RTFObj.LoadFile( '%RTFFile' )
+#ENDIF
+#! -------------------------------------------------------------------------
+#CODE (LoadRTFField, 'Load the RTF Control from a field'),REQ(RTFControl),DESCRIPTION( 'Load an the RTF Control from a field'),HLP('~TPLLoadRTFField')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#PROMPT('Field Name: ', FIELD ), %RTFField
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.LoadField( %RTFField )
+#! -------------------------------------------------------------------------
+#CODE (SaveRTFFile, 'Save the contents of the RTF control to a file'),REQ(RTFControl),DESCRIPTION( 'Save the contents of the RTF control to a file'),HLP('~TPLSaveRTFFile')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('File name or ')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFile
+#DECLARE( %RTFObj )
+#DECLARE( %TmpName )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+#IF( SUB(%RTFFile, 1, 1 ) = '!' )
+  #SET( %TmpName, CLIP( SUB(%RTFFile, 2, LEN( %RTFFile ) ) ) )
+%RTFObj.SaveFile( %TmpName )
+#ELSE
+%RTFObj.SaveFile( '%RTFFile' )
+#ENDIF
+#! -------------------------------------------------------------------------
+#CODE (SaveRTFField, 'Save the contents of the RTF control to a field'),REQ(RTFControl),DESCRIPTION( 'Save the contents of the RTF control to a field'),HLP('~TPLSaveRTFField')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#PROMPT('Field Name: ', FIELD ), %RTFField
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.SaveField( %RTFField )
+#! -------------------------------------------------------------------------
+#CODE (PrintRTF, 'Print the contents of the RTF Control'),REQ(RTFControl),DESCRIPTION( 'Print the contents of the RTF Control'),HLP('~TPLPrintRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#PROMPT('Show Print Setup?', CHECK ), %RTFShowPrintSetup
+#ENABLE( %RTFShowPrintSetup )
+#PROMPT( 'Status Variable: ', FIELD ), %RTFPrintStatus
+#ENDENABLE
+#DISPLAY('Job name or')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFJobName
+#DECLARE( %TmpName )
+#CLEAR( %TmpName )
+#IF( SUB(%RTFJobName, 1, 1 ) = '!' )
+  #SET( %TmpName, CLIP( SUB(%RTFJobName, 2, LEN( %RTFJobName ) ) ) )
+#ELSIF ( CLIP(%RTFJobName) <> '' )
+  #SET( %TmpName, '''' & CLIP( %RTFJobName ) & '''' )
+#ENDIF
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+#IF( CLIP( %TmpName ) <> '' )
+  #IF(CLIP(%RTFPrintStatus) <> '')
+%RTFPrintStatus = %RTFObj._Print( %RTFShowPrintSetup, %TmpName )
+  #ELSE
+%RTFObj._Print( %RTFShowPrintSetup, %TmpName )
+  #ENDIF
+#ELSE
+  #IF(CLIP(%RTFPrintStatus) <> '')
+%RTFPrintStatus = %RTFObj._Print( %RTFShowPrintSetup )
+  #ELSE
+%RTFObj._Print( %RTFShowPrintSetup )
+  #ENDIF
+#ENDIF
+#! -------------------------------------------------------------------------
+#CODE (PageSetupRTF, 'Show the Page Setup Dialog'),REQ(RTFControl),DESCRIPTION( 'Show the Page Setup Dialog'),HLP('~TPLPageSetupRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.PageSetup()
+#! -------------------------------------------------------------------------
+#CODE (FontRTF, 'Change the font in the RTF control'),REQ(RTFControl),DESCRIPTION( 'Change the font of the higlighted text in the RTF control'),HLP('~TPLFontRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Font name or ')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFont
+#DISPLAY('Font size or ')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFontSize
+#DISPLAY('Font color or ')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFontColor
+#DISPLAY('Font style or ')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFontStyle
+#DECLARE( %TmpFont )
+#CLEAR( %TmpFont )
+#IF( SUB(%RTFFont, 1, 1 ) = '!' )
+  #SET( %TmpFont, CLIP( SUB(%RTFFont, 2, LEN( %RTFFont ) ) ) )
+#ELSIF ( CLIP(%RTFFont) <> '' )
+  #SET( %TmpFont, '''' & CLIP( %RTFFont ) & '''' )
+#ENDIF
+#DECLARE( %TmpFontSize )
+#CLEAR( %TmpFontSize )
+#IF( SUB(%RTFFontSize, 1, 1 ) = '!' )
+  #SET( %TmpFontSize, CLIP( SUB(%RTFFontSize, 2, LEN( %RTFFontSize ) ) ) )
+#ELSIF ( CLIP(%RTFFontSize ) <> '' )
+  #SET( %TmpFontSize, CLIP( %RTFFontSize ) )
+#ENDIF
+#DECLARE( %TmpFontColor )
+#CLEAR( %TmpFontColor )
+#IF( SUB(%RTFFontColor, 1, 1 ) = '!' )
+  #SET( %TmpFontColor, CLIP( SUB(%RTFFontColor, 2, LEN( %RTFFontColor ) ) ) )
+#ELSIF ( CLIP(%RTFFontColor ) <> '' )
+  #SET( %TmpFontColor, CLIP( %RTFFontColor ) )
+#ENDIF
+#DECLARE( %TmpFontStyle )
+#CLEAR( %TmpFontStyle )
+#IF( SUB(%RTFFontStyle, 1, 1 ) = '!' )
+  #SET( %TmpFontStyle, CLIP( SUB(%RTFFontStyle, 2, LEN( %RTFFontStyle ) ) ) )
+#ELSIF ( CLIP(%RTFFontStyle ) <> '' )
+  #SET( %TmpFontStyle, CLIP( %RTFFontStyle ) )
+#ENDIF
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.Font( %TmpFont, %TmpFontSize, %TmpFontColor, %TmpFontStyle )
+#! -------------------------------------------------------------------------
+#CODE (ColorRTF, 'Show the Color Dialog'),REQ(RTFControl),DESCRIPTION( 'Show the Color Dialog'),HLP('~TPLColorRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.Color()
+#! -------------------------------------------------------------------------
+#CODE (CopyRTF, 'Copy the highlighted text'),REQ(RTFControl),DESCRIPTION( 'Copy the highlighted text'),HLP('~TPLCopyRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.Copy()
+#! -------------------------------------------------------------------------
+#CODE (CutRTF, 'Cut the highlighted text'),REQ(RTFControl),DESCRIPTION( 'Cut the highlighted text'),HLP('~TPLCutRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.Cut()
+#! -------------------------------------------------------------------------
+#CODE (PasteRTF, 'Paste clipboard contents'),REQ(RTFControl),DESCRIPTION( 'Paste clipboard contents at the cursor location'),HLP('~TPLPasteRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.Paste()
+#! -------------------------------------------------------------------------
+#CODE (FontStyleRTF, 'Change the font Style in the RTF control'),REQ(RTFControl),DESCRIPTION( 'Change the font style of the higlighted text in the RTF control'),HLP('~TPLFontStyleRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Font style or ')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFontStyle
+#DECLARE( %TmpFontStyle )
+#CLEAR( %TmpFontStyle )
+#IF( SUB(%RTFFontStyle, 1, 1 ) = '!' )
+  #SET( %TmpFontStyle, CLIP( SUB(%RTFFontStyle, 2, LEN( %RTFFontStyle ) ) ) )
+#ELSIF ( CLIP(%RTFFontStyle ) <> '' )
+  #SET( %TmpFontStyle, CLIP( %RTFFontStyle ) )
+#ENDIF
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.ChangeFontStyle( %TmpFontStyle )
+#! -------------------------------------------------------------------------
+#CODE (AlignLeftRTF, 'Align the current paragraph left'),REQ(RTFControl),DESCRIPTION( 'Align the current paragraph left'),HLP('~TPLAlignLeftRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.AlignParaLeft()
+#! -------------------------------------------------------------------------
+#CODE (AlignRightRTF, 'Align the current paragraph right'),REQ(RTFControl),DESCRIPTION( 'Align the current paragraph right'),HLP('~TPLAlignRightRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.AlignParaRight()
+#! -------------------------------------------------------------------------
+#CODE (AlignCenterRTF, 'Align the current paragraph Center'),REQ(RTFControl),DESCRIPTION( 'Align the current paragraph Center'),HLP('~TPLAlignCenterRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.AlignParaCenter()
+#! -------------------------------------------------------------------------
+#CODE (ParagraphBulletsOnRTF, 'Change paragraph bullets'),REQ(RTFControl),DESCRIPTION( 'Change paragraph bullets'),HLP('~TPLParagraphBulletsOnRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#PROMPT('Bullet Style', DROP('Bullets:On|Bullets:Arabic|Bullets:LowerLetters|Bullets:UpperLetters|Bullets:LowerRoman|Bullets:UpperRoman')),%BulletStyle,DEFAULT('Bullets:On')
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.ParaBulletsOn( %BulletStyle )
+#! -------------------------------------------------------------------------
+#CODE (ParagraphBulletsOffRTF, 'Turn paragraph bullets off'),REQ(RTFControl),DESCRIPTION( 'Turn paragraph bullets off'),HLP('~TPLParagraphBulletsOffRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.ParaBulletsOff()
+#! -------------------------------------------------------------------------
+#CODE (ParagraphLeftIndentRTF, 'Change paragraph left indent'),REQ(RTFControl),DESCRIPTION( 'Change paragraph left indent'),HLP('~TPLParagraphLeftIndentRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Paragraph indent ')
+#PROMPT( ' from left', @n-7.3 ), %LeftIndent
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.LeftIndent( %LeftIndent )
+#! -------------------------------------------------------------------------
+#CODE (ParagraphRightIndentRTF, 'Change paragraph right indent'),REQ(RTFControl),DESCRIPTION( 'Change paragraph right indent'),HLP('~TPLParagraphRightIndentRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Paragraph indent ')
+#PROMPT( ' from right', @n-7.3 ), %RightIndent
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.RightIndent( %RightIndent )
+#! -------------------------------------------------------------------------
+#CODE (ParagraphOffsetRTF, 'Change paragraph offset'),REQ(RTFControl),DESCRIPTION( 'Change paragraph offset'),HLP('~TPLParagraphOffsetRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#PROMPT('Paragraph offset', @n-7.3 ), %Offset
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.Offset( %Offset )
+#! -------------------------------------------------------------------------
+#CODE (UndoRTF, 'Undo Changes'),REQ(RTFControl),DESCRIPTION( 'Undo Changes'),HLP('~TPLUndoRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+IF %RTFObj.CanUndo()
+  %RTFObj.Undo()
+END
+#! -------------------------------------------------------------------------
+#CODE (RedoRTF, 'Redo Changes'),REQ(RTFControl),DESCRIPTION( 'Redo Changes'),HLP('~TPLRedoRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+IF %RTFObj.CanRedo()
+  %RTFObj.Redo()
+END
+#! -------------------------------------------------------------------------
+#CODE (FindRTF, 'Find text in the RTF control'),REQ(RTFControl),DESCRIPTION( 'Find text in the RTF control, returns the starting position of the text'),HLP('~TPLFindRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Find string or ')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFindText
+#DISPLAY('Variable to recieve ')
+#PROMPT( ' starting postion: ', FIELD ), %RTFTargetField
+#DECLARE( %TmpFindText )
+#CLEAR( %TmpFindText )
+#IF( SUB(%RTFFindText, 1, 1 ) = '!' )
+  #SET( %TmpFindText, CLIP( SUB(%RTFFindText, 2, LEN( %RTFFindText ) ) ) )
+#ELSIF ( CLIP(%RTFFindText ) <> '' )
+  #SET( %TmpFindText, '''' & CLIP( %RTFFindText ) & '''' )
+#ENDIF
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+#IF( %RTFTargetField <> '' )
+%RTFTargetField = %RTFObj.Find( %TmpFindText )
+#ELSE
+%RTFObj.Find( %TmpFindText )
+#ENDIF
+#! -------------------------------------------------------------------------
+#CODE (ReplaceRTF, 'Find and replace text in the RTF control'),REQ(RTFControl),DESCRIPTION( 'Find and replace text in the RTF control'),HLP('~TPLReplaceRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Find string or')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFFindText
+#DISPLAY('Replace string or')
+#PROMPT( ' variable (prefixed with !): ', @s128 ), %RTFReplaceText
+#DECLARE( %TmpFindText )
+#CLEAR( %TmpFindText )
+#IF( SUB(%RTFFindText, 1, 1 ) = '!' )
+  #SET( %TmpFindText, CLIP( SUB(%RTFFindText, 2, LEN( %RTFFindText ) ) ) )
+#ELSIF ( CLIP(%RTFFindText ) <> '' )
+  #SET( %TmpFindText, '''' & CLIP( %RTFFindText ) & '''' )
+#ENDIF
+#DECLARE( %TmpReplaceText )
+#CLEAR( %TmpReplaceText )
+#IF( SUB(%RTFReplaceText, 1, 1 ) = '!' )
+  #SET( %TmpReplaceText, CLIP( SUB(%RTFReplaceText, 2, LEN( %RTFReplaceText ) ) ) )
+#ELSE
+  #SET( %TmpReplaceText, '''' & CLIP( %RTFReplaceText ) & '''' )
+#ENDIF
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.Replace( %TmpFindText, %TmpReplaceText )
+#! -------------------------------------------------------------------------
+#CODE (SelectRTF, 'Set the RTF control active (SELECT())'),REQ(RTFControl),DESCRIPTION( 'Set the RTF control active (SELECT())'),HLP('~TPLSelectRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.SetFocus()
+#! -------------------------------------------------------------------------
+#CODE (CanUndoRTF, 'Check the RTF control to see if there is data in the undo buffer'),REQ(RTFControl),DESCRIPTION( 'Check the RTF control to see if there is data in the undo buffer'),HLP('~TPLCanUndoRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Variable to receive')
+#PROMPT( ' Undo Status: ', FIELD ), %RTFUndoStatus, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFUndoStatus = %RTFObj.CanUndo()
+#! -------------------------------------------------------------------------
+#CODE (CanRedoRTF, 'Check the RTF control to see if there is data in the Redo buffer'),REQ(RTFControl),DESCRIPTION( 'Check the RTF control to see if there is data in the Redo buffer'),HLP('~TPLCanRedoRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Variable to receive ')
+#PROMPT( ' Redo Status: ', FIELD ), %RTFRedoStatus, REQ
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFRedoStatus = %RTFObj.CanRedo()
+#! -------------------------------------------------------------------------
+#CODE (IsDirtyRTF, 'Check the RTF control to see if the document has been modified'),REQ(RTFControl),DESCRIPTION( 'Check the RTF control to see if the document has been modified'),HLP('~TPLIsDirtyRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Variable to receive ' )
+#PROMPT( ' document status: ', FIELD ), %RTFDirtyStatus, REQ
+#PROMPT('Prompt to save if modified?: ', CHECK ), %RTFPromptSave, DEFAULT( 1 )
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFDirtyStatus = %RTFObj.IsDirty( %RTFPromptSave )
+#! -------------------------------------------------------------------------
+#CODE (SelectTextRTF, 'Select text in the RTF control'),REQ(RTFControl),DESCRIPTION( 'Select text in the RTF control'),HLP('~TPLSelectTextRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('Starting Position')
+#PROMPT( ' or variable (prefixed with !): ', @s128 ), %RTFSelStart, REQ
+#DISPLAY('Ending Position' )
+#PROMPT(' or variable (prefixed with !): ', @s128 ), %RTFSelEnd, REQ
+#DECLARE( %TmpSelStart )
+#CLEAR( %TmpSelStart )
+#IF( SUB(%RTFSelStart, 1, 1 ) = '!' )
+  #SET( %TmpSelStart, CLIP( SUB(%RTFSelStart, 2, LEN( %RTFSelStart ) ) ) )
+#ELSE
+  #SET( %TmpSelStart, CLIP( %RTFSelStart ) )
+#ENDIF
+#DECLARE( %TmpSelEnd )
+#CLEAR( %TmpSelEnd )
+#IF( SUB(%RTFSelEnd, 1, 1 ) = '!' )
+  #SET( %TmpSelEnd, CLIP( SUB(%RTFSelEnd, 2, LEN( %RTFSelEnd ) ) ) )
+#ELSE
+  #SET( %TmpSelEnd, CLIP( %RTFSelEnd ) )
+#ENDIF
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.SelectText( %TmpSelStart, %TmpSelEnd )
+#! -------------------------------------------------------------------------
+#CODE (GetTextRTF, 'Get Select text in the RTF control'),REQ(RTFControl),DESCRIPTION( 'Get Select text in the RTF control'),HLP('~TPLGetTextRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#PROMPT('Variable to Receive text: ', FIELD ), %RTFTargetString, REQ
+#DISPLAY('Starting Position or')
+#PROMPT (' variable (prefixed with !): ', @s128 ), %RTFSelStart
+#DISPLAY('Ending Position or')
+#PROMPT(' variable (prefixed with !): ', @s128 ), %RTFSelEnd
+#DISPLAY('Variable to receive')
+#PROMPT(' string length: ', FIELD ), %RTFSelLength
+#DECLARE( %TmpSelStart )
+#CLEAR( %TmpSelStart )
+#IF( SUB(%RTFSelStart, 1, 1 ) = '!' )
+  #SET( %TmpSelStart, CLIP( SUB(%RTFSelStart, 2, LEN( %RTFSelStart ) ) ) )
+#ELSE
+  #SET( %TmpSelStart, CLIP( %RTFSelStart ) )
+#ENDIF
+#DECLARE( %TmpSelEnd )
+#CLEAR( %TmpSelEnd )
+#IF( SUB(%RTFSelEnd, 1, 1 ) = '!' )
+  #SET( %TmpSelEnd, CLIP( SUB(%RTFSelEnd, 2, LEN( %RTFSelEnd ) ) ) )
+#ELSE
+  #SET( %TmpSelEnd, CLIP( %RTFSelEnd ) )
+#ENDIF
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+#IF( CLIP( %RTFSelLength ) <> '' )
+%RTFSelLength = %RTFObj.GetText( %RTFTargetString, %TmpSelStart, %TmpSelEnd )
+#ELSE
+%RTFObj.GetText( %RTFTargetString, %TmpSelStart, %TmpSelEnd )
+#ENDIF
+#! -------------------------------------------------------------------------
+#CODE (SetTextRTF, 'Set Select text in the RTF control'),REQ(RTFControl),DESCRIPTION( 'Set Select text in the RTF control'),HLP('~TPLSetTextRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#DISPLAY('String or')
+#PROMPT(' variable (prefixed with !): ', @s128 ), %RTFTargetString, REQ
+#PROMPT('Allow undo?: ', CHECK ), %RTFAllowUndo, DEFAULT( 0 )
+#DISPLAY('Starting Position')
+#PROMPT(' or variable (prefixed with !): ', @s128 ), %RTFSelStart
+#DISPLAY('Ending Position')
+#PROMPT(' or variable (prefixed with !): ', @s128 ), %RTFSelEnd
+#DECLARE( %TmpTargetString )
+#CLEAR( %TmpTargetString )
+#IF( SUB(%RTFTargetString, 1, 1 ) = '!' )
+  #SET( %TmpTargetString, CLIP( SUB(%RTFTargetString, 2, LEN( %RTFTargetString ) ) ) )
+#ELSE
+  #SET( %TmpTargetString, '''' & CLIP( %RTFTargetString ) & '''' )
+#ENDIF
+#DECLARE( %TmpSelStart )
+#CLEAR( %TmpSelStart )
+#IF( SUB(%RTFSelStart, 1, 1 ) = '!' )
+  #SET( %TmpSelStart, CLIP( SUB(%RTFSelStart, 2, LEN( %RTFSelStart ) ) ) )
+#ELSE
+  #SET( %TmpSelStart, CLIP( %RTFSelStart ) )
+#ENDIF
+#DECLARE( %TmpSelEnd )
+#CLEAR( %TmpSelEnd )
+#IF( SUB(%RTFSelEnd, 1, 1 ) = '!' )
+  #SET( %TmpSelEnd, CLIP( SUB(%RTFSelEnd, 2, LEN( %RTFSelEnd ) ) ) )
+#ELSE
+  #SET( %TmpSelEnd, CLIP( %RTFSelEnd ) )
+#ENDIF
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.SetText( %TmpTargetString, %RTFAllowUndo, %TmpSelStart, %TmpSelEnd )
+#! -------------------------------------------------------------------------
+#CODE (FlatButtonsRTF, 'Toggle Flat Buttons on toolbars'),REQ(RTFControl),DESCRIPTION( 'Toggle Flat Buttons on toolbars'),HLP('~TPLFlatButtonsRTF')
+#! -------------------------------------------------------------------------
+#!DISPLAY
+#PROMPT('Associated RTF Control', CONTROL ), %RTFParentObject, REQ
+#PROMPT('Flat Buttons?: ', CHECK ), %RTFFlatButtons, DEFAULT( 1 )
+#DECLARE( %RTFObj )
+#IF(SUB(%RTFParentObject,1,1) = '?')
+  #SET( %RTFObj, 'oRTF_' & SUB(%RTFParentObject,2, LEN( %RTFParentObject ) ) )
+#ELSE
+  #SET( %RTFObj, 'oRTF_' & %RTFParentObject )
+#ENDIF
+%RTFObj.FlatButtons( %RTFFlatButtons )

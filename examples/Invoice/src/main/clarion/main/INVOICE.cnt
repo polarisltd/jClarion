@@ -1,0 +1,17 @@
+:Base INVOICE.hlp
+1 INVOICE
+2 Contents=IDHCONTENTS
+2 Main Toolbar=MainToolbar
+2 Browse Customers Orders in Tree View=BrowseCustomersOrdersinTreeView
+2 Browse Customers=BrowseCustomers
+2 Update Customers=UpdateCustomers
+2 Select a State=SelectaState
+2 Update States=UpdateStates
+2 Browse Orders for a Customer=BrowseOrdersforaCustomer
+2 Update Order=UpdateOrder
+2 Update Detail=UpdateDetail
+2 Select a Product=SelectaProduct
+2 Browse Products=BrowseProducts
+2 Update Products=UpdateProducts
+2 Update Company=UpdateCompany
+2 Select Order for Report=SelectOrderforReport

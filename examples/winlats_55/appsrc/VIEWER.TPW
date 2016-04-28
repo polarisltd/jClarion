@@ -1,0 +1,72 @@
+#PROCEDURE(Viewer,'View a ASCII (text) file'),WINDOW,HLP('~TPLProcViewer')
+#LOCALDATA
+LocalRequest         LONG
+OriginalRequest      LONG
+LocalResponse        LONG
+FilesOpened          LONG
+WindowOpened         LONG
+WindowInitialized    LONG
+ForceRefresh         LONG
+CurrentTab           STRING(80)
+#ENDLOCALDATA
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','Refresh Window ROUTINE, before lookups')
+#CLASS('After Lookups','Refresh Window ROUTINE, after lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#PROMPT('&Parameters:',@s255),%Parameters
+#ENABLE(%ProcedureType='FUNCTION')
+  #PROMPT('Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#PROMPT('Window Operation Mode:',DROP('Use WINDOW setting|Normal|MDI|Modal')),%WindowOperationMode
+#ENABLE(%INIActive)
+  #BOXED('INI File Settings')
+    #PROMPT('Save and Restore Window Location',CHECK),%INISaveWindow,DEFAULT(1),AT(10,,150)
+  #ENDBOXED
+#ENDENABLE
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#INSERT(%StandardWindowCode)
+#!-----------------------------------------
+#DEFAULT
+NAME DefaultViewer
+[COMMON]
+DESCRIPTION 'View an ASCII file'
+FROM Clarion Viewer
+[PROMPTS]
+%WindowOperationMode STRING  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+[ADDITION]
+NAME Clarion ASCIIBox
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%ASCIIFileDescription @S40  ('')
+%ASCIIFile @S80  ('')
+%ASCIIWarning LONG  (1)
+[ADDITION]
+NAME Clarion ASCIIPrintButton
+[INSTANCE]
+INSTANCE 4
+PARENT 1
+[ADDITION]
+NAME Clarion ASCIISearchButton
+[INSTANCE]
+INSTANCE 3
+PARENT 1
+[ADDITION]
+NAME Clarion CloseButton
+[INSTANCE]
+INSTANCE 2
+[WINDOW]
+ViewWindow WINDOW('View an ASCII File'),AT(3,7,296,136),SYSTEM,GRAY,MAX
+       LIST,AT(5,5,285,110),FONT('FixedSys',9,,FONT:regular),USE(?AsciiBox),HVSCROLL,FROM(Queue:ASCII), |
+           #SEQ(1),#ORIG(?AsciiBox)
+       BUTTON('&Print'),AT(135,120,35,10),USE(?ASCIIPrint),#SEQ(4),#ORIG(?ASCIIPrint)
+       BUTTON('&Find...'),AT(174,120,35,10),USE(?ASCIISearch),#SEQ(3),#ORIG(?ASCIISearch)
+       BUTTON('Find Next'),AT(213,120,39,10),USE(?ASCIIRepeat)#SEQ(3),#ORIG(?ASCIIRepeat)
+       BUTTON('&Close'),AT(255,120,35,10),USE(?Close),#SEQ(2),#ORIG(?Close)
+     END
+
+#ENDDEFAULT

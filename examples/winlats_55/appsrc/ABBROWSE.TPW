@@ -1,0 +1,2542 @@
+#PROCEDURE(Browse,'Browse Fields in a List Box'),WINDOW,HLP('~TPLProcBrowse'),PARENT(Window(ABC))
+#DEFAULT
+NAME DefaultABCBrowse
+CATEGORY 'Browse'
+[COMMON]
+DESCRIPTION 'Browse with update and select'
+FROM ABC Window
+[PROMPTS]
+%WindowOperationMode STRING  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+[ADDITION]
+NAME ABC BrowseBox
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%LocatorType STRING  ('Step')
+%RecordFilter @S180  ('')
+%RangeField COMPONENT  ()
+%RangeLimitType STRING  ('Current Value')
+%RangeLimit @s40  ('')
+%RangeLow @S50  ('')
+%RangeHigh @S50  ('')
+%HotFields MULTI LONG  ()
+%HotField DEPEND %HotFields FIELD TIMES 0
+
+[ADDITION]
+NAME ABC BrowseSelectButton
+[INSTANCE]
+INSTANCE 3
+PARENT 1
+[PROMPTS]
+%HideIfDisabled LONG  (1)
+[ADDITION]
+NAME ABC BrowseUpdateButtons
+[INSTANCE]
+INSTANCE 2
+PARENT 1
+PROCPROP
+[PROMPTS]
+%UpdateProcedure PROCEDURE  ()
+[ADDITION]
+NAME ABC CloseButton
+[INSTANCE]
+INSTANCE 4
+[WINDOW]
+BrowseWindow WINDOW('Browse Records'),AT(0,0,247,140),SYSTEM,GRAY,MDI
+       LIST,AT(5,5,235,100),MSG('Browsing Records'),USE(?List),IMM,FROM(Queue:Browse),HVSCROLL,#SEQ(1),#ORIG(BrowseBox)
+       BUTTON('&Insert'),AT(5,110,40,12),KEY(InsertKey),USE(?Insert),#SEQ(2),#ORIG(?Insert),#LINK(?Change)
+       BUTTON('&Change'),AT(50,110,40,12),KEY(CtrlEnter),USE(?Change),DEFAULT,#SEQ(2),#ORIG(?Change),#LINK(?Delete)
+       BUTTON('&Delete'),AT(95,110,40,12),KEY(DeleteKey),USE(?Delete),#SEQ(2),#ORIG(?Delete),#LINK(?Insert)
+       BUTTON('&Select'),AT(145,110,40,12),KEY(EnterKey),USE(?Select),#SEQ(3),#ORIG(?Select)
+       BUTTON('Close'),AT(200,110,40,12),USE(?Close),#SEQ(4),#ORIG(?Close)
+     END
+
+#ENDDEFAULT
+
+#CONTROL(BrowseBox,'File-Browsing List Box'),PRIMARY('File-Browsing List Box',OPTKEY),DESCRIPTION('Browse on ' & %Primary),MULTI,WINDOW,HLP('~TPLControlBrowseBox'),WRAP(List)
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default', 'BRW'&%ActiveTemplateInstance, %BrowserType)
+  #CALL(%SetBothTypes,0)
+  #FOR(%SortOrder)
+    #CALL(%SetBothTypes,%SortOrder)
+  #ENDFOR
+#ENDPREPARE
+  CONTROLS
+    LIST,AT(,,150,100),USE(?List),IMM,FROM(Queue:Browse),MSG('Browsing Records')
+  END
+
+#BUTTON('&Browse Box Behavior'),AT(10,,180)
+  #INSERT(%OOPPrompts)
+  #SHEET,HSCROLL
+    #TAB('&Default Behavior'),HLP('~TPLControlBrowseBox_Default_Behavior')
+      #PROMPT('&Quick-Scan Records (buffered reads)',CHECK),%EnableQuickScan,DEFAULT(0),AT(10,30,180)
+      #PROMPT('&Loading Method',DROP('Page|File')),%LoadMethod,DEFAULT('Page')
+      #PROMPT('Accept browse control from ToolBar',CHECK),%AcceptToolBarControl,DEFAULT(1),AT(10)
+      #ENABLE(%PrimaryKey)
+        #BUTTON('&Locator Behavior'),AT(,,175)
+          #PROMPT('&Locator:',DROP('None|Step|Entry|Incremental|Filtered')),%LocatorType,DEFAULT('Step'),WHENACCEPTED(%SetLocatorClass(0,%LocatorType))
+          #BOXED('Locator Field'),WHERE(%LocatorType = 'Entry' OR %LocatorType = 'Incremental' OR %LocatorType = 'Filtered')
+            #PROMPT('&Override default locator control',CHECK),%OverrideDefaultLocator,AT(10,,180)
+            #ENABLE(%OverrideDefaultLocator)
+              #PROMPT('&New Locator Control:',CONTROL),%OverrideLocator,REQ
+            #ENDENABLE
+          #ENDBOXED
+          #BOXED('Find method'),WHERE(%LocatorType = 'Filtered')
+            #PROMPT('Find Anywhere',CHECK),%FindDefaultAnywhere
+          #ENDBOXED
+          #BUTTON('Locator &Class'),WHERE(%LocatorType='Step' OR %LocatorType='Entry' OR %LocatorType='Incremental' OR %LocatorType='Filtered'),AT(,,180)
+            #WITH(%ClassItem,'Locator0')
+              #INSERT(%ClassPrompts)
+            #END
+          #ENDBUTTON
+        #ENDBUTTON
+      #ENDENABLE
+      #PROMPT('&Record Filter:',@S255),%RecordFilter
+      #ENABLE(%PrimaryKey)
+        #INSERT(%RangeLimitOptions)
+      #ENDENABLE
+      #PROMPT('&Additional Sort Fields',EXPR),%AddSortFields
+      #BUTTON('&Reset Fields'),MULTI(%ResetFields,%ResetField),HLP('~TPLControlBrowseBox_Reset_Fields')
+        #PROMPT('&Reset Field:',FIELD),%ResetField
+      #ENDBUTTON
+      #ENABLE(%PrimaryKey AND %LoadMethod = 'Page')
+        #BUTTON('&Scroll Bar Behavior'),HLP('~TPLControlBrowseBox_Scroll_Bar_Behavior')
+          #PROMPT('&Scroll Bar Type:',DROP('Fixed Thumb|Movable Thumb')),%ScrollBehavior,DEFAULT('Fixed Thumb'),WHENACCEPTED(%SetStepClass(0))
+          #ENABLE(%ScrollBehavior='Movable Thumb')
+            #PROMPT('&Key Distribution:',DROP('Alpha|Last Names|Custom|Runtime')),%ScrollKeyDistribution,DEFAULT('Alpha')
+            #ENABLE(%ScrollKeyDistribution='Custom')
+              #BUTTON('&Custom Key Distribution'),MULTI(%CustomKeyDistribution,%KeyDistributionValue),AT(10,,180),HLP('~TPLControlBrowseBox_Scroll_Bar_Behavior')
+                #PROMPT('&Key Value:',@S10),%KeyDistributionValue,REQ
+              #ENDBUTTON
+            #ENDENABLE
+            #ENABLE(%ScrollKeyDistribution='Runtime')
+              #BUTTON('Runtime Distribution Parameters'),AT(10,,190),HLP('~TPLControlBrowseBox_Scroll_Bar_Behavior')
+                #DISPLAY('If the free key element is a string (or')
+                #DISPLAY('CSTRING, PSTRING, etc.), you may customize')
+                #DISPLAY('the characters that are used to compute the')
+                #DISPLAY('scroll bar''s stop points.  If the free key')
+                #DISPLAY('element is numeric, these check will not be used.')
+                #DISPLAY('')
+                #BOXED('Please check the appropriate boxes.')
+                  #PROMPT('Use alpha characters',CHECK),%ScrollAlpha,DEFAULT(1),AT(10,,190)
+                  #PROMPT('Use numeric characters',CHECK),%ScrollNumeric,AT(10,,190)
+                  #PROMPT('Use other keyboard characters',CHECK),%ScrollAlt,AT(10,,190)
+                #ENDBOXED
+              #ENDBUTTON
+            #ENDENABLE
+            #BUTTON('Step &Class'),AT(,,180)
+              #WITH(%ClassItem,'Step0')
+                #INSERT(%ClassPrompts)
+              #END
+            #ENDBUTTON
+          #ENDENABLE
+        #ENDBUTTON
+      #ENDENABLE
+    #ENDTAB
+    #TAB('&Conditional Behavior'),HLP('~TPLControlBrowseBox_Conditional_Behavior')
+      #BUTTON('Conditional Browse Behavior'),MULTI(%SortOrder,%SortCondition & ' - ' & %SortKey),AT(,35),INLINE,HLP('~TPLControlBrowseBox_Conditional_Behavior')
+        #PROMPT('Condition:',@S255),%SortCondition
+        #PROMPT('Key to Use:',KEY(%Primary)),%SortKey,WHENACCEPTED(%SetBothTypes(%SortOrder))
+        #ENABLE(%SortKey)
+          #BUTTON('&Locator Behavior'),AT(,,175)
+            #PROMPT('&Locator:',DROP('None|Step|Entry|Incremental|Filtered')),%SortLocatorType,DEFAULT('Step'),WHENACCEPTED(%SetLocatorClass(%SortOrder,%SortLocatorType))
+            #BOXED('Locator Field'),WHERE(%SortLocatorType = 'Entry' OR %SortLocatorType = 'Incremental' OR %SortLocatorType = 'Filtered')
+              #PROMPT('&Override default locator control',CHECK),%SortOverrideDefaultLocator,AT(10,,180)
+              #ENABLE(%SortOverrideDefaultLocator)
+                #PROMPT('&New Locator Control:',CONTROL),%SortOverrideLocator,REQ
+              #ENDENABLE
+            #ENDBOXED
+            #BOXED('Find Method'),WHERE(%SortLocatorType = 'Filtered')
+              #PROMPT('Find Anywhere',CHECK),%SortFindAnywhere
+            #ENDBOXED
+            #BUTTON('Locator &Class'),AT(,,180),WHERE(%SortLocatorType='Step' OR %SortLocatorType='Entry' OR %SortLocatorType='Incremental' OR %SortLocatorType='Filtered')
+              #WITH(%ClassItem,'Locator'&%SortOrder)
+                #INSERT(%ClassPrompts)
+              #END
+            #ENDBUTTON
+          #ENDBUTTON
+        #ENDENABLE
+        #PROMPT('&Record Filter:',@S255),%SortRecordFilter
+        #ENABLE(%SortKey)
+          #PROMPT('Range Limit &Field:',COMPONENT(%SortKey)),%SortRangeField
+          #ENABLE(%SortRangeField)
+            #PROMPT('Range Limit &Type:',DROP('Current Value|Single Value|Range of Values|File Relationship')),%SortRangeLimitType,DEFAULT('Current Value')
+            #BOXED,SECTION
+              #BOXED('Range Limit Boundary'),WHERE(%SortRangeLimitType='Single Value'),AT(,0)
+                #PROMPT('&Range Limit Value:',FIELD),%SortRangeLimit
+              #ENDBOXED
+              #BOXED('Range Limit Boundaries'),WHERE(%SortRangeLimitType='Range of Values'),AT(,0)
+                #PROMPT('&Low Limit Value:',FIELD),%SortRangeLow
+                #PROMPT('&High Limit Value:',FIELD),%SortRangeHigh
+              #ENDBOXED
+              #BOXED('Range Limiting File'),WHERE(%SortRangeLimitType='File Relationship'),AT(,0)
+                #PROMPT('&Related File:',FILE),%SortRangeFile
+              #ENDBOXED
+            #ENDBOXED
+          #ENDENABLE
+        #ENDENABLE
+        #PROMPT('&Additional Sort Fields',EXPR),%SortAddSortFields
+        #BUTTON('Reset Fields'),MULTI(%SortResetFields,%SortResetField),HLP('~TPLControlBrowseBox_Reset_Fields')
+          #PROMPT('&Reset Field:',FIELD),%SortResetField
+        #ENDBUTTON
+        #ENABLE(%SortKey AND %LoadMethod = 'Page')
+          #BUTTON('Scroll Bar Behavior'),HLP('~TPLControlBrowseBox_Scroll_Bar_Behavior')
+            #PROMPT('Scroll Bar Type:',DROP('Fixed Thumb|Movable Thumb')),%SortScrollBehavior,DEFAULT('Fixed Thumb'),WHENACCEPTED(%SetStepClass(%SortOrder))
+            #ENABLE(%SortScrollBehavior='Movable Thumb')
+              #PROMPT('Key Distribution:',DROP('Alpha|Last Names|Custom|Runtime')),%SortScrollKeyDistribution,DEFAULT('Alpha')
+              #ENABLE(%SortScrollKeyDistribution='Custom')
+                #BUTTON('Custom Key Distribution'),MULTI(%SortCustomKeyDistribution,%SortKeyDistributionValue),AT(10,,180),HLP('~TPLControlBrowseBox_Scroll_Bar_Behavior')
+                  #PROMPT('Key Value:',@S10),%SortKeyDistributionValue,REQ
+                #ENDBUTTON
+              #ENDENABLE
+              #ENABLE(%SortScrollKeyDistribution='Runtime')
+                #BUTTON('Runtime Distribution Parameters'),AT(10,,180),HLP('~TPLControlBrowseBox_Scroll_Bar_Behavior')
+                  #DISPLAY('If the free key element is a string (or')
+                  #DISPLAY('CSTRING, PSTRING, etc.), you may customize')
+                  #DISPLAY('the characters that are used to compute the')
+                  #DISPLAY('scroll bar''s stop points.  If the free key')
+                  #DISPLAY('element is numeric, these check will not be used.')
+                  #DISPLAY('')
+                  #BOXED('Please check the appropriate boxes.')
+                    #PROMPT('Use alpha characters',CHECK),%SortScrollAlpha,DEFAULT(1),AT(10,,180)
+                    #PROMPT('Use numeric characters',CHECK),%SortScrollNumeric,AT(10,,180)
+                    #PROMPT('Use other keyboard characters',CHECK),%SortScrollAlt,AT(10,,180)
+                  #ENDBOXED
+                #ENDBUTTON
+              #ENDENABLE
+            #ENDENABLE
+            #BUTTON('Step &Class'),AT(,,180)
+              #WITH(%ClassItem,'Step'&%SortOrder)
+                #INSERT(%ClassPrompts)
+              #END
+            #ENDBUTTON
+          #ENDBUTTON
+        #ENDENABLE
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('&Hot Fields'),HLP('~TPLControlBrowseBox_Hot_Fields')
+      #BUTTON('"Hot" Fields'),MULTI(%HotFields,%HotField),AT(,35),INLINE,HLP('~TPLControlBrowseBox_Hot_Fields')
+        #PROMPT('Hot Field:',FIELD),%HotField,REQ
+        #PROMPT('BIND Field',CHECK),%HotFieldBound
+        #PROMPT('Not in view',CHECK),%HotFieldBindOnly
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('&Colors'),WHERE(%ControlHasColor),HLP('~TPLControlBrowseBox_Colors')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #BUTTON('Customize Colors'),FROM(%ControlField,%ControlField),AT(,35),INLINE,WHERE(%ControlFieldHasColor),HLP('~TPLControlBrowseBox_Colors')
+        #PREPARE
+          #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+        #ENDPREPARE
+        #BOXED('Default Colors')
+          #PROMPT('&Foreground Normal:',COLOR),%ControlFieldForegroundNormal,DEFAULT(-1)
+          #PROMPT('&Background Normal:',COLOR),%ControlFieldBackgroundNormal,DEFAULT(-1)
+          #PROMPT('&Foreground Selected:',COLOR),%ControlFieldForegroundSelected,DEFAULT(-1)
+          #PROMPT('&Background Selected:',COLOR),%ControlFieldBackgroundSelected,DEFAULT(-1)
+        #ENDBOXED
+        #BOXED('Conditional Color Assignments')
+          #BUTTON('Conditional Color Assignments'),MULTI(%ConditionalColors,%ColorCondition),INLINE,HLP('~TPLControlBrowseBox_Colors')
+            #PROMPT('&Condition:',@S255),%ColorCondition
+            #PROMPT('&Foreground Normal:',COLOR),%ConditionalControlFieldForegroundNormal,DEFAULT(-1)
+            #PROMPT('&Background Normal:',COLOR),%ConditionalControlFieldBackgroundNormal,DEFAULT(-1)
+            #PROMPT('&Foreground Selected:',COLOR),%ConditionalControlFieldForegroundSelected,DEFAULT(-1)
+            #PROMPT('&Background Selected:',COLOR),%ConditionalControlFieldBackgroundSelected,DEFAULT(-1)
+          #ENDBUTTON
+        #ENDBOXED
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('&Colors'),WHERE(NOT %ControlHasColor),HLP('~TPLControlBrowseBox_Colors')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #DISPLAY('Your BrowseBox is not set to use custom colors. To activate custom colors for your BrowseBox, follow these steps.'),AT(10,30,175,24)
+      #DISPLAY('1.  If you aren''t in the window formatter, go there.'),AT(10,,175)
+      #DISPLAY('2.  Right-click on the BrowseBox control, and select "List Box Format..."'),AT(10,,175,16)
+      #DISPLAY('3.  Select the column you want to "colorize" from the left hand list.'),AT(10,,175)
+      #DISPLAY('4.  Check the "Color" Checkbox in the Flags group.'),AT(10,,175)
+      #DISPLAY('5.  Repeat steps 3 and 4 as necessary.'),AT(10,,175)
+      #DISPLAY('6.  When you call up the BrowseBox actions window, this tab will show the columns you''ve colored.'),AT(10,,175,16)
+    #ENDTAB
+    #TAB('&Icons'),WHERE(%ControlHasIcon),HLP('~TPLControlBrowseBox_Icons')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #BUTTON('&Customize BrowseBox Icons'),FROM(%ControlField,%ControlField & ' - ' & %ControlFieldIcon),AT(,35),HLP('~TPLControlBrowseBox_Icons'),INLINE,WHERE(%ControlFieldHasIcon)
+        #PREPARE
+          #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+        #ENDPREPARE
+        #BOXED('Default Icon')
+          #PROMPT('Icon:',@S40),%ControlFieldIcon
+        #ENDBOXED
+        #BOXED('Conditional Icon Usage')
+          #BUTTON('&Conditional Icon Usage'),MULTI(%ConditionalIcons,%IconCondition),INLINE,HLP('~TPLControlBrowseBox_Icons')
+            #PROMPT('&Condition:',@S255),%IconCondition
+            #PROMPT('Icon:',@S40),%ConditionalControlFieldIcon
+          #ENDBUTTON
+        #ENDBOXED
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('&Icons'),WHERE(NOT %ControlHasIcon),HLP('~TPLControlBrowseBox_Icons')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #DISPLAY('Your BrowseBox is not set to use icons. To activate icons for your BrowseBox, follow these steps.'),AT(10,30,175,24)
+      #DISPLAY('1.  If you aren''t in the window formatter, go there.'),AT(10,,175)
+      #DISPLAY('2.  Right-click on the BrowseBox control, and select "List Box Format..."'),AT(10,,175,16)
+      #DISPLAY('3.  Select the column you want to use an icon with from the left hand list.'),AT(10,,175)
+      #DISPLAY('4.  Switch to "Appearance" tab.'),AT(10,,175)
+      #DISPLAY('5.  Choose "Normal" or "Transparent" as an Icon mode.'),AT(10,,175)
+      #DISPLAY('6.  Repeat steps 3-5 as necessary.'),AT(10,,175)
+      #DISPLAY('7.  When you call up the BrowseBox actions window, this tab will show the columns you''ve added icons to.'),AT(10,,175,24)
+    #ENDTAB
+    #TAB('St&yles'),WHERE(%ControlHasStyle),HLP('~TPLControlBrowseBox_Styles')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #BUTTON('&Customize BrowseBox Styles'),FROM(%ControlField,%ControlField & ' - ' & %ControlFieldStyle),HLP('~TPLControlBrowseBox_Styles'),INLINE,WHERE(%ControlFieldHasStyle)
+        #PREPARE
+          #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+        #ENDPREPARE
+        #BOXED('Default Style')
+          #PROMPT('Style:',SPIN(@N6,0,65535)),%ControlFieldStyle
+        #ENDBOXED
+        #BOXED('Conditional Styles')
+          #BUTTON('&Conditional Styles'),MULTI(%ConditionalStyles,%StyleCondition),INLINE,HLP('~TPLControlFileDrop_Styles')
+            #PROMPT('&Condition:',@S255),%StyleCondition
+            #PROMPT('Style:',SPIN(@N6,0,65535)),%ConditionalControlFieldStyle
+          #ENDBUTTON
+        #ENDBOXED
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('St&yles'),WHERE(NOT %ControlHasStyle),HLP('~TPLControlBrowseBox_Styles')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #DISPLAY('Your BrowseBox is not set to use styles. To activate styles for your BrowseBox, follow these steps.'),AT(10,,175,24)
+      #DISPLAY('1.  If you aren''t in the window formatter, go there.'),AT(10,,175)
+      #DISPLAY('2.  Right-click on the FileDrop control, and select "List Box Format..."'),AT(10,,175,16)
+      #DISPLAY('3.  Select the column you want to use styles for from the left hand list.'),AT(10,,175)
+      #DISPLAY('4.  Check the "Style" Checkbox in the Flags group.'),AT(10,,175)
+      #DISPLAY('5.  Repeat steps 3 and 4 as necessary.'),AT(10,,175)
+      #DISPLAY('6.  When you call up the BrowseBox actions window, this tab will show the columns you''ve added styles for.'),AT(10,,175,16)
+    #ENDTAB
+    #TAB('&Totaling'),HLP('~TPLControlBrowseBox_Totaling')
+      #BUTTON('Browse Totaling'),MULTI(%BrowseTotals,%BrowseTotalTarget & ' (' & %BrowseTotalType & ')'),AT(,30),INLINE
+        #PROMPT('Total Target Field:',FIELD),%BrowseTotalTarget,REQ
+        #PROMPT('Total Type:',DROP('Count|Sum|Average')),%BrowseTotalType
+        #ENABLE(%BrowseTotalType <> 'Count'),CLEAR
+          #PROMPT('Field To Total:',FIELD),%BrowseTotalField,REQ
+        #ENDENABLE
+        #PROMPT('Total Based On:',DROP('Each Record Read|Specified Condition')),%BrowseTotalBasedOn
+        #ENABLE(%BrowseTotalBasedOn = 'Specified Condition'),CLEAR
+          #PROMPT('Total Condition:',@S255),%BrowseTotalCondition,REQ
+        #ENDENABLE
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('&Classes'),HLP('~TPLControlBrowseBox_Classes')
+      #WITH(%ClassItem,'Default')
+        #INSERT(%ClassPrompts)
+      #END
+    #ENDTAB
+  #ENDSHEET
+#ENDBUTTON
+#CLASS('Before Filter',%ActiveTemplateInstanceDescription & ' - Validate Record before Filter Code')
+#CLASS('Before Range Limits',%ActiveTemplateInstanceDescription & ' - Validate Record before Range Limit Code')
+#CLASS('Format Browse','Format a variable in the ' & %ActiveTemplateInstanceDescription)
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%FileControlSetFlags)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #FOR(%ControlField)
+      #IF(%ControlFieldHasIcon)
+        #IF(%ControlFieldIcon)
+          #INSERT(%StandardAddIconToProject,%ControlFieldIcon)
+        #ENDIF
+        #FOR(%ConditionalIcons)
+          #INSERT(%StandardAddIconToProject,%ConditionalControlFieldIcon)
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+  #ENDFOR
+#ENDAT
+#!
+#AT(%GenerateInstanceUpdate)
+  #CALL(%AddModuleIncludeFile,%PopupClass)
+  #IF(%AcceptToolbarControl)
+    #CALL(%AddModuleIncludeFile,%ToolbarListBoxType)
+  #ENDIF
+#ENDAT
+#!
+#!
+#ATSTART
+#MESSAGE('Initializing Browse',3)
+#INSERT(%FileControlInitialize)
+#CALL(%ReadABCFiles)
+#CALL(%SetClassDefaults, 'Default', 'BRW' & %ActiveTemplateInstance, %BrowserType)
+#CALL(%SetBothTypes,0)
+#FOR(%SortOrder)
+  #CALL(%SetBothTypes,%Sortorder)
+#ENDFOR
+#!
+#EQUATE(%InstancePrefix,'BRW'&%ActiveTemplateInstance&':')
+#DECLARE(%AdditionObjectNumber,LONG)
+#DECLARE(%ManagerName)
+#FIX(%ClassItem,'Default')
+#SET(%ManagerName,%ThisObjectName)
+#DECLARE(%ListView)
+#SET(%ListView,%InstancePrefix & ':View:Browse')
+#DECLARE(%VerticalScrollBarFound)
+#DECLARE(%ListControl)
+#DECLARE(%UseValidateRoutine)
+#DECLARE(%BeginningOffset)
+#DECLARE(%EndingOffset)
+#SET(%ListControl,%GetControlName())
+#SET(%VerticalScrollBarFound,%ControlAttributePresent('VSCROLL')+%ControlAttributePresent('HVSCROLL'))
+#!
+#!
+#DECLARE(%ListViewBoundField),UNIQUE
+#DECLARE(%BrowseAccessID),MULTI
+#DECLARE(%BrowseTotalKeys)
+#DECLARE(%BrowseSortOrderInstance,%BrowseAccessID,LONG)         #!Stores the %SortOrder instance number or 0
+#DECLARE(%BrowseKey,%BrowseAccessID)
+#DECLARE(%BrowsePrefix,%BrowseAccessID)
+#DECLARE(%BrowseCondition,%BrowseAccessID)
+#DECLARE(%BrowseRecordFilter,%BrowseAccessID)
+#DECLARE(%BrowseRangeField,%BrowseAccessID)
+#DECLARE(%BrowseRangeLimitType,%BrowseAccessID)
+#DECLARE(%BrowseRangeLimit,%BrowseAccessID)
+#DECLARE(%BrowseRangeHigh,%BrowseAccessID)
+#DECLARE(%BrowseRangeLow,%BrowseAccessID)
+#DECLARE(%BrowseRangeFile,%BrowseAccessID)
+#DECLARE(%BrowseRangeLimitField,%BrowseAccessID),MULTI
+#DECLARE(%BrowseRangeLimitValue,%BrowseRangeLimitField)
+#DECLARE(%BrowseResetField,%BrowseAccessID),UNIQUE
+#DECLARE(%BrowseFreeElement,%BrowseAccessID)
+#DECLARE(%BrowseFreeElementNumber,%BrowseAccessID)
+#DECLARE(%BrowseFilterStatement,%BrowseAccessID)
+#DECLARE(%BrowseOrderStatement,%BrowseAccessID)
+#DECLARE(%BrowseLocatorType,%BrowseAccessID)
+#DECLARE(%BrowseLocatorName,%BrowseAccessID)
+#DECLARE(%BrowseLocatorField,%BrowseAccessID)
+#DECLARE(%BrowseLocatorControl,%BrowseAccessID)
+#DECLARE(%BrowseLocatorFindAny,%BrowseAccessID)
+#DECLARE(%BrowseScrollBehavior,%BrowseAccessID)
+#DECLARE(%BrowseScrollKeyDistribution,%BrowseAccessID)
+#DECLARE(%BrowseScrollParameters,%BrowseAccessID)
+#DECLARE(%BrowseKeyDistributionValue,%BrowseAccessID),MULTI
+#DECLARE(%BrowseKeyDistributionCount,%BrowseAccessID)
+#DECLARE(%Found,LONG)
+#DECLARE(%ListQueue)
+#DECLARE(%HelpControl)
+#FOR(%Control)
+  #IF(UPPER(EXTRACT(%ControlStatement,'STD',1))='STD:HELP')
+    #SET(%HelpControl,%Control)
+    #BREAK
+  #ENDIF
+#ENDFOR
+#FIX(%Key,%PrimaryKey)
+#FIX(%Control,%ListControl)
+#SET(%ListQueue,EXTRACT(%ControlStatement,'FROM',1))
+#DECLARE(%IconList),UNIQUE
+#DECLARE(%IconListType,%IconList)
+#DECLARE(%QueueField),MULTI
+#DECLARE(%QueueFieldAssignment,%QueueField)
+#DECLARE(%QueueFieldComment,%QueueField)
+#DECLARE(%QueueFieldHasColor,%QueueField)
+#DECLARE(%QueueFieldHasIcon,%QueueField)
+#DECLARE(%QueueFieldHasTree,%QueueField)
+#DECLARE(%QueueFieldHasStyle,%QueueField)
+#CALL(%BuildQueueFields,%ManagerName,%ListControl)
+#INSERT(%SetupBrowseBehavior)
+#ENDAT
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'Default')
+#IF(%PrimaryKey)
+  #CASE(%LocatorType)
+  #OF('Step')
+    #CALL(%AddObjectList, 'Locator0', %StepLocatorType)
+  #OF('Entry')
+    #CALL(%AddObjectList, 'Locator0', %EntryLocatorType)
+  #OF('Incremental')
+    #CALL(%AddObjectList, 'Locator0', %IncrementalLocatorType)
+  #OF('Filtered')
+    #CALL(%AddObjectList, 'Locator0', %FilteredLocatorType)
+  #ENDCASE
+#ENDIF
+#FOR(%SortOrder)
+  #CASE(%SortLocatorType)
+  #OF('Step')
+    #CALL(%AddObjectList, 'Locator' & %SortOrder, %StepLocatorType)
+  #OF('Entry')
+    #CALL(%AddObjectList, 'Locator' & %SortOrder, %EntryLocatorType)
+  #OF('Incremental')
+    #CALL(%AddObjectList, 'Locator' & %SortOrder, %IncrementalLocatorType)
+  #OF('Filtered')
+    #CALL(%AddObjectList, 'Locator' & %SortOrder, %FilteredLocatorType)
+  #ENDCASE
+#ENDFOR
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%CustomModuleDeclarations)
+  #IF(%AcceptToolbarControl)
+    #CALL(%AddModuleIncludeFile,%ToolbarClass)
+  #ENDIF
+#ENDAT
+#!-------------------------------------------------------------------------
+#!
+#!
+#AT(%DataSection),PRIORITY(3500),DESCRIPTION('Views & Queues')
+#INSERT(%ConstructView)
+#EMBED(%BeforeConstructingBrowseQueue, ''),%ActiveTemplateInstance,HIDE
+#INSERT(%ConstructQueue)
+#ENDAT
+#!-------------------------------------------------------------------------
+#!
+#AT(%WindowManagerMethodCodeSection,'Kill','(),BYTE'),PRIORITY(7000)
+#IF(%FuzzyMatchingEnabled)
+  #FOR(%ActiveTemplate)
+    #IF(%ActiveTemplate = 'BrowseFuzzyMatching(ABC)')
+UNBIND('FuzzyMatch')
+      #BREAK
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(7750),DESCRIPTION('Initialize browse')
+#IF(%FuzzyMatchingEnabled)
+  #FOR(%ActiveTemplate)
+    #IF(%ActiveTemplate = 'BrowseFuzzyMatching(ABC)')
+BIND('FuzzyMatch', FuzzyMatch)
+      #BREAK
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#FIX(%Control,%ListControl)
+%ManagerName.Init(%Control,%ListQueue.ViewPosition,%ListView,%ListQueue,Relate:%Primary,SELF)
+#PRIORITY(8125),DESCRIPTION('Filling in browse options')
+#IF(%EnableRunTimeTranslator)
+%ManagerName.Popup.SetTranslator(Translator)
+#ENDIF
+%ManagerName.Q &= %ListQueue
+#IF(%LoadMethod='File')
+%ManagerName.FileLoaded = 1
+#END
+#IF(%ActiveInvisible NOT=%SysActiveInvisible)
+%ManagerName.ActiveInvisible = %ActiveInvisible
+#ENDIF
+#IF(%AllowUnFilled NOT=%SysAllowUnFilled)
+%ManagerName.AllowUnfilled = %AllowUnFilled
+#ENDIF
+#IF(%RetainRow NOT=%SysRetainRow)
+%ManagerName.RetainRow = %RetainRow
+#ENDIF
+#FIX(%File,%Primary)
+#SUSPEND
+#?IF SELF.Request <> SelectRecord
+  #EMBED(%BrowsePrepNormal,'Browse Preparation, Request Normal Operation'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),LEGACY
+#SUSPEND
+#?ELSE
+  #EMBED(%BrowsePrepSelectRecord,'Browse Preparation, Request to Select Record'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),LEGACY
+#RESUME
+#?END
+#RESUME
+#FOR(%BrowseAccessID)
+  #IF(%BrowseSortOrderInstance)
+    #SELECT(%SortOrder,%BrowseSortOrderInstance)
+    #SET(%AdditionObjectNumber,%SortOrder)
+  #ELSE
+    #SET(%AdditionObjectNumber,0)
+  #ENDIF
+  #IF(%BrowseScrollBehavior = 'Movable Thumb')
+    #FIX(%Key,%BrowseKey)
+    #FIX(%KeyField,%BrowseFreeElement)
+    #IF (%KeyFieldSequence <> 'ASCENDING')
+      #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:Descending')
+    #ENDIF
+    #FIX(%Field,%BrowseFreeElement)
+    #CASE(%FieldType)
+    #OF('STRING')
+    #OROF('CSTRING')
+    #OROF('PSTRING')
+    #OROF('GROUP')
+      #IF (%BrowseScrollKeyDistribution='Runtime')
+        #SET(%BrowseScrollParameters,%BrowseScrollParameters & ',ScrollBy:Runtime')
+      #ELSIF(%BrowseScrollKeyDistribution='Last Names')
+        #SET(%BrowseScrollParameters,%BrowseScrollParameters & ',ScrollBy:Name')
+      #ELSIF(%BrowseScrollKeyDistribution='Alpha')
+        #SET(%BrowseScrollParameters,%BrowseScrollParameters & ',ScrollBy:Alpha')
+      #ENDIF
+    #ENDCASE
+    #CALL(%SetClassItem,'Step'&%AdditionObjectNumber)
+%ThisObjectName.Init(%BrowseScrollParameters)
+    #IF(%BrowseScrollKeyDistribution='Custom')
+      #FOR(%BrowseKeyDistributionValue)
+        #SET(%ValueConstruct,INSTANCE(%BrowseKeyDistributionValue))
+%ThisObjectName.AddItem(%BrowseKeyDistributionValue)
+      #ENDFOR
+    #ENDIF
+%ManagerName.AddSortOrder(%ThisObjectName,%BrowseKey)
+  #ELSE
+%ManagerName.AddSortOrder(,%BrowseKey)
+  #ENDIF
+  #IF (%BrowseRangeField)
+    #CASE (%BrowseRangeLimitType)
+    #OF ('Single Value')
+%ManagerName.AddRange(%BrowseRangeField,%BrowseRangeLimit)
+    #OF ('Range of Values')
+%ManagerName.AddRange(%BrowseRangeField,%BrowseRangeLow,%BrowseRangeHigh)
+    #OF ('File Relationship')
+%ManagerName.AddRange(%BrowseRangeField,Relate:%Primary,Relate:%BrowseRangeFile)
+    #OF ('Current Value')
+%ManagerName.AddRange(%BrowseRangeField)
+    #ENDCASE
+  #ENDIF
+  #CALL(%SetClassItem,'Locator'&%AdditionObjectNumber)
+  #IF (%BrowseLocatorType AND %BrowseLocatorType <> 'None')
+%ManagerName.AddLocator(%ThisObjectName)
+#FIND(%KeyField,%BrowseLocatorName)
+%ThisObjectName.Init(%BrowseLocatorControl,%BrowseLocatorName,%KeyNoCase,%ManagerName)
+    #IF (%BrowseLocatorType = 'Filtered' AND %BrowseLocatorFindAny)
+%ThisObjectName.FloatRight = 1
+    #END
+  #ENDIF
+#IF (%BrowseOrderStatement)
+%ManagerName.AppendOrder(%(%StripPling(%BrowseOrderStatement)))
+#ENDIF
+#!#IF (%BrowseFilterStatement)
+#!%ManagerName.SetFilter(%(%StripPling(%BrowseFilterStatement)))
+#!#ENDIF
+  #IF(%GetBrowseFilter() <> '')
+%ManagerName.SetFilter(%(%StripPling(%GetBrowseFilter())))
+  #ENDIF
+  #FOR (%BrowseResetField)
+%ManagerName.AddResetField(%BrowseResetField)
+  #ENDFOR
+#ENDFOR
+#FOR(%QueueField)
+  #FIND(%Field,%QueueFieldAssignment)
+  #IF(NOT %FieldFile OR %FieldName)
+    #IF(~INLIST(%QueueFieldAssignment,%ListViewBoundField))
+BIND('%QueueField',%QueueFieldAssignment)
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#FOR(%HotFields),WHERE(%HotFieldBound)
+  #FIND(%Field,%HotField)
+  #IF(NOT %FieldFile OR %FieldName AND ~INLIST(%HotField,%ListViewBoundField))
+    #SET(%ValueConstruct,%HotField)
+    #INSERT(%CleanDimensions)
+    #IF(~INLIST(%ValueConstruct,%QueueField))
+BIND('%ValueConstruct',%HotField)
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#FOR(%ListViewBoundField)
+  #FIND(%Field,%ListViewBoundField)
+  #IF(NOT %FieldFile OR %FieldName)
+    #SET(%ValueConstruct,%ListViewBoundField)
+    #INSERT(%CleanDimensions)
+BIND('%ValueConstruct',%ListViewBoundField)
+  #ENDIF
+#ENDFOR
+#FOR(%IconList),WHERE(%IconListType <> 'Variable')
+  #SET(%ValueConstruct,INSTANCE(%IconList))
+  #IF(%IconListType = 'Built-In')
+%ListControl{Prop:IconList,%ValueConstruct} = %IconList
+  #ELSIF(%IconListType = 'File')
+    #IF(SUB(%IconList,1,1) = '~')
+%ListControl{Prop:IconList,%ValueConstruct} = '%IconList'
+    #ELSE
+%ListControl{Prop:IconList,%ValueConstruct} = '~%IconList'
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#FIX(%Control,%ListControl)
+#EMBED(%AddFieldsToBrowse),%ActiveTemplateInstance,HIDE
+#PRIORITY(8510),DESCRIPTION('Setting up browse toolbar control')
+#IF(%AcceptToolbarControl)
+%ManagerName.AddToolbarTarget(Toolbar)
+  #IF ( %HelpControl )
+%ManagerName.ToolbarItem.HelpButton = %HelpControl
+  #ENDIF
+#ENDIF
+#EMBED(%BrowseInit,'Browse Initialization'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),LEGACY
+#ENDAT
+#!
+#!
+#AT(%AddFieldsToBrowse, %ActiveTemplateInstance),PRIORITY(5000)
+#FOR(%QueueField)
+  #FIND(%Field,%QueueFieldAssignment)
+  #FIND(%HotField,%QueueFieldAssignment,%HotFields)
+  #IF (%Field OR %HotField AND ~%HotFieldBindOnly OR INLIST(%QueueFieldAssignment,%ControlField))
+%ManagerName.AddField(%QueueFieldAssignment,%ManagerName.Q.%QueueField)
+  #ENDIF
+#ENDFOR
+#ENDAT
+#!
+#!--------------------------------------------------------------------------
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance,'ResetSort','(BYTE Force),BYTE'),PRIORITY(2500),DESCRIPTION('Select sort order based on browse conditions')
+#EMBED(%BeforeControlRefresh,'Before Refresh Window for Browse Box'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),LEGACY
+  #IF(ITEMS(%BrowseAccessID) > 1)
+    #FOR(%BrowseAccessID)
+      #IF(%BrowseAccessID = 1)
+IF %BrowseCondition
+      #ELSIF(%BrowseAccessID = ITEMS(%BrowseAccessID))
+ELSE
+      #ELSE
+ELSIF %BrowseCondition
+      #ENDIF
+  RETURN SELF.SetSort(%BrowseAccessID,Force)
+    #ENDFOR
+END
+  #ENDIF
+#EMBED(%AfterControlRefresh,'After Refresh Window for Browse Box'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),LEGACY
+#ENDAT
+#!
+#AT(%BrowserMethodDataSection,%ActiveTemplateInstance,'ResetFromView','()')
+  #FOR(%BrowseTotals)
+    #CASE(%BrowseTotalType)
+    #OF('Count')
+      #SET(%ValueConstruct,%BrowseTotalTarget & ':Cnt')
+#?%[20]ValueConstruct LONG
+    #OF('Sum')
+      #SET(%ValueConstruct,%BrowseTotalTarget & ':Sum')
+#?%[20]ValueConstruct REAL
+    #OF('Average')
+      #SET(%ValueConstruct,%BrowseTotalTarget & ':Cnt')
+#?%[20]ValueConstruct LONG
+      #SET(%ValueConstruct,%BrowseTotalTarget & ':Sum')
+#?%[20]ValueConstruct REAL
+    #ENDCASE
+  #ENDFOR
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance,'ResetFromView','()'),PRIORITY(1000)
+#?SETCURSOR(Cursor:Wait)
+#?Relate:%Primary.SetQuickScan(1)
+#EMBED(%StartInitializeBrowseRoutine,'Browser, Start of Initialize ROUTINE'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),HIDE,LEGACY
+#?SELF.Reset
+#PRIORITY(2000)
+#EMBED(%BeforeTotalLoop,'Before Browse Total Loop'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),LEGACY
+#?LOOP
+  #?CASE SELF.Next()
+  #?OF Level:Notify
+    #?BREAK
+  #?OF Level:Fatal
+    #?RETURN
+  #?END
+#PRIORITY(2500)
+  #?SELF.SetQueueRecord
+#PRIORITY(3000)
+  #FOR(%BrowseTotals)
+    #IF(%BrowseTotalCondition)
+  IF (%BrowseTotalCondition)
+      #CASE(%BrowseTotalType)
+      #OF('Count')
+    %BrowseTotalTarget:Cnt += 1
+      #OF('Sum')
+    %BrowseTotalTarget:Sum += %BrowseTotalField
+      #OF('Average')
+    %BrowseTotalTarget:Cnt += 1
+    %BrowseTotalTarget:Sum += %BrowseTotalField
+      #ENDCASE
+  END
+    #ELSE
+      #CASE(%BrowseTotalType)
+      #OF('Count')
+  %BrowseTotalTarget:Cnt += 1
+      #OF('Sum')
+  %BrowseTotalTarget:Sum += %BrowseTotalField
+      #OF('Average')
+  %BrowseTotalTarget:Cnt += 1
+  %BrowseTotalTarget:Sum += %BrowseTotalField
+      #ENDCASE
+    #ENDIF
+  #ENDFOR
+  #EMBED(%TotalLoop,'Browse Total Loop'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),LEGACY
+#PRIORITY(3500)
+#?END
+#PRIORITY(4000)
+#EMBED(%AfterTotalLoop,'After Browse Total Loop'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),LEGACY
+  #FOR(%BrowseTotals)
+    #CASE(%BrowseTotalType)
+    #OF('Count')
+%BrowseTotalTarget = %BrowseTotalTarget:Cnt
+    #OF('Sum')
+%BrowseTotalTarget = %BrowseTotalTarget:Sum
+    #OF('Average')
+%BrowseTotalTarget = %BrowseTotalTarget:Sum/%BrowseTotalTarget:Cnt
+    #ENDCASE
+  #ENDFOR
+#PRIORITY(7500)
+#?Relate:%Primary.SetQuickScan(0)
+#EMBED(%EndInitializeBrowseRoutine,'Browser, End of Initialize ROUTINE'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),HIDE,LEGACY
+#?SETCURSOR()
+#ENDAT
+#!
+#!
+#!
+#!----------------------------------------------------------------------
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocatorMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%StepManagerMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+#FIX(%File,%Primary)
+#FOR(%BrowseAccessID)
+  #IF(%BrowseSortOrderInstance)
+    #SELECT(%SortOrder,%BrowseSortOrderInstance)
+    #CALL(%SetClassItem,'Step'&%SortOrder)
+  #ELSE
+    #CALL(%SetClassItem,'Step0')
+  #ENDIF
+  #IF(%BrowseKey)
+    #IF(%LoadMethod = 'Page' AND %VerticalScrollBarFound AND %BrowseFreeElement AND %BrowseScrollBehavior = 'Movable Thumb')
+      #IF(%BrowseScrollKeyDistribution='Custom')
+        #SET(%ActualDefaultBaseClassType,%StepManagerCustomType)
+      #ELSE
+        #FIND(%Field,%BrowseFreeElement)
+        #CASE (%FieldType)
+        #OF ('STRING')
+        #OROF ('CSTRING')
+        #OROF ('PSTRING')
+        #OROF ('GROUP')
+          #SET(%ActualDefaultBaseClassType,%StepManagerStringType)
+        #OF ('BYTE')
+        #OROF ('SHORT')
+        #OROF ('USHORT')
+        #OROF ('LONG')
+          #SET(%ActualDefaultBaseClassType,%StepManagerLongType)
+        #ELSE
+          #SET(%ActualDefaultBaseClassType,%StepManagerRealType)
+        #ENDCASE
+      #END
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!
+#!
+#DECLARE(%Terminator,LONG)
+#CALL(%SetClassItem,'Default')
+#INSERT(%MakeDeclr,24,%OOPConstruct,'Q','&'&%ListQueue)
+#INSERT(%MakeDeclr,55,%OOPConstruct,%OOPConstruct,'!Reference to browse queue')
+#ADD(%ClassLines,%OOPConstruct)
+#!
+#CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|Browse on ' & %Primary & ' using ' & %ListControl, '%BrowseVirtuals(ABC)')
+#IF(%PrimaryKey AND %LocatorType NOT='None')
+  #CALL(%GenerateVirtuals, 'Locator0', 'Local Objects|Abc Objects|Browse on ' & %Primary & ' using ' & %ListControl & ', default locator', '%DefaultLocatorVirtuals(ABC)')
+#ENDIF
+#FOR(%SortOrder),WHERE(%SortKey)
+  #IF(%SortLocatorType <> 'None')
+    #CALL(%GenerateVirtuals, 'Locator' & %SortOrder, 'Local Objects|Abc Objects|Browse on ' & %Primary & ' using ' & %ListControl & ', locator when ' & %SortCondition, '%LocatorVirtuals(ABC)')
+  #ENDIF
+#ENDFOR
+#IF(%ScrollBehavior='Movable Thumb' AND %LoadMethod = 'Page' )
+  #CALL(%GenerateVirtuals, 'Step0', 'Local Objects|Abc Objects|Browse on ' & %Primary & ' using ' & %ListControl & ', default thumb manager', '%DefaultThumbManagerVirtuals(ABC)')
+#ENDIF
+#FOR(%SortOrder),WHERE(%LoadMethod = 'Page')
+  #IF(%SortScrollBehavior = 'Movable Thumb')
+    #CALL(%GenerateVirtuals, 'Step' & %SortOrder, 'Local Objects|Abc Objects|Browse on ' & %Primary & ' using ' & %ListControl & ', thumb manager when ' & %SortCondition, '%ThumbManagerVirtuals(ABC)')
+  #ENDIF
+#ENDFOR
+#!
+#!
+#!
+#SUSPEND
+ #?OMIT('***OrphanedCodeSection***')
+ #?!This section contains code that existed in EMBED points that have now been orphaned
+ #?!by the new Application Builder Classes and templates.
+ #?%NULL
+ #SUSPEND
+   #?!Start: EMBED Point %%AfterOpeningListView - After opening VIEW
+   #?%NULL
+   #EMBED(%AfterOpeningListView,'*** After opening VIEW'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+   #?%NULL
+   #?!End: EMBED point %%AfterOpeningListView - After opening VIEW
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: EMBED point %%BeforeOpeningListView - Before opening VIEW
+   #?%NULL
+   #EMBED(%BeforeOpeningListView,'*** Before opening VIEW'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+   #?%NULL
+   #?!End: EMBED point %%BeforeOpeningListView - Before opening VIEW
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: EMBED point %%StartLocateRecordRoutine - Start of Locate Record Routine
+   #?!-----------------------------------------------------------------------------
+   #?!Move code from here into the correct instances of either the ResetFromBuffer
+   #?!or ResetFromFile virtual's.
+   #?%NULL
+   #EMBED(%StartLocateRecordRoutine,'*** Start of Locate Record Routine'),HIDE,LEGACY
+   #?%NULL
+   #?!End: EMBED point %%StartLocateRecordRoutine - Start of Locate Record Routine
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%StartResetQueueRoutine - Start of ResetQueue Routine
+   #?!--------------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the ResetQueue virtual.
+   #?%NULL
+   #EMBED(%StartResetQueueRoutine,'*** Start of ResetQueue Routine'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%StartResetQueueRoutine - Start of ResetQueue Routine
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%EndResetQueueRoutine - End of ResetQueue Routine
+   #?!----------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the ResetQueue virtual.
+   #?%NULL
+   #EMBED(%EndResetQueueRoutine,'*** End of ResetQueue Routine'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%EndResetQueueRoutine - End of ResetQueue Routine
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%BeforeTurningQuickScanOn - Before turning QuickScan ON
+   #?!--------------------------------------------------------------------------
+   #?!This embed point is now redundant, code controling QuickScan should be removed.
+   #?%NULL
+   #EMBED(%BeforeTurningQuickScanOn,'*** Before turning QuickScan ON'),WHERE(%EnableQuickScan),LEGACY
+   #?%NULL
+   #?!End: Embed point %%BeforeTurningQuickScanOn - Before turning QuickScan ON
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start:Embed point %%AfterTurnQuickScanOn - After turning QuickScan ON
+   #?!--------------------------------------------------------------------
+   #?!This embed point is now redundant, code controlling QuickScan should be removed.
+   #?%NULL
+   #EMBED(%AfterTurnQuickScanOn,'*** After turning QuickScan ON'),WHERE(%EnableQuickScan),LEGACY
+   #?%NULL
+   #?!End: Embed point %%AfterTurnQuickScanOn - After turning QuickScan ON
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%BeforeTurnQuickScanOff - Before turning QuickScan OFF
+   #?!-------------------------------------------------------------------------
+   #?!This embed point is now redundant, code controlling QuickScan should be removed.
+   #?%NULL
+   #EMBED(%BeforeTurnQuickScanOff,'*** Before turning QuickScan OFF'),WHERE(%EnableQuickScan),LEGACY
+   #?%NULL
+   #?!End: Embed point %%BeforeTurnQuickScanOff - Before turning QuickScan OFF
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%AfterTurnQuickScanOff - After turning QuickScan OFF
+   #?!-----------------------------------------------------------------------
+   #?!This embed point is now redundant, code controlling QuickScan should be removed.
+   #?%NULL
+   #EMBED(%AfterTurnQuickScanOff,'*** After turning QuickScan OFF'),WHERE(%EnableQuickScan),LEGACY
+   #?%NULL
+   #?!End: Embed point %%AfterTurnQuickScanOff - After turning QuickScan OFF
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%StartAlertKey - Start of TakeKey Routine
+   #?!-------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the TakeKey virtual.
+   #?%NULL
+   #EMBED(%StartAlertKey,'*** Start of TakeKey Routine'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%StartAlertKey - Start of TakeKey Routine
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%BrowseBoxDoubleClick - Browse box double click handler
+   #?!--------------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the TakeKey virtual.
+   #?%NULL
+   #EMBED(%BrowseBoxDoubleClick,'*** Browse box double click handler'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%BrowseBoxDoubleClick - Browse box double click handler
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%BrowseBoxKeyHandling - Browse Key Handling
+   #?!--------------------------------------------------------------
+   #?!Move code from here into the correct instance of the TakeKey virtual.
+   #?%NULL
+   #EMBED(%BrowseBoxKeyHandling,'*** Browse Key Handling'),HIDE,LEGACY
+   #?%NULL
+   #!End: Embed point %%BrowseBoxKeyHandling - Browse Key Handling
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%BrowseBoxKeyHandlingNoRecords - Browse Key Handling, No Records
+   #?!-----------------------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the TakeKey virtual.
+   #?%NULL
+   #EMBED(%BrowseBoxKeyHandlingNoRecords,'*** Browse Key Handling, No Records'),HIDE,LEGACY
+   #?%NULL
+   #!End: Embed point %%BrowseBoxKeyHandlingNoRecords - Browse Key Handling, No Records
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%EndAlertKey - End of TakeKey routine
+   #?!---------------------------------------------------------------
+   #?!Move code from here into the correct instance of the TakeKey virtual.
+   #?%NULL
+   #EMBED(%EndAlertKey,'*** End of TakeKey routine'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%EndAlertKey - End of TakeKey routine
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%StartUpdateBufferRoutine - Start of UpdateBuffer routine
+   #?!------------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the UpdateBuffer virtual.
+   #?%NULL
+   #EMBED(%StartUpdateBufferRoutine,'*** Start of UpdateBuffer routine'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%StartUpdateBufferRoutine - Start of UpdateBuffer routine
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%EndUpdateBufferRoutine - End of UpdateBuffer routine
+   #?!--------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the UpdateBuffer virtual.
+   #?%NULL
+   #EMBED(%EndUpdateBufferRoutine,'*** End of UpdateBuffer routine'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%StartUpdateBufferRoutine - Start of UpdateBuffer routine
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%StartValidateRecordRoutine - Start of Validate Record Code
+   #?!---------------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the ValidateRecord virtual.
+   #?%NULL
+   #EMBED(%StartValidateRecordRoutine,'*** Start of Validate Record Code'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%StartValidateRecordRoutine - Start of Validate Record Code
+   #?%NULL
+ #RESUME
+ #SUSPEND
+   #?!Start: Embed point %%EndValidateRecordRoutine - End of Validate Record Code
+   #?!--------------------------------------------------------------------------
+   #?!Move code from here into the correct instance of the ValidateRecord virtual.
+   #?%NULL
+   #EMBED(%EndValidateRecordRoutine,'*** End of Validate Record Code'),HIDE,LEGACY
+   #?%NULL
+   #?!End: Embed point %%EndValidateRecordRoutine - End of Validate Record Code
+   #?%NULL
+ #RESUME
+ #?***OrphanedCodeSection***
+#RESUME
+#ENDAT
+#!
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance,'ResetQueue','(BYTE ResetMode)'),PRIORITY(6000)
+#SUSPEND
+#?IF RECORDS(SELF.ListQueue)
+  #EMBED(%BrowseBoxNotEmpty,'Browser, records found'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#?ELSE
+  #EMBED(%BrowseBoxEmpty,'Browser, no records found'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#?END
+#RESUME
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance,'Fetch','(BYTE Direction)'),PRIORITY(2500)
+#SUSPEND
+#?IF Direction=FillForward
+  #EMBED(%StartFillForwardRoutine,'Browser, Start of Fetch VIRTUAL for FillForward'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+  #EMBED(%StartFetchRoutineForward,'Browser, Start of Fetch VIRTUAL, reading forward'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#?ELSE
+  #EMBED(%StartBackwardRoutine,'Browser, Start of FillRecord VIRTUAL for FillBackward'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+  #EMBED(%StartFillRecordRoutineBackward,'Browser,Start of FillRecord VIRTUAL, reading backward'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#?END
+#RESUME
+#PRIORITY(7500)
+#SUSPEND
+#?IF Direction=FillForward
+  #EMBED(%EndOfFillForwardRoutine,'Browser, End of FillRecord VIRTUAL for FillForward'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+  #EMBED(%EndFillRecordRoutineForward,'Browser, Start of FillRecord VIRTUAL, reading forward'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#?ELSE
+  #EMBED(%EndBackwardRoutine,'Browser, End of FillRecord VIRTUAL, reading backward'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+  #EMBED(%EndFillRoutineBackward,'Browser, End of FillRecord VIRTUAL for FillBackward'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#?END
+#RESUME
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance,'TakeKey','(),BYTE'),PRIORITY(2500)
+#SUSPEND
+#?IF RECORDS(SELF.ListQueue)
+  #?CASE KEYCODE()
+  #EMBED(%AlertKeyCaseKEYCODE,'Browser, TakeKey inside CASE KEYCODE()'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+  #?OF MouseLeft2
+    #EMBED(%BrowseBoxDoubleClickHandler,'Browser, Double Click Handler'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+  #?END
+#?END
+#RESUME
+#ENDAT
+#!
+#AT(%BrowserMethodDataSection,%ActiveTemplateInstance,'ValidateRecord','(),BYTE')
+#CALL(%MakeDeclr,22,%OOPConstruct,%InstancePrefix&':RecordStatus','BYTE,AUTO')
+#?%OOPConstruct
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance,'ValidateRecord','(),BYTE'),PRIORITY(5100)
+#?%InstancePrefix:RecordStatus=ReturnValue
+#SUSPEND
+#INSERT(%StandardFormula,'Before range limits')
+#EMBED(%RecordOutOfRange,'Browser, Validate Record: Range Checking'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+#?IF %InstancePrefix:RecordStatus NOT=Record:OK THEN RETURN %InstancePrefix:RecordStatus.
+#INSERT(%StandardFormula,'Before filter')
+#PRIORITY(8000)
+#EMBED(%RecordFilter,'Validate Record: Filter Checking'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+#EMBED(%AfterRangeFilterCheck,'After range and filter check'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#?ReturnValue=%InstancePrefix:RecordStatus
+#RESUME
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance,'SetQueueRecord','()'),PRIORITY(2500)
+#SUSPEND
+#FOR(%Formula),WHERE(%FormulaClass='Format Browse' AND %FormulaInstance=0)
+  #ERROR(%Formula&' formula is disconnected from browse. Please reselect browse instance!')
+#ENDFOR
+#FOR(%Formula),WHERE(%FormulaInstance=%ActiveTemplateInstance AND %FormulaClass='Format Browse')         #!Attempt to expand formula
+#INSERT(%ExpandFormula,1)
+#ENDFOR
+#EMBED(%FormatBrowse,'Browser, Format an element of the queue'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#PRIORITY(6000)
+#FIX(%Control,%ListControl)
+#IF(%Control NOT=%ListControl)
+  #ERROR('List box control not found!')
+  #ABORT
+#ENDIF
+#FOR(%QueueField)
+  #FIX(%ControlField,%QueueFieldAssignment)
+  #SET(%ValueConstruct,%QueueField)
+  #IF(%QueueFieldHasColor)
+    #IF(ITEMS(%ConditionalColors))
+      #FOR(%ConditionalColors)
+        #IF(INSTANCE(%ConditionalColors) = 1)
+IF (%ColorCondition)
+        #ELSE
+ELSIF (%ColorCondition)
+        #ENDIF
+  SELF.Q.%ValueConstruct_NormalFG = %ConditionalControlFieldForegroundNormal
+  SELF.Q.%ValueConstruct_NormalBG = %ConditionalControlFieldBackgroundNormal
+  SELF.Q.%ValueConstruct_SelectedFG = %ConditionalControlFieldForegroundSelected
+  SELF.Q.%ValueConstruct_SelectedBG = %ConditionalControlFieldBackgroundSelected
+      #ENDFOR
+ELSE
+  SELF.Q.%ValueConstruct_NormalFG = %ControlFieldForegroundNormal
+  SELF.Q.%ValueConstruct_NormalBG = %ControlFieldBackgroundNormal
+  SELF.Q.%ValueConstruct_SelectedFG = %ControlFieldForegroundSelected
+  SELF.Q.%ValueConstruct_SelectedBG = %ControlFieldBackgroundSelected
+END
+    #ELSE
+SELF.Q.%ValueConstruct_NormalFG = %ControlFieldForegroundNormal
+SELF.Q.%ValueConstruct_NormalBG = %ControlFieldBackgroundNormal
+SELF.Q.%ValueConstruct_SelectedFG = %ControlFieldForegroundSelected
+SELF.Q.%ValueConstruct_SelectedBG = %ControlFieldBackgroundSelected
+    #ENDIF
+  #ENDIF
+  #IF(%QueueFieldHasIcon)
+    #IF(ITEMS(%ConditionalIcons))
+      #FOR(%ConditionalIcons)
+        #IF(INSTANCE(%ConditionalIcons) = 1)
+IF (%IconCondition)
+        #ELSE
+ELSIF (%IconCondition)
+        #ENDIF
+        #FIX(%IconList,%ConditionalControlFieldIcon)
+        #IF(%IconList)
+          #CASE(%IconListType)
+          #OF('Variable')
+  SELF.Q.%ValueConstruct_Icon = %IconList
+          #ELSE
+  SELF.Q.%ValueConstruct_Icon = %(INSTANCE(%IconList))
+          #ENDCASE
+        #ELSE
+  SELF.Q.%ValueConstruct_Icon = 0
+        #ENDIF
+      #ENDFOR
+ELSE
+      #FIX(%IconList,%ControlFieldIcon)
+      #IF(%IconList)
+        #CASE(%IconListType)
+        #OF('Variable')
+  SELF.Q.%ValueConstruct_Icon = %IconList
+        #ELSE
+  SELF.Q.%ValueConstruct_Icon = %(INSTANCE(%IconList))
+        #ENDCASE
+      #ELSE
+  SELF.Q.%ValueConstruct_Icon = 0
+      #ENDIF
+END
+    #ELSE
+      #FIX(%IconList,%ControlFieldIcon)
+      #IF(%IconList)
+        #CASE(%IconListType)
+        #OF('Variable')
+SELF.Q.%ValueConstruct_Icon = %IconList
+        #ELSE
+SELF.Q.%ValueConstruct_Icon = %(INSTANCE(%IconList))
+        #ENDCASE
+      #ELSE
+SELF.Q.%ValueConstruct_Icon = 0
+      #ENDIF
+    #ENDIF
+  #ENDIF
+  #IF(%QueueFieldHasStyle)
+    #IF(ITEMS(%ConditionalStyles))
+      #FOR(%ConditionalStyles)
+        #IF(INSTANCE(%ConditionalStyles) = 1)
+IF (%StyleCondition)
+        #ELSE
+ELSIF (%StyleCondition)
+        #ENDIF
+  SELF.Q.%ValueConstruct_Style = %ConditionalControlFieldStyle
+      #ENDFOR
+ELSE
+  SELF.Q.%ValueConstruct_Style = %ControlFieldStyle
+END
+    #ELSE
+SELF.Q.%ValueConstruct_Style = %ControlFieldStyle
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#EMBED(%EndOfFormatBrowse,'End of Format an element of the browse queue'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#FOR(%QueueField),WHERE(INLIST(%QueueFieldAssignment,%Formula))
+  #FOR(%Formula),WHERE(%Formula=%QueueFieldAssignment)
+    #IF(%FormulaInstance=%ActiveTemplateInstance AND %FormulaClass='Format Browse' AND INLIST(%Formula,%LocalData))
+SELF.Q.%QueueField = %Formula        #<!Assign formula result to display queue
+    #ENDIF
+  #ENDFOR
+#ENDFOR
+#RESUME
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#!
+#INSERT(%GenerateClass, 'Default', 'Browse using '&%ListControl)
+#IF(%PrimaryKey AND %LocatorType AND %LocatorType NOT='None')
+#INSERT(%GenerateClass, 'Locator0', 'Default Locator')
+#ENDIF
+#FOR(%SortOrder),WHERE(%SortKey AND %SortLocatorType AND %SortLocatorType NOT='None')
+#INSERT(%GenerateClass, 'Locator' & %SortOrder, 'Conditional Locator - '&%SortCondition)
+#ENDFOR
+#!FOR(%BrowseAccessId),WHERE(%BrowseScrollBehavior='Movable Thumb')
+#!IF ( %BrowseSortOrderInstance )
+#!INSERT(%GenerateClass, 'Step'&%BrowseSortOrderInstance, 'Step Manager - '&%BrowseCondition)
+#!ELSE
+#!INSERT(%GenerateClass, 'Step0', 'Step Manager - Default')
+#!ENDIF
+#IF(%ScrollBehavior='Movable Thumb' AND %LoadMethod = 'Page')
+#INSERT(%GenerateClass, 'Step0', 'Default Step Manager')
+#ENDIF
+#FOR(%SortOrder),WHERE(%SortScrollBehavior='Movable Thumb' AND %LoadMethod = 'Page')
+#INSERT(%GenerateClass, 'Step'&%SortOrder, 'Conditional Step Manager - '&%SortCondition)
+#ENDFOR
+#!
+#!
+#MESSAGE('BrowseBox Control Declarations',3)
+#ENDAT
+#!
+#!-------------------------------------------------------------------------
+#GROUP(%BrowseVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%BrowserMethodDataSection,'Browser Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%BrowserMethodCodeSection,'Browser Method Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%DefaultLocatorVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%LocatorMethodDataSection,'Locator Method Data Section'),%ActiveTemplateInstance,''['Locator Default'],%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,,%FixClassName(%FixBaseClassToUse('Locator0'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%LocatorMethodCodeSection,'Locator Method Executable Code Section'),%ActiveTemplateInstance,''['Locator Default'],%pClassMethod,%pClassMethodPrototype,PREPARE(,,%FixClassName(%FixBaseClassToUse('Locator0'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%LocatorVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%LocatorMethodDataSection,'Locator Method Data Section'),%ActiveTemplateInstance,%SortOrder['Locator Condition: '&%SortCondition],%pClassMethod,%pClassMethodPrototype,PREPARE(,,%FixClassName(%FixBaseClassToUse('Locator'&%SortOrder))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%LocatorMethodCodeSection,'Locator Method Executable Code Section'),%ActiveTemplateInstance,%SortOrder['Locator Condition: '&%SortCondition],%pClassMethod,%pClassMethodPrototype,PREPARE(,,%FixClassName(%FixBaseClassToUse('Locator'&%SortOrder))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%DefaultThumbManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%StepManagerMethodDataSection,'Step Manager Method Data Section'),%ActiveTemplateInstance,''['Step Class Default'],%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,,%FixClassName(%FixBaseClassToUse('Step0'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%StepManagerMethodCodeSection,'Step Manager Method Executable Code Section'),%ActiveTemplateInstance,''['Step Class Default'],%pClassMethod,%pClassMethodPrototype,PREPARE(,,%FixClassName(%FixBaseClassToUse('Step0'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%ThumbManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%StepManagerMethodDataSection,'Step Manager Method Executable Data Section'),%ActiveTemplateInstance,%SortOrder['Step Class Condition: '&%SortCondition],%pClassMethod,%pClassMethodPrototype,PREPARE(,,%FixClassName(%FixBaseClassToUse('Step'&%SortOrder))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%StepManagerMethodCodeSection,'Step Manager Executable Code Section'),%ActiveTemplateInstance,%SortOrder['Step Class Condition: '&%SortCondition],%pClassMethod,%pClassMethodPrototype,PREPARE(,,%FixClassName(%FixBaseClassToUse('Step'&%SortOrder))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!
+#!
+#GROUP(%AddBrowseIcon,%CurrentIcon)
+#IF(UPPER(SUB(%CurrentIcon,1,5)) = 'ICON:')
+  #ADD(%IconList,%CurrentIcon)
+  #SET(%IconListType,'Built-In')
+#ELSIF(SUB(%CurrentIcon,1,1) = '!')
+  #SET(%ValueConstruct,SUB(%CurrentIcon,2,LEN(%CurrentIcon)-1))
+  #ADD(%IconList,%ValueConstruct)
+  #SET(%IconListType,'Variable')
+#ELSE
+  #ADD(%IconList,%CurrentIcon)
+  #SET(%IconListType,'File')
+#ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%ConstructQueue)
+  #DECLARE(%Lb,LONG)
+  #DECLARE(%QFieldType)
+  #INSERT(%MakeDeclr,22,%OOPConstruct,%ListQueue,'QUEUE')
+%[53]OOPConstruct !Queue declaration for browse/combo box using %ListControl
+  #FOR(%QueueField)
+    #SET(%Lb, INSTRING('[', %QueueFieldAssignment, 1, 1))
+    #IF(%Lb > 0)
+      #SET(%QFieldType, %GetQueueDataType(SLICE(%QueueFieldAssignment, 1, %Lb - 1), %QueueFieldComment))
+    #ELSE
+      #SET(%QFieldType, %GetQueueDataType(%QueueFieldAssignment, %QueueFieldComment))
+    #ENDIF
+    #EMBED(%AfterCalculatingQueueDataType, ''),%ActiveTemplateInstance, %QueueField,HIDE
+#INSERT(%MakeField, %QueueField, '', %QFieldType, %QueueFieldComment)
+    #IF(%QueueFieldHasColor)
+#INSERT(%MakeField, %QueueField, 'NormalFG', 'LONG', 'Normal forground color')
+#INSERT(%MakeField, %QueueField, 'NormalBG', 'LONG', 'Normal background color')
+#INSERT(%MakeField, %QueueField, 'SelectedFG', 'LONG', 'Selected forground color')
+#INSERT(%MakeField, %QueueField, 'SelectedBG', 'LONG', 'Selected background color')
+    #ENDIF
+    #IF(%QueueFieldHasIcon)
+#INSERT(%MakeField, %QueueField, 'Icon', 'LONG', 'Entry''s icon ID')
+    #ENDIF
+    #IF(%QueueFieldHasTree)
+#INSERT(%MakeField, %QueueField, 'Level', 'LONG', 'Tree level')
+    #ENDIF
+    #IF(%QueueFieldHasStyle)
+#INSERT(%MakeField, %QueueField, 'Style', 'LONG', 'Field style')
+    #ENDIF
+  #ENDFOR
+#INSERT(%MakeField, 'Mark', '', 'BYTE' ,'Entry''s marked status')
+#INSERT(%MakeField, 'ViewPosition', '', 'STRING(1024)','Entry''s view position')
+%[20]NULL END
+#!---------------------------------------------------------------------
+#GROUP(%MakeField, %Lbl, %PostFix, %dType, %Cmt)
+  #CALL(%MakeDeclr, 24, %OOPConstruct, %Lbl & CHOOSE(%PostFix = '', '', '_' & %PostFix), %dType)
+  #IF(%Cmt <> '')
+    #CALL(%MakeDeclr, 55, %OOPConstruct, %OOPConstruct, '!' & %Cmt)
+  #ENDIF
+%OOPConstruct
+#!---------------------------------------------------------------------
+#GROUP(%SetupBrowseBehavior)
+#EMBED(%TopOfSetupBrowseBehavior,'INTERNAL Top of SetupBrowseBehavior GROUP'),HIDE
+#DECLARE(%BrowseFreeElementFound)
+#DECLARE(%ValidRangeKey)
+#DECLARE(%BrowseFiltersExist)
+#DECLARE(%FieldIsString)
+#FOR(%SortOrder)
+  #ADD(%BrowseAccessID,ITEMS(%BrowseAccessID)+1)
+  #SET(%BrowseSortOrderInstance,INSTANCE(%SortOrder))
+  #SET(%BrowseKey,%SortKey)
+  #SET(%BrowsePrefix,%InstancePrefix & ':Sort' & %BrowseAccessID)
+  #SET(%BrowseCondition,%SortCondition)
+  #SET(%BrowseRecordFilter,%SortRecordFilter)
+  #SET(%BrowseOrderStatement,%SortAddSortFields)
+  #FOR(%SortResetFields)
+    #ADD(%BrowseResetField,%SortResetField)
+  #ENDFOR
+  #IF(%BrowseKey)
+    #SET(%BrowseRangeField,%SortRangeField)
+    #SET(%BrowseRangeLimitType,%SortRangeLimitType)
+    #SET(%BrowseRangeLimit,%SortRangeLimit)
+    #SET(%BrowseRangeHigh,%SortRangeHigh)
+    #SET(%BrowseRangeLow,%SortRangeLow)
+    #SET(%BrowseRangeFile,%SortRangeFile)
+    #SET(%BrowseLocatorType,%SortLocatorType)
+    #SET(%BrowseLocatorFindAny,%SortFindAnywhere)
+    #IF(%BrowseLocatorType = 'Entry' OR %BrowseLocatorType = 'Incremental' OR %BrowseLocatorType = 'Filtered')
+      #IF(%SortOverrideDefaultLocator)
+    #SET(%BrowseLocatorControl,%SortOverrideLocator)
+      #ENDIF
+    #ENDIF
+    #IF(%VerticalScrollBarFound)
+      #SET(%BrowseScrollBehavior,CHOOSE(%LoadMethod='Page',%SortScrollBehavior,'Fixed Thumb'))
+      #IF(%BrowseScrollBehavior = 'Movable Thumb')
+        #SET(%BrowseScrollKeyDistribution,%SortScrollKeyDistribution)
+        #FIX(%File,%Primary)
+        #FIX(%Key,%BrowseKey)
+        #IF(%BrowseScrollKeyDistribution = 'Custom')
+          #FOR(%SortCustomKeyDistribution)
+            #ADD(%BrowseKeyDistributionValue,%SortKeyDistributionValue)
+          #ENDFOR
+          #SET(%BrowseKeyDistributionCount,ITEMS(%BrowseKeyDistributionValue))
+        #ELSIF(%BrowseScrollKeyDistribution = 'Runtime')
+          #IF(%SortScrollAlpha)
+            #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:AllowAlpha')
+            #IF(NOT %KeyNoCase)
+              #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:CaseSensitive')
+            #ENDIF
+          #ENDIF
+          #IF(%SortScrollNumeric)
+            #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:AllowNumeric')
+          #ENDIF
+          #IF(%SortScrollAlt)
+            #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:AllowAlt')
+          #ENDIF
+        #ELSE
+          #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:AllowAlpha')
+        #ENDIF
+      #ENDIF
+    #ENDIF
+  #ELSE
+    #SET(%BrowseScrollBehavior,'Fixed Thumb')
+  #ENDIF
+#ENDFOR
+#ADD(%BrowseAccessID,ITEMS(%BrowseAccessID)+1)
+#SET(%BrowseKey,%PrimaryKey)
+#SET(%BrowseTotalKeys,%BrowseAccessID)
+#SET(%BrowsePrefix,%InstancePrefix & ':Sort' & %BrowseAccessID)
+#SET(%BrowseCondition,%False)
+#SET(%BrowseRecordFilter,%RecordFilter)
+#SET(%BrowseOrderStatement,%AddSortFields)
+#FOR(%ResetFields)
+  #ADD(%BrowseResetField,%ResetField)
+#ENDFOR
+#IF(%BrowseKey)
+  #SET(%BrowseRangeField,%RangeField)
+  #SET(%BrowseRangeLimitType,%RangeLimitType)
+  #SET(%BrowseRangeLimit,%RangeLimit)
+  #SET(%BrowseRangeHigh,%RangeHigh)
+  #SET(%BrowseRangeLow,%RangeLow)
+  #SET(%BrowseRangeFile,%RangeFile)
+  #SET(%BrowseLocatorType,%LocatorType)
+  #SET(%BrowseLocatorFindAny,%FindDefaultAnywhere)
+  #IF(%BrowseLocatorType = 'Entry' OR %BrowseLocatorType = 'Incremental' OR %BrowseLocatorType = 'Filtered')
+    #IF(%OverrideDefaultLocator)
+  #SET(%BrowseLocatorControl,%OverrideLocator)
+    #ENDIF
+  #ENDIF
+  #IF(%VerticalScrollBarFound)
+    #SET(%BrowseScrollBehavior,CHOOSE(%LoadMethod='Page',%ScrollBehavior,'Fixed Thumb'))
+    #IF(%BrowseScrollBehavior = 'Movable Thumb')
+      #SET(%BrowseScrollKeyDistribution,%ScrollKeyDistribution)
+      #FIX(%File,%Primary)
+      #FIX(%Key,%BrowseKey)
+      #IF(%BrowseScrollKeyDistribution = 'Custom')
+        #FOR(%CustomKeyDistribution)
+          #ADD(%BrowseKeyDistributionValue,%KeyDistributionValue)
+        #ENDFOR
+        #SET(%BrowseKeyDistributionCount,ITEMS(%BrowseKeyDistributionValue))
+      #ELSIF(%BrowseScrollKeyDistribution = 'Runtime')
+        #IF(%ScrollAlpha)
+          #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:AllowAlpha')
+          #IF(NOT %KeyNoCase)
+            #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:CaseSensitive')
+          #ENDIF
+        #ENDIF
+        #IF(%ScrollNumeric)
+          #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:AllowNumeric')
+        #ENDIF
+        #IF(%ScrollAlt)
+          #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:AllowAlt')
+        #ENDIF
+      #ELSE
+        #SET(%BrowseScrollParameters,%BrowseScrollParameters & '+ScrollSort:AllowAlpha')
+      #ENDIF
+    #ENDIF
+  #ENDIF
+#ELSE
+  #SET(%BrowseScrollBehavior,'Fixed Thumb')
+#ENDIF
+#FIX(%File,%Primary)
+#SET(%BrowseFiltersExist,%False)
+#FOR(%BrowseAccessID),WHERE(%BrowseKey)
+  #FIX(%Key,%BrowseKey)
+  #FOR(%KeyField)
+    #SET(%ValueConstruct,%KeyField)
+    #IF(~INLIST(%ValueConstruct,%QueueField))
+      #ADD(%QueueField,%ValueConstruct)
+      #SET(%QueueFieldAssignment,%KeyField)
+      #SET(%QueueFieldComment,'Browse key field')
+    #ENDIF
+  #ENDFOR
+  #FIX(%Key,%BrowseKey)
+  #SET(%BrowseLocatorName,%Null)
+  #IF(%BrowseLocatorType <> 'None')
+    #IF(%BrowseRangeField)
+      #FOR(%KeyField)
+        #IF(%BrowseLocatorName)
+          #IF(%BrowseRangeLimitType <> 'Range of Values')
+            #SET(%BrowseLocatorName,%KeyField)
+          #ENDIF
+          #BREAK
+        #ELSE
+          #IF(UPPER(%KeyField)=UPPER(%BrowseRangeField))
+            #SET(%BrowseLocatorName,%KeyField)
+          #ENDIF
+        #ENDIF
+      #ENDFOR
+    #ELSE
+      #SELECT(%KeyField,1)
+      #SET(%BrowseLocatorName,%KeyField)
+    #ENDIF
+    #IF(%BrowseLocatorType = 'Entry' OR %BrowseLocatorType = 'Incremental' OR %BrowseLocatorType = 'Filtered')
+      #IF(%BrowseLocatorControl)
+        #IF (~INLIST(%BrowseLocatorControl,%Control))
+          #SET(%BrowseLocatorControl,%Null)
+        #ENDIF
+      #ELSE
+        #FOR(%Control)
+          #IF(UPPER(%ControlUse)=UPPER(%BrowseLocatorName))
+            #SET(%BrowseLocatorControl,%Control)
+            #SET(%ForceWindowRefresh,%False)
+            #BREAK
+          #ENDIF
+        #ENDFOR
+      #ENDIF
+    #ENDIF
+    #IF(%BrowseLocatorName=%Null)
+      #INSERT(%ErrorBrowseLocatorNoFreeKey)
+      #SET(%BrowseLocatorType,'None')
+    #ELSIF(%BrowseLocatorControl = %Null AND %BrowseLocatorType = 'Entry')
+      #INSERT(%ErrorBrowseLocatorNoEntryControl)
+      #SET(%BrowseLocatorType,'Step')
+    #ENDIF
+    #IF(%BrowseLocatorName)
+      #SET(%BrowseFreeElement,%BrowseLocatorName)
+    #ENDIF
+  #ENDIF
+  #FIX(%Control,%ListControl)
+  #IF(%BrowseFreeElement=%Null)
+    #SELECT(%KeyField,1)
+    #SET(%BrowseFreeElement,%KeyField)
+    #SET(%BrowseFreeElementNumber,1)
+  #ELSE
+    #FIX(%KeyField,%BrowseFreeElement)
+    #SET(%BrowseFreeElementNumber,INSTANCE(%KeyField))
+  #ENDIF
+  #IF(%BrowseFilterStatement)
+    #SET(%BrowseFiltersExist,%True)
+  #ENDIF
+#ENDFOR
+#FOR(%BrowseAccessID)
+  #IF(%BrowseRecordFilter)
+    #SET(%BrowseFilterStatement,%BrowseFilterStatement & '(' & %BrowseRecordFilter & ')')
+  #ENDIF
+  #IF(%BrowseFilterStatement)
+    #SET(%BrowseFiltersExist,%True)
+  #ENDIF
+#ENDFOR
+#EMBED(%BottomofSetupBrowseBehavior,'INTERNAL Bottom of SetupBrowseBehavior GROUP'),HIDE,%ActiveTemplateInstance
+#!
+#!
+#!---------------------------------------------------------------------
+#CONTROL(BrowseSelectButton,'Select record from a Browse Box'),DESCRIPTION('Select a Record from Browse on ' & %Primary),REQ(BrowseBox),FIRST,HLP('~TPLControlBrowseSelectButton')
+  CONTROLS
+    BUTTON('&Select'),USE(?Select)
+  END
+#BOXED('Select Button')
+  #PROMPT('Hide the Select button when not applicable',CHECK),%HideIfDisabled,AT(10,,150)
+  #PROMPT('&Allow Select via Popup',CHECK),%SelectViaPopup,DEFAULT(1),AT(10,,150)
+#ENDBOXED
+#!
+#!
+#AT(%GenerateInstanceUpdate),WHERE(%AcceptToolbarControl AND %GenerateSelectInstance=0)
+  #SET(%GenerateSelectInstance,%ActiveTemplateInstance)
+#ENDAT
+#!
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'Init','(SIGNED ListBox,*STRING Posit,VIEW V,QUEUE Q,RelationManager RM,WindowManager WM)'),PRIORITY(8000)
+  #IF(%GetControlName() <> '')
+SELF.SelectControl = %(%GetControlName())
+      #IF(%HideIfDisabled)
+SELF.HideSelect = 1
+      #ENDIF
+  #ENDIF
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateInstance,'TakeEvent','()'),PRIORITY(4000)
+#?IF ACCEPTED()=%SelectControl
+  #EMBED(%BrowseBoxProcessSelected,'Browse Box, process selected record'),LEGACY
+#?END
+#ENDAT
+#!
+#!
+#CONTROL(BrowsePrintButton,'Print record from a Browse Box'),DESCRIPTION('Print a Record from Browse on ' & %Primary),REQ(BrowseBox),FIRST,HLP('~TPLControlBrowsePrintButton')
+  CONTROLS
+    BUTTON('&Print'),USE(?Print)
+  END
+#BOXED('Print Button')
+  #PROMPT('Report Procedure',PROCEDURE),%PrintProcedure,REQ,AT(10,,150)
+#ENDBOXED
+#ATSTART
+  #DECLARE(%PrintControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #SET(%PrintControl,%Control)
+  #ENDFOR
+#ENDAT
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8525)
+  #ADD(%ProcsCalled,%PrintProcedure)
+%ManagerName.PrintProcedure = %(INSTANCE(%ProcsCalled))
+%ManagerName.PrintControl = %PrintControl
+#ENDAT
+#!
+#!
+#!
+#!
+#CONTROL(BrowseToolboxButton,'Start toolbox'),DESCRIPTION('Start toolbox for Browse on ' & %Primary),REQ(BrowseBox),FIRST,HLP('~TPLControlBrowseToolboxButton')
+  CONTROLS
+    BUTTON('&Toolbox'),USE(?Toolbox)
+  END
+#ATSTART
+  #DECLARE(%TBControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #SET(%TBControl,%Control)
+  #ENDFOR
+#ENDAT
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'Init','(SIGNED ListBox,*STRING Posit,VIEW V,QUEUE Q,RelationManager RM,WindowManager WM)'),PRIORITY(8525)
+SELF.ToolControl = %TBControl
+#ENDAT
+#!
+#!
+#CONTROL(BrowseQBEButton,'QBE Filter'),DESCRIPTION('Call a QBE filter for ' & %Primary),FIRST,HLP('~TPLControlBrowseQBEButton'),REQ(BrowseBox)
+  CONTROLS
+    BUTTON('&Query'),USE(?Query)
+  END
+#INSERT(%QBEPrompts)
+#!
+#ATSTART
+#INSERT(%QBEStart)
+#ENDAT
+#!
+#AT(%CustomGlobalDeclarations) #! Specific to Browse
+ #IF(%QkMenuIcon)
+   #PROJECT(%QkMenuIcon)
+ #ENDIF
+ #IF(%QkIcon)
+  #PROJECT(%QkIcon)
+ #ENDIF
+#ENDAT
+#!
+#AT(%GatherObjects)
+#INSERT(%QBEGatherObjects)
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8125),AUTO
+#INSERT(%QBEWinManInit)
+#IF(%QkSupport) #! jvn specific to Browse.
+%ThisObjectName.QkSupport = True
+#IF(%QkMenuIcon)
+%ThisObjectName.QkMenuIcon = '%QkMenuIcon'
+#ENDIF
+#IF(%QkIcon)
+%ThisObjectName.QkIcon = '%QkIcon'
+#ENDIF
+#ENDIF
+#PRIORITY(8500)
+#INSERT(%QBEWinManAfterWinOpen)
+#ENDAT
+#!
+#AT(%QBEMethodCodeSection,%ActiveTemplateInstance,'Ask','(BYTE UseLast=1),BYTE'),PRIORITY(2500),WHERE(~%RetainQuery)
+#INSERT(%QBEAsk)
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'Init','(SIGNED ListBox,*STRING Posit,VIEW V,QUEUE Q,RelationManager RM,WindowManager WM)'),PRIORITY(7500)
+#INSERT(%QBERelationManagerInit)
+#!---------------------------------------------------------------------
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE')
+#PRIORITY(9500)
+#INSERT(%QBETakeLocate)
+#ENDAT
+#!
+#AT(%QBEMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%QBEVisualMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%QBELocalDataClasses)
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+#INSERT(%QBELocalProcedures)
+#ENDAT
+#!
+#!
+#CONTROL(BrowseViewButton, 'View records from a Browse Box'),DESCRIPTION('View a Record from Browse Box on ' & %Primary),REQ(BrowseBox),HLP('~TPLControlBrowseViewButton')
+#!
+  CONTROLS
+       BUTTON('&View'),AT(,,42,12),USE(?View)
+#!
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'Init','(SIGNED ListBox,*STRING Posit,VIEW V,QUEUE Q,RelationManager RM,WindowManager WM)'),PRIORITY(8550)
+SELF.ViewControl = %(%GetControlName())
+#ENDAT
+#!
+#!
+#!
+#!
+#CONTROL(BrowseUpdateButtons,'Update records from a Browse Box'),DESCRIPTION('Update a Record from Browse Box on ' & %Primary),REQ(BrowseBox),HLP('~TPLControlBrowseUpdateButtons')
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'BrowseEIPManager', 'BRW' & %ActiveTemplateParentInstance & '::EIPManager', %BrowseEIPManagerType)
+#ENDPREPARE
+  CONTROLS
+       BUTTON('&Insert'),AT(,,42,12),USE(?Insert)
+       BUTTON('&Change'),AT(42,0,42,12),USE(?Change)
+       BUTTON('&Delete'),AT(42,0,42,12),USE(?Delete)
+  END
+#BOXED('Update Buttons')
+  #PROMPT('Use Edit &in Place',CHECK),%EditInPlace,DEFAULT(%False),AT(10)
+  #ENABLE(%EditInPlace = %True)
+    #BUTTON('&Configure Edit in place'),AT(,,180)
+      #BOXED('EIP prompts'),AT(0,0),WHERE(%False),HIDE
+        #INSERT(%OOPHiddenPrompts)
+      #ENDBOXED
+      #BUTTON('Browse &EIP Manager'),AT(,,180)
+        #WITH(%ClassItem, 'BrowseEIPManager')
+          #INSERT(%ClassPrompts)
+        #ENDWITH
+      #ENDBUTTON
+      #BOXED('Action upon tab at end of row')
+        #PROMPT('Save',DROP('Default|Always|Never|Prompted')),%EIPTabAction,DEFAULT('Default')
+        #PROMPT('Remain editing',CHECK),%EIPTabRemain,DEFAULT(0)
+      #ENDBOXED
+      #BOXED('Action upon ENTER key')
+        #PROMPT('Save',DROP('Default|Always|Never|Prompted')),%EIPEnterAction,DEFAULT('Default')
+        #PROMPT('Remain editing',CHECK),%EIPEnterRemain,DEFAULT(0)
+      #ENDBOXED
+      #BOXED('Default action upon arrow key')
+        #PROMPT('Save',DROP('Default|Always|Never|Prompted')),%EIPArrowAction,DEFAULT('Default')
+        #PROMPT('Remain editing',CHECK),%EIPArrowRemain,DEFAULT(1)
+        #PROMPT('Retain column',CHECK),%EIPArrowRetain,DEFAULT(1)
+      #ENDBOXED
+      #BOXED('Action upon focus loss')
+        #PROMPT('Save',DROP('Default|Always|Never|Prompted')),%EIPFocusAction,DEFAULT('Default')
+      #ENDBOXED
+      #PROMPT('Insertion point',DROP('Before|After|Append')),%EIPInsertionPoint,DEFAULT('After')
+      #BUTTON('Column &Specific'),MULTI(%EditInPlaceList,%EditInPlaceField&' - '&%GetEIPStatus()),AT(,,180)
+        #PROMPT('&Field',FIELD),%EditInPlaceField,WHENACCEPTED(%SetEIPDefaults())
+        #PROMPT('&Allow Edit-In-Place',CHECK),%AllowEIP,DEFAULT(%True)
+        #ENABLE(%AllowEIP)
+          #WITH(%ClassItem,'EIP'&%EditInPlaceList)
+            #ENABLE(%EditInPlaceField)
+              #INSERT(%ClassPrompts)
+            #ENDENABLE
+          #ENDWITH
+        #ENDENABLE
+      #ENDBUTTON
+    #ENDBUTTON
+  #ENDENABLE
+  #PROMPT('&Update Procedure',PROCEDURE),%UpdateProcedure
+#ENDBOXED
+#!
+#ATSTART
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'BrowseEIPManager', 'BRW' & %ActiveTemplateParentInstance & '::EIPManager', %BrowseEIPManagerType)
+  #FOR(%EditInPlaceList)
+    #CALL(%SetEIPDefaults)
+  #ENDFOR
+  #DECLARE(%InsertControl)
+  #DECLARE(%ChangeControl)
+  #DECLARE(%DeleteControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #CASE(%ControlOriginal)
+    #OF('?Insert')
+      #SET(%InsertControl,%Control)
+    #OF('?Change')
+      #SET(%ChangeControl,%Control)
+    #OF('?Delete')
+      #SET(%DeleteControl,%Control)
+    #ENDCASE
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8500)
+  #IF(%UpdateProcedure)
+    #ADD(%ProcsCalled,%UpdateProcedure)
+    #IF(~%EditInPlace)
+%ManagerName.AskProcedure = %(INSTANCE(%ProcsCalled))
+    #ENDIF
+  #ENDIF
+#ENDAT
+#!
+#AT(%GenerateInstanceUpdate),WHERE(%AcceptToolbarControl AND %GenerateUpdateInstance=0)
+  #SET(%GenerateUpdateInstance,%ActiveTemplateInstance)
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'Init','(SIGNED ListBox,*STRING Posit,VIEW V,QUEUE Q,RelationManager RM,WindowManager WM)'),PRIORITY(8500),WHERE(%EditInPlace OR %UpdateProcedure)
+#! Insert user defined EditInPlaceClasses
+  #FIX(%Control,%ListControl)
+  #IF (%EditInPlace)
+    #FOR(%EditInPlaceList)
+      #FIX(%ControlField,%EditInPlaceField)
+      #IF (%ControlField)
+        #CALL(%SetClassItem,'EIP'&%EditInPlaceList)
+        #IF(%AllowEIP)
+SELF.AddEditControl(%ThisObjectName,%(INSTANCE(%ControlField)))
+        #ELSE
+SELF.AddEditControl(,%(INSTANCE(%ControlField)))
+        #ENDIF
+      #ELSE
+          #ERROR('Unable to find edit-in-place field in list box')
+      #ENDIF
+    #ENDFOR
+#! Disable edit in place for secondary fields (unless overridden by user)
+    #FIX(%File,%Primary)
+    #FOR(%ControlField),WHERE(~INLIST(%ControlField,%Field))
+      #FIND (%EditInPlaceField,%ControlField,%EditInPlaceList)
+      #IF (~%EditInPlaceField)
+SELF.AddEditControl(,%(INSTANCE(%ControlField)))
+      #END
+    #ENDFOR
+    #IF (%EIPTabRemain OR %EIPTabAction <> 'Default')
+SELF.TabAction = EIPAction:%EIPTabAction%(CHOOSE(%EIPTabRemain,'+EIPAction:Remain',''))
+    #ENDIF
+    #IF (%EIPEnterRemain OR %EIPEnterAction <> 'Default')
+SELF.EnterAction = EIPAction:%EIPEnterAction%(CHOOSE(%EIPEnterRemain,'+EIPAction:Remain',''))
+    #ENDIF
+    #IF (%EIPFocusAction <> 'Default')
+SELF.FocusLossAction = EIPAction:%EIPFocusAction
+    #ENDIF
+    #IF (%EIPArrowAction <> 'Default' OR %EIPArrowRemain OR %EIPArrowRetain)
+SELF.ArrowAction = EIPAction:%EIPArrowAction%(CHOOSE(%EIPArrowRemain,'+EIPAction:Remain',''))%(CHOOSE(%EIPArrowRetain,'+EIPAction:RetainColumn',''))
+    #ENDIF
+    #IF (%EIPInsertionPoint <> 'After')
+SELF.EIP.Insert = EIPAction:%EIPInsertionPoint
+    #ENDIF
+  #ENDIF
+#! Plug control equates into browse engine
+#SUSPEND
+#?IF WM.Request <> ViewRecord
+  #IF(%InsertControl)
+  SELF.InsertControl=%InsertControl
+  #ENDIF
+  #IF(%ChangeControl)
+  SELF.ChangeControl=%ChangeControl
+  #ENDIF
+  #IF(%DeleteControl)
+  SELF.DeleteControl=%DeleteControl
+  #ENDIF
+#?END
+#RESUME
+#ENDAT
+#!
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'Init','(SIGNED ListBox,*STRING Posit,VIEW V,QUEUE Q,RelationManager RM,WindowManager WM)'),PRIORITY(6000),WHERE(%EditInPlace)
+  #CALL(%SetClassItem, 'BrowseEIPManager')
+SELF.EIP &= %ThisObjectName
+#ENDAT
+#!
+#!
+#AT(%BeforeProcedureCall,%UpdateProcedure)
+#SUSPEND
+#?CASE Request
+  #SUSPEND
+#?OF InsertRecord
+  #EMBED(%BrowseBeforeInsert,'Browser, Before Insert'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+  #RESUME
+  #SUSPEND
+#?OF DeleteRecord
+  #EMBED(%BrowseBeforeDelete,'Browser, Before Delete'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+  #RESUME
+  #SUSPEND
+#?OF ChangeRecord
+  #EMBED(%BrowseBeforeChange,'Browser, Before Change'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+  #RESUME
+#?END
+#EMBED(%BrowseBoxBeforeUpdate,'Browse Box, before calling the update procedure'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+#RESUME
+#ENDAT
+#!
+#!
+#!
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'ResetFromAsk','(*BYTE Request,*BYTE Response)'),PRIORITY(4000)
+#EMBED(%BrowseBoxAfterUpdate,'Browse Box, returning from the update procedure'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+#PRIORITY(6000)
+#SUSPEND
+#?IF VCRRequest=VCR:None
+  #SUSPEND
+#?CASE Request
+    #SUSPEND
+#?OF InsertRecord
+  #EMBED(%BrowseAfterInsert,'Browser, After Insert'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+    #RESUME
+    #SUSPEND
+#?OF DeleteRecord
+  #EMBED(%BrowseAfterDelete,'Browser, After Delete'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+    #RESUME
+    #SUSPEND
+#?OF ChangeRecord
+  #EMBED(%BrowseAfterChange,'Browser, After Change'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription),LEGACY
+    #RESUME
+#?END
+  #RESUME
+#?END
+#RESUME
+#ENDAT
+#!
+#!
+#AT(%EditInPlaceManagerMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%BrowserEIPManagerMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals, 'BrowseEIPManager', 'Local Objects|Abc Objects|EIP Manager for Browse Using ' & %ListControl, '%BrowseEIPManagerVirtuals(ABC)')
+  #FOR(%EditInPlaceList),WHERE(%AllowEIP)
+    #CALL(%GenerateVirtuals, 'EIP' & %EditInPlaceList, 'Local Objects|Abc Objects|EIP Field Manager for Browse Using ' & %ListControl & ' for field ' & %EditInPlaceField, '%EIPFieldVirtuals(ABC)')
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses),WHERE(%EditInPlace)
+  #CALL(%GenerateClass, 'BrowseEIPManager', 'Browse EIP Manager for Browse using ' & %ListControl)
+  #FOR(%EditInPlaceList),WHERE(%AllowEIP)
+    #CALL(%GenerateClass, 'EIP'&%EditInPlaceList, 'Edit-in-place class for field '&%EditInPlaceField)
+  #ENDFOR
+#ENDAT
+#!
+#!
+#!
+#GROUP(%BrowseEIPManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%BrowserEIPManagerMethodDataSection,'Browse EIP Manager Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,,%FixClassName(%FixBaseClassToUse('BrowseEIPManager'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%BrowserEIPManagerMethodCodeSection,'Browse EIP Manager Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,,%FixClassName(%FixBaseClassToUse('BrowseEIPManager'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%EIPFieldVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%EditInPlaceManagerMethodDataSection,'Edit-In-Place Manager Method Executable Data Section'),%ActiveTemplateInstance,%EditInPlaceList,%pClassMethod,%pClassMethodPrototype,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription&' using '&%BaseClassToUse()),MAP(%EditInPlaceList,'Edit-In-Place field '&%EditInPlaceField),PREPARE(,,%FixClassName(%FixBaseClassToUse('EIP'&%EditInPlaceList))),WHERE(%AllowEIP AND %MethodEmbedPointValid()),TREE(%TreeText & %DataText),NOORDER
+  #?CODE
+  #EMBED(%EditInPlaceManagerMethodCodeSection,'Edit-In-Place Manager Executable Code Section'),%ActiveTemplateInstance,%EditInPlaceList,%pClassMethod,%pClassMethodPrototype,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription&' using '&%BaseClassToUse()),MAP(%EditInPlaceList,'Edit-In-Place field '&%EditInplaceField),WHERE(%AllowEIP AND %MethodEmbedPointValid()),PREPARE(,,%FixClassName(%FixBaseClassToUse('EIP'&%EditInPlaceList))),TREE(%TreeText & %CodeText),NOORDER
+#!
+#!
+#!
+#! Grid Extension
+#!
+#CONTROL(BrowseGrid,'Grid Browse'),DESCRIPTION('Cause Browse to act as grid '),REQ(BrowseBox)
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default', 'BRW' & %ActiveTemplateParentInstance, %GridClass)
+  #DECLARE(%GridChildren),MULTI
+  #DECLARE(%GridChildrenEvents),MULTI
+  #FOR(%Control),WHERE(%ControlParent = %GetControlName())
+    #ADD(%GridChildren,%Control)
+  #ENDFOR
+    #CALL(%FillEventList,%UpdateControl)
+#ENDPREPARE
+  CONTROLS
+       GROUP(''),AT(,,40,40),USE(?GridCell)
+  END
+#PROMPT('Expression for Group Title',EXPR),%GroupTitle
+#PROMPT('Color of Selected Group',Color),%GroupColor
+#PROMPT('Update on control event',CHECK),%HaveUpdate
+#ENABLE(%HaveUpdate)
+  #PROMPT('Update Control:',FROM(%GridChildren)),%UpdateControl,WHENACCEPTED(%FillEventList(%UpdateControl))
+  #ENABLE(%UpdateControl),CLEAR
+    #PROMPT('Update Control Event:',FROM(%GridChildrenEvents)),%UpdateControlEvent
+  #ENDENABLE
+#ENDENABLE
+#PROMPT('Make group selectable',CHECK),%GroupSelect,DEFAULT(%True)
+#ENABLE(%GroupSelect)
+  #PROMPT('Forward other control clicks',CHECK),%ForwardClick,DEFAULT(%False)
+  #ENABLE(%ForwardClick)
+    #PROMPT('Forward other control clicks to :',Control),%GroupPress1
+  #ENDENABLE
+#ENDENABLE
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default', 'BRW' & %ActiveTemplateParentInstance, %GridClass)
+  #DECLARE(%GroupControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #SET(%GroupControl,%Control)
+  #ENDFOR
+  #FIX(%ClassItem, 'Default')
+  #EQUATE(%GridObject, %ThisObjectName)
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'Init','(SIGNED ListBox,*STRING Posit,VIEW V,QUEUE Q,RelationManager RM,WindowManager WM)'),PRIORITY(8000)
+SELF.GroupControl = %GroupControl
+#IF (%GroupTitle)
+SELF.GroupTitle = %(%StripPling(%GroupTitle))
+#ENDIF
+#IF (%GroupColor)
+SELF.SelColor = %GroupColor
+#ENDIF
+#IF (%GroupSelect)
+SELF.Selectable = %GroupSelect
+#ENDIF
+#IF (%ForwardClick AND %GroupPress1)
+SELF.ClickPress = %GroupPress1
+#ENDIF
+#IF (%HaveUpdate AND %UpdateControl)
+SELF.UpdateControl = %UpdateControl
+SELF.UpdateControlEvent = EVENT:%UpdateControlEvent
+#ENDIF
+#ENDAT
+#!
+#!
+#AT(%BrowserMethodCodeSection,%ActiveTemplateParentInstance,'IsSkelActive','(),BYTE'),PRIORITY(8000)
+#EMBED(%InsideIsSkelActive,''),%ActiveTemplateInstance,HIDE
+#ENDAT
+#!
+#!----------------------------------------------------------------
+#CONTROL(DynamicImage,'Dynamic Image Control'),DESCRIPTION('An image control that changes for each record'),WINDOW,MULTI,HLP('~TPLControlDynamicImage'),REQ(BrowseGrid)
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'DynImage', 'DynImage'&%ActiveTemplateInstance,%ImageClass)
+#ENDPREPARE
+   CONTROLS
+     IMAGE(),AT(,,40,40),USE(?DynImage)
+   END
+#BOXED('Dynamic Image Prompts')
+  #INSERT(%OOPPrompts)
+  #PROMPT('Field to drive image:',FIELD),%ImageField
+  #BUTTON('&Classes'),AT(,,170),HLP('~TPLDynamicImage_Classes')
+    #WITH(%ClassItem,'DynImage')
+      #INSERT(%ClassPrompts)
+    #ENDWITH
+  #ENDBUTTON
+#ENDBOXED
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'DynImage','DynImage'&%ActiveTemplateInstance,%ImageClass)
+  #DECLARE(%ImageControl)
+  #SET(%ImageControl,%GetControlName())
+  #EQUATE(%BrowseBCT,%ParentInstanceFind('BrowseBox(ABC)'))
+#ENDAT
+#!
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'DynImage')
+#ENDAT
+#!
+#AT(%BrowserMethodCodeSection,%BrowseBCT,'Init','(SIGNED ListBox,*STRING Posit,VIEW V,QUEUE Q,RelationManager RM,WindowManager WM)'),PRIORITY(8000)
+SELF.AddItem(%ThisObjectName.RecordProcessor)
+%ThisObjectName.AddItem(%ImageControl,%ImageField)
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'DynImage')
+#ENDAT
+#!
+#AT(%DynImageMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals, 'DynImage', 'Local Objects|Abc Objects|Dynamic Image ' & %ImageControl, '%DynImageVirtuals(ABC)')
+#ENDAT
+#!
+#!
+#GROUP(%DynImageVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%DynImageMethodDataSection,'Dynamic Image Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('DynImage'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%DynImageMethodCodeSection,'Dynamic Image Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('DynImage'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%GetEIPStatus),PRESERVE
+#IF(%AllowEIP AND %EditInPlaceField)
+  #CALL(%SetClassItem,'EIP'&%EditInPlaceList)
+  #RETURN('Enabled using '&%BaseClassToUse())
+#ENDIF
+#RETURN('Disabled')
+#!
+#!
+#GROUP(%SetEIPDefaults),PRESERVE
+  #IF(%EditInPlaceList AND %EditInPlaceField)
+    #CALL(%SetClassDefaults,'EIP'&%EditInPlaceList ,'EditInPlace::'&%EditInPlaceField,%EditInPlaceType)
+  #ENDIF
+#!
+#!------------------------------------------------------------------------------------------------------
+#GROUP(%BuildQueueFields,%ManagerName,%ControlID),PRESERVE
+#!First add browse display fields to queue
+  #FIX(%Control,%ControlID)
+  #FOR(%ControlField)
+    #SET(%ValueConstruct,%ControlField)
+    #INSERT(%CleanDimensions)
+    #ADD(%QueueField,%ValueConstruct)
+    #SET(%QueueFieldAssignment,%ControlField)
+    #SET(%QueueFieldComment,'List box control field')
+    #SET(%QueueFieldHasColor,%ControlFieldHasColor)
+    #SET(%QueueFieldHasTree,%ControlFieldHasTree)
+    #SET(%QueueFieldHasStyle,%ControlFieldHasStyle)
+    #SET(%QueueFieldHasIcon,%ControlFieldHasIcon)
+    #IF(%ControlFieldHasIcon)
+      #IF(%ControlFieldIcon)
+       #INSERT(%AddBrowseIcon,%ControlFieldIcon)
+      #ENDIF
+      #FOR(%ConditionalIcons)
+       #INSERT(%AddBrowseIcon,%ConditionalControlFieldIcon)
+      #ENDFOR
+    #ENDIF
+  #ENDFOR
+#!
+#!2nd append hot field to queue
+  #FOR(%HotFields),WHERE(~%HotFieldBindOnly)
+    #SET(%ValueConstruct,%HotField)
+    #INSERT(%CleanDimensions)
+    #IF(~INLIST(%ValueConstruct,%QueueField))
+     #ADD(%QueueField,%ValueConstruct)
+     #SET(%QueueFieldAssignment,%HotField)
+     #SET(%QueueFieldComment,'Browse hot field')
+    #ENDIF
+  #ENDFOR
+#!
+#!3rd append primary key fields to queue
+  #FIX(%File,%Primary)
+  #FIX(%Key,%FilePrimaryKey)
+  #FOR(%KeyField)
+    #IF(~INLIST(%KeyField,%QueueField))
+     #ADD(%QueueField,%KeyField)
+     #SET(%QueueFieldAssignment,%KeyField)
+     #SET(%QueueFieldComment,'Primary key field')
+    #ENDIF
+  #ENDFOR
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseInvalidRangeField)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('    The range field specified is not in the current key!')
+#IF(%BrowseCondition)
+  #ERROR('   Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('   Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('   Current Key: ' & %BrowseKey)
+#IF(%RangeField)
+  #ERROR('   Range Field: ' & %RangeField)
+#ELSE
+  #ERROR('   Range Field: None')
+#ENDIF
+#!--------------------------------------------------------------
+#GROUP(%ErrorRelationshipMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A file relationship range limit was specified, but')
+#ERROR('no relationship to the file specified could be found!')
+#ERROR('Range Field: ' & %RangeField)
+#ERROR('Range File:  ' & %RangeFile)
+#!--------------------------------------------------------------
+#GROUP(%ErrorLimitFieldMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A single value range limit was specified, but')
+#ERROR('no value was provided!')
+#ERROR('   Range Field: ' & %RangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseLimitFieldMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A single value range limit was specified, but')
+#ERROR('no value was provided!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('   Range Field: ' & %RangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseLowLimitMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A range of values range limit was specified, but')
+#ERROR('no low value was provided!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('   Range Field: ' & %RangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseHighLimitMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A range of values range limit was specified, but')
+#ERROR('no high value was provided!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('   Range Field: ' & %RangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseRelationshipMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A file relationship range limit was specified, but')
+#ERROR('no relationship to the file specified could be found!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('Range Field: ' & %RangeField)
+#ERROR('Range File:  ' & %RangeFile)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseLocatorNoFreeKey)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A locator was specified, but no free key element')
+#ERROR('exists!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('Locator Type:' & %BrowseLocatorType)
+#ERROR('Range Field: ' & %BrowseRangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseLocatorNoEntryControl)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('An Entry locator was specified, but no entry control')
+#ERROR('exists for the free key element!  Using STEP locator')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('Locator Type:' & %LocatorType)
+#ERROR('Range Field: ' & %RangeField)
+#!
+#!
+#GROUP(%SetBothTypes,%InstanceNumber)
+  #IF(%InstanceNumber=0)
+    #CALL(%SetLocatorClass,%InstanceNumber,%LocatorType)
+  #ELSE
+    #CALL(%SetLocatorClass,%InstanceNumber,%SortLocatorType)
+  #ENDIF
+  #CALL(%SetStepClass,%InstanceNumber)
+#!
+#!
+#GROUP(%SetLocatorClass,%InstanceNumber,%LocatorType)
+#CASE(%LocatorType)
+#OF('')
+#OROF('None')
+#OROF('Step')
+  #CALL(%SetClassDefaults, 'Locator'&%InstanceNumber,'BRW'&%ActiveTemplateInstance&'::Sort'&%InstanceNumber&':Locator',%StepLocatorType)
+#OF('Entry')
+  #CALL(%SetClassDefaults, 'Locator'&%InstanceNumber,'BRW'&%ActiveTemplateInstance&'::Sort'&%InstanceNumber&':Locator',%EntryLocatorType)
+#OF('Incremental')
+  #CALL(%SetClassDefaults, 'Locator'&%InstanceNumber,'BRW'&%ActiveTemplateInstance&'::Sort'&%InstanceNumber&':Locator',%IncrementalLocatorType)
+#OF('Filtered')
+  #CALL(%SetClassDefaults, 'Locator'&%InstanceNumber,'BRW'&%ActiveTemplateInstance&'::Sort'&%InstanceNumber&':Locator',%FilteredLocatorType)
+#ELSE
+  #ASSERT(%False,'%SetLocatorType: %LocatorType contains unknown value '&%LocatorType)
+#ENDCASE
+#CLEAR(%ActualDefaultBaseClassType)
+#!
+#!
+#GROUP(%SetStepClass,%InstanceNumber)
+#IF(%ScrollBehavior='Movable Thumb' AND %LoadMethod='Page')
+  #CALL(%SetClassDefaults,'Step'&%InstanceNumber,'BRW'&%ActiveTemplateInstance&'::Sort'&%InstanceNumber&':StepClass',%StepManagerType)
+#ENDIF
+#CLEAR(%ActualDefaultBaseClassType)
+#!
+#!
+#GROUP(%SetQBEs,%Interface)
+  #CALL(%SetClassDefaults, 'QBEClass','QBE'&%ActiveTemplateInstance,%GetQBEClass(%Interface))
+  #CALL(%SetClassDefaults, 'QBEVisual','QBV'&%ActiveTemplateInstance,%GetQBEVisualClass(%Interface))
+#!
+#!
+#GROUP(%GetQBEClass,%Interface)
+  #CASE(%Interface)
+  #OF('FORM')
+    #RETURN(%QBEFormType)
+  #OF('LIST')
+    #RETURN(%QBEListType)
+  #ELSE
+    #ASSERT(%False,'Unknown QBE form type')
+  #END
+#!
+#!
+#GROUP(%GetQBEVisualClass,%Interface)
+  #CASE(%Interface)
+  #OF('FORM')
+    #RETURN(%QBEFormVisualType)
+  #OF('LIST')
+    #RETURN(%QBEListVisualType)
+  #ELSE
+    #ASSERT(%False,'Unknown QBE visual type')
+  #END
+#!
+#!
+#!
+#!
+#GROUP(%QueryPopulationPrompts)
+#BUTTON('Fields'),MULTI(%QBEFields,%QBETitle & '-' & %QBEField),AT(100)
+  #PROMPT('Field :',FIELD),%QBEField
+  #PROMPT('Title :',@S40),%QBETitle
+  #PROMPT('Picture :',PICTURE),%QBEPicture
+  #ENABLE(UPPER(SUB(%QBEPicture,2,1))='S')
+   #PROMPT('Caseless?',CHECK),%QBENoCase,DEFAULT(1)
+  #ENDENABLE
+  #ENABLE(%Interface='FORM' AND UPPER(SUB(%QBEPicture,2,1))<>'S')
+   #PROMPT('Disable Begins\Contains?',CHECK),%QBEForceEditPicture,Default(1)
+  #ENDENABLE
+#ENDBUTTON
+#GROUP(%QueryPopulation)
+#FOR(%QBEFields)
+%ThisObjectName.AddItem('%(CHOOSE(%QBENoCase,'UPPER('&%QBEField&')',%QBEField))','%'QBETitle','%QBEPicture',%QBEForceEditPicture)
+#ENDFOR
+#!
+#!-------------------------------------------------------------------------
+#GROUP(%QBEParseView)
+#DECLARE(%PreviouslyAddedField),MULTI
+#DECLARE(%QField)
+#DECLARE(%LB,LONG)
+#EQUATE(%QBEFieldFound,%False)
+#FIX(%File,%Primary)
+#FOR(%QueueField)
+  #SET(%LB, INSTRING('[',%QueueFieldAssignment,1,1))
+  #IF(%LB > 1)
+    #SET(%QField, SLICE (%QueueFieldAssignment, 1, %LB-1))
+  #ELSE
+    #SET(%QField, %QueueFieldAssignment)
+  #ENDIF
+  #FIX(%Field,%QField)
+  #IF(%Field)
+    #FIX(%PreviouslyAddedField,%Field)
+    #IF(NOT(%PreviouslyAddedField))
+      #ADD(%PreviouslyAddedField,%Field)
+%ThisObjectName.AddItem('%Field','%FieldHeader','%FieldPicture')
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#FOR(%Secondary),WHERE(%SecondaryTo=%Primary)
+  #INSERT(%QBEParseSecondary,%Primary,%Secondary)
+#ENDFOR
+#IF(~ITEMS(%PreviouslyAddedField)) #! View is empty all fields are PROJECTED.
+ #FIX(%File,%Primary)
+ #FOR(%Field)
+  #ADD(%PreviouslyAddedField,%Field)
+%ThisObjectName.AddItem('%Field','%FieldHeader','%FieldPicture')
+ #ENDFOR
+ #FOR(%Secondary),WHERE(%SecondaryTo=%Primary)
+  #INSERT(%QBEParseSecondaryFile,%Primary,%Secondary)
+ #ENDFOR
+#ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%QBEParseSecondary,%CurrentPrimary,%CurrentSecondary)
+#FIX(%File,%CurrentSecondary)
+#FIX(%Relation,%CurrentPrimary)
+#FOR(%RelationKeyField),WHERE(%RelationKeyFieldLink AND %RelationKeyField)
+  #FIX(%QueueField,%RelationKeyField)
+  #IF(NOT %QueueField)
+    #FIX(%PreviouslyAddedField,%RelationKeyField)
+    #IF(NOT(%PreviouslyAddedField))
+      #ADD(%PreviouslyAddedField,%RelationKeyField)
+%ThisObjectName.AddItem('%Field','%FieldHeader','%FieldPicture')
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!---------------------------------------------------------------------
+#GROUP(%QBEParseSecondaryFile,%CurrentPrimary,%CurrentSecondary)
+#FIX(%File,%CurrentSecondary)
+#FIX(%PreviouslyAddedField,%Field)
+#IF(NOT(%PreviouslyAddedField))
+ #ADD(%PreviouslyAddedField,%Field)
+ #SET(%QBEFieldFound,%True)
+%ThisObjectName.AddItem('%Field','%FieldHeader','%FieldPicture')
+#ENDIF
+#!---------------------------------------------------------------------
+#GROUP(%QBEPrompts)
+#RESTRICT
+ #IF(UPPER(%ProcedureTemplate)='REPORT' OR UPPER(%ProcedureTemplate) = 'PROCESS')
+  #ACCEPT
+ #ELSE
+  #FOR(%ActiveTemplate),WHERE(%ActiveTemplate='BrowseBox(ABC)')
+   #ACCEPT
+  #ENDFOR
+  #REJECT
+ #ENDIF
+#ENDRESTRICT
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetQBEs,%Interface)
+#ENDPREPARE
+#BUTTON('&QBE Options'),AT(,,180)
+  #BOXED('QBE Prompts'),AT(0,0),WHERE(%False),HIDE
+    #INSERT(%OOPHiddenPrompts)
+  #ENDBOXED
+  #SHEET,HSCROLL
+    #TAB('&General')
+     #BOXED('')
+      #PROMPT('QBE Family:',@s255),%QBEFamily,REQ,DEFAULT(%Procedure)
+      #PROMPT('QBE &Interface',DROP('Form[FORM]|List[LIST]')),%Interface,WHENACCEPTED(%SetQBEs(%Interface)),DEFAULT('FORM')
+      #PROMPT('Auto Populate',CHECK),%AutoPopulate,DEFAULT(1)
+      #ENABLE(%AutoPopulate)
+       #PROMPT('Caseless Auto Populate',CHECK),%CaselessAutoPopulate,DEFAULT(1)
+      #ENDENABLE
+      #ENABLE(~%AutoPopulate)
+        #INSERT(%QueryPopulationPrompts)
+      #ENDENABLE
+      #BOXED,WHERE(UPPER(%ProcedureTemplate)='REPORT' OR UPPER(%ProcedureTemplate)='PROCESS')
+       #PROMPT('Use current query?',CHECK),%UseMRU
+      #ENDBOXED
+      #PROMPT('Retain Query',CHECK),%RetainQuery,DEFAULT(1)
+      #PROMPT('Use on startup',CHECK),%StartQuery,DEFAULT(0)
+      #PROMPT('Result Control',CONTROL),%QueryResultControl
+      #ENABLE(~(UPPER(%ProcedureTemplate)='REPORT' OR UPPER(%ProcedureTemplate)='PROCESS'))
+       #PROMPT('Auto-share between tabs',CHECK),%AutoShare,DEFAULT(0)
+       #BOXED('Quick QBE Settings')
+        #PROMPT('Quick QBE Support?',CHECK),%QkSupport,DEFAULT(1)
+        #ENABLE(%QkSupport)
+         #PROMPT('Submenu Icon:',@s255),%QkMenuIcon,DEFAULT('QkQBE.ico')
+         #PROMPT('Query Icon:',@s255),%QkIcon,DEFAULT('QkLoad.ico')
+        #ENDENABLE
+       #ENDBOXED
+      #ENDENABLE
+     #ENDBOXED
+    #ENDTAB
+    #TAB('&QBE Class')
+      #WITH(%ClassItem,'QBEClass')
+        #INSERT(%ClassPrompts)
+      #ENDWITH
+    #ENDTAB
+    #TAB('QBE &Visual Class')
+      #WITH(%ClassItem,'QBEVisual')
+        #INSERT(%ClassPrompts)
+      #ENDWITH
+    #ENDTAB
+  #ENDSHEET
+#ENDBUTTON
+#!---------------------------------------------------------------------
+#GROUP(%QBEStart)
+  #IF(UPPER(%ProcedureTemplate)='REPORT' OR UPPER(%ProcedureTemplate) = 'PROCESS')
+   #EQUATE(%PauseFound,%False)
+   #FOR(%ActiveTemplate),WHERE(%ActiveTemplate='PauseButton(ABC)')
+    #SET(%PauseFound,%True)
+   #ENDFOR
+   #IF(~%PauseFound)
+    #ERROR('A Pause button is required for the Process\Report to wait for the user to be able to use the QBE functionality.')
+   #ENDIF
+  #ENDIF
+  #CALL(%ReadABCFiles)
+  #CALL(%SetQBEs,%Interface)
+  #DECLARE(%QControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #SET(%QControl,%Control)
+  #ENDFOR
+#!---------------------------------------------------------------------
+#GROUP(%QBEGatherObjects)
+  #CALL(%AddObjectList, 'QBEClass')
+  #CALL(%AddObjectList, 'QBEVisual')
+#!---------------------------------------------------------------------
+#GROUP(%QBEWinManInit)
+#CALL(%SetClassItem,'QBEVisual')
+#EQUATE(%VisualClass,%ThisObjectName)
+#CALL(%SetClassItem,'QBEClass')
+%ThisObjectName.Init(%VisualClass, INIMgr,'%QBEFamily', GlobalErrors)
+#!---------------------------------------------------------------------
+#GROUP(%QBEWinManAfterWinOpen)
+#IF(UPPER(%ProcedureTemplate)='PROCESS' OR UPPER(%ProcedureTemplate) = 'REPORT')
+SELF.QueryControl = %QControl
+#ELSE
+%ManagerName.QueryControl = %QControl
+#ENDIF
+#IF(%AutoPopulate)
+ #IF(UPPER(%ProcedureTemplate)='PROCESS' OR UPPER(%ProcedureTemplate) = 'REPORT')
+%ProcessObjectName.Query &= %ThisObjectName
+#INSERT(%QBEParseView)
+#IF(%UseMRU)
+%ThisObjectName.Restore('tsMRU')
+%ProcessObjectName.SetFilter(%ThisObjectName.GetFilter())
+#ENDIF
+ #ELSE
+%ManagerName.UpdateQuery(%ThisObjectName,%CaselessAutoPopulate)
+ #ENDIF
+#ELSE
+%ManagerName.Query &= %ThisObjectName
+#INSERT(%QueryPopulation)
+#ENDIF
+#!---------------------------------------------------------------------
+#GROUP(%QBEAsk)
+SELF.Reset
+#!---------------------------------------------------------------------
+#GROUP(%QBETakeLocate)
+#IF(%StartQuery)
+%ManagerName.TakeLocate
+#ENDIF
+#!---------------------------------------------------------------------
+#GROUP(%QBELocalDataClasses)
+#INSERT(%GenerateClass, 'QBEClass', 'QBE List Class. ')
+#INSERT(%GenerateClass, 'QBEVisual', 'QBE Visual Class')
+#!---------------------------------------------------------------------
+#GROUP(%QBELocalProcedures)
+  #CALL(%GenerateVirtuals, 'QBEClass', 'Local Objects|Abc Objects|QBE for ' & %Primary, '%QBEVirtuals(ABC)')
+  #CALL(%GenerateVirtuals, 'QBEVisual', 'Local Objects|Abc Objects|QBE Visual for ' & %Primary, '%QBEVisualVirtuals(ABC)')
+#!
+#!
+#!---------------------------------------------------------------------
+#GROUP(%QBEVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%QBEMethodDataSection,'QBE Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('QBEClass'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%QBEMethodCodeSection,'QBE Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('QBEClass'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%QBEVisualVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%QBEVisualMethodDataSection,'QBE Visual Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('QBEVisual'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%QBEVisualMethodCodeSection,'QBE Visual Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('QBEVisual'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!---------------------------------------------------------------------
+#GROUP(%QBERelationManagerInit)
+#IF(%AutoShare)
+SELF.QueryShared = 1
+#ENDIF
+#IF(%QueryResultControl)
+  #FIX(%Control,%QueryResultControl)
+  #IF(~%Control)
+    #SET(%QueryResultControl,%NULL)
+  #ELSE
+SELF.QueryResult = %QueryResultControl
+  #ENDIF
+#ENDIF
+#!
+#!
+#GROUP(%FillEventList, %Ctrl),PRESERVE,AUTO
+  #FIX(%Control, %Ctrl)
+    #EQUATE(%Temp, %UpdateControlEvent)
+    #FREE(%GridChildrenEvents)
+    #FOR(%ControlEvent)
+        #ADD(%GridChildrenEvents, %ControlEvent)
+    #END
+    #IF (~INLIST(%Temp, %GridChildrenEvents))
+      #CLEAR(%UpdateControlEvent)
+        #SELECT(%GridChildrenEvents, 1)
+        #SET(%UpdateControlEvent, %GridChildrenEvents)
+    #ENDIF
+#!
+#!

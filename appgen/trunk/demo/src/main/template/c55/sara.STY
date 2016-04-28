@@ -1,0 +1,112 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AdminBrowses),ACORN(1),ACORN.CONTEXT('PrimaryFile(%_VALUE_%)'),ACORN.NAME(Browse %_VALUE_%),ACORN.WIZARD(*Browse),DESCRIPTION(Generate browses for these files),DEVIMP(ASK),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AdminBrowses.List),DESCRIPTION(Available files),DTYPE(HIDDEN),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(~%Scope.PROCEDUREWIZATRON% AND %SAU% AND @USER(%_VALUE_%,SAU)=1))'),LISTFILL.FUNC('@FILES()'),MULTI(1)
+  PROPERTY: NAME(Guard),ACORN.WIZARD(TOPSPEED:ControlTemplate#WebProcedureGuard)
+  PROPERTY: NAME(Product),ACORN(1),ACORN.CONTEXT('PrimaryFile(%_VALUE_%)'),ACORN.NAME(Show Products),ACORN.WIZARD(*Browse#Product),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(SAU),DESCRIPTION(Sales Administration Utility),DEVIMP(INTERNAL),DTYPE(CHECK),HIDDEN(1),LOCKED(1),TYPE(BOOLEAN)
+  [DEFINITION]
+    ADMINBROWSES()
+    ADMINBROWSES.LIST()
+    GUARD(1)
+    PRODUCT('@FIND(''@Files()'',`@USER(%_VALUE_%,PRODUCT)`)')
+    SAU(0)
+    SPLASHWINDOW(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(QuickStart.SAU),DESCRIPTION(If set to true then a series of procedures will be created to allow the merchant to maintain certain key datafiles over the internet.),DEVIMP(ASK),DOCUMENTATION(Causes the marketing administration utility to be produced),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.PROMPT(Sales Administration Utility),QUICKSTART.WHENAPPLY('TOPSPEED:Frame.SAU(%_VALUE_%)'),TYPE(BOOLEAN)
+  [DEFINITION]
+    AUTOPROCEDUREDEPTH(0)
+    GUARDENABLED(1)
+    -QUICKSTART.BROWSEALLFILES
+    QUICKSTART.SAU(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuManager
+  DESCRIPTOR: 1
+  [DEFINITION]
+    STANDARDMENUITEMS(Quit)
+    STANDARDMENUITEMS.LIST(Quit)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Browse#SAU
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem#Browse)
+    MENU(Sales)
+    SECURE(Sales)
+    TEXT(Maintain %^PrimaryFile%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Sales
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(6)
+    SECURE(Sales)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Browse
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Collections),ACORN(1),ACORN.CONTEXT('Field(%_VALUE_%)'),ACORN.NAME('AddTo @USER(%_VALUE_%,INITIALISES,1)'),ACORN.WIZARD(TopSpeed:ControlTemplate#AddRecord),DESCRIPTION(Allow browse to be collected into :),DEVIMP(USEFUL),DOCUMENTATION('Populates ''one click'' buttons to allow lines from this browse to be stored into some other file'),DTYPE(CHECK),MULTI(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(Collections.List),DEVIMP(USEFUL),DTYPE(CHECK),HIDDEN(1),LISTFILL.AUTO('@EVAL(CHOOSE(''@USER(%_VALUE_%,INITIALISES)''<>'''',1,0 ))'),LISTFILL.FUNC('@FIELDS(%PrimaryFile%)'),MULTI(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(MenuItem),ACORN.NAME(Maintain %PrimaryFile%),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Browse#SAU')
+  [DEFINITION]
+    COLLECTIONS()
+    COLLECTIONS.LIST()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Browse#Product
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BrowseBox),ACORN.CONTEXT('HasView(1)')
+  PROPERTY: NAME(MenuItem),ACORN.CONTEXT('USE.LABEL(?ShowProduct),Populator(%Name%)'),ACORN.NAME(Browse %PrimaryFile%),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Browse')
+  [DEFINITION]
+    OUTPUT.PROCNAME(ShowProduct)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#AddRecord
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ViewParent),ACORN(1),ACORN.CONTEXT('PrimaryFile(%AddParent%)'),ACORN.NAME(Update %AddParent%),ACORN.WIZARD(*Form),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ViewParentButton),ACORN(1),ACORN.CONTEXT('POPULATOR(%NAME%)'),ACORN.NAME(View %AddParent% Button),ACORN.WIZARD(^Button#ViewParent),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    VIEWPARENT('@EVAL(CHOOSE(''%AddParent%''='''',0,1))')
+    VIEWPARENTBUTTON(%ViewParent%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#ViewParent
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.TAB()
+    ALLOCATION.ZONE(Zone:SouthWest)
+    ITEM.PROCEDURE(Update%^AddParent%)
+    ITEM.REQUEST(Change)
+    TEXT(&View %^AddParent%)
+    USE.LABEL(?View:%^AddParent%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Report
+  DESCRIPTOR: 1
+  [DEFINITION]
+    SECURE(Sales)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#GenericSkeletons
+  DESCRIPTOR: 1
+  [DEFINITION]
+    WEBTEMPLATESINUSE(1)
+  [END]
+[END]

@@ -26,6 +26,8 @@ public class Print implements Runnable
         ,PatternRewriter.create(ExprType.rawstring,"getPDF","$.getPDF($)",ExprType.report,ExprType.rawint).call()
         ,PatternRewriter.create(ExprType.rawstring,"getPDF","$.getPDF($,$)",ExprType.report,ExprType.rawint,ExprType.rawint).call()
         ,PatternRewriter.create(ExprType.rawint,"pageCount","$.getPageCount()",ExprType.report).call()
+        ,PatternRewriter.create(ExprType.rawstring,"writePDF","$.writePDF()",ExprType.report).call() // %%%%% attempt to store pdf.
+        ,PatternRewriter.create(ExprType.rawstring,"previewPDF","$.previewPDF()",ExprType.report).call() // %%%%% attempt to preview pdf.
         );
     }
 }

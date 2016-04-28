@@ -1,0 +1,210 @@
+#UTILITY(ApplicationWizard,'Create a New Database Application'),WIZARD,HLP('~TPLWizardApplication')
+#!
+#SHEET
+  #TAB('Application Wizard'),HLP('~TPLWizardApplication')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WAPP1' & %GetColorSuffix() & '.GIF')),AT(,,75,115),PROP(PROP:Centered)
+    #DISPLAY('This wizard will help you quickly create a new Application.'),AT(90,8,235,24)
+    #DISPLAY('To begin creating your new Application, click Next.'),AT(90)
+  #ENDTAB
+  #TAB('Application Wizard - File Usage'),FINISH(1),HLP('~TPLWizardApplication')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WAPP2' & %GetColorSuffix() & '.GIF')),AT(,,75,115),PROP(PROP:Centered)
+    #DISPLAY('With the Application Wizard, you can generate procedures for all of the files in your dictionary, or you can select individual files to use in the application'),AT(90,8,235,24)
+    #PROMPT('Generate Procedures for all files in my dictionary',CHECK),%QuickAppGenerateAllFiles,AT(90,,180),DEFAULT(1)
+  #ENDTAB
+  #TAB('Application Wizard - Select Files to Use'),WHERE(NOT %QuickAppGenerateAllFiles),FINISH(1),HLP('~TPLWizardApplication')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFSCH' & %GetColorSuffix() & '.GIF')),AT(,,75,115),PROP(PROP:Centered)
+    #PROMPT('File Selection',FROM(%File)),%FileSelection,INLINE,SELECTION('File Selection'),AT(90,8,235)
+  #ENDTAB
+  #TAB('Application Wizard - Control Model'),HLP('~TPLWizardApplication'),FINISH(1)
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WAPP3' & %GetColorSuffix() & '.GIF')),AT(,,75,115),PROP(PROP:Centered)
+    #DISPLAY('The Application Wizard can generate applications using any of the following Control Models:'),AT(90,8,235,24)
+    #DISPLAY('Button: Traditional Insert, Change, Delete, OK and Cancel approach'),AT(90)
+    #DISPLAY('Toolbar: Browse controls are populated on a common toolbar'),AT(90)
+    #DISPLAY('Both: Employs both control models'),AT(90)
+    #PROMPT('Which Control Model should the Application use?',OPTION),%ControlModel,DEFAULT('Toolbar'),AT(90,75,180,30)
+    #PROMPT('Button',RADIO),AT(100,90,50)
+    #PROMPT('Toolbar',RADIO),AT(160,90,50)
+    #PROMPT('Both',RADIO),AT(220,90,50)
+  #ENDTAB
+  #TAB('Application Wizard - Internet Connect'),WHERE(ITEMS(%Procedure)<=1),FINISH(1)
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WAPP1' & %GetColorSuffix() & '.GIF')),AT(,,75,115)
+    #DISPLAY('The Application Wizard can produce an application that will work as both a windows and a Internet application.  (This will also make the application 32bit.)'),AT(90,8,235,24)
+    #PROMPT ('Create an Internet Enabled Application', CHECK),%QueryInternet,AT(90,,180),DEFAULT(0)
+  #END
+  #TAB('Application Wizard - Finally...'),FINISH(1),HLP('~TPLWizardApplication')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WAPP1' & %GetColorSuffix() & '.GIF')),AT(,,75,115),PROP(PROP:Centered)
+    #DISPLAY('If you are creating new procedures with names that already exist in your application, the old procedures can be overwritten or the new procedures can be suppressed.'),AT(90,8,235,30)
+    #PROMPT('Overwrite existing procedures',CHECK),%QuickAppPromptOverwriteAll,AT(90,,235),DEFAULT(0)
+    #IMAGE('<255,1,4,127>'),AT(90,55)
+    #DISPLAY('The procedure specified as your First Procedure will always be overwritten by the application wizard!'),AT(125,54,200,20)
+  #ENDTAB
+#ENDSHEET
+#INSERT(%DeclareSymbols)
+#!
+#SET(%ReplaceExistingProcedures,%QuickAppPromptOverwriteAll)
+#IF (ITEMS(%Procedure)<=1 AND %QueryInternet)
+  #SET(%GenerateInternet,%True)
+#END
+#IF(NOT %Procedure)
+  #ADD(%ProcedureList,%FirstProcedure)
+  #SET(%QuickProcedurePrimary,'')
+  #SET(%QuickProcedureType,'Clarion Frame')
+  #SET(%QuickProcedureDescription,'Clarion for Windows Wizard Application for ' & %DictionaryFile)
+  #SET(%QuickProcedureWindow,%True)
+#ENDIF
+#!
+#INSERT(%GenerateProcedures)
+#!
+#GROUP(%QuickAppDeclarations)
+#!
+#!------------------------------------------------------------------
+#GROUP(%ConstructQuickApp)
+#!
+#DECLARE(%AppFilesList),MULTI
+#FIX(%ProcedureList,%CurrentProcedure)
+#MESSAGE('Generating Internal File Tables',2)
+#IF(%QuickAppGenerateAllFiles)
+  #FOR(%File),WHERE(NOT EXTRACT(%FileQuickOptions,'NOPOPULATE'))
+    #IF(ITEMS(%Field))
+      #ADD(%AppFilesList,%File)
+      #INSERT(%GenerateQuickAppCalls)
+      #FIX(%ProcedureList,%CurrentProcedure)
+    #ENDIF
+  #ENDFOR
+#ELSE
+  #FOR(%FileSelection)
+    #FIX(%File,%FileSelection)
+    #IF(ITEMS(%Field))
+      #ADD(%AppFilesList,%File)
+      #INSERT(%GenerateQuickAppCalls)
+      #FIX(%ProcedureList,%CurrentProcedure)
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#!
+#IF(%SQLUsed)
+  #FOR(%SQLDrivers)
+#ADD(%QuickOtherFiles,%SQLFile)
+  #ENDFOR
+  #ADD(%FilledEmbed,'DataSectionAfterWindow')
+  #ADD(%FilledEmbedContents,'SQLOpenWindow WINDOW(''Initializing Database''),AT(,,198,24),FONT(''MS Sans Serif'',10,,FONT:regular),GRAY,CENTER')
+  #ADD(%FilledEmbedContents,'       STRING(''This process could take several seconds.''),AT(27,12)')
+  #ADD(%FilledEmbedContents,'       IMAGE(Icon:Connect),AT(4,4,20,17)')
+  #ADD(%FilledEmbedContents,'       STRING(''Please wait while the program connects to the database.''),AT(27,3)')
+  #ADD(%FilledEmbedContents,'     END')
+  #ADD(%FilledEmbed,'BeforeFileOpen')
+  #ADD(%FilledEmbedContents,'SETCURSOR(Cursor:Wait)')
+  #ADD(%FilledEmbedContents,'OPEN(SQLOpenWIndow)')
+  #ADD(%FilledEmbedContents,'ACCEPT')
+  #ADD(%FilledEmbedContents,'  IF EVENT() = Event:OpenWindow')
+  #ADD(%FilledEmbed,'AfterFileOpen')
+  #ADD(%FilledEmbedContents,'    POST(EVENT:CloseWindow)')
+  #ADD(%FilledEmbedContents,'  END')
+  #ADD(%FilledEmbedContents,'END')
+  #ADD(%FilledEmbedContents,'CLOSE(SQLOpenWindow)')
+  #ADD(%FilledEmbedContents,'SETCURSOR()')
+#ENDIF
+#!
+#ADD(%WindowLayerID,%MenuBar)
+#INSERT(%AddMenuItem,'MENU(''&File'')','')
+  #INSERT(%AddMenuItem,'ITEM(''&Print Setup ...''),USE(?PrintSetup),MSG(''Setup printer''),STD(STD:PrintSetup)','')
+  #INSERT(%AddMenuItem,'ITEM,SEPARATOR','')
+  #INSERT(%AddMenuItem,'ITEM(''E&xit''),USE(?Exit),MSG(''Exit this application''),STD(STD:Close)','')
+#INSERT(%AddMenuItem,'END','')
+#INSERT(%AddMenuItem,'MENU(''&Edit'')','')
+  #INSERT(%AddMenuItem,'ITEM(''Cu&t''),USE(?Cut),MSG(''Remove item to Windows Clipboard''),STD(STD:Cut)','')
+  #INSERT(%AddMenuItem,'ITEM(''&Copy''),USE(?Copy),MSG(''Copy item to Windows Clipboard''),STD(STD:Copy)','')
+  #INSERT(%AddMenuItem,'ITEM(''&Paste''),USE(?Paste),MSG(''Paste contents of Windows Clipboard''),STD(STD:Paste)','')
+#INSERT(%AddMenuItem,'END','')
+#IF(ITEMS(%AppFilesList))
+  #INSERT(%AddMenuItem,'MENU(''&Browse'')','')
+  #FOR(%AppFilesList)
+    #FIX(%FileList,%AppFilesList)
+    #IF(%FileListDescription)
+      #INSERT(%AddMenuItem,'ITEM(''Browse ' & %FileListDescription & '''),USE(?Browse' & %FileList & '),MSG(''Browse ' & %FileListDescription & ''')','Browse' & %FileList)
+    #ELSE
+      #INSERT(%AddMenuItem,'ITEM(''Browse the ' & %FileList & ' file''),USE(?Browse' & %FileList & '),MSG(''Browse ' & %FileList & ''')','Browse' & %FileList)
+    #ENDIF
+  #ENDFOR
+  #INSERT(%AddMenuItem,'END','')
+  #INSERT(%AddMenuItem,'MENU(''&Reports''),USE(?ReportMenu),MSG(''Report data'')','')
+  #FOR(%AppFilesList)
+    #FIX(%FileList,%AppFilesList)
+    #SET(%ValueConstruct,0)
+    #FOR(%KeyListID),WHERE(NOT %KeyListNoPopulate)
+      #SET(%ValueConstruct,%ValueConstruct + 1)
+    #ENDFOR
+    #IF(%ValueConstruct = 0)
+      #IF(%FileListDescription)
+        #INSERT(%AddMenuItem,'ITEM(''Print the ' & %FileListDescription & '''),USE(?Print' & %FileList & '),MSG(''Print in record order'')','Print' & %FileList)
+      #ELSE
+        #INSERT(%AddMenuItem,'ITEM(''Print the ' & %FileList & ' file''),USE(?Print' & %FileList & '),MSG(''Print in record order'')','Print' & %FileList)
+      #ENDIF
+    #ELSIF(%ValueConstruct = 1)
+      #FOR(%KeyListID),WHERE(NOT %KeyListNoPopulate)
+        #IF(%KeyListDescription)
+          #INSERT(%AddMenuItem,'ITEM(''Print by ' & %KeyListDescription & '''),USE(?Print' & %KeyList & '),MSG(''Print ordered by ' & %KeyListDescription & ''')','Print' & %KeyList)
+        #ELSE
+          #INSERT(%AddMenuItem,'ITEM(''Print by ' & %KeyList & ' key''),USE(?Print' & %KeyList & '),MSG(''Print ordered by the ' & %KeyList & ' key'')','Print' & %KeyList)
+        #ENDIF
+      #ENDFOR
+    #ELSE
+      #IF(%FileListDescription)
+        #INSERT(%AddMenuItem,'MENU(''Report ' & %FileListDescription & '''),USE(?Print' & %FileList & ')','')
+      #ELSE
+        #INSERT(%AddMenuItem,'MENU(''Report the ' & %FileList & ' file''),USE(?Print' & %FileList & ')','')
+      #ENDIF
+      #FOR(%KeyListID),WHERE(NOT %KeyListNoPopulate)
+        #IF(%KeyListDescription)
+          #INSERT(%AddMenuItem,'ITEM(''Print by ' & %KeyListDescription & '''),USE(?Print' & %KeyList & '),MSG(''Print ordered by ' & %KeyListDescription & ''')','Print' & %KeyList)
+        #ELSE
+          #INSERT(%AddMenuItem,'ITEM(''Print by ' & %KeyList & ' key''),USE(?Print' & %KeyList & '),MSG(''Print ordered by the ' & %KeyList & ' key'')','Print' & %KeyList)
+        #ENDIF
+      #ENDFOR
+      #INSERT(%AddMenuItem,'END','')
+    #ENDIF
+  #ENDFOR
+  #INSERT(%AddMenuItem,'END','')
+#ENDIF
+#INSERT(%AddMenuItem,'MENU(''&Window''),MSG(''Create and Arrange windows''),STD(STD:WindowList)','')
+  #INSERT(%AddMenuItem,'ITEM(''T&ile''),USE(?Tile),MSG(''Make all open windows visible''),STD(STD:TileWindow)','')
+  #INSERT(%AddMenuItem,'ITEM(''&Cascade''),USE(?Cascade),MSG(''Stack all open windows''),STD(STD:CascadeWindow)','')
+  #INSERT(%AddMenuItem,'ITEM(''&Arrange Icons''),USE(?Arrange),MSG(''Align all window icons''),STD(STD:ArrangeIcons)','')
+#INSERT(%AddMenuItem,'END','')
+#INSERT(%AddMenuItem,'MENU(''&Help''),MSG(''Windows Help'')','')
+  #INSERT(%AddMenuItem,'ITEM(''&Contents''),USE(?Helpindex),MSG(''View the contents of the help file''),STD(STD:HelpIndex)','')
+  #INSERT(%AddMenuItem,'ITEM(''&Search for Help On...''),USE(?HelpSearch),MSG(''Search for help on a subject''),STD(STD:HelpSearch)','')
+  #INSERT(%AddMenuItem,'ITEM(''&How to Use Help''),USE(?HelpOnHelp),MSG(''How to use Windows Help''),STD(STD:HelpOnHelp)','')
+#INSERT(%AddMenuItem,'END','')
+#!
+#!------------------------------------------------------------------
+#GROUP(%AddMenuItem,%ItemStatement,%ItemProcedure)
+#ADD(%WindowControlID,ITEMS(%WindowControlID))
+#SET(%WindowControlStatement,%ItemStatement)
+#IF(%ItemProcedure)
+  #ADD(%ButtonControlID,ITEMS(%ButtonControlID))
+  #SET(%ButtonControl,'?' & %ItemProcedure)
+  #SET(%ButtonAction,'Call a Procedure')
+  #SET(%ButtonProcedure,%ItemProcedure)
+  #SET(%ButtonThread,%True)
+  #SET(%ButtonThreadStack,50000)
+#ENDIF
+#!------------------------------------------------------------------
+#GROUP(%GenerateQuickAppCalls)
+#FIX(%FileList,%File)
+#IF(NOT %FileList)
+  #ADD(%FileList,%File)
+  #INSERT(%AccumulateFieldList,%FileList)
+#ENDIF
+#INSERT(%AddPrimaryBrowse,%FileList)
+#SET(%ValueConstruct,0)
+#FOR(%KeyListID),WHERE(NOT %KeyListNoPopulate)
+  #SET(%ValueConstruct,%ValueConstruct+1)
+#ENDFOR
+#IF(%ValueConstruct)
+  #FOR(%KeyListID),WHERE(NOT %KeyListNoPopulate)
+    #INSERT(%AddReportProcedure,%KeyList)
+  #ENDFOR
+#ELSE
+  #INSERT(%AddReportProcedure,%FileList)
+#ENDIF

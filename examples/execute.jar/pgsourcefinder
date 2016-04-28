@@ -1,0 +1,1 @@
+java -cp clarion-runtime-1.122-SNAPSHOT.jar:postgresql-8.4-701.jdbc4.jar:clarion-sysruntime-1.17.jar org.jclarion.clarion.jdbc.PgSourceFinder

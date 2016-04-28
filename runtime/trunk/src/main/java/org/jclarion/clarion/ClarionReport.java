@@ -9,6 +9,9 @@
  */
 package org.jclarion.clarion;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 import org.jclarion.clarion.constants.*;
 import org.jclarion.clarion.control.AbstractControl;
 import org.jclarion.clarion.control.ReportContainer;
@@ -16,10 +19,13 @@ import org.jclarion.clarion.control.ReportDetail;
 import org.jclarion.clarion.control.ReportFooter;
 import org.jclarion.clarion.control.ReportForm;
 import org.jclarion.clarion.control.ReportHeader;
+import org.jclarion.clarion.file.FileFactoryRepository;
+import org.jclarion.clarion.file.MemoryFile;
 import org.jclarion.clarion.print.OpenReport;
 import org.jclarion.clarion.print.QueuePrintBook;
 import org.jclarion.clarion.runtime.CMemory;
 import org.jclarion.clarion.runtime.CWin;
+import org.jclarion.clarion.util.PDFPreviewer;
 
 /**
  * Model a report
@@ -29,7 +35,9 @@ import org.jclarion.clarion.runtime.CWin;
  */
 public class ClarionReport extends AbstractTarget implements ReportContainer
 {
-    /**
+    private static Logger log = Logger.getLogger(ClarionReport.class.getName());	
+
+	/**
      * Set default font
      * 
      * @param typeface
@@ -192,6 +200,48 @@ public class ClarionReport extends AbstractTarget implements ReportContainer
         return null;
     }
 
+    
+    public String writePDF()
+    {
+        String name = getPDF();
+        try {
+            ClarionRandomAccessFile cff;
+            cff = FileFactoryRepository.getInstance().getRandomAccessFile(name);
+            if (cff==null) return "";
+            MemoryFile mf = new MemoryFile(cff);    // within constructor file has been read and stored into payload.
+            int sz = mf.getPayload().getSize();     // payload=new MemoryFileSystem();
+            log.fine(" pdf size "+sz);
+            mf.getPayload().writeToFile("temp.pdf"); 
+            return "";
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    
+    public String previewPDF()
+    {
+        String name = getPDF();
+        try {
+            ClarionRandomAccessFile cff;
+            cff = FileFactoryRepository.getInstance().getRandomAccessFile(name);
+            if (cff==null) return "";
+            MemoryFile mf = new MemoryFile(cff);    // within constructor file has been read and stored into payload.
+            int sz = mf.getPayload().getSize();     // payload=new MemoryFileSystem();
+            log.fine(" pdf size "+sz);
+            byte[] buf = new byte[sz];
+            mf.getPayload().read(0,buf,0,sz); 
+            new PDFPreviewer(buf).run();
+            return "";
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    
+    
+    
+    
     public void cancelPrint()
     {
         if (open==null) return;
@@ -295,6 +345,17 @@ public class ClarionReport extends AbstractTarget implements ReportContainer
 		}
 		super.notifyLocalChange(indx, value);
 	}
-    
+
+	
+// robertsp pdf previewer
+	
+	
+	
+	
+	
+	
+	
+	
+	
     
 }

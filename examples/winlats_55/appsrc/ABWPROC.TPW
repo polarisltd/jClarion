@@ -1,0 +1,58 @@
+#!---------------------------------------------------
+#GROUP(%QuickDeclareProcedure)
+#DECLARE(%Parameters,%ProcedureList)
+#DECLARE(%ReturnValue,%ProcedureList)
+#DECLARE(%WindowOperationMode,%ProcedureList)
+#DECLARE(%INISaveWindow,%ProcedureList)
+#DECLARE(%WindowMessage,%ProcedureList)
+#DECLARE(%EnablePrintPreview,%ProcedureList)
+#DECLARE(%EnableQuickScan,%ProcedureList)
+#!---------------------------------------------------
+#GROUP(%GenerateProcedurePrompts)
+[PROMPTS]
+#IF(%Parameters)
+%%Parameters STRING  ('%Parameters')
+#ENDIF
+#IF(%ReturnValue)
+%%ReturnValue STRING  ('%ReturnValue')
+#ENDIF
+#IF(%WindowOperationMode)
+%%WindowOperationMode STRING  ('%WindowOperationMode')
+#ENDIF
+#IF(%INISaveWindow)
+%%INISaveWindow LONG  (%INISaveWindow)
+#ENDIF
+#IF(%WindowMessage)
+%%WindowMessage STRING  ('%WindowMessage')
+#ENDIF
+#IF(%EnablePrintPreview)
+%%EnablePrintPreview LONG  (%EnablePrintPreview)
+#ENDIF
+#IF(%EnableQuickScan)
+%%EnableQuickScan LONG  (%EnableQuickScan)
+#ENDIF
+#!--------------------------------------------------------------------------
+#GROUP(%GenerateProcedureHeader)
+[PROCEDURE]
+NAME %ProcedureList
+#CASE (%QuickProcedureType)
+#OF ('ABC Form')
+CATEGORY 'Form'
+#OF ('ABC Browse')
+CATEGORY 'Browse'
+#END
+[COMMON]
+DESCRIPTION '%QuickProcedureDescription'
+#CASE (%QuickProcedureType)
+#OF ('ABC Form')
+#OROF ('ABC Browse')
+FROM ABC Window
+#ELSE
+FROM %QuickProcedureType
+#END
+#SUSPEND
+[DATA]
+#FOR(%ProcedureDataItemID)
+%[25]ProcedureDataItem %ProcedureDataItemType
+#ENDFOR
+#RESUME

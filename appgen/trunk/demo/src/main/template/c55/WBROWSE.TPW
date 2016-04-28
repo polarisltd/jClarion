@@ -1,0 +1,418 @@
+#UTILITY(BrowseWizard,'Create a new record browsing procedure'),WIZARD,HLP('~TPLWizardBrowse')
+#!
+#SHEET
+  #TAB('Browse Wizard'),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW1'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('This wizard will help you quickly create a new record browsing (Browse) procedure.'),AT(90,8,235,24)
+    #DISPLAY('To begin creating your new Browse procedure, click Next.'),AT(90)
+  #ENDTAB
+  #TAB('Browse Wizard - Procedure Name'),WHERE(~%QuickProcedure),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW1'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('What name should be used as the label of this browse procedure?',@S100),%QuickBrowsePromptProcedureName,AT(90,23,235),PROMPTAT(90,8,235)
+    #VALIDATE(%QuickBrowsePromptProcedureName,'You must supply a procedure name!')
+  #ENDTAB
+  #TAB('Browse Wizard - File Access'),FINISH(1),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WFSCH'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('Which file do you want to browse?',FILE),%QuickBrowsePromptPrimaryFile,AT(90,23,235),PROMPTAT(90,8,235)
+    #VALIDATE(%QuickBrowsePromptPrimaryFile,'You must supply a file to browse!')
+  #ENDTAB
+  #TAB('Browse Wizard - Key Sequence'),FINISH(1),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WKEY'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('You can browse a file using a single record key or you can use all of the record keys declared for a file.'),AT(90,8,235,20)
+    #DISPLAY('If you use all the keys, they will be placed on tab controls that change the sequence of records displayed in the list box.'),AT(90,,235,20)
+    #PROMPT('&Browse using all record keys',CHECK),%QuickBrowsePromptKeyAccess,AT(90,,180),DEFAULT(1)
+    #ENABLE(%QuickBrowsePromptKeyAccess = %False),CLEAR
+      #PROMPT('&Access Key:',KEY(%QuickBrowsePromptPrimaryFile)),%QuickBrowsePromptPrimaryKey,PROMPTAT(90),AT(200,,125)
+      #VALIDATE(%QuickBrowsePromptPrimaryKey,'You must supply a key to use to access the file!')
+    #ENDENABLE
+  #ENDTAB
+  #TAB('Browse Wizard - Update Procedure'),FINISH(1),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW2'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('The browse procedure can select a record to be processed by an update procedure.  If you enter an update procedure, "Insert", "Change", and "Delete" buttons will be placed in the browse window.'),AT(90,8,235,24)
+    #PROMPT('A&llow the user to update records',CHECK),%QuickBrowsePromptAllowUpdate,AT(90,,180,14),DEFAULT(1)
+    #DISPLAY('You may use the default update procedure name, or you may specify your own procedure name.  To use the default name, leave the Update Procedure blank.'),AT(90,,235,24)
+    #ENABLE(%QuickBrowsePromptAllowUpdate)
+      #PROMPT('&Update Procedure:',@S100),%QuickBrowsePromptUpdateProcedure,PROMPTAT(90),AT(200,,125)
+    #ENDENABLE
+  #ENDTAB
+  #TAB('Browse Wizard - Call Update Procedure'),WHERE(%QuickBrowsePromptAllowUpdate),FINISH(1),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW3'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('Now that you''ve specified an update procedure, you might want your users to be able to call the update by clicking the right mouse button on a list box item, rather than using the edit buttons alone.'),AT(90,8,235,24)
+    #PROMPT('&Call update using popup menu',CHECK),%QuickBrowsePromptUpdatePopupMenu,AT(90,,180),DEFAULT(1)
+  #ENDTAB
+  #TAB('Browse Wizard - Child Files'),FINISH(1),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW4'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('If this browse has one to many relations with any other files in the data dictionary, buttons can be provided to access the child files.'),AT(90,8,235,24)
+    #PROMPT('&Provide buttons for child files',CHECK),%QuickBrowsePromptChildHandling,DEFAULT(1),AT(90,,180)
+  #ENDTAB
+  #TAB('Browse Wizard - Parent File Handling'),WHERE(%QuickBrowsePromptKeyAccess = %False),FINISH(1),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW5'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('If the Record Key that you specified to use as the Access Key is the key used in a Many:1 relation, (In other words, this file is a child of another file) how do you want the selection of the parent record to take place?'),AT(90,8,235,24)
+    #PROMPT('&Parent Record Selection:',OPTION),%QuickBrowsePromptParentHandling,DEFAULT('Select parent record via button'),AT(90,40,235)
+    #PROMPT('Do not select by parent record',RADIO),AT(100,,140)
+    #PROMPT('Select parent record via button',RADIO),AT(100,,140)
+    #PROMPT('Assume that the parent record is active',RADIO),AT(100,,140)
+  #ENDTAB
+  #TAB('Browse Wizard - Select Button'),FINISH(1),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW6'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('A browse procedure can be used to lookup a record for an entry field.  If used for this purpose, the browse window should include a "Select" button.'),AT(90,8,235,24)
+    #PROMPT('&Provide a "Select" button',CHECK),%QuickBrowsePromptSelectButton,DEFAULT(1),AT(90,,180)
+  #ENDTAB
+  #TAB('Browse Wizard - Control Model'),HLP('~TPLWizardBrowse'),FINISH(1)
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW7'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('A Browse procedure can use any of the following Control Models:'),AT(90,8,235,24)
+    #DISPLAY('Button: Traditional Insert, Change, Delete, OK and Cancel approach'),AT(90)
+    #DISPLAY('Toolbar: Browse controls are populated on a common toolbar'),AT(90)
+    #DISPLAY('Both: Employs both control models'),AT(90)
+    #PROMPT('Which Control Model should the Application use?',OPTION),%ControlModel,DEFAULT('Toolbar'),AT(90,75,180,30)
+    #PROMPT('Button',RADIO),AT(100,90,50)
+    #PROMPT('Toolbar',RADIO),AT(160,90,50)
+    #PROMPT('Both',RADIO),AT(220,90,50)
+  #ENDTAB
+  #TAB('Browse Wizard - Finally...'),HLP('~TPLWizardBrowse')
+    #IMAGE(''),PROP(PROP:text,FULLNAME('WBRW8'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('If you are creating new procedures with names that already exist in your application, the old procedures can be overwritten or the new procedures can be suppressed.'),AT(90,8,235,24)
+    #PROMPT('Overwrite existing procedures',CHECK),%QuickBrowsePromptOverwriteAll,AT(90,,235),DEFAULT(0)
+    #IMAGE('<255,1,4,127>'),AT(90,55)
+    #DISPLAY('The browse procedure will always be overwritten by the browse wizard!'),AT(125,54,200,20)
+  #ENDTAB
+#ENDSHEET
+#!
+#INSERT(%DeclareSymbols)
+#!
+#IF(%QuickProcedure)
+  #SET(%ValueConstruct,%QuickProcedure)
+#ELSE
+  #SET(%ValueConstruct,%QuickBrowsePromptProcedureName)
+#ENDIF
+#SET(%ReplaceExistingProcedures,%QuickBrowsePromptOverwriteAll)
+#ADD(%ProcedureList,%ValueConstruct)
+#SET(%QuickProcedurePrimary,%QuickBrowsePromptPrimaryFile)
+#SET(%QuickProcedureType,'Clarion Browse')
+#SET(%QuickProcedureDescription,'Browse the ' & %QuickProcedurePrimary & ' File')
+#SET(%QuickProcedurePrimaryKey,%QuickBrowsePromptPrimaryKey)
+#SET(%QuickProcedureWindow,%True)
+#IF(%QuickBrowsePromptAllowUpdate)
+  #IF(%QuickBrowsePromptUpdateProcedure)
+    #SET(%QuickBrowseUpdateProcedure,%QuickBrowsePromptUpdateProcedure)
+  #ELSE
+    #SET(%QuickBrowseUpdateProcedure,'Update' & %QuickProcedurePrimary)
+  #ENDIF
+#ENDIF
+#SET(%QuickBrowseUpdatePopupMenu,%QuickBrowsePromptUpdatePopupMenu)
+#SET(%QuickBrowseChildHandling,%QuickBrowsePromptChildHandling)
+#SET(%QuickBrowseParentHandling,%QuickBrowsePromptParentHandling)
+#SET(%QuickBrowseSelectButton,%QuickBrowsePromptSelectButton)
+#!
+#!
+#INSERT(%GenerateProcedures)
+#!
+#!-------------------------------------------------------------
+#GROUP(%QuickBrowseDeclarations)
+#DECLARE(%QuickBrowseUpdateProcedure,%ProcedureList)
+#DECLARE(%QuickBrowseUpdatePopupMenu,%ProcedureList)
+#DECLARE(%QuickBrowseCreateUpdate,%ProcedureList)
+#DECLARE(%QuickBrowseChildHandling,%ProcedureList)
+#DECLARE(%QuickBrowseParentHandling,%ProcedureList)
+#DECLARE(%QuickBrowseSelectButton,%ProcedureList)
+#!
+#DECLARE(%PrimaryBrowseInstance)
+#DECLARE(%WorksheetLowerEdge)
+#DECLARE(%WorksheetUpperEdge)
+#DECLARE(%NoListResize,LONG)
+#DECLARE(%ThisTemplateInstance,LONG)
+#!--------------------------------------------------------
+#GROUP(%ConstructQuickBrowse)
+#MESSAGE('Determining Secondary Procedures',3)
+#CASE(%QuickProcedureDefault)
+#OF('Primary Browse')
+  #INSERT(%PrimaryBrowseDefaults)
+#OF('Secondary Browse')
+  #INSERT(%SecondaryBrowseDefaults)
+#OF('Select Browse')
+  #INSERT(%SelectBrowseDefaults)
+#ENDCASE
+#IF(%QuickBrowseChildHandling AND %ProgramType='Full')
+  #FIX(%File,%QuickProcedurePrimary)
+  #FOR(%Relation),WHERE(%FileRelationType = '1:MANY')
+    #IF(%FileKey AND %RelationKey)
+      #SET(%ValueConstruct,%Relation)
+      #INSERT(%AddSecondaryBrowse,%RelationKey)
+      #FIX(%File,%QuickProcedurePrimary)
+      #FIX(%Relation,%ValueConstruct)
+      #FIX(%ProcedureList,%CurrentProcedure)
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#FIX(%ProcedureList,%CurrentProcedure)
+#FIX(%File,%QuickProcedurePrimary)
+#IF(%QuickBrowseParentHandling = 'Select parent record via button' )
+  #FOR(%Relation),WHERE(%FileRelationType='MANY:1')
+    #IF(%QuickProcedurePrimaryKey AND %FileKey <> %QuickProcedurePrimaryKey)
+      #CYCLE
+    #ELSIF(NOT %FileKey)
+      #CYCLE
+    #ENDIF
+    #SET(%ValueConstruct,%Relation)
+    #INSERT(%AddSelectBrowse,%Relation)
+    #FIX(%File,%QuickProcedurePrimary)
+    #FIX(%Relation,%ValueConstruct)
+    #FIX(%ProcedureList,%CurrentProcedure)
+  #ENDFOR
+#ENDIF
+#FIX(%ProcedureList,%CurrentProcedure)
+#IF(%QuickBrowseUpdateProcedure)
+  #INSERT(%AddUpdateProcedure,%QuickProcedurePrimary,%QuickBrowseUpdateProcedure)
+  #FIX(%ProcedureList,%CurrentProcedure)
+#ENDIF
+#ADD(%ProcedureDataItemID,ITEMS(%ProcedureDataItemID)+1)
+#SET(%ProcedureDataItem,'CurrentTab')
+#SET(%ProcedureDataItemType,'STRING(80)')
+#MESSAGE('Determining Window Size',3)
+#ADD(%WindowLayerID,%LayerPreSheet)
+#FIX(%ProcedureList,%CurrentProcedure)
+#SET(%WorksheetHeight,%MaximumSheetHeight)
+#SET(%WorksheetWidth,0)
+#FIX(%FileList,%QuickProcedurePrimary)
+#INSERT(%QuickSetBrowseBox,%QuickProcedurePrimary,1,%QuickProcedurePrimaryKey)
+#SET(%PrimaryBrowseInstance,%QuickTemplateInstance)
+#ADD(%WindowControlID,ITEMS(%WindowControlID)+1)
+#SET(%WindowControl,%QuickTemplateControl)
+#SET(%WindowControlXOffset,2 * %DefaultXOffset)
+#SET(%WindowControlYOffset,2 * %DefaultYOffset)
+#IF(%QuickBrowseUpdateProcedure)
+  #SET(%WorksheetWidth,%WorksheetWidth + (3 * %DefaultButtonWidth) + (4 * %DefaultXOffset))
+#ENDIF
+#IF(%QuickBrowseSelectButton)
+  #SET(%WorksheetWidth,%WorksheetWidth + %DefaultButtonWidth + %DefaultXOffset)
+#ENDIF
+#IF(%QuickBrowseParentHandling = 'Select parent record via button' AND %QBBParentFound)
+  #SET(%WorksheetWidth,%WorksheetWidth + %DefaultButtonWidth + %DefaultXOffset)
+#ENDIF
+#IF(%WorksheetWidth)
+  #SET(%WindowControlHeight,%WorksheetHeight - ((3 * %DefaultYOffset) + %DefaultButtonHeight))
+#ELSE
+  #SET(%WindowControlHeight,%WorksheetHeight - %DefaultYOffset)
+#ENDIF
+#IF(%QBBWidth > %WorksheetWidth)
+  #SET(%WorksheetWidth,%QBBWidth)
+#ENDIF
+#IF(%WorksheetWidth > %MaximumSheetWidth)
+  #SET(%WorksheetWidth,%MaximumSheetWidth)
+#ELSIF(%WorksheetWidth < %MinimumsheetWidth)
+  #SET(%WorksheetWidth,%MinimumSheetWidth)
+#ENDIF
+#SET(%WindowControlWidth,%WorksheetWidth - (2 * %DefaultXOffset))
+#FREE(%RelationList)
+#SET(%RelationRows,0)
+#SET(%RelationCols,0)
+#IF(%QuickBrowseChildHandling)
+  #FIX(%File,%QuickProcedurePrimary)
+  #FOR(%Relation),WHERE(%FileRelationType = '1:MANY')
+    #IF(%FileKey AND %RelationKey)
+      #ADD(%Relationlist,%Relation)
+      #SET(%RelationCols,%RelationCols + 1)
+      #IF(%RelationCols = %MaximumRelationCols)
+        #SET(%RelationCols,0)
+      #ENDIF
+      #IF(%RelationCols = 0)
+        #SET(%RelationRows,%RelationRows + 1)
+      #ENDIF
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#SET(%WindowWidth,%WorksheetWidth + (2 * %DefaultXOffset))
+#SET(%WindowHeight,%WorksheetHeight + (3 * %DefaultYOffset) + %DefaultButtonHeight)
+#IF(%RelationRows AND NOT %RelationCols)
+  #SET(%RelationRows,%RelationRows-1)
+  #SET(%RelationCols,4)
+#ENDIF
+#IF(%RelationRows)
+  #SET(%WindowHeight,%WindowHeight + (%RelationRows * (%DefaultYOffset + %DefaultButtonHeight)))
+  #SET(%ValueConstruct,6)
+#ELSE
+  #SET(%ValueConstruct,%RelationCols + 2)
+#ENDIF
+#SET(%HoldConstruct,(%ValueConstruct * %DefaultButtonWidth) + ((%ValueConstruct + 1) * %DefaultXOffset))
+#IF(%HoldConstruct > %WindowWidth)
+  #SET(%ValueConstruct,%HoldConstruct - %WindowWidth)
+  #SET(%WindowWidth,%HoldConstruct)
+  #SET(%WorksheetWidth,%WindowWidth - (2 * %DefaultXOffset))
+  #SET(%WindowControlWidth,%WorksheetWidth - (2 * %DefaultXOffset))
+#ENDIF
+#SET(%ValueConstruct,0)
+#IF(%QuickBrowseUpdateProcedure)
+  #SET(%ValueConstruct,3)
+#ENDIF
+#IF(%QuickBrowseSelectButton)
+  #SET(%ValueConstruct,%ValueConstruct + 1)
+#ENDIF
+#FIND(%QuickTemplateInstance,%PrimaryBrowseInstance)
+#SET(%CurrentX,(%WindowControlXOffset + %WindowControlWidth) - ((%ValueConstruct * %DefaultButtonWidth) + ((%ValueConstruct - 1) * %DefaultXOffset)))
+#SET(%CurrentY,%WindowControlYOffset + %WindowControlHeight + %DefaultYOffset)
+#IF(%QuickBrowseSelectButton)
+  #INSERT(%QuickSetBrowseSelectButton)
+  #SELECT(%QuickTemplateControl,1)
+  #ADD(%WindowControlID,ITEMS(%WindowControlID)+1)
+  #SET(%WindowControl,%QuickTemplateControl)
+  #SET(%WindowControlXOffset,%CurrentX)
+  #SET(%WindowControlYOffset,%CurrentY)
+  #SET(%WindowControlHeight,%DefaultButtonHeight)
+  #SET(%WindowControlWidth,%DefaultButtonWidth)
+  #SET(%CurrentX,%CurrentX + %DefaultXOffset + %DefaultButtonWidth)
+#ENDIF
+#IF(%QuickBrowseUpdateProcedure)
+  #FIND(%QuickTemplateInstance,%PrimaryBrowseInstance)
+  #INSERT(%QuickSetBrowseUpdateButton,%QuickBrowseUpdateProcedure,%QuickBrowseUpdatePopupMenu,%True)
+  #FOR(%QuickTemplateControl)
+    #ADD(%WindowControlID,ITEMS(%WindowControlID)+1)
+    #SET(%WindowControl,%QuickTemplateControl)
+    #SET(%WindowControlXOffset,%CurrentX)
+    #SET(%WindowControlYOffset,%CurrentY)
+    #SET(%WindowControlHeight,%DefaultButtonHeight)
+    #SET(%WindowControlWidth,%DefaultButtonWidth)
+    #SET(%CurrentX,%CurrentX + %DefaultXOffset + %DefaultButtonWidth)
+  #ENDFOR
+#ENDIF
+#FIND(%QuickTemplateInstance,%PrimaryBrowseInstance)
+#IF(ITEMS(%QBBKeyList))
+  #FOR(%QBBKeyList)
+    #FIX(%KeyListID,%QBBKeyListID)
+    #ADD(%WindowLayerID,ITEMS(%WindowLayerID)+1)
+    #SET(%WindowLayerTabText,%KeyListTab)
+    #SET(%CurrentY,%WorksheetHeight - %DefaultButtonHeight)
+    #IF(%QuickBrowseParentHandling = 'Select parent record via button' )
+      #IF(%QBBRangeFile)
+        #ADD(%WindowControlID,ITEMS(%WindowControlID)+1)
+        #SET(%WindowControl,'?Select' & %QBBRangeFile)
+        #SET(%ValueConstruct,%WorksheetWidth - (2 * %DefaultXOffset))
+        #IF(%QuickBrowseSelectButton)
+          #SET(%ValueConstruct,%ValueConstruct - (%DefaultXOffset + %DefaultButtonWidth))
+        #ENDIF
+        #IF(%QuickBrowseUpdateProcedure)
+          #SET(%ValueConstruct,%ValueConstruct - (3 * (%DefaultXOffset + %DefaultButtonWidth)))
+        #ENDIF
+        #IF(%ValueConstruct > (2 * %DefaultButtonWidth) + %DefaultXOffset)
+          #SET(%ValueConstruct,'Select ' & %QBBRangeFile)
+          #SET(%WindowControlWidth,(2 * %DefaultButtonWidth) + %DefaultXOffset)
+        #ELSE
+          #IF(LEN(%QBBRangeFile) > 12)
+            #SET(%ValueConstruct,SUB(%QBBRangeFile,1,9) & '...')
+          #ELSE
+            #SET(%ValueConstruct,%QBBRangeFile)
+          #ENDIF
+          #SET(%WindowControlWidth,%DefaultButtonWidth)
+        #ENDIF
+        #SET(%WindowControlStatement,'BUTTON(''' & %ValueConstruct & ''')')
+        #SET(%WindowControlXOffset,2 * %DefaultXOffset)
+        #SET(%WindowControlYOffset,%CurrentY)
+        #SET(%WindowControlHeight,%DefaultButtonHeight)
+        #ADD(%ButtonControlID,ITEMS(%ButtonControlID)+1)
+        #SET(%ButtonControl,%WindowControl)
+        #SET(%ButtonAction,'Call a Procedure')
+        #SET(%ButtonProcedure,'Select' & %QBBRangeFile)
+        #SET(%ButtonThread,'0')
+        #SET(%ButtonThreadStack,'025000')
+        #SET(%ButtonRequest,'Select')
+      #ENDIF
+    #ENDIF
+  #ENDFOR
+#ELSE
+  #ADD(%WindowLayerID,ITEMS(%WindowLayerID)+1)
+  #SET(%WindowLayerTabText,'Record Order')
+#ENDIF
+#SET(%TabLineCount,1)
+#SET(%CurrentTabLineLength,0)
+#SET(%CurrentTabLength,0)
+#FOR(%WindowLayerID)
+  #IF(INSTRING('&',%WindowLayerTabText,1,1))
+    #SET(%CurrentTabLength,(LEN(%WindowLayerTabText) * 4))
+  #ELSE
+    #SET(%CurrentTabLength,((LEN(%WindowLayerTabText) - 1) * 4))
+  #ENDIF
+  #IF(%CurrentTabLength < %MinimumTabLength)
+    #SET(%CurrentTabLength,%MinimumTabLength)
+  #ENDIF
+  #SET(%CurrentTabLength,%CurrentTabLength + %TabTextOffset)
+  #IF((%CurrentTabLength + %CurrentTabLineLength) > %WorksheetWidth)
+    #SET(%TabLineCount,%TabLineCount + 1)
+    #SET(%CurrentTabLineLength,%CurrentTabLength)
+  #ELSE
+    #SET(%CurrentTabLineLength,%CurrentTabLineLength + %CurrentTabLength)
+  #ENDIF
+  #IF(%WindowLayerTopOffset > %MaximumTopOffset)
+    #SET(%MaximumTopOffset,%WindowLayerTopOffset)
+  #ENDIF
+#ENDFOR
+#SET(%InitialSheetYOffset,(%TabLineVerticalOffset * %TabLineCount) + %TabDefaultVerticalOffset)
+#SET(%WorksheetHeight,%MaximumSheetHeight + %InitialSheetYOffset)
+#FOR(%WindowLayerID)
+  #FOR(%WindowControlID)
+    #SET(%WindowControlYOffset,%WindowControlYOffset + %InitialSheetYOffset)
+  #ENDFOR
+#ENDFOR
+#SET(%ValueConstruct,%WorkSheetHeight - %MaximumSheetHeight)
+#SET(%WindowHeight,%WindowHeight + %ValueConstruct)
+#ADD(%WindowLayerID,%LayerWindow)
+#SET(%CurrentY,%WindowHeight - (%DefaultYOffset + %DefaultButtonHeight))
+#SET(%CurrentX,%DefaultXOffset)
+#FIX(%FileList,%QuickProcedurePrimary)
+#IF(ITEMS(%RelationList) AND %ProgramType='Full')
+  #SET(%CurrentY,%CurrentY - (%RelationRows * ((%DefaultYOffset + %DefaultButtonHeight))))
+  #FOR(%RelationList)
+    #ADD(%WindowControlID,ITEMS(%WindowControlID)+1)
+    #SET(%WindowControl,'?Browse' & %RelationList)
+    #IF(LEN(%RelationList) > 12)
+      #SET(%ValueConstruct,SUB(%RelationList,1,9) & '...')
+    #ELSE
+      #SET(%ValueConstruct,%RelationList)
+    #ENDIF
+    #IF(%ControlModel='Toolbar')
+      #SET(%WindowControlStatement,'BUTTON(''' & %ValueConstruct & '''),HIDE')
+    #ELSE
+      #SET(%WindowControlStatement,'BUTTON(''' & %ValueConstruct & ''')')
+    #ENDIF
+    #SET(%WindowControlXOffset,%CurrentX)
+    #SET(%WindowControlYOffset,%CurrentY)
+    #SET(%WindowControlHeight,%DefaultButtonHeight)
+    #SET(%WindowControlWidth,%DefaultButtonWidth)
+    #ADD(%ButtonControlID,ITEMS(%ButtonControlID)+1)
+    #SET(%ButtonControl,%WindowControl)
+    #SET(%ButtonAction,'Call a Procedure')
+    #FIX(%Relation,%RelationList)
+    #SET(%ButtonProcedure,'Browse' & %RelationKey)
+    #SET(%ButtonThread,'0')
+    #SET(%ButtonThreadStack,'025000')
+    #SET(%RelationCols,%RelationCols - 1)
+    #IF(%RelationCols = 0)
+      #SET(%CurrentY,%CurrentY + %DefaultYOffset + %DefaultButtonHeight)
+      #SET(%CurrentX,%DefaultXOffset)
+      #SET(%RelationCols,4)
+    #ELSE
+      #SET(%CurrentX,%CurrentX + %DefaultXOffset + %DefaultButtonWidth)
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#SET(%CurrentX,%WindowWidth - (2 * (%DefaultXOffset + %DefaultButtonWidth)))
+#SET(%CurrentY,%WindowHeight - (%DefaultButtonHeight + %DefaultYOffset))
+#INSERT(%QuickSetCloseButton)
+#SELECT(%QuickTemplateControl,1)
+#ADD(%WindowControlID,ITEMS(%WindowControlID)+1)
+#SET(%WindowControl,%QuickTemplateControl)
+#SET(%WindowControlXOffset,%CurrentX)
+#SET(%WindowControlYOffset,%CurrentY)
+#SET(%WindowControlHeight,%DefaultButtonHeight)
+#SET(%WindowControlWidth,%DefaultButtonWidth)
+#SET(%CurrentX,%CurrentX + %DefaultXOffset + %defaultButtonWidth)
+#ADD(%WindowControlID,ITEMS(%WindowControlID)+1)
+#SET(%WindowControl,'?Help')
+#IF(%ControlModel='Toolbar')
+  #SET(%WindowControlStatement,'BUTTON(''' & %DefaultHelpControlText & '''),STD(STD:Help),HIDE')
+  #SET(%WindowControlYOffset,%CurrentY-18)
+#ELSE
+  #SET(%WindowControlStatement,'BUTTON(''' & %DefaultHelpControlText & '''),STD(STD:Help)')
+  #SET(%WindowControlYOffset,%CurrentY)
+#ENDIF
+#SET(%WindowControlXOffset,%CurrentX)
+#SET(%WindowControlHeight,%DefaultButtonHeight)
+#SET(%WindowControlWidth,%DefaultButtonWidth)

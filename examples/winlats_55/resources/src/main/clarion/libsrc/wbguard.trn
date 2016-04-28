@@ -1,0 +1,38 @@
+WBGuardErrors GROUP
+Number          USHORT(7)
+                USHORT(Msg:VerifyPswdFailed)
+                BYTE(Level:Notify)
+                PSTRING('Invalid Password')
+                PSTRING('The passwords are not identical. Please reenter the passwords.')
+
+                USHORT(Msg:CapabilityNotFound)
+                BYTE(Level:Notify)
+                PSTRING('Capability Error')
+                PSTRING('User does not have capability %message.')
+
+                USHORT(Msg:DuplicateName)
+                BYTE(Level:Notify)
+                PSTRING('Duplicate Name Error')
+                PSTRING('Name %message already exists.')
+
+                USHORT(Msg:LogonError)
+                BYTE(Level:Notify)
+                PSTRING('Logon Error')
+                PSTRING('Incorrect logon Information.')
+
+                USHORT(Msg:NameFieldRequired)
+                BYTE(Level:Notify)
+                PSTRING('Logon Error')
+                PSTRING('Name field must not be blank.')
+
+                USHORT(Msg:AccountLocked)
+                BYTE(Level:Fatal)
+                PSTRING('Access Denied')
+                PSTRING('Access to your account is denied.')
+
+                USHORT(Msg:InvalidLogon)
+                BYTE(Level:Notify)
+                PSTRING('Invalid Logon Name')
+                PSTRING('Name %message is invalid for logon.')
+
+              END

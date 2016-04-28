@@ -1,0 +1,98 @@
+!ABCIncludeFile(LAY)
+
+OMIT('_EndOfInclude_',_SkeletonInterface_)
+_SkeletonInterface_ EQUATE(1)
+
+   INCLUDE('IBCBASE.INT')
+
+ZoneName                CSTRING(40),TYPE
+
+!!-- Interfaces that are implemented by the patching code --
+
+! This interface is used to interact with a skeleton.  The patching that
+! the skelton performed is completely encapsulated.  Must be C++ compatible.
+ISkeleton               INTERFACE(IInterface)
+Parse                     PROCEDURE(IHtmlSource in, IParseContext ctx),CBOOL,PASCAL
+Patch                     PROCEDURE(IPatchContext ctx, CONST * CSTRING phase, CBOOL final),*ISkeleton,PASCAL
+Save                      PROCEDURE(CONST *CSTRING filename, CBOOL final),CBOOL,PROC,PASCAL
+GetPlaceholders           PROCEDURE,*IIterator,PASCAL
+GetMetaTags               PROCEDURE,*IIterator,PASCAL
+ExpandZones               PROCEDURE(IPatchContext ctx),*ISkeleton,PASCAL
+                        END
+
+IPlaceholder            INTERFACE(IInterface)
+GetName                   PROCEDURE(IStringVal target),PASCAL
+                        END
+
+IMetaTag                INTERFACE(IInterface)
+GetName                   PROCEDURE(IStringVal target),PASCAL
+GetValue                  PROCEDURE(IStringVal target),PASCAL
+                        END
+
+IErrorPos               INTERFACE(IInterface)
+GetFileName               PROCEDURE(IStringVal target),PASCAL
+GetCharPos                PROCEDURE,LONG,PASCAL
+GetLineNo                 PROCEDURE,LONG,PASCAL
+GetColumn                 PROCEDURE,LONG,PASCAL
+                        END
+
+ERROR_MISSING_ENDTAG            EQUATE(100)
+ERROR_EXTRA_ENDTAG              EQUATE(101)
+ERROR_UNKNOWN_TAG               EQUATE(102)
+ERROR_UNEXPECTED_TOKEN          EQUATE(103)
+ERROR_UNKNOWN_ATTRIBUTE         EQUATE(104) ! Bad syntax in a patch tag
+ERROR_REPLACE_AND_PATCH         EQUATE(105) ! bad combination of attrs in a patch tag
+ERROR_CANNOT_EVALUATE           EQUATE(106) ! not legal to delay, but vars are not bound
+ERROR_SYNTAX_ERROR              EQUATE(107)
+ERROR_INTEGER_EXPECTED          EQUATE(108)
+ERROR_BOOLEAN_EXPECTED          EQUATE(109)
+ERROR_STRING_EXPECTED           EQUATE(110)
+ERROR_BAD_INCLUDE               EQUATE(111)
+ERROR_WHILE_AND_REPEAT          EQUATE(112) ! both while= and until= specified on a repeat
+ERROR_BAD_TAG_ATTRIBUTE         EQUATE(113) ! could not parse tag= value in a patch tag
+ERROR_UNKNOWN_LOCAL             EQUATE(114)
+ERROR_RULE_SYNTAX               EQUATE(115)
+ERROR_INCLUDE_NOT_FOUND         EQUATE(116)
+
+!  Not really an interface, more of an opaque type
+IHtmlSource             INTERFACE(IInterface)
+                        END
+
+!!-- Interfaces that must be provided to the patching routines --
+
+IParseContext           INTERFACE(IInterface)
+ReportError               PROCEDURE(SIGNED code, CONST *CSTRING extra, IErrorPos epos),PASCAL
+GetInclude                PROCEDURE(CONST * CSTRING filename),*IHtmlSource,PASCAL
+                        END
+
+IPatchContext           INTERFACE(IParseContext)
+ParseExpression           PROCEDURE(CONST *CSTRING name),*IEvaluate,PASCAL
+OpenScope                 PROCEDURE(CONST *CSTRING name),CBOOL,PASCAL,PROC
+CloseScope                PROCEDURE,PASCAL
+OpenLocal                 PROCEDURE(CONST * CSTRING name, CONST * CSTRING expr, CBOOL preserve),PASCAL
+SetLocal                  PROCEDURE(CONST * CSTRING name, CONST * CSTRING expr),PASCAL
+CloseLocal                PROCEDURE,PASCAL
+OpenProperty              PROCEDURE(CONST * CSTRING name, CONST * CSTRING expr),PASCAL
+CloseProperty             PROCEDURE,PASCAL
+ExpandPlaceholder         PROCEDURE(CONST *CSTRING name),*ISkeleton,PASCAL
+                        END
+
+IEvaluate               INTERFACE(IInterface)
+Evaluate                  PROCEDURE(),*IValue,PASCAL
+                        END
+
+ISkeletonManager        INTERFACE(IInterface)
+GetSkeletonFile           PROCEDURE(CONST * CSTRING filename),*ISkeleton,PASCAL
+GetSkeleton               PROCEDURE(CONST * CSTRING style, CONST * CSTRING type, CONST * CSTRING control, CONST * CSTRING capabilities),*ISkeleton,PASCAL
+GetFiles                  PROCEDURE,*IIterator,PASCAL
+                        END
+
+ MAP; MODULE('PYSKEL.CLW')
+ISkeleton::Create       PROCEDURE(),*ISkeleton,NAME('_Skeleton$CreateSkeleton@0'),PASCAL
+ISkeleton::CreateCache  PROCEDURE(CONST * CSTRING SkeletonDir, <IParseContext ctx>),*ISkeletonManager,NAME('_Skeleton$CreateCache@8'),PASCAL
+IHtmlSource::CreateFile PROCEDURE(CONST * CSTRING Filename),*IHtmlSource,NAME('_Skeleton$SourceFile@4'),PASCAL
+IHtmlSource::CreateStr  PROCEDURE(SIGNED length, CONST * CSTRING text),*IHtmlSource,NAME('_Skeleton$SourceStr@8'),PASCAL
+ END; END
+
+
+_EndOfInclude_

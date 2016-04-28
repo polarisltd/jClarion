@@ -1,0 +1,3 @@
+  MODULE('TUTOR010.CLW')
+ReportStatesBySTA:KeyState PROCEDURE
+  END

@@ -161,7 +161,9 @@ public class PgSource implements AbstractJDBCSource
                 Properties p = new Properties();
                 p.setProperty("user",connect[1]);
                 p.setProperty("password",connect[2]);
-                result = DriverManager.getConnection("jdbc:postgresql://"+connect[0]+":"+connect[3]+"/"+connect[1],p);
+                String dbUrl = "jdbc:postgresql://"+connect[0]+":"+connect[3]+"/"+connect[1];
+                log.info("Connecting to DB! "+dbUrl);
+                result = DriverManager.getConnection(dbUrl,p);
                 try {
                     String ip = InetAddress.getByName(connect[0]).getHostAddress();
                     CConfig.setProperty("altsource",name,ip+":"+connect[1]+":"+connect[2]+":"+connect[3],"db.properties");
@@ -173,11 +175,12 @@ public class PgSource implements AbstractJDBCSource
             e.printStackTrace();
         }
         
-        if (result==null) {
+        if (result==null) {  // still not connected? Then use alternative source.
             String details = CConfig.getProperty("altsource",name,"","db.properties").toString();
             String connect[] = PgSourceFinder.getHostData(details);
             if (connect.length>=4) {
                 try {
+                    log.info("Connecting to DB!");
                     Properties p = new Properties();
                     p.setProperty("user",connect[1]);
                     p.setProperty("password",connect[2]);

@@ -1,0 +1,42 @@
+!ABCIncludeFile(ABC)
+
+OMIT('_EndOfInclude_',_ReportTargetInterfacePresent_)
+_ReportTargetInterfacePresent_ EQUATE(1)
+
+  INCLUDE('ABERROR.INC'),ONCE
+
+IStream       INTERFACE
+Init             PROCEDURE(<ErrorClass EC>)
+Kill             PROCEDURE()
+DisposeOf        PROCEDURE()
+
+SetName          PROCEDURE(STRING name)
+FileName         PROCEDURE(),STRING
+Open             PROCEDURE(<STRING name>),BYTE,PROC
+Close            PROCEDURE(),BYTE,PROC
+Position         PROCEDURE(),ULONG
+BufferSize       PROCEDURE(),ULONG
+              END
+              
+IInputStream  INTERFACE(IStream)
+TryRead          PROCEDURE(*ANY dest),BYTE
+Read             PROCEDURE(*ANY dest),BYTE,PROC
+Read             PROCEDURE(),ULONG
+ReadStr          PROCEDURE(UNSIGNED bytes),STRING
+SetPosition      PROCEDURE(ULONG pos)
+               END
+
+IBufferProcessor INTERFACE
+ProcessBuffer      PROCEDURE(IOutputStream out, STRING buf),BYTE
+                 END
+                 
+IOutputStream  INTERFACE(IStream)
+CreateAndOpen    PROCEDURE(STRING name),BYTE,PROC
+CreateFile       PROCEDURE(),BYTE,PROC
+WriteChar        PROCEDURE(BYTE char),BYTE,PROC
+WriteStr         PROCEDURE(STRING str),BYTE,PROC
+WriteLine        PROCEDURE(STRING line),BYTE,PROC
+WriteStream      PROCEDURE(IInputStream in, ULONG startPos = 0, UNSIGNED len = 0, <*BYTE ErrState>, <IBufferProcessor processor>),LONG,PROC
+               END
+
+ _EndOfInclude_

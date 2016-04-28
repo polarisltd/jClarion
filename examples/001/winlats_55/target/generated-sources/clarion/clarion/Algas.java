@@ -1,0 +1,110 @@
+package clarion;
+
+import clarion.Main;
+import org.jclarion.clarion.Clarion;
+import org.jclarion.clarion.ClarionArray;
+import org.jclarion.clarion.ClarionDecimal;
+import org.jclarion.clarion.ClarionKey;
+import org.jclarion.clarion.ClarionNumber;
+import org.jclarion.clarion.ClarionSQLFile;
+import org.jclarion.clarion.ClarionString;
+
+@SuppressWarnings("all")
+public class Algas extends ClarionSQLFile
+{
+	public ClarionNumber yyyymm=Clarion.newNumber().setEncoding(ClarionNumber.LONG);
+	public ClarionNumber id=Clarion.newNumber().setEncoding(ClarionNumber.USHORT);
+	public ClarionString ini=Clarion.newString(5);
+	public ClarionString nodala=Clarion.newString(2);
+	public ClarionNumber obj_nr=Clarion.newNumber().setEncoding(ClarionNumber.ULONG);
+	public ClarionString statuss=Clarion.newString(1);
+	public ClarionString inv_p=Clarion.newString(1);
+	public ClarionNumber apgad_sk=Clarion.newNumber().setEncoding(ClarionNumber.BYTE);
+	public ClarionDecimal pr37=Clarion.newDecimal(5,2);
+	public ClarionDecimal pr1=Clarion.newDecimal(5,2);
+	public ClarionDecimal ppf=Clarion.newDecimal(7,2);
+	public ClarionDecimal dzivap=Clarion.newDecimal(7,2);
+	public ClarionDecimal izdev=Clarion.newDecimal(7,2);
+	public ClarionDecimal parskaitit=Clarion.newDecimal(9,2);
+	public ClarionDecimal izmaksat=Clarion.newDecimal(9,2);
+	public ClarionNumber n_stundas=Clarion.newNumber().setEncoding(ClarionNumber.USHORT);
+	public ClarionString soc_v=Clarion.newString(1);
+	public ClarionDecimal lmia=Clarion.newDecimal(6,2);
+	public ClarionDecimal lber=Clarion.newDecimal(6,2);
+	public ClarionDecimal linv=Clarion.newDecimal(6,2);
+	public ClarionArray<ClarionDecimal> k=Clarion.newDecimal(3,0).dim(20);
+	public ClarionArray<ClarionNumber> l=Clarion.newNumber().setEncoding(ClarionNumber.BYTE).dim(20);
+	public ClarionArray<ClarionDecimal> s=Clarion.newDecimal(3,0).dim(20);
+	public ClarionArray<ClarionDecimal> d=Clarion.newDecimal(3,0).dim(20);
+	public ClarionArray<ClarionDecimal> a=Clarion.newDecimal(9,3).dim(20);
+	public ClarionArray<ClarionDecimal> r=Clarion.newDecimal(9,2).dim(20);
+	public ClarionArray<ClarionDecimal> i=Clarion.newDecimal(3,0).dim(15);
+	public ClarionArray<ClarionNumber> j=Clarion.newNumber().setEncoding(ClarionNumber.BYTE).dim(15);
+	public ClarionArray<ClarionDecimal> c=Clarion.newDecimal(9,2).dim(15);
+	public ClarionArray<ClarionDecimal> n=Clarion.newDecimal(9,2).dim(15);
+	public ClarionDecimal terkod=Clarion.newDecimal(6,0);
+	public ClarionDecimal iin=Clarion.newDecimal(8,2);
+	public ClarionNumber iin_datums=Clarion.newNumber().setEncoding(ClarionNumber.LONG);
+	public ClarionNumber iin_lock=Clarion.newNumber().setEncoding(ClarionNumber.BYTE);
+	public ClarionNumber baits=Clarion.newNumber().setEncoding(ClarionNumber.BYTE);
+	public ClarionNumber baits1=Clarion.newNumber().setEncoding(ClarionNumber.BYTE);
+	public ClarionString acc_kods=Clarion.newString(8);
+	public ClarionNumber acc_datums=Clarion.newNumber().setEncoding(ClarionNumber.LONG);
+	public ClarionKey id_key=new ClarionKey("ID_KEY");
+	public ClarionKey ini_key=new ClarionKey("INI_KEY");
+	public ClarionKey nod_key=new ClarionKey("NOD_KEY");
+	public ClarionKey id_dat=new ClarionKey("ID_DAT");
+
+	public Algas()
+	{
+		setName(Main.algasname);
+		setPrefix("ALG");
+		setCreate();
+		this.addVariable("YYYYMM",this.yyyymm);
+		this.addVariable("ID",this.id);
+		this.addVariable("INI",this.ini);
+		this.addVariable("NODALA",this.nodala);
+		this.addVariable("OBJ_NR",this.obj_nr);
+		this.addVariable("STATUSS",this.statuss);
+		this.addVariable("INV_P",this.inv_p);
+		this.addVariable("APGAD_SK",this.apgad_sk);
+		this.addVariable("PR37",this.pr37);
+		this.addVariable("PR1",this.pr1);
+		this.addVariable("PPF",this.ppf);
+		this.addVariable("DZIVAP",this.dzivap);
+		this.addVariable("IZDEV",this.izdev);
+		this.addVariable("PARSKAITIT",this.parskaitit);
+		this.addVariable("IZMAKSAT",this.izmaksat);
+		this.addVariable("N_Stundas",this.n_stundas);
+		this.addVariable("SOC_V",this.soc_v);
+		this.addVariable("LMIA",this.lmia);
+		this.addVariable("LBER",this.lber);
+		this.addVariable("LINV",this.linv);
+		this.addVariable("K",this.k);
+		this.addVariable("L",this.l);
+		this.addVariable("S",this.s);
+		this.addVariable("D",this.d);
+		this.addVariable("A",this.a);
+		this.addVariable("R",this.r);
+		this.addVariable("I",this.i);
+		this.addVariable("J",this.j);
+		this.addVariable("C",this.c);
+		this.addVariable("N",this.n);
+		this.addVariable("TERKOD",this.terkod);
+		this.addVariable("IIN",this.iin);
+		this.addVariable("IIN_DATUMS",this.iin_datums);
+		this.addVariable("IIN_LOCK",this.iin_lock);
+		this.addVariable("BAITS",this.baits);
+		this.addVariable("BAITS1",this.baits1);
+		this.addVariable("ACC_KODS",this.acc_kods);
+		this.addVariable("ACC_DATUMS",this.acc_datums);
+		id_key.setNocase().setOptional().addAscendingField(yyyymm).addAscendingField(id);
+		this.addKey(id_key);
+		ini_key.setDuplicate().setNocase().setOptional().addAscendingField(yyyymm).addAscendingField(ini);
+		this.addKey(ini_key);
+		nod_key.setDuplicate().setNocase().setOptional().addAscendingField(yyyymm).addAscendingField(nodala).addAscendingField(ini);
+		this.addKey(nod_key);
+		id_dat.setDuplicate().setNocase().setOptional().addAscendingField(id).addAscendingField(yyyymm);
+		this.addKey(id_dat);
+	}
+}

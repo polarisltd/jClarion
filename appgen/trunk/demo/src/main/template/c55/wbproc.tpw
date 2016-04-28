@@ -1,0 +1,960 @@
+#EXTENSION (WebProc, 'Web Procedure Extension'),PROCEDURE,SHOW,FIRST,SINGLE,HLP('~WebProcedureExt')
+#PREPARE
+  #CALL (%ReadABCFiles(ABC))
+  #CALL (%InitFrameControls)
+  #CALL (%CascadeGlobalOption)
+  #CALL (%SetWinProgressTimer)
+  #CALL (%PrepareOverrideControls)
+  #CALL (%PrepareProcedureClassDefaults)
+#END
+#BUTTON ('&Internet Options...'),AT(,,180)
+  #BOXED, WHERE(%False), AT(,,0,0)
+    #BUTTON ('Hidden controls'),AT(,,0,0)
+      #PROMPT ('', @s20), %FrameMenu, MULTI(''),UNIQUE
+      #PROMPT ('', @s20), %FrameTool, MULTI(''),UNIQUE
+    #END
+  #END
+  #INSERT(%OOPPrompts(ABC))
+  #SHEET, HSCROLL
+    #TAB ('&Window')
+      #BOXED, WHERE(%Window), HIDE
+        #BOXED ('Pa&ge'),HIDE,WHERE(0)
+          #PROMPT ('Override global settings', CHECK), %WinOverridePage, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+          #ENABLE (%WinOverridePage)
+            #PROMPT ('Center window on page', CHECK), %WinCenterWindow,AT(10)
+            #PROMPT ('Background color:', COLOR), %WinPageBackColor,DEFAULT(-1)
+            #PROMPT ('Background image:', OPENDIALOG('Select background Image', 'GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*')), %WinPageBackImage
+          #END
+        #END
+        #BOXED ('Win&dow'),HIDE,WHERE(0)
+          #PROMPT ('Override global settings', CHECK), %WinOverrideWindow, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+          #ENABLE (%WinOverrideWindow)
+            #PROMPT ('Background color:', COLOR), %WinWindowBackColor,DEFAULT(-1)
+            #PROMPT ('Background image:', OPENDIALOG('Select background Image', 'GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*')), %WinWindowBackImage
+            #PROMPT ('Window border width:', SPIN(@n3, 0, 999)), %WinWindowBorderWidth,DEFAULT(2)
+          #END
+        #END
+        #BOXED ('HTML generation'),HIDE
+          #PROMPT ('HTML generation time:', DROP('Wizatron[Wizatron]|Generator[Generator]|Runtime[Runtime]')),%HtmlGenerateTime,DEFAULT('Runtime')
+        #END
+        #BOXED ('Skeleton Selection')
+          #PROMPT ('Override global settings', CHECK), %WinOverrideSkeleton, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+          #ENABLE (%WinOverrideSkeleton)
+            #PROMPT ('Skeleton to use:', @s255), %WinSkeletonName
+            #ENABLE (NOT %WinSkeletonName)
+              #PROMPT ('Theme:', @s255), %WinSkeletonStyle
+              #PROMPT ('Extra capabilities:', @s255), %WinSkeletonCapabilities
+            #END
+          #END
+        #END
+        #ENABLE (%AppHelpEnabled)
+          #BOXED ('Help'),HIDE,WHERE(0)
+            #PROMPT ('Override global settings', CHECK), %WinOverrideHelp, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+            #ENABLE (%WinOverrideHelp)
+              #PROMPT ('Help ids are links within a base document', CHECK), %WinHelpRelative,AT(10)
+              #BOXED, SECTION
+                #BOXED, WHERE(%WinHelpRelative), AT(,0)
+                  #PROMPT ('Help document:', @s255), %WinHelpDocument
+                #END
+                #BOXED, WHERE(NOT %WinHelpRelative), AT(,0)
+                  #PROMPT ('URL of help documents:', @s255), %WinHelpURL
+                #END
+              #END
+              #PROMPT ('Help window style', @s255), %WinHelpStyle
+            #END
+          #END
+        #END
+        #BOXED ('Pa&ge'),HIDE,WHERE(0)
+        #BUTTON('Window Com&ponents...'), AT(,,172),HLP('~ICProcedureExt_WindowComponents')
+          #SHEET
+            #TAB('&Caption')
+              #BOXED ('Ca&ption')
+                #PROMPT ('Override global settings', CHECK), %WinOverrideCaption, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+                #ENABLE (%WinOverrideCaption)
+                  #PROMPT ('Include caption', CHECK), %WinDisplayCaption, AT(10),DEFAULT(1)
+                  #ENABLE (%WinDisplayCaption)
+                    #PROMPT ('Background color:', COLOR), %WinCaptionBackColor, DEFAULT(800000H)
+                    #PROMPT ('Background image:', OPENDIALOG('Select background Image', 'GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*')), %WinCaptionBackImage
+                    #PROMPT ('Alignment:', DROP('Left[PROP:left]|Center[PROP:center]|Right[PROP:right]')), %WinCaptionAlign, DEFAULT('PROP:center')
+                    #PROMPT ('Font family name:', @s255), %WinCaptionFontFace, DEFAULT('')
+                    #PROMPT ('Font size:', SPIN(@n3b, 0, 127)), %WinCaptionFontSize, DEFAULT(0)
+                    #PROMPT ('Font color:', COLOR), %WinCaptionFontColor, DEFAULT(-1)
+                  #END
+                #END
+              #END
+            #END
+            #TAB ('&Menu'),HLP('~ICGlobalExt_WindowComponents_Menu')
+              #BOXED ('M&enu')
+                #PROMPT ('Override global settings', CHECK), %WinOverrideMenu, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+                #ENABLE (%WinOverrideMenu)
+                  #PROMPT ('Background color:', COLOR), %WinMenuBackColor,DEFAULT(099CCCCH)
+                  #PROMPT ('Background image:', OPENDIALOG('Select background Image', 'GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*')), %WinMenuBackImage
+                  #PROMPT ('Alignment:', DROP('Left of Window[PROP:left]|Above Toolbar[PROP:above]')), %WinMenuAlign, DEFAULT('PROP:above')
+                #END
+              #END
+            #END
+            #TAB('&Toolbar'),HLP('~ICGlobalExt_WindowComponents_Toolbar')
+              #BOXED ('Tool&bar')
+                #PROMPT ('Override global settings', CHECK), %WinOverrideToolbar, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+                #ENABLE (%WinOverrideToolbar)
+                  #PROMPT ('Background color:', COLOR), %WinToolbarBackColor,DEFAULT(-1)
+                  #PROMPT ('Background image:', OPENDIALOG('Select background Image', 'GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*')), %WinToolbarBackImage
+                #END
+              #END
+              #BOXED ('C&lose button')
+                #PROMPT ('Override global settings', CHECK), %WinOverrideClose, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+                #ENABLE (%WinOverrideClose)
+                  #PROMPT ('Create extra close button', CHECK),%WinCreateExtraClose,AT(10)                  #ENABLE (%WinCreateExtraClose)
+                    #PROMPT ('Image for close:', OPENDIALOG('Select close Image', 'GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*')), %WinToolbarCloseImage, DEFAULT('exit.ico')
+                  #END
+                #END
+              #END
+            #END
+            #TAB ('Client &Area'),HLP('~ICGlobalExt_WindowComponents_ClientArea')
+              #BOXED ('Win&dow')
+                #PROMPT ('Override global settings', CHECK), %WinOverrideClientArea, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+                #ENABLE (%WinOverrideClientArea)
+                  #PROMPT ('Background color:', COLOR), %WinClientAreaBackColor,DEFAULT(-1)
+                  #PROMPT ('Background image:', OPENDIALOG('Select background Image', 'GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*')), %WinClientAreaBackImage
+                #END
+              #END
+            #END
+          #END
+        #END
+        #END
+      #END
+      #BOXED ('General')
+        #PROMPT ('Return if launched from browser', CHECK), %WinDisableFromBrowser,AT(10)
+      #END
+    #END
+    #TAB ('&Report'),HLP('~WebProc_Report')
+      #PROMPT('Previewer Window Title: ', @S80 ),%RptPreviewTitle
+      #PROMPT('Include current page in title?', CHECK ), %RptShowCurrentPage
+      #ENABLE(%RptShowCurrentPage),CLEAR
+        #PROMPT('Show total pages in title?',CHECK),%RptShowTotalPages
+      #ENDENABLE
+#!8/28
+      #!BOXED ('')
+        #!DISPLAY('Reports are not yet supported in this version of the web builder.'),AT(10,,170,20)
+      #!END
+      #!PROMPT ('Allow server side reports on the internet',CHECK),%GenerateReportOnServer,AT(10)
+      #!BOXED ('Pa&ges'),HIDE,WHERE(%False)
+        #!PROMPT ('Display All Pages', CHECK), %RptDisplayAllPages, AT(10)
+        #!ENABLE (NOT %RptDisplayAllPages)
+          #!PROMPT ('Pages on display', SPIN(@n5, 1, 9999)), %RptPagesOnDisplay
+        #!END
+      #!END
+#!8/28
+    #END
+    #TAB ('&Controls'),HLP('~ICProcedureExt_Controls'),WHERE(%Window)
+      #BOXED(''),WHERE(%False),HIDE
+        #BOXED ('General')
+          #PROMPT ('', CHECK), %WinSetOnDisabled,DEFAULT(0),AT(10,,10),WHENACCEPTED(%CascadeWindowOption())
+          #ENABLE (%WinSetOnDisabled)
+            #PROMPT ('If control disabled:', DROP('Hide control[Hide]|Hide if cannot disable[OptHide]|Show control[Show]')), %WinOnDisabled,DEFAULT('Hide'),PROMPTAT(20,,77),AT(97,,87)
+          #END
+        #END
+        #BOXED ('Drop listboxes')
+          #PROMPT ('', CHECK), %WinSetJavaDropList,DEFAULT(0),AT(10,,10),WHENACCEPTED(%CascadeWindowOption())
+          #ENABLE (%WinSetJavaDropList)
+            #PROMPT ('Replace with Java non-drop list', CHECK), %WinJavaDropList,AT(20)
+          #END
+        #END
+        #BOXED('Sheets')
+          #PROMPT ('', CHECK), %WinSetSheetBorderWidth,DEFAULT(0),AT(10,,10),WHENACCEPTED(%CascadeWindowOption())
+          #ENABLE (%WinSetSheetBorderWidth)
+            #PROMPT ('Border width:', SPIN(@n2,0,99)),%WinSheetBorderWidth,PROMPTAT(20,,77),AT(97,,87)
+          #END
+        #END
+        #BOXED('Options')
+          #PROMPT ('', CHECK), %WinSetOptionBorderWidth,DEFAULT(0),AT(10,,10),WHENACCEPTED(%CascadeWindowOption())
+          #ENABLE (%WinSetOptionBorderWidth)
+            #PROMPT ('Border width (if boxed):', SPIN(@n2,0,99)),%WinOptionBorderWidth,PROMPTAT(20,,77),AT(97,,87)
+          #END
+        #END
+        #BOXED('Groups')
+          #PROMPT ('', CHECK), %WinSetGroupBorderWidth,DEFAULT(0),AT(10,,10),WHENACCEPTED(%CascadeWindowOption())
+          #ENABLE (%WinSetGroupBorderWidth)
+            #PROMPT ('Border width (if boxed):', SPIN(@n2,0,99)),%WinGroupBorderWidth,PROMPTAT(20,,77),AT(97,,87)
+          #END
+        #END
+      #END
+      #BOXED ('Individual control options')
+        #BUTTON ('Individual Override for ' & %Control), FROM(%Control, %Control & CHOOSE(%ControlSettingsChanged(),' (changed)','')), WHERE(%Control), INLINE,AT(,,,80)
+          #INSERT (%IndividualControlPrompts)
+        #END
+      #END
+    #END
+    #TAB('&MDI'),WHERE(EXTRACT(%WindowStatement,'APPLICATION')),HLP('~ICProcedureExt_MDIFrame')
+      #BOXED ('Application Menu')
+        #PROMPT ('Override global settings', CHECK), %WinSetAppMenubar, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+        #ENABLE (%WinSetAppMenubar)
+          #PROMPT ('Include On Child Windows:', DROP('Global Setting[Default]|All Menu Items[All]|No Menu Items[None]|Selected Menu Items[Some]')),%MenuCopy,DEFAULT('Default')
+          #ENABLE (%MenuCopy = 'All')
+            #PROMPT ('Ignore Frame Code', CHECK),%MenuIgnoreCode,AT(10)
+          #END
+          #ENABLE (%MenuCopy = 'Some')
+            #BUTTON ('Individual Action'), FROM(%FrameMenu, 'Actions for ' & %FrameMenu), INLINE,AT(,,,60)
+              #PROMPT ('Remove from child', CHECK), %MenuControlIgnore
+              #ENABLE (NOT %MenuControlIgnore)
+                #PROMPT ('Ignore Frame Code', CHECK), %MenuControlIgnoreCode
+              #END
+            #END
+          #END
+        #END
+      #END
+      #BOXED ('Application Toolbar')
+        #PROMPT ('Override global settings', CHECK), %WinSetAppToolbar, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+        #ENABLE (%WinSetAppToolbar)
+          #PROMPT ('Include On Child Windows:', DROP('Global Setting[Default]|All Toolbar Items[All]|Standard Toolbar Only[Standard]|No Toolbar Items[None]|Selected Toolbar Items[Some]')),%ToolCopy,DEFAULT('Default')
+          #ENABLE (%ToolCopy = 'All')
+            #PROMPT ('Ignore Frame Code', CHECK),%ToolIgnoreCode,AT(10)
+          #END
+          #ENABLE (%ToolCopy = 'Some')
+            #BUTTON ('Individual Action'), FROM(%FrameTool, 'Actions for ' & %FrameTool), INLINE,AT(,,,60),HLP('~ICProcedureExt_MDIFrame')
+              #PROMPT ('Remove from child', CHECK), %ToolControlIgnore
+              #ENABLE (NOT %ToolControlIgnore)
+                #PROMPT ('Ignore Frame Code', CHECK), %ToolControlIgnoreCode
+              #END
+            #END
+          #END
+        #END
+      #END
+    #END
+    #TAB('&MDI'),WHERE(EXTRACT(%WindowStatement,'MDI')),HLP('~ICProcedureExt_MDIUse')
+      #BOXED ('Merging Options')
+        #PROMPT ('Merge frame menu', CHECK), %WinMergeMenu, AT(10), DEFAULT(1)
+        #PROMPT ('Merge frame toolbar', CHECK), %WinMergeTool, AT(10), DEFAULT(1)
+      #END
+    #END
+    #TAB ('Properties'),HLP('~ICProcedureExt_WindowProperties')
+      #BOXED ('Overridden properties')
+        #BUTTON('Properties'),MULTI(%WinProperty,%WinPropertyName & ' =  ' & %WinPropertyValue),INLINE,HLP('~TPLControlBrowseBox_Conditional_Behavior')
+          #PROMPT ('Name of property:', @s255),%WinPropertyName
+          #PROMPT ('Type of property:', DROP('Bool|Integer|String|Reference')),%WinPropertyType,DEFAULT('String')
+          #PROMPT ('Value:', @s255),%WinPropertyValue
+        #ENDBUTTON
+      #ENDBOXED
+    #END
+    #TAB ('Advanced'),HLP('~ICProcedureExt_Advanced')
+      #BOXED ('Formatting'),WHERE(0),HIDE
+        #PROMPT ('Override global settings', CHECK), %WinOverrideFormat, AT(10),DEFAULT(0),WHENACCEPTED(%CascadeWindowOption())
+        #ENABLE (%WinOverrideFormat)
+          #BOXED ('HTML scaling - Pixels Per Character')
+            #PROMPT ('Horizontal:', SPIN(@n2,1,99)),%WinPixelsPerCharX,DEFAULT(6)
+            #PROMPT ('Vertical:', SPIN(@n2,1,99)),%WinPixelsPerCharY,DEFAULT(13)
+          #END
+          #PROMPT ('Delta for grid snapping:', SPIN(@n2b, 0,99)),%WinGridSnapDeltaX,DEFAULT(2),AT(96,,40)
+          #PROMPT ('', SPIN(@n2b, 0,99)),%WinGridSnapDeltaY,DEFAULT(2),AT(140,,40)
+        #END
+      #END
+      #BOXED ('Security')
+        #PROMPT ('Transfer over a secure connection', CHECK), %WinSecure, AT(10)
+        #PROMPT ('Restrict access to this procedure', CHECK), %WinAuthorize, AT(10)
+        #ENABLE (%WinAuthorize)
+          #DISPLAY ('Override the password validation - or use the following')
+          #PROMPT ('Password:', OPTFIELD), %WinAuthorizePassword
+          #PROMPT ('Case sensitive', CHECK), %WinAuthorizeCaseSensitive,DEFAULT(0),AT(10)
+        #END
+      #END
+      #BOXED ('Window refresh')
+        #ENABLE(%ProcedureTemplate='Report' OR %ProcedureTemplate='Process')
+          #BOXED, WHERE(%Window), HIDE
+            #ENABLE(NOT %SetWinProgressTimer())
+              #PROMPT ('Show progress window', CHECK), %WinProgressTimer, AT(10)
+            #END
+            #ENABLE (%WinProgressTimer)
+              #PROMPT ('Time between refresh:', @n5), %WinProgressTimerDelay, DEFAULT(2)
+              #PROMPT ('Action on timer:', DROP('Partial page refresh[Partial]|Submit page[Full]|Complete refresh Page[Refresh]')), %WinProgressTimerAction, DEFAULT('Partial')
+            #END
+          #END
+        #END
+        #BOXED ('')
+        #ENABLE (NOT %WinProgressTimer)
+          #PROMPT ('Enable window refresh on timer', CHECK), %WinTimer, AT(10)
+          #ENABLE (%WinTimer)
+            #PROMPT ('Time between refresh:', @n5), %WinTimerDelay, DEFAULT(10)
+            #!PROMPT ('Action on timer:', DROP('Partial page refresh[Partial]|Submit page[Full]|Complete refresh Page[Refresh]')), %WinTimerAction, DEFAULT('Partial')
+            #PROMPT ('Action on timer:', DROP('Complete refresh Page[Refresh]')), %WinTimerAction, DEFAULT('Refresh')
+          #END
+        #END
+        #END
+      #END
+    #END
+    #TAB('&Classes'),HLP('~WebProc_Classes')
+      #BUTTON('&Web Window Manager')
+        #WITH(%ClassItem, 'WebWindowManager')
+          #INSERT(%ClassPrompts(ABC))
+        #ENDWITH
+      #ENDBUTTON
+      #BUTTON('&Web Window')
+        #WITH(%ClassItem, 'WebWindow')
+          #INSERT(%ClassPrompts(ABC))
+        #ENDWITH
+      #ENDBUTTON
+      #ENABLE(%HasQBE())
+        #BUTTON('&QBE Web Win Manager')
+          #WITH(%ClassItem, 'QBEWebWindowManager')
+            #INSERT(%ClassPrompts(ABC))
+          #ENDWITH
+        #ENDBUTTON
+        #BUTTON('&QBE Web Window')
+          #WITH(%ClassItem, 'QBEWebWindow')
+            #INSERT(%ClassPrompts(ABC))
+          #ENDWITH
+        #ENDBUTTON
+      #ENDENABLE
+      #BUTTON('&Web Window Properties')
+        #WITH(%ClassItem, 'WebWindowProperty')
+          #INSERT(%ClassPrompts(ABC))
+        #ENDWITH
+      #ENDBUTTON
+      #ENABLE(%IsFrame())
+        #BUTTON('Web &Frame Manager')
+          #WITH(%ClassItem, 'WebFrameManager')
+            #INSERT(%ClassPrompts(ABC))
+          #ENDWITH
+        #ENDBUTTON
+      #ENDENABLE
+    #ENDTAB
+  #END
+#END
+#!
+#ATSTART
+  #CALL (%ReadABCFiles(ABC))
+  #CALL (%CascadeGlobalOption)
+  #CALL (%PrepareOverrideControls)
+  #CALL (%PrepareProcedureClassDefaults)
+  #CALL (%SetWinProgressTimer)
+  #CALL (%CheckQBEList)
+  #CALL (%AdaptToExistingExtensions)
+#END
+#AT(%CUSTOMGLOBALDECLARATIONS)
+#!8/28
+  #IF(%Report)
+  #ADD(%CustomGlobalMapIncludes,'WBPREVIEW.INC')
+  #PROJECT('WBPREVIEW.CLW')
+  #END
+#!8/28
+#ENDAT
+#!
+#!
+#AT(%DataSectionAfterWindow),WHERE(%ProcedureHasWebWindow())
+  #CALL(%GenerateDeclr(ABC), 22, 'Web:CurFrame', '&WbFrameClass')
+#ENDAT
+#!
+#!
+#AT(%WebFrameManagerMethodCodeSection,'CopyControlsToWindow', '(BYTE MergeMenu,BYTE MergeTool)'),WHERE(%ProcedureHasWebWindow() AND %IsFrame())
+  #CALL(%CalculateFrameControls)
+#?SELF.BeforeCopy()
+  #SUSPEND
+#?IF MergeMenu
+    #FOR (%FrameControlInstance)
+      #SELECT(%Control, %FrameControlInstance)
+      #IF (%ControlMenu)
+  SELF.CopyControlToWindow(%(%ControlFeq()))
+      #END
+    #END
+#?END
+    #RESUME
+    #SUSPEND
+#?IF MergeTool
+    #FOR (%FrameControlInstance)
+      #SELECT(%Control, %FrameControlInstance)
+      #IF (%ControlTool)
+  SELF.CopyControlToWindow(%(%ControlFeq()))
+      #END
+    #END
+#?END
+  #RESUME
+#?SELF.AfterCopy()
+#ENDAT
+#!
+#!
+#AT(%WebFrameManagerMethodDataSection, 'TakeEvent', '(),SIGNED'),WHERE(%ProcedureHasWebWindow() AND %IsFrame())
+FirstIteration       SIGNED(1)
+#ENDAT
+#!
+#!
+#AT(%WebFrameManagerMethodCodeSection, 'TakeEvent', '(),SIGNED'),WHERE(%ProcedureHasWebWindow() AND %IsFrame()),PRIORITY(6000)
+LOOP
+  #SUSPEND
+  #?IF (NOT FirstIteration)
+    #?RETURN REPLY:CYCLE
+  #?END
+  #?FirstIteration = FALSE
+  #?CASE FIELD()
+  #FOR (%FrameControlInstance)
+    #SELECT(%Control, %FrameControlInstance)
+    #IF (%Control AND %FrameControlCopyCode)
+  #!INSERT (%SingleControlHandling)
+    #END
+  #END
+  #?END
+  #RESUME
+  RETURN REPLY:NONE
+END
+ReturnValue = REPLY:BREAK
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),PRIORITY(8060),DESCRIPTION('Initialize Web Window'),WHERE(%ProcedureHasWebWindow()),AUTO,DESCRIPTION('Web Window Initialization')
+#INSERT(%WebWindowInit, %GetObjName('WebWindowManager'),%GetObjName('WebWindow'))
+#END
+#!
+#!
+#AT(%WebWindowMethodCodeSection, 'Init'),PRIORITY(6000), WHERE(%ProcedureHasWebWindow()),AUTO
+#INSERT(%WebWindowInitMethod, %True)
+#EMBED (%AfterInitialiseWebWindow, 'Internet, after initialising the Window object'),WHERE(%ProcedureHasWebWindow())
+#ENDAT
+#!
+#!
+#AT(%WebWindowMethodCodeSection, 'Init'),PRIORITY(8000), WHERE(%ProcedureHasWebWindow()),AUTO
+#INSERT(%WebWindowInitFrame, %True)
+#ENDAT
+#!
+#!
+#AT(%WebWindowManagerMethodCodeSection, 'Init'),PRIORITY(6000), WHERE(%ProcedureHasWebWindow()),AUTO
+#INSERT(%WebWindowManagerInitMethod)
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Kill', '(),BYTE'),WHERE(%ProcedureHasWebWindow()),PRIORITY(8000),DESCRIPTION('Kill Web Window'),AUTO
+#INSERT(%WebWindowKill)
+#END
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),PRIORITY(4800)
+  #IF (%WinDisableFromBrowser)
+IF(WebServer.IsEnabled())
+  RETURN Level:Fatal
+END
+  #ENDIF
+#!8/28  #IF ((%ProcedureTemplate = 'Report') AND NOT %GenerateReportOnServer)
+#!8/28IF(WebServer.IsEnabled())
+#!8/28  MESSAGE('Reports not yet supported in this beta release','Web Builder')
+#!8/28  RETURN Level:Fatal
+#!8/28END
+#!8/28  #ENDIF
+  #IF (%IsFrame())
+    #CALL(%SetClassItem(ABC), 'WebFrameManager')
+%ThisObjectName.FrameWindow &= %Window
+  #END
+  #IF (%Report)
+WebFilesManager.SelectTarget(Secure:%(CHOOSE(%WinSecure,'Full','None')))
+  #END
+#END
+#!
+#!
+#!8/28
+#!HERE
+#AT(%WindowManagerMethodCodeSection,'AskPreview','()'),PRIORITY(4000)
+  #IF( %Report )
+IF (WebServer.IsEnabled())
+  ENDPAGE(SELF.Report)
+  WebPreview(WebServer,SELF.PreviewQueue,'%RptPreviewTitle',%RptShowCurrentPage,%RptShowTotalPages)
+  RETURN
+END
+  #ENDIF
+#ENDAT
+#!8/28
+#AT(%WebWindowManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#END
+#!
+#!
+#AT(%WebWindowMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#END
+#!
+#!
+#AT(%WebFrameManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#END
+#!
+#!
+#AT(%QBEWebWindowManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#END
+#!
+#!
+#AT(%QBEWebWindowMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#END
+#!
+#!
+#AT(%LocalProcedures)
+  #IF(%ProcedureHasWebWindow())
+    #FOR(%Control)
+      #CALL(%GenerateVirtuals(ABC), %Control, 'Local Objects|Web Objects|Control Managers|Control Manager for ' & %Control, '%WebControlManagerVirtuals(Web)')
+    #ENDFOR
+    #CALL(%GenerateVirtuals(ABC), 'WebWindowManager', 'Local Objects|Web Objects|Web Window Manager', '%WebWindowManagerVirtuals(Web)')
+    #CALL(%GenerateVirtuals(ABC), 'WebWindowProperty', 'Local Objects|Web Objects|Web Window Property', '%WebWindowPropertyVirtuals(Web)')
+    #CALL(%GenerateVirtuals(ABC), 'WebWindow', 'Local Objects|Web Objects|Web Window', '%WebWindowVirtuals(Web)')
+    #IF(%IsFrame())
+      #CALL(%SetClassItem(ABC), 'WebFrameManager')
+      #INSERT(%MakeDeclr(ABC), 24, %OOPConstruct, 'FrameWindow' ,'&WINDOW')
+      #ADD(%ClassLines, %OOPConstruct)
+      #CALL(%GenerateVirtuals(ABC), 'WebFrameManager', 'Local Objects|Web Objects|Web Frame Manager', '%WebFrameManagerVirtuals(Web)')
+    #ENDIF
+    #IF(%HasQBE())
+      #CALL(%GenerateVirtuals(ABC), 'QBEWebWindowManager', 'Local Objects|Web Objects|QBE Web Window Manager', '%QBEWebWindowManagerVirtuals(Web)')
+      #CALL(%GenerateVirtuals(ABC), 'QBEWebWindow', 'Local Objects|Web Objects|QBE Web Window', '%QBEWebWindowVirtuals(Web)')
+    #ENDIF
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses),WHERE(%ProcedureHasWebWindow())
+  #CALL(%GenerateClass(ABC), 'WebWindowManager')
+  #CALL(%GenerateClass(ABC), 'WebWindow')
+  #IF(%IsFrame())
+    #CALL(%GenerateClass(ABC), 'WebFrameManager')
+  #ENDIF
+  #IF(%HasQBE())
+    #CALL(%GenerateClass(ABC), 'QBEWebWindowManager')
+    #CALL(%GenerateClass(ABC), 'QBEWebWindow')
+  #ENDIF
+  #FOR(%Control),WHERE(%ControlValidForOverride())
+    #CALL(%QueryGenerateClass, %Control, 'Web Control Manager for ' & %Control)
+  #ENDFOR
+  #CALL(%QueryGenerateClass, 'WebWindowProperty')
+#ENDAT
+#!
+#!
+#AT(%CustomModuleDeclarations),WHERE(%HasQBE())
+  #CALL(%AddModuleIncludeFile(ABC),'WbQueryButtonHtmlProperties')
+#ENDAT
+#!
+#!
+#!=========== Control Processing ===========================================
+#!
+#AT (%WebControlManagerMethodCodeSection,,'Init','(SIGNED Feq,SIGNED Container)'),PRIORITY(7000)
+  #IF (%CtlSubmitOnChange)
+SELF.SubmitOnChange = TRUE
+  #END
+  #IF (%CtlDisableFromBrowser)
+SELF.SuppressInsertion = TRUE
+  #END
+  #IF (%CtlAltText)
+SELF.SetExtraProperty('AltText', '%'CtlAltText')
+  #ENDIF
+#END
+#!
+#!
+#!
+#AT(%WebControlManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#END
+#!
+#!
+#AT (%WebControlManagerMethodCodeSection,,'GetSkeletonAttr', '(SIGNED whichAttr),STRING'),PRIORITY(7000)
+#SUSPEND
+#?CASE whichAttr
+  #IF (%CtlSkeletonCapabilities)
+OF SkeletonAttr:Capabilities
+  ReturnValue = ReturnValue & ',%'CtlSkeletonCapabilities'
+  #ENDIF
+  #IF (%CtlSkeletonName)
+OF SkeletonAttr:Name
+  ReturnValue = '%'CtlSkeletonName'
+  #ENDIF
+  #IF (%CtlSkeletonStyle)
+OF SkeletonAttr:Style
+  ReturnValue = '%'CtlSkeletonStyle'
+  #ENDIF
+  #IF (%CtlSkeletonType)
+OF SkeletonAttr:Type
+  ReturnValue = '%'CtlSkeletonType'
+  #ENDIF
+#?END
+#RESUME
+#END
+#!
+#!
+#AT (%WebControlManagerMethodCodeSection,,'GetProperty', '(ASTRING name,unsigned idx1=0,unsigned idx2=0),*IValue'),PRIORITY(2500)
+#SUSPEND
+#FOR (%CtlProperty)
+IF (name = '%CtlPropertyName')
+  RETURN Create%(%CtlPropertyType)Value(%CtlPropertyValue)
+#IF (INSTANCE(%CtlProperty)<>ITEMS(%CtlProperty))
+ELS%|
+#ENDIF
+#ENDFOR
+#?END
+#RESUME
+#ENDAT
+#!
+#!
+#AT (%WebControlManagerMethodDataSection,,'GetEmbedText', '(ASTRING embed),STRING'),PRIORITY(5000)
+#?Target                  &IHtmlWriter,AUTO
+#END
+#!
+#!
+#AT (%WebControlManagerMethodCodeSection,,'GetEmbedText', '(ASTRING embed),STRING'),PRIORITY(4000)
+#?Target &= IHtmlWriter:Create()
+#SUSPEND
+#?CASE embed
+#SUSPEND
+#?OF A:EmbedBeforeControl
+  #EMBED (%WebBeforeControl, 'Internet, before generating HTML for control'), %Control,WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedAfterControl
+  #EMBED (%WebAfterControl, 'Internet, after generating HTML for control'), %Control,WHERE(%ProcedureHasWebWindow())
+#RESUME
+#?END
+#RESUME
+#END
+#!
+#!
+#AT (%WebControlManagerMethodCodeSection,,'GetEmbedText', '(ASTRING embed),STRING'),PRIORITY(8000)
+#?ReturnValue = Target.GetText()
+#?Target.Release()
+#END
+#!
+#!
+#AT (%WebBeforeControl), WHERE(%CtlHtmlHeader)
+  #INSERT (%GenerateLiteralHtml, %CtlHtmlHeader)
+#END
+#!
+#!
+#AT (%WebAfterControl), WHERE(%CtlHtmlFooter)
+  #INSERT (%GenerateLiteralHtml, %CtlHtmlFooter)
+#END
+#!
+#!
+#!=========== Window Properties Processing ===================================
+#!
+#!
+#AT (%WebWindowPropertyMethodCodeSection,'Init','()'),PRIORITY(7000)
+  #IF (%ProcedureTemplate='Splash')
+SELF.SetTimeOut(%(CHOOSE(%DisplayTime = '', 0, %DisplayTime)))
+    #!SELF.CreateClose = CLOSE:Never
+  #ENDIF
+  #IF (%WinTimer)
+SELF.SetTimeOut(%(CHOOSE(%WinTimerDelay = '', 100, %WinTimerDelay)))
+  #ENDIF
+#END
+#!
+#!
+#!
+#AT(%WebWindowPropertyMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#END
+#!
+#!
+#AT (%WebWindowPropertyMethodCodeSection,'GetProperty', '(ASTRING name,unsigned idx1=0,unsigned idx2=0),*IValue'),PRIORITY(2500)
+#SUSPEND
+#FOR (%WinProperty)
+#IF (INSTANCE(%WinProperty)<>1)
+ELS%|
+#ENDIF
+IF (name = '%WinPropertyName')
+  RETURN Create%(%WinPropertyType)Value(%WinPropertyValue)
+#ENDFOR
+#?END
+#RESUME
+#ENDAT
+#!
+#!
+#AT (%WebWindowPropertyMethodCodeSection,'GetSkeletonAttr', '(SIGNED whichAttr),STRING'),PRIORITY(7000)
+#?CASE whichAttr
+#SUSPEND
+#?OF SkeletonAttr:Capabilities
+  #IF (%ProcedureTemplate='Splash')
+  ReturnValue = ReturnValue & ',splash'
+  #ENDIF
+  #IF (%WinSkeletonCapabilities)
+  ReturnValue = ReturnValue & ',%'WinSkeletonCapabilities'
+  #ENDIF
+#RESUME
+  #IF (%WinSkeletonName)
+OF SkeletonAttr:Name
+  ReturnValue = '%'WinSkeletonName'
+  #ENDIF
+  #IF (%WinSkeletonStyle AND (%WinSkeletonStyle<>%AppSkeletonStyle))
+OF SkeletonAttr:Theme
+  ReturnValue = '%'WinSkeletonStyle'
+  #ENDIF
+#?END
+#END
+#!
+#!
+#AT (%WebWindowPropertyMethodDataSection,'GetEmbedText', '(ASTRING embed),STRING'),PRIORITY(5000)
+#?Target                  &IHtmlWriter,AUTO
+#END
+#!
+#!
+#AT (%WebWindowPropertyMethodCodeSection,'GetEmbedText', '(ASTRING embed),STRING'),PRIORITY(4000)
+#?Target &= IHtmlWriter:Create()
+#?CASE embed
+#SUSPEND
+#?OF A:EmbedMetaTags
+  #EMBED (%WebMetaTagsVirtual, 'Internet, inside the <<META> tag area'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedInsideTitle
+  #EMBED (%WebTitleContentsVirtual, 'Internet, inside the Title for the page'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedBeforeHeadClose
+  #EMBED (%WebHeadFooterVirtual, 'Internet, before the closing <</HEAD> tag'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedBeforeBodyOpen
+  #EMBED (%WebBeforeBodyVirtual, 'Internet, before the opening <<BODY> tag'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedBeforeWindow
+  #EMBED (%WebBodyHeaderVirtual, 'Internet, after the opening <<BODY> tag'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedTopOfForm
+  #EMBED (%WebFormHeaderVirtual, 'Internet, after the opening <<FORM> tag'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedBottomOfForm
+  #EMBED (%WebFormFooterVirtual, 'Internet, before the closing <</FORM> tag'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedAfterWindow
+  #EMBED (%WebBodyFooterVirtual, 'Internet, before the closing <</BODY> tag'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#SUSPEND
+#?OF A:EmbedBeforeHtmlClose
+  #EMBED (%WebHtmlFooterVirtual, 'Internet, before the closing <</HTML> tag'),WHERE(%ProcedureHasWebWindow())
+#RESUME
+#?END
+#END
+#!
+#!
+#AT (%WebWindowPropertyMethodCodeSection,'GetEmbedText', '(ASTRING embed),STRING'),PRIORITY(8000)
+#?ReturnValue = Target.GetText()
+#?Target.Release()
+#END
+#!
+#!
+#!=========== Window Processing ==============================================
+#!
+#!
+#AT (%WebWindowMethodCodeSection,'GenerateHTML', '(STRING Filename)'),PRIORITY(8500),WHERE(%ProcedureTemplate='Splash')
+POST(EVENT:CloseWindow)
+#END
+#!
+#!
+#!=========== QBE Processing ==============================================
+#!
+#!
+#AT(%QBEVisualMethodDataSection,,'Init','(),BYTE'),WHERE(%ProcedureHasWebWindow() AND %HasQBE()),AUTO,PRIORITY(6000)
+curProperties           &WbQueryButtonHtmlProperties,AUTO
+feq                     SIGNED,AUTO
+index                   SIGNED,AUTO
+#ENDAT
+#!
+#!
+#AT(%QBEVisualMethodCodeSection,,'Init','(),BYTE'),WHERE(%ProcedureHasWebWindow() AND %HasQBE()),AUTO,DESCRIPTION('QBE Web Window Initialization'),PRIORITY(8060)
+#INSERT(%WebWindowInit, %GetObjName('QBEWebWindowManager'), %GetObjName('QBEWebWindow'))
+#!
+#!The following should be isolated in a common function somewhere
+IF (WebServer.IsEnabled())
+  index = 0
+  LOOP
+    index += 1
+    feq = SELF.GetButtonFeq(index)
+    IF feq = 0 THEN BREAK .
+    curProperties &= NEW WbQueryButtonHtmlProperties()
+    curProperties.Init(feq, FEQ:Unknown)
+    %(%GetObjName('QBEWebWindow')).AddOwnedControl(curProperties.IControlToHtml)
+  END
+END
+#ENDAT
+#!
+#!
+#AT(%QBEVisualMethodCodeSection,,'TakeAccepted','(),BYTE'),WHERE(%ProcedureHasWebWindow() AND %HasQBE()),AUTO,DESCRIPTION('Web: Remove unexpected events'),PRIORITY(4500)
+IF WebServer.IsEnabled()
+  CASE FIELD()
+  OF FEQ:SaveQueryButton
+  OROF FEQ:RestoreQueryButton
+  OROF FEQ:DeleteQueryButton
+    IF (Feq:QueryNameField{Prop:ScreenText} = '')
+      RETURN Level:Benign
+    END
+  END
+END
+#ENDAT
+#!
+#!
+#AT(%QBEVisualMethodCodeSection,,'Reset','(BYTE Force=0)'),WHERE(%ProcedureHasWebWindow() AND %HasQBE()),AUTO,DESCRIPTION('Web: Always enable saved query buttons'),PRIORITY(6000)
+IF WebServer.IsEnabled()
+  Enable(FEQ:DeleteQueryButton)
+  Enable(FEQ:RestoreQueryButton)
+  Enable(FEQ:SaveQueryButton)
+END
+#ENDAT
+#!
+#!
+#AT(%QBEWebWindowMethodCodeSection, 'Init'),PRIORITY(6000), WHERE(%ProcedureHasWebWindow() AND %HasQBE()),AUTO
+#INSERT(%WebWindowInitMethod, %False)
+#ENDAT
+#!
+#!
+#AT(%QBEWebWindowManagerMethodCodeSection, 'Init'),PRIORITY(6000), WHERE(%ProcedureHasWebWindow() AND %HasQBE()),AUTO
+#INSERT(%WebWindowManagerInitMethod)
+#ENDAT
+#!
+#!
+#!=========== Legacy embed points.... ========================================
+#!
+#!
+#AT (%WebWindowMethodCodeSection,'GenerateHTML', '(STRING Filename)'),PRIORITY(2500)
+#EMBED (%WebCodeSectionBeforeCreateHtmlPage, 'Internet, before generating HTML page'),WHERE(%ProcedureHasWebWindow())
+#END
+#!
+#!
+#AT (%WebWindowMethodCodeSection,'GenerateHTML', '(STRING Filename)'),PRIORITY(7500)
+#EMBED (%WebCodeSectionAfterCreateHtmlPage, 'Internet, after generating HTML page'),WHERE(%ProcedureHasWebWindow())
+#END
+#!
+#!
+#AT (%WebWindowManagerMethodDataSection,'ValidatePassword', '(STRING UserName,STRING Password),BYTE'),PRIORITY(5000)
+#EMBED (%WebDataSectionValidatePasswordVirtual, 'Internet, password validation - data section'),LABEL,WHERE(%ProcedureHasWebWindow())
+#END
+#!
+#!
+#AT (%WebWindowManagerMethodCodeSection,'ValidatePassword', '(STRING UserName,STRING Password),BYTE'),PRIORITY(4000)
+#EMBED (%WebCodeSectionValidatePasswordVirtual, 'Internet, password validation - code section'),WHERE(%ProcedureHasWebWindow())
+#END
+#!
+#AT (%WebWindowMethodCodeSection,'TakeUnknownResponse', '(STRING name,STRING value)')
+#EMBED (%WebCodeSectionTakeUnknownSubmitVirtual, 'Internet, process user html control values - code section'),WHERE(%ProcedureHasWebWindow())
+#END
+#!
+#!=========== Common processing groups ========================================
+#!
+#GROUP(%WebWindowManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebWindowManagerMethodDataSection,'Web Window Manager Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebWindowManagerMethodCodeSection,'Web Window Manager Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%WebWindowPropertyVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebWindowPropertyMethodDataSection,'Web Window Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebWindowPropertyMethodCodeSection,'Web Window Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%WebWindowVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebWindowMethodDataSection,'Web Window Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebWindowMethodCodeSection,'Web Window Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%WebControlManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebControlManagerMethodDataSection, 'Web Control Manager Method Data Section'),%Control,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebControlManagerMethodCodeSection, 'Web Control Manager Method Code Section'),%Control,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%WebFrameManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebFrameManagerMethodDataSection,'Web Frame Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebFrameManagerMethodCodeSection,'Web Frame Executable Code Section'),%pClassMethod,%pClassMethodPrototype,TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%QBEWebWindowManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%QBEWebWindowManagerMethodDataSection,'QBE Web Window Manager Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%QBEWebWindowManagerMethodCodeSection,'QBE Web Window Manager Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%QBEWebWindowVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%QBEWebWindowMethodDataSection,'QBE Web Window Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%QBEWebWindowMethodCodeSection,'Web Window Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,TREE(%TreeText & %CodeText)
+#!
+#!
+#!
+#!
+#EXTENSION(WebGridExtension, 'Web Extension to Browse Grid'),REQ(BrowseGrid(ABC)),DESCRIPTION('Web Extension to Browse Grid for ' & %GetGridControl()),HLP('~WebGridExtension')
+#!
+#RESTRICT
+  #FOR(%ActiveTemplate),WHERE(%ActiveTemplate = 'WebProc(Web)')
+    #ACCEPT
+  #ENDFOR
+  #REJECT
+#ENDRESTRICT
+#!
+#ATSTART
+  #DECLARE(%HTMLGridObject)
+  #DECLARE(%CtrlInstance)
+  #EQUATE(%GridControl, %GetGridControl())
+  #CALL(%FindLocalTemplateInstance(ABC), 'WebProc(Web)'),%CtrlInstance
+  #ALIAS(%ControlClassItem, %ClassItem, %CtrlInstance)
+  #FIX(%ControlClassItem, %GridControl)
+  #ASSERT(%ControlClassItem = %GetGridControl(), 'Unable to find ' & %GetGridControl())
+  #ALIAS(%ControlActualDefaultBaseClassType, %ActualDefaultBaseClassType, %CtrlInstance)
+  #SET(%ControlActualDefaultBaseClassType, %HTMLGridManager)
+  #ALIAS(%ControlThisObjectName, %ThisObjectName, %CtrlInstance)
+  #SET(%HTMLGridObject, %ControlThisObjectName)
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),PRIORITY(8065), WHERE(%ProcedureHasWebWindow()),AUTO,PRESERVE
+IF (WebServer.IsEnabled())
+  #FIX(%ActiveTemplate, 'WebProc(Web)')
+  #IF(%ActiveTemplate <> 'WebProc(Web)')
+    #ERROR('BrowseGridExtension requires a WebProc extension, which could not be found!')
+  #ELSE
+    #! There should only be a SINGLE instance of WebProc
+    #FOR(%ActiveTemplateInstance)
+      #ALIAS(%LocalClassItem, %ClassItem, %ActiveTemplateInstance) 
+      #! This will cause errors to be generated in there are multiple instances
+      #ALIAS(%LocalObjectName, %ThisObjectName, %ActiveTemplateInstance)
+      #CALL(%NoCaseFix(ABC), %LocalClassItem, 'WebWindow')
+  %HTMLGridObject.Init(%LocalObjectName, %GridObject, %(%GridControl))
+  %LocalObjectName.AddControl(%HTMLGridObject.IControlToHtml)
+    #ENDFOR
+  #ENDIF
+END
+#ENDAT
+#!
+#!
+#AT (%WebControlManagerMethodDataSection,,'GetInstanceName', '(),STRING'),WHERE(%ControlParent = %GridControl),PRESERVE
+  #CASE (%ControlType)
+  #OF ('BUTTON')
+  #OROF ('ENTRY')
+  #OROF ('SPIN')
+  #OROF ('CHECK')
+  #OROF ('COMBO')
+GridNameIV &IValue,AUTO
+temp       &IStringVal,AUTO
+Str        &CSTRING,AUTO
+  #END
+#ENDAT
+#!
+#!
+#AT (%WebControlManagerMethodCodeSection,,'GetInstanceName', '(),STRING'),WHERE(%ControlParent = %GridControl),PRESERVE
+  #CASE (%ControlType)
+  #OF ('BUTTON')
+  #OROF ('ENTRY')
+  #OROF ('SPIN')
+  #OROF ('CHECK')
+  #OROF ('COMBO')
+GridNameIV &= %HtmlGridObject.GetProperty('Record')
+temp &= MakeStringVal()
+Str &= GridNameIV.toString(temp)
+ReturnValue = %HTMLGridObject.GetInstanceName() & '$' & Str & '$' & ReturnValue
+temp.Release()
+GridNameIV.Release()
+  #END
+#ENDAT
+#!
+#!
+#GROUP(%GetGridControl),PRESERVE
+  #FOR(%Control), WHERE(%ControlInstance = %ActiveTemplateParentInstance)
+    #RETURN(%Control)
+  #ENDFOR
+  #ASSERT(%False, 'Unable to find Grid Control!')
+#!
+#!

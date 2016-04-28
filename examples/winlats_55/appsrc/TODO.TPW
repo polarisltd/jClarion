@@ -1,0 +1,8 @@
+#PROCEDURE(ToDo,'Procedure not yet defined'),DEFAULT
+%Procedure PROCEDURE
+  CODE
+  IF StandardWarning(Warn:ProcedureToDo,'%Procedure')
+    SETKEYCODE(0)
+    GlobalResponse = RequestCancelled
+    RETURN
+  END

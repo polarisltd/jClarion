@@ -16,7 +16,7 @@
         <maven>2.0</maven>
     </prerequisites>
 
-    <url>http://wwww.c8software.com.au/</url>
+    <url>https://c8software.com.au/wp/</url>
 
   <description>JClarion compiler mvn plugin</description>
   <distributionManagement>

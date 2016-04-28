@@ -1,0 +1,336 @@
+package org.jclarion.clarion.ide.model;
+
+import java.io.IOException;
+import java.util.LinkedList;
+
+import jclarion.Activator;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.window.Window;
+import org.jclarion.clarion.appgen.app.Addition;
+import org.jclarion.clarion.appgen.app.App;
+import org.jclarion.clarion.appgen.app.Module;
+import org.jclarion.clarion.appgen.app.Procedure;
+import org.jclarion.clarion.appgen.app.TextAppLoad;
+import org.jclarion.clarion.appgen.dict.Dict;
+import org.jclarion.clarion.appgen.dict.TextDictLoad;
+import org.jclarion.clarion.appgen.template.BufferedWriteTarget;
+import org.jclarion.clarion.appgen.template.ExecutionEnvironment;
+import org.jclarion.clarion.appgen.template.TemplateChain;
+import org.jclarion.clarion.appgen.template.TemplateLoader;
+import org.jclarion.clarion.appgen.template.at.AtSource;
+import org.jclarion.clarion.appgen.template.cmd.ModuleCmd;
+import org.jclarion.clarion.appgen.template.cmd.TemplateID;
+import org.jclarion.clarion.appgen.template.prompt.EmbedTree;
+import org.jclarion.clarion.appgen.template.prompt.MemoryFileSystem;
+import org.jclarion.clarion.ide.dialog.AdditionFileDialog;
+import org.jclarion.clarion.ide.dialog.prompt.PromptDialog;
+import org.jclarion.clarion.ide.model.app.AppModel;
+
+public class AppProject {
+
+	private App app;
+	private Dict dict;
+	private TemplateChain chain;
+	private IContainer libsrc;
+	private IContainer appsrc;
+	private IProject project;
+
+	public static AppProject get(IProject project)
+	{
+		return (AppProject)project.getAdapter(AppProject.class);
+	}
+	
+	public AppProject(IProject project)
+	{
+		this.project=project;
+		
+		try {
+			chain = new TemplateChain();
+			TemplateLoader tl = new TemplateLoader(chain);
+			
+			try {
+				loadTemplates(tl,project);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			chain.finalise();
+			
+			IFile dict = locate(project,"dict");
+			System.out.println("locating dict");
+			if (dict!=null) {
+				System.out.println("located dict: "+dict.getName());
+				this.dict = (new TextDictLoad()).load(dict.getContents());	
+			}
+			
+			IFile app = locate(project,"app");
+			System.out.println("locating dict");
+			if (app != null) {
+				System.out.println("located app: "+app.getName());
+				System.out.println("getting appsrc");
+				appsrc=app.getParent();
+				System.out.println("appsrc: "+appsrc.getFullPath());
+				appsrc.refreshLocal(IContainer.DEPTH_INFINITE,null);
+				this.app = (new TextAppLoad(chain)).load(new ProjectAppLoader(appsrc));
+				System.out.println("getting libsrc");
+				this.libsrc= project.getFolder("libsrc");
+			} else {
+				Activator.getDefault().logWarning("app folder not found");
+			}
+		} catch (IOException ex) { 
+			ex.printStackTrace();
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public IProject getProject()
+	{
+		return project;
+	}
+	
+	public IContainer getAppSource()
+	{
+		return appsrc;
+	}
+	
+	public TemplateChain getChain()
+	{
+		return chain;
+	}
+	
+	private IFile locate(IContainer container,String extension)
+	{
+        System.out.println("locate(IContainer) ENTRY ext="+extension);
+		try {
+			for (IResource r : container.members()) {
+				if (r instanceof IContainer) {
+					
+					IFile result = locate((IContainer)r,extension);
+					if (result!=null){  System.out.println("located file "+result.getName());return result;}
+					continue;
+				}
+				if (r.getFileExtension()==null) continue;
+				if (r instanceof IFile) {
+					if (r.getFileExtension().equals(extension)) {System.out.println("located file "+((IFile)r).getName());return (IFile)r;};
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	private void loadTemplates(TemplateLoader tl, IContainer parent) throws CoreException, IOException 
+	{
+		for (IResource r : parent.members()) {
+			if (r instanceof IContainer) {
+				loadTemplates(tl,(IContainer)r);
+				continue;
+			}
+			if (r.getFileExtension()==null) continue;
+			if (r.getFileExtension().equals("tpl")) {
+				System.out.println("located tpl "+r.getName()+".tpl");
+				parent.refreshLocal(IContainer.DEPTH_INFINITE,null);
+				tl.load(new ProjectTemplateLoader(parent),r.getName());
+			}
+		}		
+	}
+
+
+	public App getApp()
+	{
+		return app;
+	}
+	
+	public Dict getDict()
+	{
+		return dict;
+	}
+	
+	/*
+	public BufferedWriteTarget getEditProcedure(Procedure proc)
+	{
+		ExecutionEnvironment ideEnv = new ExecutionEnvironment(chain,app,dict);
+		if (libsrc!=null) {
+			ideEnv.setLibSrc(new ProjectAppLoader(libsrc));
+		}
+		ideEnv.setEditProcedure("edit.$$$",proc.getName());
+		ideEnv.init();
+		ideEnv.generate();
+		BufferedWriteTarget result = ideEnv.getBuffer("edit.$$$");
+		return result;
+	}
+	*/
+	
+	public BufferedWriteTarget getEditProcedure(Procedure proc,boolean detailed)
+	{
+		ExecutionEnvironment ideEnv = getEnvironment(true);
+		ideEnv.setGenerationEnabled(true);
+		ideEnv.setEditProcedure("edit.$$$",proc.getName(),detailed);
+		ideEnv.open("edit.$$$", ExecutionEnvironment.CREATE);
+		ideEnv.generate(proc);
+		BufferedWriteTarget result = ideEnv.getBuffer("edit.$$$");
+		recycleEnvironment(ideEnv);
+		return result;
+	}
+
+	public BufferedWriteTarget getEditModule(Module module,boolean detailed)
+	{
+		ExecutionEnvironment ideEnv = getEnvironment(true);
+		ideEnv.setGenerationEnabled(true);
+		ideEnv.setEditProcedure("edit.$$$","foobar",detailed);
+		MemoryFileSystem mfs = new MemoryFileSystem();
+		ideEnv.setFileSystem(mfs);
+		ideEnv.generate(module);
+		BufferedWriteTarget result =  mfs.get(module.getName());
+		recycleEnvironment(ideEnv);
+		return result;
+	}
+	
+	public EmbedTree getEmbeds(Procedure procedure)
+	{
+		EmbedTree tree = new EmbedTree();
+		tree.load(getEditProcedure(procedure,true));
+		tree.collateOrphanedEmbeds(procedure);
+		return tree;
+	}
+	
+	private LinkedList<ExecutionEnvironment> reuse=new LinkedList<ExecutionEnvironment>();
+	private AppModel appModel;
+	
+	public ExecutionEnvironment newEnvironment()
+	{
+		ExecutionEnvironment result = new ExecutionEnvironment(chain,app,dict);
+		if (libsrc!=null) {
+			result.setLibSrc(new ProjectAppLoader(libsrc));
+		}
+		result.init();
+		return result;
+	}
+	
+	/**
+	 * Yields a reused execution environment that needs to be done with very quickly
+	 * @return
+	 */
+	public ExecutionEnvironment getEnvironment(boolean primeForUse)
+	{
+		ExecutionEnvironment result=null;
+		synchronized(reuse) {
+			if (!reuse.isEmpty()) {
+				result=reuse.removeFirst();
+			}
+		}
+		
+		if (result!=null) {
+			result.recycle();
+			result.getAppSource().deleteChildren();
+		} else {
+			result = new ExecutionEnvironment(chain,app,dict);
+			if (libsrc!=null) {
+				result.setLibSrc(new ProjectAppLoader(libsrc));
+			}
+			result.init();
+			if (primeForUse) {
+				result.setGeneratorProgress(new BlankProgress());
+				result.setGenerationEnabled(false);
+				result.setFileSystem(new MemoryFileSystem());
+				result.generate(app,true);
+				result.recycle();
+				result.getAppSource().deleteChildren();
+			}				
+		}
+		result.setGeneratorProgress(new BlankProgress());
+		return result;
+	}
+	
+	public void recycleEnvironment(ExecutionEnvironment ee) {
+		synchronized(reuse) {
+			reuse.add(ee);
+		}
+	}
+
+	public boolean prompt(ExecutionEnvironment ideEnv,AtSource source) 
+	{
+		return prompt(ideEnv,source,null);
+		
+	}
+	public boolean prompt(ExecutionEnvironment ideEnv,AtSource source,String field) 
+	{
+		PromptDialog editor = new PromptDialog();
+		editor.setInfo(ideEnv, source,field);
+		editor.setBlockOnOpen(true);
+		int result  = editor.open();
+		recycleEnvironment(ideEnv);
+		return result==Window.OK;
+	}
+
+	public void fileDialog(Addition a) {
+		AdditionFileDialog editor = new AdditionFileDialog();
+		editor.setInfo(getModel().getAppProject(),a);
+		editor.setBlockOnOpen(true);
+		editor.open();
+	}
+	
+	public Module createNewModule(String procedureName,String family) {
+
+		int scan=0;
+		String moduleName=null;
+		
+		while (true) {
+			scan++;			
+			String st= String.valueOf(scan);
+			if (st.length()==1) st="00"+st;
+			if (st.length()==2) st="0"+st;			
+			moduleName = app.getName()+st+".clw";
+			if (app.getModule(moduleName)!=null) continue;		
+			break;
+		}
+		
+		
+		TemplateID moduleID = new TemplateID(family,"GENERATED");
+		ModuleCmd moduleCmd=(ModuleCmd) chain.getSection("#MODULE",moduleID	);
+		if (moduleCmd==null) return null;
+		
+		Module m = new Module();
+		m.setName(moduleName);
+		m.setBase(moduleID);
+		m.setOrder(scan);
+		m.setPopulate(true);
+		m.setApp(app);
+		
+		
+		IContainer folder = appsrc;
+		IFile target=null;
+		int fsuffix=0;
+		while ( target==null ) {
+			String test = procedureName+(fsuffix==0 ? "" : "_"+fsuffix)+".module";
+			fsuffix++;
+			target = ((IFolder)folder).getFile(test);
+			if (!target.exists()) break;
+		}		
+		m.setSource(target);
+		
+		return m;
+	}
+
+	public void setAppModel(AppModel appModel) {
+		this.appModel=appModel;
+	}
+	
+	public AppModel getModel()
+	{
+		return appModel;
+	}
+
+
+}

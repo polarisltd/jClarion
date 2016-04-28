@@ -1,0 +1,103 @@
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseInvalidRangeField)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('    The range field specified is not in the current key!')
+#IF(%BrowseCondition)
+  #ERROR('   Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('   Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('   Current Key: ' & %BrowseKey)
+#IF(%RangeField)
+  #ERROR('   Range Field: ' & %RangeField)
+#ELSE
+  #ERROR('   Range Field: None')
+#ENDIF
+#!--------------------------------------------------------------
+#GROUP(%ErrorRelationshipMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A file relationship range limit was specified, but')
+#ERROR('no relationship to the file specified could be found!')
+#ERROR('Range Field: ' & %RangeField)
+#ERROR('Range File:  ' & %RangeFile)
+#!--------------------------------------------------------------
+#GROUP(%ErrorLimitFieldMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A single value range limit was specified, but')
+#ERROR('no value was provided!')
+#ERROR('   Range Field: ' & %RangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseLimitFieldMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A single value range limit was specified, but')
+#ERROR('no value was provided!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('   Range Field: ' & %RangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseLowLimitMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A range of values range limit was specified, but')
+#ERROR('no low value was provided!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('   Range Field: ' & %RangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseHighLimitMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A range of values range limit was specified, but')
+#ERROR('no high value was provided!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('   Range Field: ' & %RangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseRelationshipMissing)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A file relationship range limit was specified, but')
+#ERROR('no relationship to the file specified could be found!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('Range Field: ' & %RangeField)
+#ERROR('Range File:  ' & %RangeFile)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseLocatorNoFreeKey)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('A locator was specified, but no free key element')
+#ERROR('exists!')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('Locator Type:' & %BrowseLocatorType)
+#ERROR('Range Field: ' & %BrowseRangeField)
+#!--------------------------------------------------------------
+#GROUP(%ErrorBrowseLocatorNoEntryControl)
+#ERROR('Template Error in Procedure: ' & %Procedure)
+#ERROR('An Entry locator was specified, but no entry control')
+#ERROR('exists for the free key element!  Using STEP locator')
+#IF(%BrowseCondition)
+  #ERROR('Browse Condition: ' & %BrowseCondition)
+#ELSE
+  #ERROR('Browse Condition: Default Browse Behavior')
+#ENDIF
+#ERROR('Current Key: ' & %BrowseKey)
+#ERROR('Locator Type:' & %LocatorType)
+#ERROR('Range Field: ' & %RangeField)

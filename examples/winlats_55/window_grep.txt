@@ -1,0 +1,1620 @@
+ABASCII.CLW:GotoDialog WINDOW('Goto'),AT(,,96,38),FONT('MS Sans Serif',8,,FONT:regular),GRAY,DOUBLE
+ABASCII.CLW:FindOptions WINDOW('Find'),AT(,,239,46),FONT('MS Sans Serif',8,,FONT:regular),IMM,GRAY,DOUBLE
+ABASCII.CLW:PrintOptions WINDOW('Print Options: Checking File, please wait...'),AT(,,259,89),FONT('MS Sans Serif',8,,FONT:regular), |
+ABASCII.CLW:window WINDOW('Printing'),AT(,,219,33),FONT('MS Sans Serif',8,,FONT:regular),CENTER,GRAY,DOUBLE
+ABDST.CLW:Window      WINDOW('Winsock Window'),AT(,,260,34),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI), |
+ABDST.CLW:WaitWindow WINDOW('WaitWindow'),AT(,,260,100),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI),GRAY
+ABDST.CLW:WaitWindow WINDOW('WaitWindow'),AT(,,260,100),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI),GRAY
+ABDST.CLW:CloseWindow WINDOW('Close Socket Window'),AT(,,260,100),GRAY
+ABDST.CLW:W    WINDOW('Select Recipients'),AT(,,321,206),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI),SYSTEM, |
+ABDST.CLW:WMDI WINDOW('Select Recipients'),AT(,,321,206),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI),SYSTEM, |
+ABDST.CLW:W    WINDOW('Update Recipient Details'),AT(,,181,75),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI), |
+ABDST.CLW:WMDI WINDOW('Update Recipient Details'),AT(,,181,75),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI), |
+ABEIP.CLW:MultiWindow WINDOW('Choose items and order'),AT(,,300,200),FONT('MS Sans Serif',8,,FONT:regular),CENTER, |
+ABEIP.CLW:TxtWindow WINDOW('Caption'),AT(,,300,200),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI),SYSTEM,GRAY, |
+ABERROR.CLW:Window WINDOW('Error'),AT(,,320,96),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI),CENTER,GRAY,RESIZE
+ABMIME.CLW:Window WINDOW('Attachments'),AT(,,260,116),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI),SYSTEM, |
+ABPOPUP.CLW:window WINDOW('View Menu'),AT(,,251,233),FONT('MS Sans Serif',8,,FONT:regular),CENTER,SYSTEM,GRAY,DOUBLE
+ABQUERY.CLW:W    WINDOW(DefaultWindowText),FONT('MS Sans Serif',8,,FONT:regular,CHARSET:ANSI),CENTER,TILED,SYSTEM, |
+ABREPORT.CLW:PreviewWindow WINDOW('Report Preview'),AT(,,291,120),FONT('MS Sans Serif',10,,),COLOR(COLOR:Gray),CENTER, |
+ABREPORT.CLW:JumpWindow WINDOW('Jump to a Report Page'),AT(,,181,26),FONT('MS Sans Serif',10,,),CENTER,STATUS,GRAY, |
+ABREPORT.CLW:SelectWindow WINDOW('Change the Report Display'),AT(,,141,64),FONT('MS Sans Serif',10,,),GRAY,DOUBLE
+ABREPORT.CLW:Window WINDOW('Pages to Print'),AT(,,260,37),FONT('MS Sans Serif',8,,FONT:regular),CENTER,SYSTEM,GRAY, |
+C5CVT___.CLW:CVTWindow WINDOW('Converting'),AT(,,274,67),FONT('MS Sans Serif',8,,FONT:regular), |
+C5CVT___.CLW:AskWindow WINDOW('Files being converted'),AT(,,360,160),FONT('MS Sans Serif',8,,FONT:regular),SYSTEM, |
+C5CVTDRV.CLW:GetFileWindow WINDOW('Caption'),AT(,,296,98),FONT('MS Sans Serif',8,,FONT:regular), |
+C5CVTDRV.CLW:Window WINDOW('Caption'),AT(,,160,230),FONT('MS Sans Serif',8,,FONT:regular),|
+cpxml.clw:Window WINDOW('XML'),AT(,,530,350),FONT('MS Sans Serif',8,,FONT:regular),ICON(ICON:Application),SYSTEM, |
+DEFAULTS.CLW:Window WINDOW('Caption'),AT(,,260,100),GRAY
+DEFAULTS.CLW:Window WINDOW('Caption'),AT(,,185,92),GRAY,FONT('MS Sans Serif',8,,FONT:regular)
+DEFAULTS.CLW:Window WINDOW('Caption'),AT(,,100,100),MODAL,DOUBLE,CENTER,GRAY,FONT('MS Sans Serif',8,,FONT:regular)
+DEFAULTS.CLW:Window WINDOW('Caption'),AT(,,185,92),MDI,SYSTEM,RESIZE,GRAY,FONT('MS Sans Serif',8,,FONT:regular)
+DEFAULTS.CLW:Window WINDOW('Caption'),AT(,,300,200),FONT('MS Sans Serif',8,,FONT:regular),ICON(ICON:Application),SYSTEM,GRAY,MAX,RESIZE
+ICBODY.$$$:INIINFO WINDOW(' '),AT(,,331,129),CENTER,GRAY
+ICBODY.$$$:LINIINFO WINDOW('C:\WINLATS\WinLatsC.ini'),AT(,,331,129),CENTER,GRAY
+ICBODY.$$$:IMAGEWINDOW WINDOW('WINLATS (c)ASSAKO'),ICON('CLARION.ICO'),STATUS(-1,90,70),SYSTEM,GRAY,MAX,MAXIMIZE, |
+ICBODY.$$$:window               WINDOW('Lietot‚ja identifik‚cija'),AT(20,120,284,175),FONT('MS Sans Serif',11,,FONT:bold),COLOR(COLOR:White),ALRT(F12Key),GRAY
+ICREPORT.CLW:PreviewWindow        WINDOW('Print Preview'),AT(0,0,200,200),AUTO
+wbguard.clw:AskWindow WINDOW('Logon'),AT(,,160,77),FONT('MS Sans Serif',8,,FONT:regular),CENTER,GRAY,NOFRAME
+wbpreview.clw:Window               WINDOW('Report Preview'),AT(,,394,283),FONT('MS Sans Serif',8,,FONT:regular),SYSTEM,GRAY,RESIZE,MDI
+winla001.clw:QuickWindow          WINDOW('Update the NODALAS File'),AT(,,362,116),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateNodalas'),SYSTEM,GRAY,RESIZE
+winla001.clw:QuickWindow          WINDOW('NODALAS.tps'),AT(,,361,278),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseNodalas'),SYSTEM,GRAY,RESIZE
+winla001.clw:FTP_Window WINDOW('JaunÔøΩko versiju lejuplÔøΩde'),AT(,,318,102),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winla002.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla002.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla002.clw:QuickWindow          WINDOW('Update the BANKAS_K File'),AT(,,274,168),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateBANKAS_K'),SYSTEM,GRAY,RESIZE
+winla002.clw:QuickWindow          WINDOW('Browse the BANKAS_K File'),AT(,,268,238),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP('BrowseBANKAS_K'),SYSTEM,GRAY,RESIZE
+winla003.clw:QuickWindow          WINDOW('Update the KON_K File'),AT(,,454,310),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateKON_K'),SYSTEM,GRAY,RESIZE
+winla003.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winla003.clw:QuickWindow          WINDOW('Kontu pl‚ns'),AT(,,450,328),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP('BrowseKON_K'),SYSTEM,GRAY,RESIZE
+winla003.clw:QuickWindow          WINDOW('Update the KURSI_K File'),AT(0,0,155,254),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateKURSI_K'),SYSTEM,GRAY,RESIZE
+winla004.clw:QuickWindow          WINDOW('Kursi_k.tps'),AT(,,200,248),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseKURSI_K'),SYSTEM,GRAY,RESIZE
+winla004.clw:QuickWindow          WINDOW('Update the VAL_K File'),AT(,,301,203),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateVAL_K'),SYSTEM,GRAY,RESIZE
+winla004.clw:QuickWindow          WINDOW('Val˚tu saraksts'),AT(,,280,236),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseVAL_K'),SYSTEM,GRAY
+winla005.clw:QuickWindow          WINDOW('Update the ATZ_K File'),AT(,,194,142),FONT('MS Sans Serif',9,COLOR:MENUTEXT,FONT:bold,CHARSET:BALTIC),IMM,HLP(' '),SYSTEM,GRAY,RESIZE
+winla005.clw:QuickWindow          WINDOW('atz_k.tps'),AT(,,350,280),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseTeksti'),SYSTEM,GRAY,RESIZE
+winla005.clw:QuickWindow          WINDOW('Update the PROJ_P File'),AT(,,233,98),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),IMM,HLP('UpdatePROJ_P'),SYSTEM,GRAY,RESIZE,MDI
+winla006.clw:QuickWindow          WINDOW('PROJ_P.tps File'),AT(,,288,188),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),IMM,HLP('BrowsePROJ_P'),SYSTEM,GRAY,RESIZE
+winla006.clw:QuickWindow          WINDOW('PROJEKTI.tps'),AT(,,361,135),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('UpdatePROJEKTI'),SYSTEM,GRAY,RESIZE
+winla006.clw:QuickWindow          WINDOW('PROJEKTI (Objekti)'),AT(,,361,278),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('BrowseProjekti'),SYSTEM,GRAY,RESIZE
+winla007.clw:Calculator WINDOW('KalkulÔøΩtors'),AT(,,116,192),FONT('Arial',8,,),CENTER,ICON('G_CALC.ICO'),SYSTEM,GRAY, |
+winla007.clw:QuickWindow          WINDOW('Update the PAROLES File'),AT(,,250,298),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('Upateparoles'),SYSTEM,GRAY,RESIZE
+winla007.clw:screen:files WINDOW('Pieeja failiem'),AT(,,283,145),GRAY
+winla007.clw:screen:base WINDOW('Pieeja BÔøΩzei'),AT(,,265,176),GRAY
+winla007.clw:screen:nolik WINDOW('Pieeja Noliktavai'),AT(,,386,230),GRAY
+winla007.clw:screen:fp WINDOW('Pieeja FiskÔøΩlai Drukai'),AT(,,340,176),GRAY
+winla007.clw:screen:alga WINDOW('Pieeja Algai'),AT(,,265,176),GRAY
+winla007.clw:screen:pam WINDOW('Pieeja PamatlÔøΩdzekÔøΩiem'),AT(,,265,176),GRAY
+winla007.clw:screen:LM WINDOW('Pieeja Laika uzskaites sistÔøΩmai'),AT(,,340,176),GRAY
+winla008.clw:QuickWindow          WINDOW('PAROLES.TPS'),AT(0,0,458,293),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('Paroles'),SYSTEM,GRAY
+winla008.clw:QuickWindow          WINDOW('Update the GLOBAL File'),AT(,,413,343),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('PAROLES'),SYSTEM,GRAY,NOFRAME
+winla009.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla009.clw:window0 WINDOW('Nor‚diet darba veidu'),AT(,,201,97),GRAY
+winla009.clw:window1 WINDOW('VÁstules sagatavoana'),AT(50,50,381,269),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winla009.clw:window2 WINDOW('VÁstules sagatavoana'),AT(50,50,302,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla009.clw:uzlimes WINDOW('Nor‚diet uzlÓmi'),AT(50,50,135,162),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla009.clw:window               WINDOW('Nor‚diet periodu'),AT(,,170,270),GRAY
+winla010.clw:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),GRAY
+winla010.clw:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,280,88),CENTER,GRAY
+winla010.clw:FiltrsScreen WINDOW('Partneru saraksta redzamÓbas Filtri'),AT(,,255,66),GRAY
+winla010.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla010.clw:QuickWindow          WINDOW('Partneru saraksts'),AT(-1,-1,457,301),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,ICON('CHECK1.ICO'),HLP('BrowsePAR_K'),SYSTEM,GRAY,RESIZE,MDI
+winla010.clw:QuickWindow          WINDOW('TEKSTI.File'),AT(,,299,131),FONT('MS Sans Serif',8,,FONT:bold),CENTER,IMM,HLP('UpdateTex'),SYSTEM,GRAY,MDI
+winla010.clw:QuickWindow          WINDOW('Tekstu sagataves'),AT(0,0,323,282),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('BrowseTEK'),SYSTEM,GRAY,MDI
+winla011.clw:QuickWindow          WINDOW('Update the VESTURE File'),AT(,,282,259),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateVesture'),GRAY,RESIZE,MDI
+winla011.clw:QuickWindow          WINDOW('VESTURE.tps'),AT(-1,-1,453,264),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseVesture'),SYSTEM,GRAY,RESIZE,MDI
+winla011.clw:QuickWindow          WINDOW('Nomenklat˚ras apakgrupa (grupa2.tps)'),AT(,,276,105),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateGRUPA2'),SYSTEM,GRAY,RESIZE
+winla012.clw:PROGRESSWINDOW WINDOW('...rakstu apakgrupas un NOM_K'),AT(,,151,37),GRAY
+winla012.clw:QuickWindow          WINDOW('Nomenklat˚ras grupa un apakgrupa'),AT(,,290,215),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateGrupas1'),SYSTEM,GRAY,RESIZE
+winla012.clw:QuickWindow          WINDOW('Update the ATL_S File'),AT(,,258,142),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateATL_S'),SYSTEM,GRAY,RESIZE,MASK
+winla012.clw:QuickWindow          WINDOW('Nomenklat˚ru grupas (grupa1.tps)'),AT(,,302,229),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseGrupas'),SYSTEM,GRAY,RESIZE
+winla013.clw:QuickWindow          WINDOW('Update the ATL_K File'),AT(,,242,270),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateATL_K'),SYSTEM,GRAY,RESIZE
+winla013.clw:ATLSCREEN WINDOW('Atlai˛u % maiÚa'),AT(,,157,75),GRAY
+winla013.clw:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,251,86),CENTER,GRAY
+winla013.clw:QuickWindow          WINDOW('ATL_K.TPS'),AT(,,235,275),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseATLAIDES'),SYSTEM,GRAY,RESIZE
+winla013.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winla013.clw:QuickWindow          WINDOW('Update the PAR_K File'),AT(,,435,297),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdatePAR_K'),SYSTEM,GRAY,RESIZE
+winla014.clw:QuickWindow          WINDOW('Update the ADR_K File'),AT(,,265,194),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateADR_K'),SYSTEM,GRAY,RESIZE
+winla014.clw:QuickWindow          WINDOW('Browse the ADR_K File'),AT(,,250,193),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('BrowseADR_K'),SYSTEM,GRAY,RESIZE
+winla014.clw:QuickWindow          WINDOW('Update the PAR_E File'),AT(,,270,141),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateADR_K'),SYSTEM,GRAY,RESIZE
+winla015.clw:QuickWindow          WINDOW('Browse the PAR_E File'),AT(,,314,188),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('BrowseADR_K'),SYSTEM,GRAY,RESIZE
+winla015.clw:Askscreen WINDOW('Datu dzÁana'),AT(,,159,128),CENTER,GRAY
+winla015.clw:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),CENTER,GRAY
+winla015.clw:SELREKWINDOW WINDOW('IzvÁles logs'),AT(,,100,73),CENTER,GRAY
+winla015.clw:QuickWindow          WINDOW('Browse the GG File'),AT(-1,-1,455,298),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP('BrowseGG'),SYSTEM,GRAY,RESIZE,MDI
+winla015.clw:QuickWindow          WINDOW('VESTURE.tps'),AT(,,262,227),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateVesture'),SYSTEM,GRAY,RESIZE,MDI
+winla016.clw:QuickWindow          WINDOW('VESTURE.tps'),AT(-1,-1,452,325),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseVesture'),SYSTEM,GRAY,RESIZE,MDI
+winla016.clw:QuickWindow          WINDOW('Update the KRI_K File'),AT(,,368,193),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),IMM,HLP('UpdateKRI_K'),GRAY,RESIZE,MDI
+winla016.clw:QuickWindow          WINDOW('KON_R.TPS'),AT(,,390,317),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER,IMM,HLP('BrowseKRI_K'),SYSTEM,GRAY,RESIZE,MDI
+winla017.clw:QuickWindow          WINDOW('Update the ARM_K File'),AT(,,315,135),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),IMM,HLP('UpdateARM_K'),SYSTEM,GRAY,RESIZE
+winla017.clw:QuickWindow          WINDOW('¬rÁjo maks‚jumu kodi'),AT(,,312,331),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),IMM,HLP('BrowseARM_K'),SYSTEM,GRAY,RESIZE
+winla017.clw:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winla018.clw:window               WINDOW('Filtrs '),AT(,,305,255),GRAY,MDI
+winla018.clw:A_window WINDOW('Filtrs pÁc atlikumiem'),AT(,,133,67),GRAY
+winla018.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winla018.clw:!window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winla018.clw:window               WINDOW('DB atvÁrtais apgabals b˚s no ... lÓdz gada beig‚m'),AT(,,167,54),CENTER,GRAY
+winla019.clw:QuickWindow          WINDOW('Update the TEK File'),AT(,,378,315),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateTEK'),SYSTEM,GRAY,RESIZE,MDI
+winla019.clw:QuickWindow          WINDOW('Tekstu pl‚ns'),AT(0,0,539,284),FONT('MS Sans Serif',8,,FONT:regular),IMM,HLP('BrowseTEK'),SYSTEM,GRAY,MAX,RESIZE,MDI
+winla019.clw:PVNSCREEN WINDOW('PVN % maiÚa'),AT(,,163,100),GRAY
+winla020.clw:AtlWindow WINDOW(' '),AT(,,164,69),GRAY
+winla020.clw:NodWindow WINDOW(' '),AT(,,154,75),CENTER,GRAY
+winla020.clw:PROWindow WINDOW(' '),AT(,,199,76),CENTER,GRAY
+winla020.clw:QuickWindow          WINDOW('Dokumenta Update (GG)'),AT(1,0,449,297),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateGG'),GRAY,RESIZE,MDI
+winla020.clw:QuickWindow          WINDOW('PamatlÓdzekÔa kartiÚa'),AT(,,584,352),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,VSCROLL,HLP('UpdatePamat'),SYSTEM,GRAY,MDI
+winla020.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,45),CENTER,TIMER(1),GRAY,DOUBLE
+winla021.clw:QuickWindow          WINDOW('Update the KAT_K File'),AT(,,358,209),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateKAT_K'),SYSTEM,GRAY,RESIZE,MDI
+winla021.clw:QuickWindow          WINDOW('Browse the KAT_K File'),AT(,,358,225),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('BrowseKAT_K'),SYSTEM,GRAY,RESIZE,MDI
+winla021.clw:QuickWindow          WINDOW('Update the PAM_P File'),AT(,,190,85),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),IMM,HLP('UpdatePAM_P'),SYSTEM,GRAY,RESIZE,MDI
+winla022.clw:QuickWindow          WINDOW('Browse the PAM_P File'),AT(,,248,188),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),IMM,HLP('BrowsePAM_P'),SYSTEM,GRAY,RESIZE,MDI
+winla022.clw:QuickWindow          WINDOW('Update the PAMAM File'),AT(1,1,221,267),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdatePAMAMORT'),SYSTEM,GRAY,DOUBLE,MDI
+winla022.clw:QuickWindow          WINDOW('Update the GGK File'),AT(0,0,201,348),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateGGK'),SYSTEM,GRAY,RESIZE,MDI
+winla023.clw:SummaWindow          WINDOW('Ievadiet summu:'),AT(,,168,94),IMM,SYSTEM,GRAY,MDI
+winla023.clw:QuickWindow          WINDOW('Browse the GGK File'),AT(1,0,433,278),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseGGK'),SYSTEM,GRAY,RESIZE,MDI
+winla023.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla023.clw:PiezimesWindow WINDOW('PiezÓmes :'),AT(,,365,45),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winla024.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla024.clw:window WINDOW('P/Z sagatavoana'),AT(,,350,340),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winla024.clw:Askscreen WINDOW('Caption'),AT(,,159,92),GRAY
+winla024.clw:SourceScreen WINDOW('Nor‚diet datu avotu'),AT(,,185,79),GRAY
+winla024.clw:QuickWindow          WINDOW('Browse the G2 File'),AT(0,0,402,244),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BROWSEGG1'),SYSTEM,GRAY,RESIZE,MDI
+winla025.clw:Askscreen WINDOW('Datu imports'),AT(,,159,99),CENTER,GRAY
+winla025.clw:BUILDscreen WINDOW('Uzb˚vÁt importa interfeisu :'),AT(,,168,76),CENTER,GRAY
+winla025.clw:SourceScreen WINDOW('Nor‚diet datu avotu'),AT(,,185,79),GRAY
+winla025.clw:MODE_SCREEN WINDOW('Uzb˚vÁt importa interfeisu :'),AT(,,160,70),CENTER,GRAY
+winla025.clw:ProcessScreen WINDOW(' '),AT(,,150,38),CENTER,GRAY
+winla025.clw:QuickWindow          WINDOW('Importa interfeiss'),AT(0,0,441,288),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BROWSEGG1'),SYSTEM,GRAY,RESIZE,MDI
+winla025.clw:QuickWindow          WINDOW('Browse the GGK1 File'),AT(,,390,205),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,VSCROLL,HLP('BROWSEGGK1'),SYSTEM,GRAY,RESIZE,MDI
+winla025.clw:NOLIDZ_SCREEN WINDOW('Nor‚dÓet druk‚jamo apgabalu :'),AT(,,185,92),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winla025.clw:QuickWindow          WINDOW('Mainam SYSTEM failu'),AT(,,313,272),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateSYSTEM'),SYSTEM,GRAY,RESIZE
+winla026.clw:window               WINDOW('231..,531.. vÁstures b˚vÁana'),AT(,,320,79),CENTER,GRAY
+winla026.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla026.clw:INIINFO WINDOW(' '),AT(,,331,129),CENTER,GRAY
+winla026.clw:LINIINFO WINDOW('C:\WINLATS\WinLatsC.ini'),AT(,,331,129),CENTER,GRAY
+winla026.clw:IMAGEWINDOW WINDOW('WINLATS (c)ASSAKO'),ICON('CLARION.ICO'),STATUS(-1,90,70),SYSTEM,GRAY,MAX,MAXIMIZE, |
+winla026.clw:window               WINDOW('Lietot‚ja identifik‚cija'),AT(20,120,284,175),FONT('MS Sans Serif',11,,FONT:bold),COLOR(COLOR:White),ALRT(F12Key),GRAY
+winla026.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla027.clw:quickwindow          WINDOW('Elektronisko norÁÌinu sistÁma'),AT(,,291,106),GRAY
+winla027.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla027.clw:window               WINDOW('Kontu slÁgana'),AT(,,260,140),GRAY
+winla028.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla028.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla028.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla028.clw:IZDRUKA WINDOW('Filtrs kontÁjumiem'),AT(,,115,91),GRAY
+winla029.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla029.clw:Window WINDOW('Filtrs klienta aktivit‚tes samazin‚juma konststÁanai'),AT(,,316,92),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winla029.clw:Key_window WINDOW(' '),AT(,,147,130),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER,GRAY
+winla029.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla029.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla030.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla030.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla030.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla031.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla031.clw:window               WINDOW('Filtrs izziÚ‚m'),AT(,,305,225),CENTER,IMM,SYSTEM,GRAY,RESIZE,MDI
+winla031.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla032.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla032.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla032.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla033.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla033.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla033.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla034.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla034.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla034.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla035.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla035.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla035.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla036.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla036.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla036.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla037.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla037.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla037.clw:window               WINDOW('Filtrs atskaitÁm'),AT(,,265,156),GRAY
+winla038.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla038.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla038.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla039.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla039.clw:ProgressWindow WINDOW('Progress...'),AT(,,152,63),CENTER,TIMER(1),GRAY,DOUBLE
+winla039.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla040.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla040.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla040.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla040.clw:NOLNRSCREEN WINDOW(' '),AT(,,122,52),CENTER,GRAY
+winla040.clw:QuickWindow          WINDOW('Browse the PAVAD File'),AT(,,336,211),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('BrowsePavad1'),SYSTEM,GRAY,RESIZE,MODAL
+winla041.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla041.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla042.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla042.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla042.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla043.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla043.clw:window WINDOW('   KÔøΩÔøΩda '),AT(,,358,71),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER,IMM, |
+winla044.clw:RINDASCREEN WINDOW('Caption'),AT(,,186,101),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winla046.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla046.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla047.clw:window               WINDOW('Self-testam'),AT(,,200,108),GRAY
+winla049.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla049.clw:window WINDOW('RÁÌina sagatavoana'),AT(,,375,335),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winla050.clw:Preview:Window WINDOW('Izdrukas apl˚koana'),FONT('MS Sans Serif',10,,),COLOR(COLOR:Gray),IMM,HVSCROLL, |
+winla051.clw:window               WINDOW('Druk‚anas parametri'),AT(,,140,84),GRAY
+winla051.clw:QuickWindow          WINDOW(' '),AT(,,453,287),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,VSCROLL,HLP(' '),SYSTEM,GRAY,RESIZE,MDI
+winla052.clw:QuickWindow          WINDOW(' '),AT(0,0,473,270),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP(' '),SYSTEM,GRAY,RESIZE,MDI
+winla052.clw:QuickWindow          WINDOW('Partneru saraksts.  PAR_K1.tps'),AT(,,363,262),FONT('MS Sans Serif',9,,FONT:bold),IMM,ICON('ZOOM.ICO'),HLP('browsepar_k1'),SYSTEM,GRAY,RESIZE,MDI
+winla052.clw:SyncWindow WINDOW('Caption'),AT(,,270,91),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),GRAY
+winla053.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla053.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla053.clw:PARAMETRI WINDOW('Parametri'),AT(,,293,89),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla053.clw:window               WINDOW('Jaunas datu b‚zes izveidoana'),AT(,,442,364),FONT('MS Sans Serif',9,,FONT:bold),CENTER,GRAY,MAXIMIZE
+winla054.clw:QuickWindow          WINDOW('Update the NOL_KOPS File'),AT(,,460,300),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateNOL_KOPS'),SYSTEM,GRAY,RESIZE,MDI
+winla054.clw:ProgressWindow WINDOW('Progress...'),AT(,,154,55),CENTER,TIMER(1),GRAY,DOUBLE
+winla054.clw:QuickWindow          WINDOW('Browse the NOL_KOPS File'),AT(-1,-1,361,251),FONT('MS Sans Serif',10,,FONT:bold),IMM,HLP('BrowseNOL_KOPS'),SYSTEM,GRAY,RESIZE,MDI
+winla054.clw:window               WINDOW('Nor‚diet datu b‚zi'),AT(,,383,199),CENTER,SYSTEM,GRAY,MDI
+winla055.clw:QuickWindow          WINDOW('Update the CENUVEST File'),AT(,,193,179),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateCENUVEST'),SYSTEM,GRAY,RESIZE,MDI
+winla055.clw:PasWindow WINDOW('¬tr‚ pas˚tÓjuma veidoana'),AT(,,318,212),CENTER,GRAY,MDI
+winla055.clw:RAZwindow WINDOW('Caption'),AT(,,191,64),GRAY
+winla055.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla055.clw:QuickWindow          WINDOW('Browse the CENUVEST File'),AT(,,358,234),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseCVesture'),SYSTEM,GRAY,RESIZE,MDI
+winla055.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla055.clw:QuickWindow          WINDOW('Browse the NOL_STAT File'),AT(,,429,277),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseNol_Stat'),SYSTEM,GRAY,RESIZE,MDI
+winla149.clw:QuickWindow          WINDOW('Update the NOL_STAT File'),AT(,,442,259),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateNOL_STAT'),SYSTEM,GRAY,RESIZE,MDI
+winla149.clw:window               WINDOW('Datu b‚zes av‚rijas atjaunoana'),AT(,,428,330),FONT('MS Sans Serif',9,,FONT:bold),CENTER,GRAY,MAXIMIZE
+winla149.clw:ProgressWindow WINDOW('Progress...'),AT(,,145,63),CENTER,TIMER(1),GRAY,DOUBLE
+winla150.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,72),CENTER,TIMER(1),GRAY,DOUBLE
+winla150.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla150.clw:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winla150.clw:PASwindow WINDOW('Veidojam pas˚tÓjumu'),AT(,,162,51),GRAY
+winla150.clw:PASTABLE WINDOW('Nor‚diet Pas˚tÓjumu'),AT(,,185,92),GRAY
+winla150.clw:FiltrsScreen WINDOW('RedzamÓba'),AT(,,235,106),GRAY
+winla150.clw:QuickWindow          WINDOW('Realiz‚cijas statistika / Pas˚tÓjumu veidoana'),AT(0,0,463,297),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateNOL_KOPS'),SYSTEM,GRAY,RESIZE,MDI
+winla150.clw:PASUT WINDOW('Pas˚tÓjuma apjoma noteikanas nosacÓjumi'),AT(,,287,180),GRAY
+winla151.clw:InfoScreen WINDOW('Inform‚cija par P/Z'),AT(,,310,89),GRAY
+winla151.clw:SHOWSCREEN WINDOW('Caption'),AT(,,260,100),GRAY
+winla151.clw:QuickWindow          WINDOW('Pas˚tÓjumu saraksts'),AT(-1,-1,385,290),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP('BrowsePAVAD'),SYSTEM,GRAY,RESIZE,MDI
+winla151.clw:QuickWindow          WINDOW('MeklÁjumu statistika'),AT(,,280,100),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateNOM_N'),SYSTEM,GRAY,MDI
+winla151.clw:QuickWindow          WINDOW('Browse the NOM_N File'),AT(,,399,251),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseNom_Meklejumi'),SYSTEM,GRAY,RESIZE,MDI
+winla152.clw:QuickWindow          WINDOW('Pas˚tÓjumi'),AT(0,0,458,292),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('UpdatePAVAD'),GRAY,RESIZE,MDI
+winla152.clw:QuickWindow          WINDOW('Update the NOLIK File'),AT(,,434,178),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('UpdateNOLIK'),SYSTEM,GRAY,RESIZE,MDI
+winla152.clw:Progresswindow WINDOW('MeklÁju auto'),AT(,,137,45),GRAY
+winla152.clw:QuickWindow          WINDOW('AutomaÓnu saraksts'),AT(,,436,317),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseAuto'),SYSTEM,GRAY,RESIZE,MDI
+winla153.clw:window               WINDOW('a/m pilna servisa vÁsture'),AT(,,326,197),FONT('MS Sans Serif',9,,FONT:bold),GRAY
+winla153.clw:QuickWindow          WINDOW('Servisa vÁsture'),AT(,,357,250),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('BrowseAutoSe'),SYSTEM,GRAY,RESIZE,MDI
+winla153.clw:QuickWindow          WINDOW('Update the AUTOAPK File'),AT(,,407,285),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateAUTOAPK'),SYSTEM,GRAY,RESIZE,MDI
+winla154.clw:BrowseWindow         WINDOW('Browse Records'),AT(0,0,399,237),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),SYSTEM,GRAY,MDI
+winla154.clw:QuickWindow          WINDOW('Update the AUTODARBI File'),AT(,,231,126),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('UpdateAUTODARBI'),SYSTEM,GRAY,RESIZE,MDI
+winla154.clw:QuickWindow          WINDOW('Update the KADRI File'),AT(,,380,337),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('UpdateKADRI'),SYSTEM,GRAY,RESIZE,MDI
+winla154.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla155.clw:QuickWindow          WINDOW('RÓkojumi un Dokumenti: Kad_Rik.tps'),AT(,,394,198),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateRIKOJUMI'),SYSTEM,GRAY,RESIZE,MDI
+winla155.clw:QuickWindow          WINDOW('Kad_Rik.tps'),AT(,,429,314),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseRikojumi'),SYSTEM,GRAY,RESIZE,MDI
+winla155.clw:QuickWindow          WINDOW('Amati.tps'),AT(,,247,98),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateAmati'),SYSTEM,GRAY,RESIZE
+winla156.clw:QuickWindow          WINDOW('Amati.tps'),AT(,,184,259),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseAmati'),SYSTEM,GRAY,RESIZE
+winla156.clw:SOCSCREEN WINDOW('Soc.apdr. % maiÚa'),AT(,,184,81),GRAY
+winla156.clw:PPFSCREEN WINDOW('Priv‚to pensiju fonda  % maiÚa'),AT(,,157,75),GRAY
+winla156.clw:QuickWindow          WINDOW('Kadru saraksts'),AT(,,460,330),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseKADRI'),SYSTEM,GRAY,RESIZE,MDI
+winla156.clw:QuickWindow          WINDOW('Update the TEK_SER File'),AT(,,473,94),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateTEK_SER'),SYSTEM,GRAY,RESIZE,MDI
+winla157.clw:QuickWindow          WINDOW('Browse the TEK_SER File'),AT(,,429,255),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BROWSETEK_SER'),SYSTEM,GRAY,RESIZE,MDI
+winla157.clw:QuickWindow          WINDOW('Update the AUTOTEX File'),AT(,,348,148),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('UpdateAUTOTEX'),SYSTEM,GRAY,RESIZE,MDI
+winla157.clw:QuickWindow          WINDOW('Update the AUTO File'),AT(,,273,177),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateAuto'),SYSTEM,GRAY,RESIZE,MDI
+winla158.clw:QuickWindow          WINDOW('Update the AUTOKR¬SAS File'),AT(,,162,70),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateAutoMarkas'),SYSTEM,GRAY,RESIZE,MDI
+winla158.clw:QuickWindow          WINDOW('Browse the AUTOKRASAS File'),AT(,,166,212),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseAutoMarkas'),SYSTEM,GRAY,RESIZE,MDI
+winla158.clw:QuickWindow          WINDOW('Update the AUTOMARKAS File'),AT(,,166,70),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateAutoMarkas'),SYSTEM,GRAY,RESIZE,MDI
+winla159.clw:QuickWindow          WINDOW('Browse the AUTOMARKAS File'),AT(,,166,217),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseAutoMarkas'),SYSTEM,GRAY,RESIZE,MDI
+winla159.clw:QuickWindow          WINDOW('Update the NOM_K File'),AT(,,376,286),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP(' '),CURSOR(CURSOR:None),GRAY,RESIZE,MDI
+winla159.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winla159.clw:QuickWindow          WINDOW('Update the NOM_P File'),AT(,,196,127),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('UpdateNOM_P'),SYSTEM,GRAY,RESIZE,MDI
+winla160.clw:QuickWindow          WINDOW('Browse the NOM_P File'),AT(,,315,220),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseNom_P'),SYSTEM,GRAY,RESIZE,MDI
+winla160.clw:QuickWindow          WINDOW('Update the NOM_C File'),AT(,,309,107),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateNOM_C'),SYSTEM,GRAY,RESIZE,MDI
+winla160.clw:QuickWindow          WINDOW('Update the CROSSREF File'),AT(,,198,126),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateCrossref'),SYSTEM,GRAY,RESIZE,MDI
+winla161.clw:QuickWindow          WINDOW('Browse the CROSSREF File'),AT(,,257,275),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP('BrowseCrossref'),SYSTEM,GRAY,RESIZE,MDI
+winla161.clw:showscreen WINDOW('Datu imports'),AT(,,185,91),CENTER,GRAY
+winla161.clw:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,273,115),CENTER,GRAY
+winla161.clw:FiltrsScreen WINDOW('Nomenklat˚ru saraksta redzamÓbas Filtri'),AT(,,210,116),GRAY
+winla161.clw:CenaScreen WINDOW('MainÓt cenu'),AT(,,189,130),GRAY
+winla161.clw:EURscreen WINDOW('MainÓt cenu uz EUR'),AT(,,184,91),GRAY
+winla161.clw:ProcScreen WINDOW('MainÓt uzcenojuma % 5.cenai'),AT(,,187,71),GRAY
+winla161.clw:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),GRAY
+winla161.clw:STATUSSCREEN WINDOW('KA Statusa maiÚa'),AT(,,130,181),GRAY
+winla161.clw:PVNSCREEN WINDOW('PVN % maiÚa'),AT(,,175,190),GRAY
+winla161.clw:PVNSCREEN1 WINDOW('PVN % maiÚa'),AT(,,175,195),GRAY
+winla161.clw:SLIQUIDscreen WINDOW('RedzamÓbas mainÓana'),AT(,,251,90),CENTER,GRAY
+winla161.clw:LIQUIDscreen WINDOW('Nomenklat˚ru dzÁana'),AT(,,251,90),CENTER,GRAY
+winla161.clw:QuickWindow          WINDOW('Browse the NOM_K File'),AT(-1,-1,462,295),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP('BrowseNOM_K'),SYSTEM,GRAY,RESIZE,MDI
+winla161.clw:QuickWindow          WINDOW('Update the KOMPLEKT File'),AT(,,181,93),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateKOMPLEKT'),SYSTEM,GRAY,RESIZE,MDI
+winla162.clw:QuickWindow          WINDOW('Browse the KOMPLEKT File'),AT(,,288,208),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseKomplekt'),SYSTEM,GRAY,RESIZE,MDI
+winla162.clw:QuickWindow          WINDOW('Update the NOLIK File'),AT(,,426,260),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('UpdateNOLIK'),SYSTEM,GRAY,RESIZE,MDI
+winla162.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla163.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla163.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla163.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla163.clw:WMFANSI WINDOW('Izdrukas Form‚ts'),AT(,,185,72),GRAY
+winla164.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla164.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla164.clw:KOM  WINDOW('Komisijas sast‚vs'),AT(,,170,135),CENTER,GRAY,DOUBLE
+winla164.clw:QuickWindow          WINDOW('Browse the PAMAT File'),AT(-1,-1,459,326),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowsePAMAT'),SYSTEM,GRAY,RESIZE,MDI
+winla164.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla165.clw:FormWindow           WINDOW('NodokÔu aprÁÌina karte'),AT(18,5,392,190),SYSTEM,GRAY,MDI
+winla165.clw:SHOWSCREEN WINDOW('B˚vÁju sarakstu'),AT(,,122,42),CENTER,GRAY
+winla165.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla165.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla166.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla166.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla166.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla167.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla167.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla167.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla168.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla168.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla168.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla169.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla169.clw:KOM  WINDOW('Komisijas sast‚vs'),AT(,,173,91),CENTER,GRAY,DOUBLE
+winla169.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla169.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,45),CENTER,TIMER(1),GRAY,DOUBLE
+winla170.clw:window               WINDOW('Filtrs izziÚ‚m'),AT(,,136,79),GRAY
+winla170.clw:MenuWindow           WINDOW('PavadzÓmes'),AT(,,380,272),CENTER,IMM,GRAY,MDI
+winla171.clw:InfoScreen WINDOW('Inform‚cija par P/Z'),AT(,,306,82),IMM,SYSTEM,GRAY,RESIZE
+winla171.clw:Askscreen WINDOW('Datu dzÁana'),AT(,,159,128),CENTER,GRAY
+winla171.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla171.clw:QuickWindow          WINDOW('Browse the PAVAD File'),AT(-1,-1,452,295),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP('BrowsePAVAD'),SYSTEM,GRAY,RESIZE,MDI
+winla171.clw:QuickWindow          WINDOW('Update the INVENT File'),AT(,,369,60),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateInvent'),SYSTEM,GRAY,RESIZE,MDI
+winla171.clw:Invwind WINDOW('Inventariz‚cijas dokumenta b˚vÁana'),AT(,,185,98),GRAY
+winla171.clw:CenaWindow WINDOW('Caption'),AT(,,138,78),GRAY
+winla171.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla171.clw:QuickWindow          WINDOW('Inventariz‚cija'),AT(,,455,327),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseInvent'),SYSTEM,GRAY,RESIZE,MDI
+winla172.clw:QuickWindow          WINDOW('Update the EIROKODI File'),AT(,,273,98),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateEIROKODI'),SYSTEM,GRAY,RESIZE,MDI
+winla172.clw:QuickWindow          WINDOW('Browse the EIROKODI File'),AT(,,315,205),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseEirokodi'),SYSTEM,GRAY,RESIZE,MDI
+winla172.clw:QuickWindow          WINDOW('Update the AU_BILDE File'),AT(,,158,255),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),IMM,HLP('UpdateAU_BILDE'),SYSTEM,GRAY,RESIZE,MDI
+winla173.clw:KESKAwindow WINDOW('IzvÁles logs'),AT(,,179,63),GRAY
+winla173.clw:MOVEHwindow WINDOW('IzvÁles logs'),AT(,,179,63),GRAY
+winla173.clw:MOVEVwindow WINDOW('IzvÁles logs'),AT(,,174,57),GRAY
+winla173.clw:SHOWSCREEN1 WINDOW('B˚vÁju .....'),AT(,,106,35),CENTER,GRAY
+winla173.clw:QuickWindow          WINDOW('aubixx.tps'),AT(0,0,580,380),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),IMM,SYSTEM,GRAY,RESIZE,MDI
+winla173.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla173.clw:windowMS             WINDOW('Marruta sast‚dÓana'),AT(,,325,196),FONT(,9,,FONT:bold),GRAY
+winla174.clw:Askscreen WINDOW('Uzkr‚jo‚ skanera lasÓana'),AT(,,201,130),CENTER,GRAY,MDI
+winla174.clw:NEWSCREEN WINDOW('Jauna prece'),AT(,,262,127),IMM,HLP(' '),CURSOR(CURSOR:None),GRAY,MDI
+winla174.clw:SHOWSCREEN WINDOW('Rakstu apmaiÚas failu ...'),AT(,,202,71),GRAY
+winla174.clw:QuickWindow          WINDOW('Update the MER_K File'),AT(,,97,56),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('UpdateMER_K'),SYSTEM,GRAY,RESIZE,MDI
+winla175.clw:QuickWindow          WINDOW('Browse the MER_K File'),AT(,,159,188),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseMER_K'),SYSTEM,GRAY,RESIZE,MDI
+winla175.clw:Askscreen WINDOW('Datu imports'),AT(,,189,138),CENTER,GRAY
+winla175.clw:QuickWindow          WINDOW('Browse the PAVA1 File'),AT(,,345,291),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('BrowsePava1'),SYSTEM,GRAY,DOUBLE,MDI
+winla175.clw:Kon_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,111),CENTER,GRAY
+winla175.clw:Kon1_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,142),CENTER,GRAY
+winla175.clw:Konfig_screen WINDOW('CHD4010,5010,TEC MA-1650,CHD3510,5510 Konfigur‚cija '),AT(,,230,210),CENTER,GRAY
+winla175.clw:Komanda_Screen WINDOW('OMRON komandu fails'),AT(,,236,148),CENTER,GRAY
+winla175.clw:!KomandaN_Screen WINDOW('OMRON 3420 komandu fails'),AT(,,236,148),CENTER,GRAY
+winla175.clw:ReLoadScreen WINDOW('Kases apar‚ta lasÓana (K P/Z veidoana)'),AT(,,353,80),GRAY
+winla176.clw:Konfig_screen WINDOW('CHD3010,4010,5010,TEC MA-1650,CHD3510,5510 Konfigur‚cija '),AT(,,230,210),CENTER, |
+winla176.clw:Kon_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,108),CENTER,GRAY
+winla176.clw:Kon1_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,138),CENTER,GRAY
+winla176.clw:Komanda_Screen WINDOW('OMRON komandu fails'),AT(,,236,181),CENTER,GRAY
+winla176.clw:!KomandaN_Screen WINDOW('OMRON3420 komandu fails'),AT(,,236,181),CENTER,GRAY
+winla176.clw:PLU_Screen WINDOW('BLUEBRIDGE'),AT(,,230,117),CENTER,GRAY
+winla176.clw:LoadScreen WINDOW('Kases apar‚ta rakstÓana'),AT(,,353,80),GRAY
+winla176.clw:QuickWindow          WINDOW('AutokontÁjuma  algoritmi'),AT(,,393,233),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP(' '),CURSOR(CURSOR:None),GRAY,RESIZE
+winla176.clw:D_KSCREEN WINDOW('Nor‚diet dokumenta Tipu:'),AT(,,137,139),FONT('MS Sans Serif',10,,FONT:bold),CENTER, |
+winla176.clw:QuickWindow          WINDOW('Update the PAVAD File'),AT(,,457,325),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),IMM,HLP('UpdatePAVAD'),GRAY,RESIZE,MDI
+winla177.clw:window               WINDOW('Caption'),AT(,,384,140),FONT('MS Sans Serif',9,,FONT:bold),CENTER,GRAY
+winla177.clw:window WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,60),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winla177.clw:NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winla177.clw:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winla177.clw:window               WINDOW('IzziÚa filtram'),AT(,,266,77),GRAY
+winla178.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla178.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla178.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla179.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla179.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla179.clw:Virsraksts_w WINDOW(' '),AT(,,140,115),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winla179.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla180.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla180.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla180.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla181.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla181.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla181.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla182.clw:window               WINDOW('Fitrs izziÚ‚m'),AT(,,200,91),GRAY
+winla182.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla182.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winla182.clw:window WINDOW('Papildus Nom Filtrs'),AT(,,160,142),GRAY
+winla183.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla183.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla183.clw:FiltrsScreen WINDOW('Nomenklat˚ru Filtrs'),AT(,,118,91),GRAY
+winla183.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla184.clw:ProgressWindow WINDOW('Progress...'),AT(,,314,66),CENTER,TIMER(1),GRAY,DOUBLE
+winla184.clw:window               WINDOW('Noliktavu IzvÁles logs'),AT(,,162,238),GRAY
+winla184.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla185.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla185.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla185.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla186.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla186.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla186.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla187.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla187.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla187.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla188.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla188.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla188.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla189.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla189.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla189.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla190.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla190.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla190.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla191.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla191.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla191.clw:window               WINDOW('Partnera tips'),AT(,,103,101),GRAY
+winla193.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla193.clw:KESKA_SCREEN WINDOW(' '),AT(,,145,108),FONT('Microsoft Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla194.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla194.clw:KOscreen WINDOW('Kases orderis'),AT(,,213,163),CENTER,GRAY
+winla194.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla194.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla195.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla196.clw:window WINDOW('Kases apar‚ta rakstÓanai'),AT(,,185,73),GRAY
+winla196.clw:REGscreen WINDOW('BARMAN lasÓanai'),AT(,,159,144),GRAY
+winla199.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla199.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla200.clw:QuickWindow          WINDOW('Update ALGAS'),AT(,,360,312),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateALGAS'),SYSTEM,GRAY,RESIZE,MDI
+winla200.clw:iet_window WINDOW('Caption'),AT(,,216,62),GRAY
+winla200.clw:QuickWindow          WINDOW('Algu saraksts'),AT(0,0,458,307),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseALGAS'),SYSTEM,GRAY,RESIZE,MDI
+winla201.clw:QuickWindow          WINDOW('PieskaitÓjumi'),AT(,,458,296),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateDAIEV'),SYSTEM,GRAY,RESIZE,MDI
+winla201.clw:QuickWindow          WINDOW('PieskaitÓjumi/IeturÁjumi'),AT(,,425,254),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('PieskTable'),SYSTEM,GRAY,RESIZE,MDI
+winla201.clw:screen1 WINDOW('NomainÓt kodu'),AT(,,185,73),GRAY
+winla201.clw:screen2 WINDOW('Ievadiet kodu'),AT(,,185,64),GRAY
+winla201.clw:QuickWindow          WINDOW('VIDALGA'),AT(,,267,280),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('VIDALGA'),SYSTEM,GRAY,MDI
+winla202.clw:A_SWINDOW WINDOW('Nor‚diet dokumenta Tipu:'),AT(,,134,66),FONT('MS Sans Serif',10,,FONT:bold),CENTER, |
+winla202.clw:QuickWindow          WINDOW('Update the PERNOS File'),AT(,,263,246),FONT('MS Sans Serif',9,,FONT:bold),CENTER,IMM,HLP('UpdatePERNOS'),SYSTEM,GRAY,RESIZE,MDI
+winla202.clw:QuickWindow          WINDOW('AtvaÔin‚jumi un SlimÓbas lapas'),AT(,,363,333),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowsePERNOS'),SYSTEM,GRAY,RESIZE,MDI
+winla202.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla203.clw:QuickWindow          WINDOW('Filtrs izziÚ‚m'),AT(,,300,133),GRAY,MDI
+winla203.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla203.clw:SVSCREEN WINDOW('Caption'),AT(,,106,92),GRAY
+winla203.clw:QuickWindow          WINDOW('ALGPA.TPS'),AT(-1,-1,374,313),FONT('MS Sans Serif',10,,FONT:bold),IMM,HLP('BrowsePARSK'),SYSTEM,GRAY,RESIZE,MDI
+winla204.clw:FormWindow           WINDOW('Darba laika grafiks'),AT(,,590,379),FONT('Arial',7,,,CHARSET:BALTIC),CENTER,SYSTEM,GRAY,RESIZE,MDI
+winla204.clw:BrowseWindow         WINDOW('Browse Records'),AT(,,320,265),CENTER,SYSTEM,GRAY,MDI
+winla204.clw:window               WINDOW('Darba laika kalend‚rs'),AT(,,309,162),IMM,SYSTEM,GRAY
+winla205.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla205.clw:QuickWindow          WINDOW('Update the ALGPA File'),AT(,,305,210),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateALPA'),SYSTEM,GRAY,RESIZE,MDI
+winla205.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla206.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla206.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla206.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla207.clw:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,339,144),GRAY
+winla207.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla207.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla207.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla208.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla208.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla208.clw:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winla208.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla209.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla209.clw:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winla209.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla209.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla210.clw:QuickWindow          WINDOW('Update the DAIEV File'),AT(,,296,323),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateDAIEV'),SYSTEM,GRAY,RESIZE,MDI
+winla210.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla210.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla212.clw:QuickWindow          WINDOW('Update the ALTAB1'),AT(,,151,88),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UPAL1'),SYSTEM,GRAY,RESIZE,MDI
+winla212.clw:QuickWindow          WINDOW('Algas H'),AT(,,296,261),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('ALTAB1'),SYSTEM,GRAY,RESIZE,MDI
+winla213.clw:QuickWindow          WINDOW('Update the ALTAB2'),AT(,,151,79),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UPAL2'),SYSTEM,GRAY,RESIZE,MDI
+winla214.clw:QuickWindow          WINDOW(' '),AT(,,146,52),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UPAL3'),SYSTEM,GRAY,RESIZE,MDI
+winla214.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla214.clw:DIVWindow WINDOW('Dividendes'),AT(,,185,92),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winla214.clw:window               WINDOW('Algu rÁÌins'),AT(,,280,115),IMM,SYSTEM,GRAY
+winla215.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla215.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla216.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla217.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla218.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla219.clw:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winla219.clw:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winla220.clw:window               WINDOW('Filtrs kopsavilkumam'),AT(,,290,93),GRAY,MDI
+winla221.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla222.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla222.clw:QuickWindow          WINDOW('Iepirkuma cenu apmaiÚas fails'),AT(,,358,184),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowseKOIVUNEN'),SYSTEM,GRAY,RESIZE,MDI
+winla222.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla223.clw:INFOSCREEN WINDOW('Papildus inform‚cija'),AT(,,248,257),CENTER,GRAY
+winla223.clw:ParrekinuWindow WINDOW(' '),AT(,,161,44),GRAY
+winla223.clw:FILTRSWINDOW WINDOW('Mainam filtra nosacÓjumus'),AT(,,169,60),GRAY
+winla223.clw:QuickWindow          WINDOW('D-Projekta formÁana no Pas˚tÓjumiem'),AT(,,437,267),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BrowsePaNolik'),SYSTEM,GRAY,RESIZE,MDI
+winla224.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla225.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla225.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla225.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla226.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla226.clw:window WINDOW('Caption'),AT(,,260,100),GRAY
+winla227.clw:window               WINDOW('Apstipriniet izvÁli ...'),AT(,,166,71),GRAY
+winla227.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla227.clw:window               WINDOW('Caption'),AT(,,248,92),GRAY
+winla228.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla228.clw:APMAKSASCREEN WINDOW('Caption'),AT(,,179,64),CENTER,GRAY
+winla228.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla228.clw:APMAKSASCREEN WINDOW('MeklÁt P/Z apmaksu'),AT(,,179,64),CENTER,GRAY
+winla228.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla229.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla230.clw:window               WINDOW('Filtrs'),AT(,,135,215),CENTER,IMM,GRAY,MDI
+winla230.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla230.clw:ToScreen WINDOW('ApmaiÚas TPS failu sagatavoana'),AT(,,185,125),GRAY
+winla230.clw:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winla231.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla231.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla231.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla232.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla232.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla233.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla233.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla233.clw:KOM  WINDOW('Komisijas sast‚vs'),AT(,,172,83),CENTER,GRAY,DOUBLE
+winla234.clw:window               WINDOW('Nor‚diet periodu'),AT(,,255,147),CENTER,IMM,GRAY,MDI
+winla234.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla234.clw:IZDRUKA WINDOW('Parametri izdrukai'),AT(,,191,204),GRAY
+winla235.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla236.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla236.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla236.clw:Virsraksts_w WINDOW(' '),AT(,,140,115),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winla236.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla237.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla238.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla238.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla239.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla239.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla240.clw:window               WINDOW('Filtrs P/L'),AT(,,153,145),CENTER,IMM,GRAY,MDI
+winla240.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla240.clw:window               WINDOW('Filtrs izziÚ‚m'),AT(,,270,141),GRAY,MDI
+winla241.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla241.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla242.clw:window               WINDOW('PeÔÚas / zaudÁjumu analÓze  '),AT(,,437,265),FONT('MS Sans Serif',8,,FONT:bold),CENTER,GRAY
+winla242.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla242.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla242.clw:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winla243.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla243.clw:Laiki WINDOW('Laiks'),AT(,,114,57),CENTER,GRAY
+winla243.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla243.clw:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winla243.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla243.clw:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winla244.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla244.clw:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winla244.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla245.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla245.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla245.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla246.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla247.clw:window               WINDOW('A/M Servisa vÁsture'),AT(,,293,204),FONT(,9,,FONT:bold),VSCROLL,GRAY
+winla247.clw:windowDD WINDOW('DaÔas/darbi'),AT(,,172,202),FONT(,9,,FONT:bold,CHARSET:BALTIC),VSCROLL,GRAY
+winla247.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla247.clw:NOMFwindow WINDOW('Papildus Nom Filtrs'),AT(,,142,98),GRAY
+winla247.clw:Datawindow WINDOW('Dati Lasotras rÁÌinam'),AT(,,272,161),GRAY
+winla248.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla248.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla248.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla249.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla249.clw:window               WINDOW('Nomenklat˚ras tips'),AT(,,103,101),GRAY
+winla249.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla250.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla250.clw:Window               WINDOW('Izdrukas apl˚koana (PAV.TXT)'),AT(,,397,287),FONT(,8,,FONT:bold,CHARSET:BALTIC),IMM,SYSTEM,GRAY,RESIZE
+winla250.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla251.clw:PROCESSCREEN WINDOW('Sagatavojam apmaiÚas tabulas'),AT(,,250,281),CENTER,GRAY
+winla251.clw:window               WINDOW(' '),AT(,,389,116),FONT('MS Sans Serif',9,,FONT:bold),CENTER,GRAY
+winla251.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla252.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla252.clw:window WINDOW('Papildus FiltrI'),AT(,,160,110),GRAY
+winla252.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla252.clw:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winla252.clw:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winla252.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla252.clw:Window WINDOW('Ievadiet s‚kuma datus'),AT(,,220,130),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winla253.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla254.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla254.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla255.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla256.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla256.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla256.clw:window WINDOW('Caption'),AT(,,260,100),GRAY
+winla256.clw:POLISE:Window WINDOW('Apdroin‚anas polises un lietas Nr:'),AT(,,273,38),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC), |
+winla257.clw:ToScreen WINDOW('ApmaiÚas TXT faila sagatavoana'),AT(,,190,138),GRAY
+winla257.clw:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,246,55),GRAY
+winla257.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla257.clw:window WINDOW('IzziÚas sagavoana'),AT(,,321,93),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winla257.clw:QuickWindow          WINDOW(' '),AT(0,0,449,283),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP(' '),SYSTEM,GRAY,RESIZE,MDI
+winla259.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla259.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla259.clw:ToScreen WINDOW('ApmaiÚas TXT faila sagatavoana'),AT(,,185,133),GRAY
+winla259.clw:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,246,55),GRAY
+winla260.clw:QuickWindow          WINDOW('Tekstu pl‚ns'),AT(0,0,440,255),FONT('MS Sans Serif',8,,FONT:bold),IMM,HLP('BrowseTEK'),SYSTEM,GRAY,MDI
+winla261.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla261.clw:BrowseWindow         WINDOW('Browse Records'),AT(0,0,240,245),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),SYSTEM,GRAY,MDI
+winla262.clw:FormWindow           WINDOW('Update Records...'),AT(18,5,289,159),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER,SYSTEM,GRAY,MDI
+winla262.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla262.clw:window WINDOW('Licences sagatavoana'),AT(,,175,115),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winla262.clw:window               WINDOW('Druka'),AT(,,220,70),CENTER,IMM,GRAY,MDI
+winla264.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla264.clw:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winla264.clw:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winla264.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla264.clw:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winla264.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla265.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla265.clw:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winla265.clw:ProgressWindow WINDOW('Progress...'),AT(,,152,63),CENTER,TIMER(1),GRAY,DOUBLE
+winla265.clw:Window WINDOW('Citi dokumenti'),AT(,,245,85),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winla265.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla266.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla266.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla266.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winla266.clw:window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winla267.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla267.clw:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla268.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla268.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla268.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla269.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla269.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla270.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla270.clw:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla270.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla270.clw:DVWindow WINDOW('DarÓjuma veids'),AT(,,180,140),GRAY
+winla270.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla271.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winla271.clw:!window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winla271.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla271.clw:Window               WINDOW('Winlats konfigur‚cija'),AT(,,172,260),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla272.clw:QuickWindow          WINDOW('Browse the PAR_L File'),AT(,,360,278),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),IMM,HLP('BrowsePAR_L'),SYSTEM,GRAY,RESIZE
+winla272.clw:QuickWindow          WINDOW('Update the PAR_L File'),AT(,,270,188),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),IMM,HLP('UpdatePAR_L'),SYSTEM,GRAY,RESIZE
+winla273.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla273.clw:TIPSWindow WINDOW('Nor‚diet dokumenta tipu'),AT(,,123,98),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winla273.clw:KOM  WINDOW('Komisijas sast‚vs'),AT(,,173,91),CENTER,GRAY,DOUBLE
+winla273.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla273.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla274.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla274.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla274.clw:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,104),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla274.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla274.clw:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winla274.clw:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winla275.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla276.clw:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,296,55),GRAY
+winla277.clw:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,296,55),GRAY
+winla278.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla278.clw:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,104),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winla279.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla280.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla281.clw:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winla281.clw:ReadScreen WINDOW('Rakstu apmaiÚas failu'),AT(,,180,55),GRAY
+winla282.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla282.clw:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winla283.clw:ToScreen WINDOW('ApmaiÚas TELEMAS faila sagatavoana'),AT(,,190,100),GRAY
+winla283.clw:!ToScreen1 WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winla283.clw:ReadScreen WINDOW('Rakstu apmaiÚas failu'),AT(,,180,55),GRAY
+winla284.clw:window WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,60),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winla284.clw:!NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winla284.clw:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winla285.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla286.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla287.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla290.clw:Askscreen WINDOW('Bankas izraksta imports'),AT(,,159,99),CENTER,GRAY
+winla290.clw:ProcessScreen WINDOW(' '),AT(,,150,38),CENTER,GRAY
+winla290.clw:QuickWindow          WINDOW('Bankas izrakstu imports'),AT(0,0,441,288),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('BROWSEGG1'),SYSTEM,GRAY,RESIZE,MDI
+winla291.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla291.clw:window WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,109),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winla293.clw:QuickWindow          WINDOW(' '),AT(0,0,473,270),FONT('MS Sans Serif',9,,FONT:bold),IMM,VSCROLL,HLP(' '),SYSTEM,GRAY,RESIZE,MDI
+winla298.clw:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winla_SF.CLW:Preview:Window WINDOW('Report Preview'),AT(,,,),FONT('MS Sans Serif',10,,),COLOR(0808080H), |
+winla_SF.CLW:JumpWindow WINDOW('Jump to a Report Page'),AT(,,181,26),FONT('MS Sans Serif',10,,),CENTER,STATUS,GRAY
+winla_SF.CLW:SelectWindow WINDOW('Change the Report Display'),AT(,,141,64),FONT('MS Sans Serif',10,,),GRAY
+winla_SF.CLW.160214:Preview:Window WINDOW('Report Preview'),AT(,,,),FONT('MS Sans Serif',10,,),COLOR(0808080H), |
+winla_SF.CLW.160214:JumpWindow WINDOW('Jump to a Report Page'),AT(,,181,26),FONT('MS Sans Serif',10,,),CENTER,STATUS,GRAY
+winla_SF.CLW.160214:SelectWindow WINDOW('Change the Report Display'),AT(,,141,64),FONT('MS Sans Serif',10,,),GRAY
+winlats.app:NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.app:PROGRESSWINDOW WINDOW('...rakstu apakgrupas un NOM_K'),AT(,,151,37),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,45),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app: Y˜W Ç ≤4 Ï2 Y +%DataSectionAfterWindow ! +*screen1 WINDOW('NomainÓt kodu'),AT(,,185,73),GRAY
+winlats.app:screen2 WINDOW('Ievadiet kodu'),AT(,,185,64),GRAY
+winlats.app:window WINDOW('Kases apar‚ta rakstÓanai'),AT(,,185,73),GRAY
+winlats.app:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,251,86),CENTER,GRAY
+winlats.app:SyncWindow WINDOW('Caption'),AT(,,270,91),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:SOCSCREEN WINDOW('Soc.apdr. % maiÚa'),AT(,,184,81),GRAY
+winlats.app:PPFSCREEN WINDOW('Priv‚to pensiju fonda  % maiÚa'),AT(,,157,75),GRAY
+winlats.app:†˙s  ˛á c+%DataSectionAfterWindow   +*« SHOWSCREEN WINDOW('B˚vÁju sarakstu'),AT(,,122,42),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:†R#  ¥& ~+%DataSection   +*¢RINDASCREEN WINDOW('Caption'),AT(,,186,101),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('Caption'),AT(,,260,100),GRAY
+winlats.app:POLISE:Window WINDOW('Apdroin‚anas polises un lietas Nr:'),AT(,,273,38),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:†E  ˇm s+%DataSection   +*awindow WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,60),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.app:!NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:PVNSCREEN WINDOW('PVN % maiÚa'),AT(,,163,100),GRAY
+winlats.app:Kon_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,111),CENTER,GRAY
+winlats.app:Datawindow WINDOW('Dati Lasotras rÁÌinam'),AT(,,272,161),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Progresswindow WINDOW('MeklÁju auto'),AT(,,137,45),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,314,66),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:PARAMETRI WINDOW('Parametri'),AT(,,293,89),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:window WINDOW('   KÔ˚da '),AT(,,358,71),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER,IMM, |
+winlats.app:A_window WINDOW('Filtrs pÁc atlikumiem'),AT(,,133,67),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winlats.app:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.app:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,296,55),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:†Û  4ƒ s+%DataSection   +*window WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,60),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.app:!NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:SVSCREEN WINDOW('Caption'),AT(,,106,92),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:KOM  WINDOW('Komisijas sast‚vs'),AT(,,170,135),CENTER,GRAY,DOUBLE
+winlats.app:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.app:Calculator WINDOW('Kalkul‚tors'),AT(,,116,192),FONT('Arial',8,,),CENTER,ICON('G_CALC.ICO'),SYSTEM,GRAY, |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Askscreen WINDOW('Uzkr‚jo‚ skanera lasÓana'),AT(,,201,130),CENTER,GRAY,MDI
+winlats.app:NEWSCREEN WINDOW('Jauna prece'),AT(,,262,127),IMM,HLP(' '),CURSOR(CURSOR:None),GRAY,MDI
+winlats.app:Preview:Window WINDOW('Izdrukas apl˚koana'),FONT('MS Sans Serif',10,,),COLOR(COLOR:Gray),IMM,HVSCROLL, |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,339,144),GRAY
+winlats.app:DVWindow WINDOW('DarÓjuma veids'),AT(,,180,140),GRAY
+winlats.app:KOM  WINDOW('Komisijas sast‚vs'),AT(,,173,91),CENTER,GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Askscreen WINDOW('Datu imports'),AT(,,189,138),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winlats.app:ReadScreen WINDOW('Rakstu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('ApmaiÚas TELEMAS faila sagatavoana'),AT(,,190,100),GRAY
+winlats.app:!ToScreen1 WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winlats.app:ReadScreen WINDOW('Rakstu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.app:Askscreen WINDOW('Datu imports'),AT(,,159,99),CENTER,GRAY
+winlats.app:BUILDscreen WINDOW('Uzb˚vÁt importa interfeisu :'),AT(,,168,76),CENTER,GRAY
+winlats.app:SourceScreen WINDOW('Nor‚diet datu avotu'),AT(,,185,79),GRAY
+winlats.app:MODE_SCREEN WINDOW('Uzb˚vÁt importa interfeisu :'),AT(,,160,70),CENTER,GRAY
+winlats.app:ProcessScreen WINDOW(' '),AT(,,150,38),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('ApmaiÚas TXT faila sagatavoana'),AT(,,190,138),GRAY
+winlats.app:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,246,55),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:QuickWindow 	ÅWINDOW('Update the NOM_C File'),AT(,,309,107),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateNOM_C'),SYSTEM,GRAY,RESIZE,MDI
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:NOLNRSCREEN WINDOW(' '),AT(,,122,52),CENTER,GRAY
+winlats.app:Askscreen WINDOW('Bankas izraksta imports'),AT(,,159,99),CENTER,GRAY
+winlats.app:ProcessScreen WINDOW(' '),AT(,,150,38),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,109),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:NOMFwindow WINDOW('Papildus Nom Filtrs'),AT(,,142,98),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:KOM  WINDOW('Komisijas sast‚vs'),AT(,,172,83),CENTER,GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:APMAKSASCREEN WINDOW('MeklÁt P/Z apmaksu'),AT(,,179,64),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:windowDD WINDOW('DaÔas/darbi'),AT(,,172,202),FONT(,9,,FONT:bold,CHARSET:BALTIC),VSCROLL,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:KOM  WINDOW('Komisijas sast‚vs'),AT(,,173,91),CENTER,GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:WMFANSI WINDOW('Izdrukas Form‚ts'),AT(,,185,72),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,152,63),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:PiezimesWindow WINDOW('PiezÓmes :'),AT(,,365,45),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:!window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CEä#  ∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞ ;n 0!.&.&  +¿&
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window0 WINDOW('Nor‚diet darba veidu'),AT(,,201,97),GRAY
+winlats.app:window1 WINDOW('VÁstules sagatavoana'),AT(50,50,381,269),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:FTP_Window WINDOW('Jaun‚ko versiju lejupl‚de'),AT(,,318,102),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:INIINFO WINDOW(' '),AT(,,331,129),CENTER,GRAY
+winlats.app:LINIINFO WINDOW('C:\WINLATS\WinLatsC.ini'),AT(,,331,129),CENTER,GRAY
+winlats.app:IMAGEWINDOW WINDOW('WINLATS (c)ASSAKO'),ICON('CLARION.ICO'),STATUS(-1,90,70),SYSTEM,GRAY,MAX,MAXIMIZE, |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winlats.app:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winlats.app:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:APMAKSASCREEN WINDOW('Caption'),AT(,,179,64),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:PasWindow WINDOW('¬tr‚ pas˚tÓjuma veidoana'),AT(,,318,212),CENTER,GRAY,MDI
+winlats.app:RAZwindow WINDOW('Caption'),AT(,,191,64),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:FiltrsScreen WINDOW('Nomenklat˚ru Filtrs'),AT(,,118,91),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winlats.app:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Kon1_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,142),CENTER,GRAY
+winlats.app:Konfig_screen WINDOW('CHD4010,5010,TEC MA-1650,CHD3510,5510 Konfigur‚cija '),AT(,,230,210),CENTER,GRAY
+winlats.app:Komanda_Screen WINDOW('OMRON komandu fails'),AT(,,236,148),CENTER,GRAY
+winlats.app:!KomandaN_Screen WINDOW('OMRON 3420 komandu fails'),AT(,,236,148),CENTER,GRAY
+winlats.app:ReLoadScreen WINDOW('Kases apar‚ta lasÓana (K P/Z veidoana)'),AT(,,353,80),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Window WINDOW('Filtrs klienta aktivit‚tes samazin‚juma konststÁanai'),AT(,,316,92),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:Key_window WINDOW(' '),AT(,,147,130),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER,GRAY
+winlats.app:window2 WINDOW('VÁstules sagatavoana'),AT(50,50,302,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:uzlimes WINDOW('Nor‚diet uzlÓmi'),AT(50,50,135,162),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Virsraksts_w WINDOW(' '),AT(,,140,115),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:PROCESSCREEN WINDOW('Sagatavojam apmaiÚas tabulas'),AT(,,250,281),CENTER,GRAY
+winlats.app:Virsraksts_w WINDOW(' '),AT(,,140,115),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('Caption'),AT(,,260,100),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:KESKA_SCREEN WINDOW(' '),AT(,,145,108),FONT('Microsoft Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Konfig_screen WINDOW('CHD3010,4010,5010,TEC MA-1650,CHD3510,5510 Konfigur‚cija '),AT(,,230,210),CENTER, |
+winlats.app:Kon_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,108),CENTER,GRAY
+winlats.app:Kon1_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,138),CENTER,GRAY
+winlats.app:Komanda_Screen WINDOW('OMRON komandu fails'),AT(,,236,181),CENTER,GRAY
+winlats.app:!KomandaN_Screen WINDOW('OMRON3420 komandu fails'),AT(,,236,181),CENTER,GRAY
+winlats.app:PLU_Screen WINDOW('BLUEBRIDGE'),AT(,,230,117),CENTER,GRAY
+winlats.app:LoadScreen WINDOW('Kases apar‚ta rakstÓana'),AT(,,353,80),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:showscreen WINDOW('Datu imports'),AT(,,185,91),CENTER,GRAY
+winlats.app:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,273,115),CENTER,GRAY
+winlats.app:FiltrsScreen WINDOW('Nomenklat˚ru saraksta redzamÓbas Filtri'),AT(,,210,116),GRAY
+winlats.app:CenaScreen WINDOW('MainÓt cenu'),AT(,,189,130),GRAY
+winlats.app:EURscreen WINDOW('MainÓt cenu uz EUR'),AT(,,184,91),GRAY
+winlats.app:ProcScreen WINDOW('MainÓt uzcenojuma % 5.cenai'),AT(,,187,71),GRAY
+winlats.app:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),GRAY
+winlats.app:STATUSSCREEN WINDOW('KA Statusa maiÚa'),AT(,,130,181),GRAY
+winlats.app:PVNSCREEN WINDOW('PVN % maiÚa'),AT(,,175,190),GRAY
+winlats.app: 7è_ ª EÒ3 Ï2 b +%DataSectionBeforeWindow ! +*—PASwindow WINDOW('Veidojam pas˚tÓjumu'),AT(,,162,51),GRAY
+winlats.app:PASTABLE WINDOW('Nor‚diet Pas˚tÓjumu'),AT(,,185,92),GRAY
+winlats.app:FiltrsScreen WINDOW('RedzamÓba'),AT(,,235,106),GRAY
+winlats.app:PASUT WINDOW('Pas˚tÓjuma apjoma noteikanas nosacÓjumi'),AT(,,287,180),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:IZDRUKA WINDOW('Filtrs kontÁjumiem'),AT(,,115,91),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),GRAY
+winlats.app:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,280,88),CENTER,GRAY
+winlats.app:FiltrsScreen WINDOW('Partneru saraksta redzamÓbas Filtri'),AT(,,255,66),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:screen:fp WINDOW('Pieeja Fisk‚lai Drukai'),AT(,,340,176),GRAY
+winlats.app:screen:alga WINDOW('Pieeja Algai'),AT(,,265,176),GRAY
+winlats.app:screen:pam WINDOW('Pieeja PamatlÓdzekÔiem'),AT(,,265,176),GRAY
+winlats.app:screen:LM WINDOW('Pieeja Laika uzskaites sistÁmai'),AT(,,340,176),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('RÁÌina sagatavoana'),AT(,,375,335),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Laiki WINDOW('Laiks'),AT(,,114,57),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,152,63),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Window WINDOW('Citi dokumenti'),AT(,,245,85),FONT('MS Sans Serif',10,,FON‚  ∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞ úÜ G$,','  ,¿'
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,104),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('Licences sagatavoana'),AT(,,175,115),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Window WINDOW('Ievadiet s‚kuma datus'),AT(,,220,130),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('Papildus FiltrI'),AT(,,160,110),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,104),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:IZDRUKA WINDOW('Parametri izdrukai'),AT(,,191,204),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app: i'm ` µ4 Ï2 ê +%DataSectionBeforeWindow ! +*3A_SWINDOW WINDOW('Nor‚diet dokumenta Tipu:'),AT(,,134,66),FONT('MS Sans Serif',10,,FONT:bold),CENTER, |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:KOscreen WINDOW('Kases orderis'),AT(,,213,163),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('Papildus Nom Filtrs'),AT(,,160,142),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('RÁÌina sagatavoana'),AT(,,375,335),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Askscreen WINDOW('Datu dzÁana'),AT(,,159,128),CENTER,GRAY
+winlats.app:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),CENTER,GRAY
+winlats.app:SELREKWINDOW WINDOW('IzvÁles logs'),AT(,,100,73),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('P/Z sagatavoana'),AT(,,350,340),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,145,63),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:KESKAwindow WINDOW('IzvÁles logs'),AT(,,179,63),GRAY
+winlats.app:MOVEHwindow WINDOW('IzvÁles logs'),AT(,,179,63),GRAY
+winlats.app:MOVEVwindow WINDOW('IzvÁles logs'),AT(,,174,57),GRAY
+winlats.app:SHOWSCREEN1 WINDOW('B˚vÁju .'),AT(,,106,35),CENTER,GRAY
+winlats.app:PVNSCREEN1 WINDOW('PVN % maiÚa'),AT(,,175,195),GRAY
+winlats.app:SLIQUIDscreen WINDOW('RedzamÓbas mainÓana'),AT(,,251,90),CENTER,GRAY
+winlats.app:LIQUIDscreen WINDOW('Nomenklat˚ru dzÁana'),AT(,,251,90),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:REGscreen WINDOW('BARMAN lasÓanai'),AT(,,159,144),GRAY
+winlats.app:D_KSCREEN WINDOW('Nor‚diet dokumenta Tipu:'),AT(,,137,139),FONT('MS Sans Serif',10,,FONT:bold),CENTER, |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:AtlWindow WINDOW(' '),AT(,,164,69),GRAY
+winlats.app:NodWindow WINDOW(' '),AT(,,154,75),CENTER,GRAY
+winlats.app:PROWindow WINDOW(' '),AT(,,199,76),CENTER,GRAY
+winlats.app:ToScreen WINDOW('ApmaiÚas TXT faila sagatavoana'),AT(,,185,133),GRAY
+winlats.app:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,246,55),GRAY
+winlats.app:ToScreen WINDOW('ApmaiÚas TPS failu sagatavoana'),AT(,,185,125),GRAY
+winlats.app:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:DIVWindow WINDOW('Dividendes'),AT(,,185,92),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app: +%DataSectionBeforeWindow ! +*VInfoScreen WINDOW('Inform‚cija par P/Z'),AT(,,310,89),GRAY
+winlats.app:SHOWSCREEN WINDOW('Caption'),AT(,,260,100),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,154,55),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,45),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:screen:files WINDOW('Pieeja failiem'),AT(,,283,145),GRAY
+winlats.app:screen:base WINDOW('Pieeja B‚zei'),AT(,,265,176),GRAY
+winlats.app:screen:nolik WINDOW('Pieeja Noliktavai'),AT(,,386,230),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:†3I  ˙« s+%DataSection   +*ºwindow WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,60),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.app:NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Invwind WINDOW('Inventariz‚cijas dokumenta b˚vÁana'),AT(,,185,98),GRAY
+winlats.app:CenaWindow WINDOW('Caption'),AT(,,138,78),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:SHOWSCREEN WINDOW('Rakstu apmaiÚas failu ...'),AT(,,202,71),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:Askscreen WINDOW('Caption'),AT(,,159,92),GRAY
+winlats.app:SourceScreen WINDOW('Nor‚diet datu avotu'),AT(,,185,79),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,296,55),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:TIPSWindow WINDOW('Nor‚diet dokumenta tipu'),AT(,,123,98),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:!window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:window WINDOW('IzziÚas sagavoana'),AT(,,321,93),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:INFOSCREEN WINDOW('Papildus inform‚cija'),AT(,,248,257),CENTER,GRAY
+winlats.app:ParrekinuWindow WINDOW(' '),AT(,,161,44),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,72),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:FILTRSWINDOW WINDOW('Mainam filtra nosacÓjumus'),AT(,,169,60),GRAY
+winlats.app:InfoScreen WINDOW('Inform‚cija par P/Z'),AT(,,306,82),IMM,SYSTEM,GRAY,RESIZE
+winlats.app:Askscreen WINDOW('Datu dzÁana'),AT(,,159,128),CENTER,GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app: À=Ç ◊% 4 Ï2 W +%DataSectionBeforeWindow   +*òiet_window WINDOW('Caption'),AT(,,216,62),GRAY
+winlats.app:ATLSCREEN WINDOW('Atlai˛u % maiÚa'),AT(,,157,75),GRAY
+winlats.app:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.app:NOLIDZ_SCREEN WINDOW('Nor‚dÓet druk‚jamo apgabalu :'),AT(,,185,92),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.BPP:PROGRESSWINDOW WINDOW('...rakstu apakgrupas un NOM_K'),AT(,,151,37),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,45),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP: Y˜W Ç ≤4 Ï2 Y +%DataSectionAfterWindow ! +*screen1 WINDOW('NomainÓt kodu'),AT(,,185,73),GRAY
+winlats.BPP:screen2 WINDOW('Ievadiet kodu'),AT(,,185,64),GRAY
+winlats.BPP:window WINDOW('Kases apar‚ta rakstÓanai'),AT(,,185,73),GRAY
+winlats.BPP:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,251,86),CENTER,GRAY
+winlats.BPP:SyncWindow WINDOW('Caption'),AT(,,270,91),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:SOCSCREEN WINDOW('Soc.apdr. % maiÚa'),AT(,,184,81),GRAY
+winlats.BPP:PPFSCREEN WINDOW('Priv‚to pensiju fonda  % maiÚa'),AT(,,157,75),GRAY
+winlats.BPP:†˙s  ˛á c+%DataSectionAfterWindow   +*« SHOWSCREEN WINDOW('B˚vÁju sarakstu'),AT(,,122,42),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:†R#  ¥& ~+%DataSection   +*¢RINDASCREEN WINDOW('Caption'),AT(,,186,101),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('Caption'),AT(,,260,100),GRAY
+winlats.BPP:POLISE:Window WINDOW('Apdroin‚anas polises un lietas Nr:'),AT(,,273,38),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:†E  ˇm s+%DataSection   +*awindow WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,60),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.BPP:!NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:PVNSCREEN WINDOW('PVN % maiÚa'),AT(,,163,100),GRAY
+winlats.BPP:Kon_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,111),CENTER,GRAY
+winlats.BPP:Datawindow WINDOW('Dati Lasotras rÁÌinam'),AT(,,272,161),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Progresswindow WINDOW('MeklÁju auto'),AT(,,137,45),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,314,66),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:PARAMETRI WINDOW('Parametri'),AT(,,293,89),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:window WINDOW('   KÔ˚da '),AT(,,358,71),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER,IMM, |
+winlats.BPP:A_window WINDOW('Filtrs pÁc atlikumiem'),AT(,,133,67),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winlats.BPP:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.BPP:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,296,55),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:†Û  4ƒ s+%DataSection   +*window WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,60),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.BPP:!NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:SVSCREEN WINDOW('Caption'),AT(,,106,92),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:KOM  WINDOW('Komisijas sast‚vs'),AT(,,170,135),CENTER,GRAY,DOUBLE
+winlats.BPP:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.BPP:Calculator WINDOW('Kalkul‚tors'),AT(,,116,192),FONT('Arial',8,,),CENTER,ICON('G_CALC.ICO'),SYSTEM,GRAY, |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Askscreen WINDOW('Uzkr‚jo‚ skanera lasÓana'),AT(,,201,130),CENTER,GRAY,MDI
+winlats.BPP:NEWSCREEN WINDOW('Jauna prece'),AT(,,262,127),IMM,HLP(' '),CURSOR(CURSOR:None),GRAY,MDI
+winlats.BPP:Preview:Window WINDOW('Izdrukas apl˚koana'),FONT('MS Sans Serif',10,,),COLOR(COLOR:Gray),IMM,HVSCROLL, |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,339,144),GRAY
+winlats.BPP:DVWindow WINDOW('DarÓjuma veids'),AT(,,180,140),GRAY
+winlats.BPP:KOM  WINDOW('Komisijas sast‚vs'),AT(,,173,91),CENTER,GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Askscreen WINDOW('Datu imports'),AT(,,189,138),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winlats.BPP:ReadScreen WINDOW('Rakstu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('ApmaiÚas TELEMAS faila sagatavoana'),AT(,,190,100),GRAY
+winlats.BPP:!ToScreen1 WINDOW('Nor‚diet, kur rakstÓt'),AT(,,185,86),GRAY
+winlats.BPP:ReadScreen WINDOW('Rakstu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.BPP:Askscreen WINDOW('Datu imports'),AT(,,159,99),CENTER,GRAY
+winlats.BPP:BUILDscreen WINDOW('Uzb˚vÁt importa interfeisu :'),AT(,,168,76),CENTER,GRAY
+winlats.BPP:SourceScreen WINDOW('Nor‚diet datu avotu'),AT(,,185,79),GRAY
+winlats.BPP:MODE_SCREEN WINDOW('Uzb˚vÁt importa interfeisu :'),AT(,,160,70),CENTER,GRAY
+winlats.BPP:ProcessScreen WINDOW(' '),AT(,,150,38),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('ApmaiÚas TXT faila sagatavoana'),AT(,,190,138),GRAY
+winlats.BPP:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,246,55),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:QuickWindow 	ÅWINDOW('Update the NOM_C File'),AT(,,309,107),FONT('MS Sans Serif',9,,FONT:bold),IMM,HLP('UpdateNOM_C'),SYSTEM,GRAY,RESIZE,MDI
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:NOLNRSCREEN WINDOW(' '),AT(,,122,52),CENTER,GRAY
+winlats.BPP:Askscreen WINDOW('Bankas izraksta imports'),AT(,,159,99),CENTER,GRAY
+winlats.BPP:ProcessScreen WINDOW(' '),AT(,,150,38),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,109),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:NOMFwindow WINDOW('Papildus Nom Filtrs'),AT(,,142,98),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:KOM  WINDOW('Komisijas sast‚vs'),AT(,,172,83),CENTER,GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:APMAKSASCREEN WINDOW('MeklÁt P/Z apmaksu'),AT(,,179,64),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:windowDD WINDOW('DaÔas/darbi'),AT(,,172,202),FONT(,9,,FONT:bold,CHARSET:BALTIC),VSCROLL,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:KOM  WINDOW('Komisijas sast‚vs'),AT(,,173,91),CENTER,GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:WMFANSI WINDOW('Izdrukas Form‚ts'),AT(,,185,72),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,152,63),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:PiezimesWindow WINDOW('PiezÓmes :'),AT(,,365,45),FONT('MS Sans Serif',8,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:!window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CEä#  ∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞ ;n 0!.&.&  +¿&
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window0 WINDOW('Nor‚diet darba veidu'),AT(,,201,97),GRAY
+winlats.BPP:window1 WINDOW('VÁstules sagatavoana'),AT(50,50,381,269),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:FTP_Window WINDOW('Jaun‚ko versiju lejupl‚de'),AT(,,318,102),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:INIINFO WINDOW(' '),AT(,,331,129),CENTER,GRAY
+winlats.BPP:LINIINFO WINDOW('C:\WINLATS\WinLatsC.ini'),AT(,,331,129),CENTER,GRAY
+winlats.BPP:IMAGEWINDOW WINDOW('WINLATS (c)ASSAKO'),ICON('CLARION.ICO'),STATUS(-1,90,70),SYSTEM,GRAY,MAX,MAXIMIZE, |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winlats.BPP:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winlats.BPP:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:APMAKSASCREEN WINDOW('Caption'),AT(,,179,64),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:PasWindow WINDOW('¬tr‚ pas˚tÓjuma veidoana'),AT(,,318,212),CENTER,GRAY,MDI
+winlats.BPP:RAZwindow WINDOW('Caption'),AT(,,191,64),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:FiltrsScreen WINDOW('Nomenklat˚ru Filtrs'),AT(,,118,91),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:SOC_V_window WINDOW('Filtrs pÁc SA statusa'),AT(,,301,150),GRAY
+winlats.BPP:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Kon1_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,142),CENTER,GRAY
+winlats.BPP:Konfig_screen WINDOW('CHD4010,5010,TEC MA-1650,CHD3510,5510 Konfigur‚cija '),AT(,,230,210),CENTER,GRAY
+winlats.BPP:Komanda_Screen WINDOW('OMRON komandu fails'),AT(,,236,148),CENTER,GRAY
+winlats.BPP:!KomandaN_Screen WINDOW('OMRON 3420 komandu fails'),AT(,,236,148),CENTER,GRAY
+winlats.BPP:ReLoadScreen WINDOW('Kases apar‚ta lasÓana (K P/Z veidoana)'),AT(,,353,80),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Window WINDOW('Filtrs klienta aktivit‚tes samazin‚juma konststÁanai'),AT(,,316,92),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:Key_window WINDOW(' '),AT(,,147,130),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER,GRAY
+winlats.BPP:window2 WINDOW('VÁstules sagatavoana'),AT(50,50,302,95),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:uzlimes WINDOW('Nor‚diet uzlÓmi'),AT(50,50,135,162),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Virsraksts_w WINDOW(' '),AT(,,140,115),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:PROCESSCREEN WINDOW('Sagatavojam apmaiÚas tabulas'),AT(,,250,281),CENTER,GRAY
+winlats.BPP:Virsraksts_w WINDOW(' '),AT(,,140,115),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('Caption'),AT(,,260,100),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:KESKA_SCREEN WINDOW(' '),AT(,,145,108),FONT('Microsoft Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Konfig_screen WINDOW('CHD3010,4010,5010,TEC MA-1650,CHD3510,5510 Konfigur‚cija '),AT(,,230,210),CENTER, |
+winlats.BPP:Kon_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,108),CENTER,GRAY
+winlats.BPP:Kon1_screen WINDOW('CHD 3320/5620 Konfigur‚cija '),AT(,,230,138),CENTER,GRAY
+winlats.BPP:Komanda_Screen WINDOW('OMRON komandu fails'),AT(,,236,181),CENTER,GRAY
+winlats.BPP:!KomandaN_Screen WINDOW('OMRON3420 komandu fails'),AT(,,236,181),CENTER,GRAY
+winlats.BPP:PLU_Screen WINDOW('BLUEBRIDGE'),AT(,,230,117),CENTER,GRAY
+winlats.BPP:LoadScreen WINDOW('Kases apar‚ta rakstÓana'),AT(,,353,80),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ToScreen WINDOW('XML faila sagatavoana'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:showscreen WINDOW('Datu imports'),AT(,,185,91),CENTER,GRAY
+winlats.BPP:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,273,115),CENTER,GRAY
+winlats.BPP:FiltrsScreen WINDOW('Nomenklat˚ru saraksta redzamÓbas Filtri'),AT(,,210,116),GRAY
+winlats.BPP:CenaScreen WINDOW('MainÓt cenu'),AT(,,189,130),GRAY
+winlats.BPP:EURscreen WINDOW('MainÓt cenu uz EUR'),AT(,,184,91),GRAY
+winlats.BPP:ProcScreen WINDOW('MainÓt uzcenojuma % 5.cenai'),AT(,,187,71),GRAY
+winlats.BPP:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),GRAY
+winlats.BPP:STATUSSCREEN WINDOW('KA Statusa maiÚa'),AT(,,130,181),GRAY
+winlats.BPP:PVNSCREEN WINDOW('PVN % maiÚa'),AT(,,175,190),GRAY
+winlats.BPP: 7è_ ª EÒ3 Ï2 b +%DataSectionBeforeWindow ! +*—PASwindow WINDOW('Veidojam pas˚tÓjumu'),AT(,,162,51),GRAY
+winlats.BPP:PASTABLE WINDOW('Nor‚diet Pas˚tÓjumu'),AT(,,185,92),GRAY
+winlats.BPP:FiltrsScreen WINDOW('RedzamÓba'),AT(,,235,106),GRAY
+winlats.BPP:PASUT WINDOW('Pas˚tÓjuma apjoma noteikanas nosacÓjumi'),AT(,,287,180),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:IZDRUKA WINDOW('Filtrs kontÁjumiem'),AT(,,115,91),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),GRAY
+winlats.BPP:INETscreen WINDOW('Interneta faila sagatavoana'),AT(,,280,88),CENTER,GRAY
+winlats.BPP:FiltrsScreen WINDOW('Partneru saraksta redzamÓbas Filtri'),AT(,,255,66),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:screen:fp WINDOW('Pieeja Fisk‚lai Drukai'),AT(,,340,176),GRAY
+winlats.BPP:screen:alga WINDOW('Pieeja Algai'),AT(,,265,176),GRAY
+winlats.BPP:screen:pam WINDOW('Pieeja PamatlÓdzekÔiem'),AT(,,265,176),GRAY
+winlats.BPP:screen:LM WINDOW('Pieeja Laika uzskaites sistÁmai'),AT(,,340,176),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('RÁÌina sagatavoana'),AT(,,375,335),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Laiki WINDOW('Laiks'),AT(,,114,57),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,152,63),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Window WINDOW('Citi dokumenti'),AT(,,245,85),FONT('MS Sans Serif',10,,FON‚  ∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞ úÜ G$,','  ,¿'
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,104),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('Licences sagatavoana'),AT(,,175,115),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Window WINDOW('Ievadiet s‚kuma datus'),AT(,,220,130),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('Papildus FiltrI'),AT(,,160,110),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:PVNA02Window WINDOW('PVN-A-02'),AT(,,369,104),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:IZDRUKA WINDOW('Parametri izdrukai'),AT(,,191,204),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP: i'm ` µ4 Ï2 ê +%DataSectionBeforeWindow ! +*3A_SWINDOW WINDOW('Nor‚diet dokumenta Tipu:'),AT(,,134,66),FONT('MS Sans Serif',10,,FONT:bold),CENTER, |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:KOscreen WINDOW('Kases orderis'),AT(,,213,163),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('Papildus Nom Filtrs'),AT(,,160,142),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('RÁÌina sagatavoana'),AT(,,375,335),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Askscreen WINDOW('Datu dzÁana'),AT(,,159,128),CENTER,GRAY
+winlats.BPP:KESKAwindow WINDOW('IzvÁles logs'),AT(,,197,73),CENTER,GRAY
+winlats.BPP:SELREKWINDOW WINDOW('IzvÁles logs'),AT(,,100,73),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('P/Z sagatavoana'),AT(,,350,340),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,145,63),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:KESKAwindow WINDOW('IzvÁles logs'),AT(,,179,63),GRAY
+winlats.BPP:MOVEHwindow WINDOW('IzvÁles logs'),AT(,,179,63),GRAY
+winlats.BPP:MOVEVwindow WINDOW('IzvÁles logs'),AT(,,174,57),GRAY
+winlats.BPP:SHOWSCREEN1 WINDOW('B˚vÁju .'),AT(,,106,35),CENTER,GRAY
+winlats.BPP:PVNSCREEN1 WINDOW('PVN % maiÚa'),AT(,,175,195),GRAY
+winlats.BPP:SLIQUIDscreen WINDOW('RedzamÓbas mainÓana'),AT(,,251,90),CENTER,GRAY
+winlats.BPP:LIQUIDscreen WINDOW('Nomenklat˚ru dzÁana'),AT(,,251,90),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:REGscreen WINDOW('BARMAN lasÓanai'),AT(,,159,144),GRAY
+winlats.BPP:D_KSCREEN WINDOW('Nor‚diet dokumenta Tipu:'),AT(,,137,139),FONT('MS Sans Serif',10,,FONT:bold),CENTER, |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:AtlWindow WINDOW(' '),AT(,,164,69),GRAY
+winlats.BPP:NodWindow WINDOW(' '),AT(,,154,75),CENTER,GRAY
+winlats.BPP:PROWindow WINDOW(' '),AT(,,199,76),CENTER,GRAY
+winlats.BPP:ToScreen WINDOW('ApmaiÚas TXT faila sagatavoana'),AT(,,185,133),GRAY
+winlats.BPP:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,246,55),GRAY
+winlats.BPP:ToScreen WINDOW('ApmaiÚas TPS failu sagatavoana'),AT(,,185,125),GRAY
+winlats.BPP:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,180,55),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:DIVWindow WINDOW('Dividendes'),AT(,,185,92),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP: +%DataSectionBeforeWindow ! +*VInfoScreen WINDOW('Inform‚cija par P/Z'),AT(,,310,89),GRAY
+winlats.BPP:SHOWSCREEN WINDOW('Caption'),AT(,,260,100),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,154,55),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,45),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:screen:files WINDOW('Pieeja failiem'),AT(,,283,145),GRAY
+winlats.BPP:screen:base WINDOW('Pieeja B‚zei'),AT(,,265,176),GRAY
+winlats.BPP:screen:nolik WINDOW('Pieeja Noliktavai'),AT(,,386,230),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:†3I  ˙« s+%DataSection   +*ºwindow WINDOW('ApmaiÚas faila lasÓana...'),AT(,,190,60),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.BPP:NEWSCREEN WINDOW('Caption'),AT(,,226,78),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,141,57),CENTER,TIMER(1),GRAY,DOUBLE,MDI
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Invwind WINDOW('Inventariz‚cijas dokumenta b˚vÁana'),AT(,,185,98),GRAY
+winlats.BPP:CenaWindow WINDOW('Caption'),AT(,,138,78),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:SHOWSCREEN WINDOW('Rakstu apmaiÚas failu ...'),AT(,,202,71),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:Askscreen WINDOW('Caption'),AT(,,159,92),GRAY
+winlats.BPP:SourceScreen WINDOW('Nor‚diet datu avotu'),AT(,,185,79),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:IZDRUKA WINDOW('Izdrukas form‚ts'),AT(,,185,70),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ReadScreen WINDOW('Lasu apmaiÚas failu'),AT(,,296,55),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:TIPSWindow WINDOW('Nor‚diet dokumenta tipu'),AT(,,123,98),FONT('MS Sans Serif',10,,FONT:bold,CHARSET:BALTIC), |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,62),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:!window WINDOW('Papildus Filtrs'),AT(,,155,105),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:window WINDOW('IzziÚas sagavoana'),AT(,,321,93),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC),CENTER, |
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:INFOSCREEN WINDOW('Papildus inform‚cija'),AT(,,248,257),CENTER,GRAY
+winlats.BPP:ParrekinuWindow WINDOW(' '),AT(,,161,44),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,72),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:FILTRSWINDOW WINDOW('Mainam filtra nosacÓjumus'),AT(,,169,60),GRAY
+winlats.BPP:InfoScreen WINDOW('Inform‚cija par P/Z'),AT(,,306,82),IMM,SYSTEM,GRAY,RESIZE
+winlats.BPP:Askscreen WINDOW('Datu dzÁana'),AT(,,159,128),CENTER,GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP: À=Ç ◊% 4 Ï2 W +%DataSectionBeforeWindow   +*òiet_window WINDOW('Caption'),AT(,,216,62),GRAY
+winlats.BPP:ATLSCREEN WINDOW('Atlai˛u % maiÚa'),AT(,,157,75),GRAY
+winlats.BPP:ProgressWindow WINDOW('Progress...'),AT(,,142,46),CENTER,TIMER(1),GRAY,DOUBLE
+winlats.BPP:NOLIDZ_SCREEN WINDOW('Nor‚dÓet druk‚jamo apgabalu :'),AT(,,185,92),FONT('MS Sans Serif',9,,FONT:bold,CHARSET:BALTIC), |

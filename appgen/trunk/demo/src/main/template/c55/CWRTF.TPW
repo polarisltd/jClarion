@@ -1,0 +1,143 @@
+#!TEMPLATE (cwRTF, 'RTF Control for Clarion'),FAMILY('ABC'),FAMILY('CW20')
+#!HELP('C55HELP.HLP')
+#! -------------------------------------------------------------------------
+#! (cwRTF.TPL)
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#EXTENSION (cwRTFGlobal, 'Include RTF for Clarion Global Definitions'), DESCRIPTION('RTF Global Definitions'), APPLICATION, HLP('~TPLRTGlobal')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#DISPLAY
+#DISPLAY('No longer needed')
+#DISPLAY
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#CONTROL(RTFControl,'RTF Control'),DESCRIPTION('RTF Control(' & INSTANCE(%ActiveTemplateInstance) & ')'),MULTI,WINDOW,WRAP(TEXT),HLP('~TPLRTControl')
+  CONTROLS
+    TEXT,USE(?RTFTextBox),VSCROLL
+  END
+#BOXED('RTF Control')
+  #PROMPT('Load from File: ', @s255 ), %RTFLoadFile
+  #PROMPT('RTF Size limit: ', @n6 ), %RTFLimitFileSize
+  #ENABLE(%RTFLoadFile = '')
+    #PROMPT('Load From Field: ', FIELD ), %RTFLoadField
+    #PROMPT('Limit RTF Size to match field', CHECK ), %RTFLimitSize,AT(80)
+  #ENDENABLE
+  #PROMPT('Check status on window close', CHECK ), %RTFCheckOnClose,AT(10)
+  #PROMPT('Display Ruler Bar', CHECK ), %RTFRulerOn,AT(10),DEFAULT(1)
+  #PROMPT('Display Tool Bar', CHECK ), %RTFTBOn,AT(10),DEFAULT(1)
+  #PROMPT('Display Format Bar', CHECK ), %RTFFBOn,AT(10),DEFAULT(1)
+#ENDBOXED
+#! --------------------------------------------------------------------------
+#AT(%CustomGlobalDeclarations)
+#! --------------------------------------------------------------------------
+#IF( %ApplicationLocalLibrary )
+  #ADD( %CustomGlobalDeclarationIncludes,'C55RTFL.INC' )
+#ELSE
+  #ADD( %CustomGlobalDeclarationIncludes,'C55RTF.INC')
+#ENDIF
+#IF(~%Target32)
+  #ERROR('The RTF control may only be used with 32 bit programs.')
+#ELSE
+  #IF( %ApplicationLocalLibrary )
+    #PROJECT( 'C55RTFL.LIB' )
+  #ELSE
+    #PROJECT( 'C55RTF.LIB' )
+  #ENDIF
+#ENDIF
+#! --------------------------------------------------------------------------
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%ShipList)
+#! --------------------------------------------------------------------------
+
+  #IF( NOT %ApplicationLocalLibrary )
+___    C55RTF.DLL - RTF Support DLL for Clarion 5.5
+  #ENDIF
+#ENDAT
+#! --------------------------------------------------------------------------
+#ATSTART
+#! --------------------------------------------------------------------------
+  #DECLARE(%RTFObject)
+  #DECLARE(%RTFControl)
+  #FOR(%Control),WHERE(%ControlInstance=%ActiveTemplateInstance)
+    #SET(%RTFControl,%Control)
+  #ENDFOR
+  #!SET( %RTFObject, 'oRTF' & %ActiveTemplateInstance )
+  #IF(SUB(%RTFControl,1,1) = '?')
+    #SET( %RTFObject, 'oRTF_' & SUB(%RTFControl,2, LEN( %RTFControl ) ) )
+  #ELSE
+    #SET( %RTFObject, 'oRTF_' & %RTFControl )
+  #ENDIF
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%DataSectionAfterWindow)
+#! --------------------------------------------------------------------------
+%RTFObject         &cwRTF,THREAD
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%AfterWindowOpening)
+#! --------------------------------------------------------------------------
+%RTFObject &= NEW cwRTF
+%RTFObject.Init( %Window, %RTFControl, %RTFRulerOn, %RTFTBOn, %RTFFBOn )
+IF ERRORCODE() = 95
+  #IF ( INSTRING('Legacy:',%EmbedDescription,1,1) > 0 )
+  RETURN Level:Fatal
+  #ELSE
+  DO ProcedureReturn
+  #ENDIF
+END
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%EventCaseBeforeGenerated),DESCRIPTION('Load RTF')
+#! --------------------------------------------------------------------------
+OF EVENT:RTFReady
+  #EMBED(%RTFReadyBefore,'EVENT RTF Ready Before Loading data.'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+#IF( %RTFLoadFile <> '' )
+  #IF( %RTFLimitFileSize <> 0 )
+  %RTFObject.LimitTextSize( %RTFLimitFileSize )
+  #ENDIF
+  %RTFObject.LoadFile( %RTFLoadFile )
+#ENDIF
+#IF( %RTFLoadField <> '' )
+  #IF( %RTFLimitSize <> 0 )
+  %RTFObject.LimitTextSize( SIZE( %RTFLoadField ) )
+  #ENDIF
+  %RTFObject.LoadField( %RTFLoadField )
+#ENDIF
+  #EMBED(%RTFReadyAfter,'EVENT RTF Ready After Loading data.'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT (%WindowEventHandling, 'CloseWindow')
+#! --------------------------------------------------------------------------
+#EMBED(%RTFKillBefore,'RTF Before calling Kill method.'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+#IF( %RTFCheckOnClose )
+CASE %RTFObject.Kill( TRUE )
+OF 1
+  #IF ( INSTRING('(ABC)',%ActiveTemplate,1,1) > 0 )
+    #IF( CLIP( %RTFLoadField ) <> '' )
+      #FIND( %Field, %RTFLoadField )
+  Relate:%FieldFile.Update()
+    #ENDIF
+  #ELSE
+    #IF (CLIP( %Primary ) <> '' )
+  PUT( %Primary )
+    #ENDIF
+  #ENDIF
+OF 2
+  CYCLE
+END
+#ELSE
+%RTFObject.Kill(FALSE)
+#ENDIF
+#EMBED(%RTFKillAfter,'RTF After calling Kill method.'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%BeforeWindowClosing)
+#! --------------------------------------------------------------------------
+DISPOSE( %RTFObject )
+#ENDAT
+#INCLUDE('cwRTFCode.tpw')

@@ -1,0 +1,91 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ReportProcess
+  DESCRIPTOR: 1
+  PROPERTY: NAME(NextButtonControl),ACORN(1),ACORN.NAME(NextButtonControl),ACORN.WIZARD(ControlTemplate#NextButton),DEVIMP(3),DTYPE(2),TYPE(7)
+  PROPERTY: NAME(PreviousButtonControl),ACORN(1),ACORN.NAME(PreviousButtonControl),ACORN.WIZARD(ControlTemplate#PreviousButton),DEVIMP(3),DTYPE(2),TYPE(7)
+  PROPERTY: NAME(RecordsPerPage),DEVIMP(5),DTYPE(5),OUTPUT.NAME(ReportRecsPerPage),TYPE(3)
+  PROPERTY: NAME(BreakChecking),DESCRIPTION('Select the granularity of breaks within the report.'),DEVIMP(1),DTYPE(SINGLEDROP),TYPE(3),OUTPUT.NAME(BreakChecking)
+  PROPERTY: NAME(BreakChecking.List),DTYPE(5),HIDDEN(1),LIST(1),MULTI(1),TYPE(3)
+  PROPERTY: NAME(ReportSkeletonName),DEVIMP(5),DTYPE(5),OUTPUT.NAME(ReportSkeletonName),TYPE(3)
+  PROPERTY: NAME(ReportTitle),DEVIMP(5),DOCUMENTATION(Report Window Title for this report.),DTYPE(5),OUTPUT.NAME(ReportTitle),TYPE(3)
+  [DEFINITION]
+    BREAKCHECKING(by line count)
+    BREAKCHECKING.LIST(by record count, by line count)
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(WebProcessReport)
+    GENERATEPRIORITY(200)
+    NAME(TOPSPEED:ControlTemplate#ReportProcess)
+    NEXTBUTTONCONTROL(1)
+    PREVIOUSBUTTONCONTROL(1)
+    RECORDSPERPAGE(%Scope.RecordsOnPage%)
+    REPORTSKELETONNAME(%Scope.ReportSkeleton%)
+    REPORTTITLE(%Scope.ReportName%)
+    TEMPLATECHAIN(Web)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#NextButton
+  DESCRIPTOR: 1
+  PROPERTY: NAME(NextButton),ACORN(1),ACORN.NAME(NextButton),ACORN.WIZARD(^Button#ReportNext),DEVIMP(3),DTYPE(2),LOCKED(1),TYPE(7)
+  PROPERTY: NAME(NextButtonName),DEVIMP(3),DTYPE(5),HIDDEN(1),LOCKED(1),OUTPUT.NAME(NextControl),TYPE(3)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATEINSTANCE('@CONTAINER(Name)')
+    NAME(TOPSPEED:ControlTemplate#NextButton)
+    NEXTBUTTON(1)
+    NEXTBUTTONNAME('@EXTRACT(NextButton,Use.Label)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#PreviousButton
+  DESCRIPTOR: 1
+  PROPERTY: NAME(PreviousButton),ACORN(1),ACORN.NAME(PreviousButton),ACORN.WIZARD(^Button#ReportPrevious),DEVIMP(3),DTYPE(2),LOCKED(1),TYPE(7)
+  PROPERTY: NAME(PreviousButtonName),DEVIMP(3),DTYPE(5),HIDDEN(1),LOCKED(1),OUTPUT.NAME(PreviousControl),TYPE(3)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATEINSTANCE('@CONTAINER(Name)')
+    NAME(TOPSPEED:ControlTemplate#PreviousButton)
+    PREVIOUSBUTTON(1)
+    PREVIOUSBUTTONNAME('@EXTRACT(PreviousButton,Use.Label)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Process#Report
+  DESCRIPTOR: 1
+  PROPERTY: NAME(MenuItem),ACORN.NAME(Report %ReportName%),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Process#Report')
+  PROPERTY: NAME(RecordsOnPage),DEVIMP(5),DTYPE(5),OUTPUT.NAME(),TYPE(3)
+  PROPERTY: NAME(ReportName),DESCRIPTION(Descriptive name for this report),OUTPUT.NAME()
+  PROPERTY: NAME(ReportProcess),ACORN(1),ACORN.NAME(ReportProcess),ACORN.WIZARD(ControlTemplate#ReportProcess),DEVIMP(3),DTYPE(2),HIDDEN(1),LOCKED(1),TYPE(7)
+  PROPERTY: NAME(ReportSkeleton),DEVIMP(5),DTYPE(5),TYPE(3)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Process)
+    MENUITEM(1)
+    NAME(TOPSPEED:Process#Report)
+    OUTPUT.PROCNAME(Report%ReportName%)
+    PROCEDUREHITCOUNTENABLED(0)
+    RECORDSONPAGE(30)
+    REPORTNAME()
+    REPORTPROCESS(1)
+    REPORTSKELETON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#ReportNext
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    NAME(TOPSPEED:Button#ReportNext)
+    TEXT(&Next Page)
+    USE.LABEL(?Next)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#ReportPrevious
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    NAME(TOPSPEED:Button#ReportPrevious)
+    TEXT(&Previous Page)
+    USE.LABEL(?Previous)
+  [END]
+[END]

@@ -1,0 +1,1681 @@
+#CONTROL(RelationTree,'Relation Tree Viewing List Box'),PRIMARY('Relation Tree Viewing List Box',OPTKEY),DESCRIPTION('Records related to ' & %Primary),MULTI,WINDOW,HLP('~TPLControlRelationTree'),WRAP(List)
+  CONTROLS
+    LIST,AT(,,150,100),USE(?RelTree),FORMAT('800Lt@s200@'),FROM(Queue:RelTree)
+  END
+#LOCALDATA
+DisplayString        STRING(255)
+#ENDLOCALDATA
+#BUTTON('&Relation Tree Behavior'),AT(10,,180)
+  #SHEET
+    #TAB('&File Details'),HLP('~TPLControlRelationTree_FileDetails')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #BOXED('Tree Heading')
+        #PROMPT('Tree Heading &Text:',@S255),%TreeTitle
+        #ENABLE(%ControlHasIcon)
+          #PROMPT('Tree Heading &Icon:',@S255),%TreeTitleIcon
+        #ENDENABLE
+      #ENDBOXED
+      #BOXED('Key Codes')
+        #PROMPT('E&xpand branch:',KEYCODE),%ExpandKeyCode,DEFAULT('CtrlRight')
+        #PROMPT('&Contract branch:',KEYCODE),%ContractKeyCode,DEFAULT('CtrlLeft')
+      #ENDBOXED
+      #PROMPT('Accept control from ToolBar',CHECK),%AcceptToolBarControl,DEFAULT(1),AT(10)
+      #PROMPT('Give option to expand and contract all levels',CHECK),%GiveExpandContractOption,AT(10)
+      #BOXED('Primary File')
+        #PROMPT('&Display String:',@S255),%PrimaryDisplay
+        #PROMPT('&Update Procedure:',PROCEDURE),%PrimaryUpdate
+        #PROMPT('&Record Filter:',@S255),%PrimaryFilter
+      #ENDBOXED
+      #BOXED('Secondary Files')
+        #BUTTON('&Secondary Files'),FROM(%Secondary,%Secondary & ' - ' & %SecondaryDisplay),INLINE,WHERE(%SecondaryType = 'MANY:1'),AT(,,,75)
+          #SHEET
+            #TAB('Secondary &File Details'),HLP('~TPLControlRelationTree_SecondaryFileDetails')
+              #PROMPT('&Display String:',@S255),%SecondaryDisplay
+              #PROMPT('&Update Procedure:',PROCEDURE),%SecondaryUpdate
+              #PROMPT('&Record Filter:',@S255),%SecondaryFilter
+            #ENDTAB
+            #TAB('&Colors'),WHERE(%ControlHasColor),HLP('~TPLControlRelationTree_Colors')
+              #PREPARE
+                #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+              #ENDPREPARE
+              #BOXED('Default Colors')
+                #PROMPT('Foreground &Normal:',COLOR),%DefaultSecondaryForegroundNormal,DEFAULT(-1)
+                #PROMPT('&Background Normal:',COLOR),%DefaultSecondaryBackgroundNormal,DEFAULT(-1)
+                #PROMPT('&Foreground Selected:',COLOR),%DefaultSecondaryForegroundSelected,DEFAULT(-1)
+                #PROMPT('Background &Selected:',COLOR),%DefaultSecondaryBackgroundSelected,DEFAULT(-1)
+              #ENDBOXED
+              #BOXED('Conditional Color Assignments')
+                #BUTTON('Conditional Color Assignments'),MULTI(%SecondaryConditionalColors,%SecondaryColorCondition),INLINE,HLP('~TPLControlRelationTree_Colors')
+                  #PROMPT('&Condition:',@S255),%SecondaryColorCondition
+                  #PROMPT('Foreground &Normal:',COLOR),%ConditionalSecondaryForegroundNormal,DEFAULT(-1)
+                  #PROMPT('&Background Normal:',COLOR),%ConditionalSecondaryBackgroundNormal,DEFAULT(-1)
+                  #PROMPT('&Foreground Selected:',COLOR),%ConditionalSecondaryForegroundSelected,DEFAULT(-1)
+                  #PROMPT('Background &Selected:',COLOR),%ConditionalSecondaryBackgroundSelected,DEFAULT(-1)
+                #ENDBUTTON
+              #ENDBOXED
+            #ENDTAB
+            #TAB('&Colors'),WHERE(NOT %ControlHasColor),HLP('~TPLControlRelationTree_Colors')
+              #PREPARE
+                #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+              #ENDPREPARE
+              #DISPLAY('Your RelationTree is not set to use custom colors. To activate custom colors for your RelationTree, follow these steps.'),AT(10,30,175,24)
+              #DISPLAY('1.  If you aren''t in the window formatter, go there.'),AT(10,,175)
+              #DISPLAY('2.  Right-click on the RelationTree control, and select "List Box Format..."'),AT(10,,175,16)
+              #DISPLAY('3.  Select the RelationTree field, and click the "Properties" button.'),AT(10,,175,16)
+              #DISPLAY('4.  Check the "Color cells" Checkbox.'),AT(10,,175)
+              #DISPLAY('5.  When you call up the RelationTree actions window, this tab will let you set the colors for your RelationTree.'),AT(10,,175,16)
+            #ENDTAB
+            #TAB('&Icons'),WHERE(%ControlHasIcon),HLP('~TPLControlRelationTree_Icons')
+              #PREPARE
+                #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+              #ENDPREPARE
+              #BOXED('Default Icon')
+                #PROMPT('&Default Icon:',@S40),%SecondaryDefaultIcon
+              #ENDBOXED
+              #BOXED('Conditional Icon Usage')
+                #BUTTON('&Conditional Icon Usage'),MULTI(%SecondaryConditionalIcons,%SecondaryIconCondition),INLINE,HLP('~TPLControlRelationTree_Icon')
+                  #PROMPT('&Condition:',@S255),%SecondaryIconCondition
+                  #PROMPT('&Icon:',@S40),%SecondaryConditionalIcon
+                #ENDBUTTON
+              #ENDBOXED
+            #ENDTAB
+            #TAB('&Icons'),WHERE(NOT %ControlHasColor),HLP('~TPLControlRelationTree_Icons')
+              #PREPARE
+                #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+              #ENDPREPARE
+              #DISPLAY('Your RelationTree is not set to use icons. To activate icons for your RelationTree, follow these steps.'),AT(10,30,175,24)
+              #DISPLAY('1.  If you aren''t in the window formatter, go there.'),AT(10,,175)
+              #DISPLAY('2.  Right-click on the RelationTree control, and select "List Box Format..."'),AT(10,,175,16)
+              #DISPLAY('3.  Select the RelationTree field, and click the "Properties" button.'),AT(10,,175,16)
+              #DISPLAY('4.  Check the "Icons" Checkbox.'),AT(10,,175)
+              #DISPLAY('5.  When you call up the RelationTree actions window, this tab will let you set the colors for your RelationTree.'),AT(10,,175,16)
+            #ENDTAB
+          #ENDSHEET
+        #ENDBUTTON
+      #ENDBOXED
+    #ENDTAB
+    #TAB('&Colors'),WHERE(%ControlHasColor),HLP('~TPLControlRelationTree_Colors')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #BOXED('Default Colors')
+        #PROMPT('Foreground &Normal:',COLOR),%DefaultPrimaryForegroundNormal,DEFAULT(-1)
+        #PROMPT('&Background Normal:',COLOR),%DefaultPrimaryBackgroundNormal,DEFAULT(-1)
+        #PROMPT('&Foreground Selected:',COLOR),%DefaultPrimaryForegroundSelected,DEFAULT(-1)
+        #PROMPT('Background &Selected:',COLOR),%DefaultPrimaryBackgroundSelected,DEFAULT(-1)
+      #ENDBOXED
+      #BOXED('Conditional Color Assignments')
+        #BUTTON('Conditional Color Assignments'),MULTI(%PrimaryConditionalColors,%PrimaryColorCondition),INLINE,AT(,,,90),HLP('~TPLControlRelationTree_Colors')
+          #PROMPT('&Condition:',@S255),%PrimaryColorCondition
+          #PROMPT('Foreground &Normal:',COLOR),%ConditionalPrimaryForegroundNormal,DEFAULT(-1)
+          #PROMPT('&Background Normal:',COLOR),%ConditionalPrimaryBackgroundNormal,DEFAULT(-1)
+          #PROMPT('&Foreground Selected:',COLOR),%ConditionalPrimaryForegroundSelected,DEFAULT(-1)
+          #PROMPT('Background &Selected:',COLOR),%ConditionalPrimaryBackgroundSelected,DEFAULT(-1)
+        #ENDBUTTON
+      #ENDBOXED
+    #ENDTAB
+    #TAB('&Colors'),WHERE(NOT %ControlHasColor),HLP('~TPLControlRelationTree_Colors')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #DISPLAY('Your RelationTree is not set to use custom colors. To activate custom colors for your RelationTree, follow these steps.'),AT(10,30,175,24)
+      #DISPLAY('1.  If you aren''t in the window formatter, go there.'),AT(10,,175)
+      #DISPLAY('2.  Right-click on the RelationTree control, and select "List Box Format..."'),AT(10,,175,16)
+      #DISPLAY('3.  Select the RelationTree field, and click the "Properties" button.'),AT(10,,175,16)
+      #DISPLAY('4.  Check the "Color cells" Checkbox.'),AT(10,,175)
+      #DISPLAY('5.  When you call up the RelationTree actions window, this tab will let you set the colors for your RelationTree.'),AT(10,,175,16)
+    #ENDTAB
+    #TAB('&Icons'),WHERE(%ControlHasIcon),HLP('~TPLControlRelationTree_Icons')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #BOXED('Default Icon')
+        #PROMPT('&Default Icon:',@S40),%PrimaryDefaultIcon
+      #ENDBOXED
+      #BOXED('Conditional Icon Usage')
+        #BUTTON('&Conditional Icon Usage'),MULTI(%PrimaryConditionalIcons,%PrimaryIconCondition),INLINE,HLP('~TPLControlRelationTree_Icons')
+          #PROMPT('&Condition:',@S255),%PrimaryIconCondition
+          #PROMPT('&Icon:',@S40),%PrimaryConditionalIcon
+        #ENDBUTTON
+      #ENDBOXED
+    #ENDTAB
+    #TAB('&Icons'),WHERE(NOT %ControlHasColor),HLP('~TPLControlRelationTree_Icons')
+      #PREPARE
+        #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+      #ENDPREPARE
+      #DISPLAY('Your RelationTree is not set to use icons. To activate icons for your RelationTree, follow these steps.'),AT(10,30,175,24)
+      #DISPLAY('1.  If you aren''t in the window formatter, go there.'),AT(10,,175)
+      #DISPLAY('2.  Right-click on the RelationTree control, and select "List Box Format..."'),AT(10,,175,16)
+      #DISPLAY('3.  Select the RelationTree field, and click the "Properties" button.'),AT(10,,175,16)
+      #DISPLAY('4.  Check the "Icons" Checkbox.'),AT(10,,175)
+      #DISPLAY('5.  When you call up the RelationTree actions window, this tab will let you set the colors for your RelationTree.'),AT(10,,175,16)
+    #ENDTAB
+  #ENDSHEET
+#ENDBUTTON
+#CLASS('Format Tree','Format a variable in the ' & %ActiveTemplateInstanceDescription)
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%FileControlSetFlags)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #IF(%ControlHasIcon)
+      #IF(%TreeTitleIcon)
+        #INSERT(%StandardAddIconToProject,%TreeTitleIcon)
+      #ENDIF
+      #IF(%PrimaryDefaultIcon)
+        #INSERT(%StandardAddIconToProject,%PrimaryDefaultIcon)
+      #ENDIF
+      #FOR(%PrimaryConditionalIcons)
+        #INSERT(%StandardAddIconToProject,%PrimaryConditionalIcon)
+      #ENDFOR
+      #FOR(%Secondary),WHERE(%SecondaryType = 'MANY:1')
+        #IF(%SecondaryDefaultIcon)
+          #INSERT(%StandardAddIconToProject,%SecondaryDefaultIcon)
+        #ENDIF
+        #FOR(%SecondaryConditionalIcons)
+          #INSERT(%StandardAddIconToProject,%SecondaryConditionalIcon)
+        #ENDFOR
+      #ENDFOR
+    #ENDIF
+  #ENDFOR
+#ENDAT
+#ATSTART
+#DECLARE(%IsFirstInstance)
+#SET(%IsFirstInstance,(INLIST(%ActiveTemplate,%ActiveTemplate)=INSTANCE(%ActiveTemplate)) AND (INSTANCE(%ActiveTemplateInstance)=1))
+#MESSAGE('Initializing Relation Tree',3)
+#INSERT(%FileControlInitialize)
+#DECLARE(%InstancePrefix)
+#DECLARE(%TreeQueue)
+#DECLARE(%TreeControl)
+#DECLARE(%TempLevel)
+#DECLARE(%TempParent)
+#DECLARE(%TempParentKey)
+#DECLARE(%InsertPopupText)
+#DECLARE(%ChangePopupText)
+#DECLARE(%DeletePopupText)
+#DECLARE(%ExpandPopupText)
+#DECLARE(%ContractPopupText)
+#DECLARE(%TreeLevelFile),MULTI
+#DECLARE(%TreeLevel,%TreeLevelFile)
+#DECLARE(%TreeChildFile,%TreeLevelFile)
+#DECLARE(%TreeParentFile,%TreeLevelFile)
+#DECLARE(%TreeParentKey,%TreeLevelFile)
+#DECLARE(%TreeDisplay,%TreeLevelFile)
+#DECLARE(%UpdatesPresent)
+#DECLARE(%IconList),UNIQUE
+#DECLARE(%IconListType,%IconList)
+#FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+  #SET(%TreeControl,%Control)
+  #SET(%TreeQueue,EXTRACT(%ControlStatement,'FROM',1))
+#ENDFOR
+#SET(%InsertPopupText,'&Insert')
+#SET(%ChangePopupText,'&Change')
+#SET(%DeletePopupText,'&Delete')
+#SET(%ExpandPopupText,'E&xpand All')
+#SET(%ContractPopupText,'Co&ntract All')
+#FIX(%Control,%TreeControl)
+#FIX(%File,%Primary)
+#ADD(%TreeLevelFile,%Primary)
+#SET(%TreeLevel,1)
+#SET(%TreeDisplay,%PrimaryDisplay)
+#SET(%UpdatesPresent,%False)
+#IF(%PrimaryUpdate)
+  #SET(%UpdatesPresent,%True)
+#ENDIF
+#IF(%ControlHasIcon)
+  #IF(%TreeTitleIcon)
+    #INSERT(%AddBrowseIcon,%TreeTitleIcon)
+  #ENDIF
+  #IF(%PrimaryDefaultIcon)
+    #INSERT(%AddBrowseIcon,%PrimaryDefaultIcon)
+  #ENDIF
+  #FOR(%PrimaryConditionalIcons)
+    #INSERT(%AddBrowseIcon,%PrimaryConditionalIcon)
+  #ENDFOR
+#ENDIF
+#FOR(%Secondary),WHERE(%SecondaryType = 'MANY:1')
+  #IF(%SecondaryUpdate)
+    #SET(%UpdatesPresent,%True)
+  #ENDIF
+  #FIX(%TreeLevelFile,%SecondaryTo)
+  #SET(%TreeChildFile,%Secondary)
+  #SET(%TempLevel,%TreeLevel + 1)
+  #FIX(%File,%Secondary)
+  #FIX(%Relation,%SecondaryTo)
+  #SET(%TempParent,%Relation)
+  #SET(%TempParentKey,%RelationKey)
+  #ADD(%TreeLevelFile,%Secondary)
+  #SET(%TreeLevel,%TempLevel)
+  #SET(%TreeParentFile,%TempParent)
+  #SET(%TreeParentKey,%TempParentKey)
+  #SET(%TreeDisplay,%SecondaryDisplay)
+  #IF(%ControlHasIcon)
+    #IF(%SecondaryDefaultIcon)
+      #INSERT(%AddBrowseIcon,%SecondaryDefaultIcon)
+    #ENDIF
+    #FOR(%SecondaryConditionalIcons)
+      #INSERT(%AddBrowseIcon,%SecondaryConditionalIcon)
+    #ENDFOR
+  #ENDIF
+#ENDFOR
+#SET(%InstancePrefix,'REL' & %ActiveTemplateInstance & ':')
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%GenerateInstanceUpdate),WHERE(%AcceptToolbarControl AND %GenerateReltreeInstance=0)
+  #SET(%GenerateReltreeInstance,%ActiveTemplateInstance)
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%DataSectionBeforeWindow)
+  #IF(%AcceptToolBarControl)
+    #IF( %GenerateReltreeInstance = %ActiveTemplateInstance )
+      #IF ( ~%GenerateBRWInstance )
+ToolbarMode          UNSIGNED,AUTO
+      #ENDIF
+ActiveReltree        SIGNED
+    #ENDIF
+    #SET(%ValueConstruct,%InstancePrefix & ':SaveRecords')
+%[20]ValueConstruct LONG,AUTO
+    #SET(%ValueConstruct,%InstancePrefix & ':SavePointer')
+%[20]ValueConstruct LONG,AUTO
+    #SET(%ValueConstruct,%InstancePrefix & ':SaveLevel')
+%[20]ValueConstruct BYTE,AUTO
+    #SET(%ValueConstruct,%InstancePrefix & ':Action')
+%[20]ValueConstruct LONG,AUTO
+  #ENDIF
+%[20]TreeQueue QUEUE,PRE()                      #<! Browsing Queue
+  #SET(%ValueConstruct,%InstancePrefix & ':Display')
+%[20]ValueConstruct STRING(200)                 #<! Queue position of scroll thumb
+  #FIX(%Control,%TreeControl)
+  #SELECT(%ControlField,1)
+  #IF(%ControlHasColor)
+    #SET(%ValueConstruct,%InstancePrefix & ':NormalFG')
+%[20]ValueConstruct LONG
+    #SET(%ValueConstruct,%InstancePrefix & ':NormalBG')
+%[20]ValueConstruct LONG
+    #SET(%ValueConstruct,%InstancePrefix & ':SelectedFG')
+%[20]ValueConstruct LONG
+    #SET(%ValueConstruct,%InstancePrefix & ':SelectedBG')
+%[20]ValueConstruct LONG
+  #ENDIF
+  #IF(%ControlHasIcon)
+    #SET(%ValueConstruct,%InstancePrefix & ':Icon')
+%[20]ValueConstruct SHORT
+  #ENDIF
+  #SET(%ValueConstruct,%InstancePrefix & ':Level')
+%[20]ValueConstruct LONG                        #<! Queue position of scroll thumb
+  #SET(%ValueConstruct,%InstancePrefix & ':Loaded')
+%[20]ValueConstruct SHORT                       #<! Queue position of scroll thumb
+  #SET(%ValueConstruct,%InstancePrefix & ':Position')
+%[20]ValueConstruct STRING(512)                 #<! Queue position of scroll thumb
+                END
+  #SET(%ValueConstruct,%InstancePrefix & ':LoadedQueue')
+%[20]ValueConstruct QUEUE,PRE()                 #<! Status Queue
+  #SET(%ValueConstruct,%InstancePrefix & ':LoadedLevel')
+%[20]ValueConstruct LONG                        #<! Queue position of scroll thumb
+  #SET(%ValueConstruct,%InstancePrefix & ':LoadedPosition')
+%[20]ValueConstruct STRING(512)                 #<! Queue position of scroll thumb
+               END
+  #SET(%ValueConstruct,%InstancePrefix & ':CurrentLevel')
+%[20]ValueConstruct LONG                        #<! Queue position of scroll thumb
+  #SET(%ValueConstruct,%InstancePrefix & ':CurrentChoice')
+%[20]ValueConstruct LONG                        #<! Queue position of scroll thumb
+  #SET(%ValueConstruct,%InstancePrefix & ':NewItemLevel')
+%[20]ValueConstruct LONG                        #<! Queue position of scroll thumb
+  #SET(%ValueConstruct,%InstancePrefix & ':NewItemPosition')
+%[20]ValueConstruct STRING(512)                 #<! Queue position of scroll thumb
+  #SET(%ValueConstruct,%InstancePrefix & ':LoadAll')
+%[20]ValueConstruct LONG
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%WindowEventHandling,'OpenWindow'),WHERE(%AcceptToolBarControl AND %IsFirstInstance)
+DO %InstancePrefix:AssignButtons
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%BeforeWindowOpening)
+DO %InstancePrefix:ContractAll
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%AfterWindowOpening)
+#FIX(%Control,%TreeControl)
+#IF(%ControlHasIcon)
+  #FOR(%IconList),WHERE(%IconListType <> 'Variable')
+    #SET(%ValueConstruct,INSTANCE(%IconList))
+    #IF(%IconListType = 'Built-In')
+%TreeControl{Prop:IconList,%ValueConstruct} = %IconList
+    #ELSIF(%IconListType = 'File')
+%TreeControl{Prop:IconList,%ValueConstruct} = '~%IconList'
+    #ENDIF
+  #ENDFOR
+#ENDIF
+%TreeControl{Prop:Selected} = 1
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%PrepareAlerts)
+#IF(%ExpandKeyCode)
+%TreeControl{Prop:Alrt,255} = %ExpandKeyCode
+#ELSE
+%TreeControl{Prop:Alrt,255} = CtrlRight
+#ENDIF
+#IF(%ContractKeyCode)
+%TreeControl{Prop:Alrt,254} = %ContractKeyCode
+#ELSE
+%TreeControl{Prop:Alrt,254} = CtrlLeft
+#ENDIF
+#IF(%UpdatesPresent)
+%TreeControl{Prop:Alrt,253} = MouseLeft2
+#ENDIF
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%ControlEventHandling,%TreeControl,'NewSelection')
+#IF(%UpdatesPresent OR %GiveExpandContractOption)
+IF KEYCODE() = MouseRight
+  #IF(%UpdatesPresent AND %GiveExpandContractOption)
+  EXECUTE(POPUP('%'InsertPopupText|%'ChangePopupText|%'DeletePopupText|-|%'ExpandPopupText|%'ContractPopupText'))
+    DO %InstancePrefix:AddEntry
+    DO %InstancePrefix:EditEntry
+    DO %InstancePrefix:RemoveEntry
+    DO %InstancePrefix:ExpandAll
+    DO %InstancePrefix:ContractAll
+  END
+  #ELSIF(%UpdatesPresent)
+  EXECUTE(POPUP('%'InsertPopupText|%'ChangePopupText|%'DeletePopupText'))
+    DO %InstancePrefix:AddEntry
+    DO %InstancePrefix:EditEntry
+    DO %InstancePrefix:RemoveEntry
+  END
+  #ELSE
+  EXECUTE(POPUP('%'ExpandPopupText|%'ContractPopupText'))
+    DO %InstancePrefix:ExpandAll
+    DO %InstancePrefix:ContractAll
+  END
+  #ENDIF
+END
+#ENDIF
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%WindowEventHandling,'GainFocus')
+%InstancePrefix:CurrentChoice = CHOICE(%TreeControl)
+GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+%InstancePrefix:NewItemLevel = %InstancePrefix:Level
+%InstancePrefix:NewItemPosition = %InstancePrefix:Position
+DO %InstancePrefix:RefreshTree
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%ControlEventHandling,%TreeControl,'Expanding')
+DO %InstancePrefix:LoadLevel
+CYCLE
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%ControlEventHandling,%TreeControl,'Contracting')
+DO %InstancePrefix:UnloadLevel
+CYCLE
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%ControlEventHandling,%TreeControl,'AlertKey')
+CASE KEYCODE()
+#IF(%ExpandKeyCode)
+OF %ExpandKeyCode
+#ELSE
+OF CtrlRight
+#ENDIF
+  %TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+  POST(Event:Expanding,%TreeControl)
+#IF(%ContractKeyCode)
+OF %ContractKeyCode
+#ELSE
+OF CtrlLeft
+#ENDIF
+  %TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+  POST(Event:Contracting,%TreeControl)
+#IF(%UpdatesPresent)
+OF MouseLeft2
+  DO %InstancePrefix:EditEntry
+#ENDIF
+END
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%WindowOtherEventHandling),WHERE(%AcceptToolBarControl)
+DO %InstancePrefix:ReltreeDispatch
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%ControlOtherEventHandling,%TreeControl)
+#SET(%ValueConstruct,%True)
+#FOR(%ControlEvent),WHERE(%ControlEvent = 'AlertKey')
+  #SET(%ValueConstruct,%False)
+#ENDFOR
+#IF(%ValueConstruct)
+CASE EVENT()
+OF Event:AlertKey
+  CASE KEYCODE()
+  #IF(%ExpandKeyCode)
+  OF %ExpandKeyCode
+  #ELSE
+  OF CtrlRight
+  #ENDIF
+    %TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+    POST(Event:Expanding,%TreeControl)
+  #IF(%ContractKeyCode)
+  OF %ContractKeyCode
+  #ELSE
+  OF CtrlLeft
+  #ENDIF
+    %TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+    POST(Event:Contracting,%TreeControl)
+  #IF(%UpdatesPresent)
+  OF MouseLeft2
+    DO %InstancePrefix:EditEntry
+  #ENDIF
+  END
+END
+#ENDIF
+#ENDAT
+#!-------------------------------------------------------------------------
+#AT(%ProcedureRoutines)
+#IF ( %AcceptToolbarControl )
+%InstancePrefix:ReltreeDispatch ROUTINE
+  IF ToolbarMode = TreeMode AND ActiveReltree = %TreeControl THEN
+    CASE ACCEPTED()
+    OF TBarBrwHelp
+      PRESSKEY(F1Key)
+    OF TBarBrwBottom TO TBarBrwUp
+      %TreeControl{PROPLIST:MouseDownRow} = CHOICE(%TreeControl) !! Server routines assume this
+      EXECUTE(ACCEPTED()-TBarBrwBottom+1)
+        DO %InstancePrefix:NextParent
+        DO %InstancePrefix:PreviousParent
+        DO %InstancePrefix:NextLevel
+        DO %InstancePrefix:PreviousLevel
+        DO %InstancePrefix:NextRecord
+        DO %InstancePrefix:PreviousRecord
+      END
+    #EMBED(%ReltreeToolbarDispatch,'Reltree Toolbar Dispatch'),%ActiveTemplateInstance,HIDE
+    END
+    #EMBED (%AfterToolbarDispatch, 'After toolbar processed'),%ActiveTemplateInstance
+  END
+
+%InstancePrefix:NextParent ROUTINE
+  GET(%TreeQueue,CHOICE(%TreeControl))
+  IF ABS(%InstancePrefix:Level) > 1 THEN
+    %InstancePrefix:SaveLevel = ABS(%InstancePrefix:Level)-1
+    DO %InstancePrefix:NextSavedLevel
+  END
+
+%InstancePrefix:PreviousParent ROUTINE
+  GET(%TreeQueue,CHOICE(%TreeControl))
+  IF ABS(%InstancePrefix:Level) > 1 THEN
+    %InstancePrefix:SaveLevel = ABS(%InstancePrefix:Level)-1
+    DO %InstancePrefix:PreviousSavedLevel
+  END
+
+%InstancePrefix:NextLevel ROUTINE
+  GET(%TreeQueue,CHOICE(%TreeControl))
+  %InstancePrefix:SaveLevel = ABS(%InstancePrefix:Level)
+  DO %InstancePrefix:NextSavedLevel
+
+%InstancePrefix:NextSavedLevel ROUTINE
+  LOOP
+    LOOP
+      GET(%TreeQueue,POINTER(%TreeQueue)+1)
+      IF ERRORCODE() THEN
+        EXIT                ! Unable to find another record on similar level
+      END
+    WHILE ABS(%InstancePrefix:Level) > %InstancePrefix:SaveLevel
+    IF ABS(%InstancePrefix:Level) = %InstancePrefix:SaveLevel THEN
+      SELECT(%TreeControl,POINTER(%TreeQueue))
+      EXIT
+    END
+    %InstancePrefix:SavePointer = POINTER(%TreeQueue)
+    %TreeControl{PROPLIST:MouseDownRow} = %InstancePrefix:SavePointer
+    DO %InstancePrefix:LoadLevel
+    GET(%TreeQueue,%InstancePrefix:SavePointer)
+  END
+
+%InstancePrefix:PreviousSavedLevel ROUTINE
+  LOOP
+    LOOP
+      GET(%TreeQueue,POINTER(%TreeQueue)-1)
+      IF ERRORCODE() THEN
+        EXIT                ! Unable to find another record on similar level
+      END
+    WHILE ABS(%InstancePrefix:Level) > %InstancePrefix:SaveLevel
+    IF ABS(%InstancePrefix:Level) = %InstancePrefix:SaveLevel THEN
+      SELECT(%TreeControl,POINTER(%TreeQueue))
+      EXIT
+    END
+    %InstancePrefix:SavePointer = POINTER(%TreeQueue)
+    %InstancePrefix:SaveRecords = RECORDS(%TreeQueue)
+    %TreeControl{PROPLIST:MouseDownRow} = %InstancePrefix:SavePointer
+    DO %InstancePrefix:LoadLevel
+    IF RECORDS(%TreeQueue) <> %InstancePrefix:SaveRecords THEN
+      %InstancePrefix:SavePointer += 1 + RECORDS(%TreeQueue) - %InstancePrefix:SaveRecords
+    END
+    GET(%TreeQueue,%InstancePrefix:SavePointer)
+  END
+
+%InstancePrefix:PreviousLevel ROUTINE
+  GET(%TreeQueue,CHOICE(%TreeControl))
+  %InstancePrefix:SaveLevel = ABS(%InstancePrefix:Level)
+  DO %InstancePrefix:PreviousSavedLevel
+
+%InstancePrefix:NextRecord ROUTINE
+  DO %InstancePrefix:LoadLevel
+  IF CHOICE(%TreeControl) < RECORDS(%TreeQueue)
+    SELECT(%TreeControl,CHOICE(%TreeControl)+1)
+  END
+
+%InstancePrefix:PreviousRecord ROUTINE
+  %InstancePrefix:SavePointer = CHOICE(%TreeControl)-1
+  LOOP
+    %InstancePrefix:SaveRecords = RECORDS(%TreeQueue)
+    %TreeControl{PROPLIST:MouseDownRow} = %InstancePrefix:SavePointer
+    DO %InstancePrefix:LoadLevel
+    IF RECORDS(%TreeQueue) = %InstancePrefix:SaveRecords THEN
+      BREAK
+    END
+    %InstancePrefix:SavePointer += RECORDS(%TreeQueue) - %InstancePrefix:SaveRecords
+  END
+  SELECT(%TreeControl,%InstancePrefix:SavePointer)
+
+%InstancePrefix:AssignButtons ROUTINE
+  Toolbarmode = TreeMode
+  ActiveReltree = %TreeControl
+  ENABLE(TBarBrwBottom,TBarBrwUp)
+  TBarBrwBottom{PROP:ToolTip}='Go to next parent record'
+  TBarBrwTop{PROP:ToolTip}='Go to parent record'
+  TBarBrwPageDown{PROP:ToolTip}='Go to next similar record'
+  TBarBrwPageUp{PROP:ToolTip}='Go to previous similar record'
+  TBarBrwDown{PROP:ToolTip}='Go to next record'
+  TBarBrwUP{PROP:ToolTip}='Go to previous record'
+  #EMBED(%AssignToolbarButtons,'Assign Toolbar Buttons'),%ActiveTemplateInstance,HIDE
+#ENDIF
+
+#FIX(%Control,%TreeControl)
+!---------------------------------------------------------------------------
+#SELECT(%TreeLevelFile,1)
+%InstancePrefix:Load:%TreeLevelFile ROUTINE
+!|
+!| This routine is used to load the base level of the RelationTree.
+!|
+!| First, the Title line is added.
+!|
+#IF(%TreeChildFile)
+!| Next, each record of the file %TreeLevelFile is read. If the record is not filtered,
+!| then the following happens:
+!|
+!|   First, the queue %InstancePrefix:LoadedQueue is searched, to see if the tree branch
+!|   corresponding to the record is "loaded", that is, if the branch is currently opened.
+!|
+!|   If the branch is open, then the records for that branch are read from the file
+!|   %TreeChildFile. This is done in the routine %InstancePrefix:Load:%TreeChildFile.
+!|
+!|   If the branch is not open, then the RelationTree looks for a single record from
+!|   %TreeChildFile, to see if any child records are available. If they are, the
+!|   branch can be expanded, so %InstancePrefix:Level gets a -%TreeLevel. This
+!|   value is used by the list box to display a "closed" box next to the entry.
+!|
+!|   Finally, the queue record that corresponds to the %TreeLevelFile record read is
+!|   formatted and added to the queue %TreeQueue. This is done in the routine
+!|   %InstancePrefix:Format:%TreeLevelFile.
+#ELSE
+!| Next, each record of the file %TreeLevelFile is read. If the record is not filtered,
+!| the queue record that corresponds to this record is formatted and added to the queue
+!| %TreeQueue. This is done in the routine %InstancePrefix:Format:%TreeLevelFile.
+#ENDIF
+!|
+  #IF(%TreeTitle)
+  %InstancePrefix:Display = '%TreeTitle'
+  %InstancePrefix:Loaded = 0
+  %InstancePrefix:Position = ''
+  %InstancePrefix:Level = 0
+    #IF(%ControlHasIcon)
+      #FIX(%IconList,%TreeTitleIcon)
+      #IF(%IconList)
+        #CASE(%IconListType)
+        #OF('Variable')
+  %ValueConstruct:Icon = %IconList
+        #ELSE
+          #SET(%ValueConstruct,INSTANCE(%IconList))
+  %InstancePrefix:Icon = %ValueConstruct
+        #ENDCASE
+      #ELSE
+  %InstancePrefix:Icon = 0
+      #ENDIF
+    #ENDIF
+    #IF(%ControlHasColor)
+  %InstancePrefix:NormalFG = -1
+  %InstancePrefix:NormalBG = -1
+  %InstancePrefix:SelectedFG = -1
+  %InstancePrefix:SelectedBG = -1
+    #ENDIF
+  ADD(%TreeQueue)
+  #ENDIF
+  #IF(%PrimaryKey)
+  SET(%PrimaryKey)
+  #ELSE
+  SET(%Primary)
+  #ENDIF
+  LOOP
+    #EMBED(%BeforePrimaryNext,'Relation Tree, Before NEXT on primary file'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    NEXT(%TreeLevelFile)
+    IF ERRORCODE()
+      IF ERRORCODE() = BadRecErr
+        BREAK
+      ELSE
+        StandardWarning(Warn:RecordFetchError,'%File')
+        POST(Event:CloseWindow)
+        EXIT
+      END
+    END
+    #EMBED(%AfterPrimaryNext,'Relation Tree, After NEXT on primary file'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    #IF(%PrimaryFilter)
+    IF NOT (%PrimaryFilter) THEN CYCLE.
+    #ENDIF
+    %InstancePrefix:Loaded = 0
+  #IF(%PrimaryKey)
+    %InstancePrefix:Position = POSITION(%PrimaryKey)
+  #ELSE
+    %InstancePrefix:Position = POSITION(%Primary)
+  #ENDIF
+    %InstancePrefix:Level = %TreeLevel
+  #IF(%TreeChildFile)
+    %InstancePrefix:LoadedLevel = ABS(%InstancePrefix:Level)
+    %InstancePrefix:LoadedPosition = %InstancePrefix:Position
+    GET(%InstancePrefix:LoadedQueue,%InstancePrefix:LoadedLevel,%InstancePrefix:LoadedPosition)
+    IF ERRORCODE() AND %InstancePrefix:LoadAll = False
+    #FIX(%File,%TreeChildFile)
+    #FIX(%Secondary,%TreeChildFile)
+    #FIX(%Relation,%TreeLevelFile)
+    #FIX(%Key,%FileKey)
+    #FOR(%RelationKeyField)
+      #IF(%RelationKeyField)
+      %RelationKeyFieldLink = %RelationKeyField
+      #ELSE
+        #FIX(%KeyField,%RelationKeyFieldLink)
+        #IF(%KeyFieldSequence = 'ASCENDING')
+      CLEAR(%KeyField,0)
+        #ELSE
+      CLEAR(%KeyField,1)
+        #ENDIF
+      #ENDIF
+    #ENDFOR
+      SET(%FileKey,%FileKey)
+      LOOP
+        #EMBED(%BeforeSecondaryNext,'Relation Tree, Before NEXT on secondary file'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription)
+        NEXT(%File)
+        IF ERRORCODE()
+          IF ERRORCODE() = BadRecErr
+            BREAK
+          ELSE
+            StandardWarning(Warn:RecordFetchError,'%File')
+            POST(Event:CloseWindow)
+            EXIT
+          END
+        END
+    #FOR(%RelationKeyField),WHERE(%RelationKeyField)
+      #IF(%KeyNoCase)
+        IF UPPER(%RelationKeyFieldLink) <> UPPER(%RelationKeyField) THEN BREAK.
+      #ELSE
+        IF %RelationKeyFieldLink <> %RelationKeyField THEN BREAK.
+      #ENDIF
+    #ENDFOR
+        #EMBED(%AfterSecondaryNext,'Relation Tree, After NEXT on secondary file'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription)
+        #IF(%SecondaryFilter)
+        IF NOT (%SecondaryFilter) THEN CYCLE.
+        #ENDIF
+        %InstancePrefix:Level = -%TreeLevel
+        BREAK
+      END
+      DO %InstancePrefix:Format:%TreeLevelFile
+      ADD(%TreeQueue,POINTER(%TreeQueue)+1)
+    ELSE
+      IF %InstancePrefix:LoadAll
+        ADD(%InstancePrefix:LoadedQueue,%InstancePrefix:LoadedLevel,%InstancePrefix:LoadedPosition)
+      END
+      %InstancePrefix:Level = %TreeLevel
+      %InstancePrefix:Loaded = True
+      DO %InstancePrefix:Format:%TreeLevelFile
+      ADD(%TreeQueue,POINTER(%TreeQueue)+1)
+      DO %InstancePrefix:Load:%TreeChildFile
+    END
+  #ELSE
+    DO %InstancePrefix:Format:%TreeLevelFile
+    ADD(%TreeQueue,POINTER(%TreeQueue)+1)
+  #ENDIF
+  END
+
+!---------------------------------------------------------------------------
+%InstancePrefix:Format:%TreeLevelFile ROUTINE
+!|
+!| This routine formats a line of the display queue %TreeQueue to display the
+!| contents of a record of %TreeLevelFile.
+!|
+!| First, the variable DisplayString is assigned the formatted value.
+!|
+!| Next, the queue variable %InstancePrefix:Display is assigned the value in
+!| DisplayString. It is possible for the display string to be reformatted in
+!| the EMBED point "Relation Tree, Before Setting Display on Primary File".
+!|
+#IF(%ControlHasColor)
+!| Next, any coloring done to the line is performed.
+!|
+#ENDIF
+#IF(%ControlHasIcon)
+!| Next, any icon assigments are made.
+!|
+#ENDIF
+  #EMBED(%BeforePrimaryDisplayCreate,'Relation Tree, Before Creating Display on Primary File'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+  #IF(%TreeDisplay)
+  DisplayString = %TreeDisplay
+  #ELSE
+  CLEAR(DisplayString)
+  #ENDIF
+  #EMBED(%BeforePrimaryDisplay,'Relation Tree, Before Setting Display on Primary File'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+  %InstancePrefix:Display = DisplayString
+  #IF(%ControlHasColor)
+    #IF(ITEMS(%PrimaryConditionalColors))
+      #FOR(%PrimaryConditionalColors)
+        #IF(INSTANCE(%PrimaryConditionalColors) = 1)
+  IF %PrimaryColorCondition
+        #ELSE
+  ELSIF %PrimaryColorCondition
+        #ENDIF
+    %InstancePrefix:NormalFG = %ConditionalPrimaryForegroundNormal
+    %InstancePrefix:NormalBG = %ConditionalPrimaryBackgroundNormal
+    %InstancePrefix:SelectedFG = %ConditionalPrimaryForegroundSelected
+    %InstancePrefix:SelectedBG = %ConditionalPrimaryBackgroundSelected
+      #ENDFOR
+  ELSE
+    %InstancePrefix:NormalFG = %DefaultPrimaryForegroundNormal
+    %InstancePrefix:NormalBG = %DefaultPrimaryBackgroundNormal
+    %InstancePrefix:SelectedFG = %DefaultPrimaryForegroundSelected
+    %InstancePrefix:SelectedBG = %DefaultPrimaryBackgroundSelected
+  END
+    #ELSE
+  %InstancePrefix:NormalFG = %DefaultPrimaryForegroundNormal
+  %InstancePrefix:NormalBG = %DefaultPrimaryBackgroundNormal
+  %InstancePrefix:SelectedFG = %DefaultPrimaryForegroundSelected
+  %InstancePrefix:SelectedBG = %DefaultPrimaryBackgroundSelected
+    #ENDIF
+  #ENDIF
+  #IF(%ControlHasIcon)
+    #IF(ITEMS(%PrimaryConditionalIcons))
+      #FOR(%PrimaryConditionalIcons)
+        #IF(INSTANCE(%PrimaryConditionalIcons) = 1)
+  IF %PrimaryIconCondition
+        #ELSE
+  ELSIF %PrimaryIconCondition
+        #ENDIF
+        #FIX(%IconList,%PrimaryConditionalIcon)
+        #IF(%IconList)
+          #CASE(%IconListType)
+          #OF('Variable')
+    %ValueConstruct:Icon = %IconList
+          #ELSE
+            #SET(%ValueConstruct,INSTANCE(%IconList))
+    %InstancePrefix:Icon = %ValueConstruct
+          #ENDCASE
+        #ELSE
+    %InstancePrefix:Icon = 0
+        #ENDIF
+      #ENDFOR
+  ELSE
+      #FIX(%IconList,%PrimaryDefaultIcon)
+      #IF(%IconList)
+        #CASE(%IconListType)
+        #OF('Variable')
+    %InstancePrefix:Icon = %IconList
+        #ELSE
+          #SET(%ValueConstruct,INSTANCE(%IconList))
+    %InstancePrefix:Icon = %ValueConstruct
+        #ENDCASE
+      #ELSE
+    %InstancePrefix:Icon = 0
+      #ENDIF
+  END
+    #ELSE
+      #FIX(%IconList,%PrimaryDefaultIcon)
+      #IF(%IconList)
+        #CASE(%IconListType)
+        #OF('Variable')
+  %InstancePrefix:Icon = %IconList
+        #ELSE
+          #SET(%ValueConstruct,INSTANCE(%IconList))
+  %InstancePrefix:Icon = %ValueConstruct
+        #ENDCASE
+      #ELSE
+  %InstancePrefix:Icon = 0
+      #ENDIF
+    #ENDIF
+  #ENDIF
+  #EMBED(%BeforeAddingPrimaryToQueue,'Relation Tree, Before Adding Primary Record to Queue'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+
+!---------------------------------------------------------------------------
+%InstancePrefix:LoadLevel ROUTINE
+!|
+!| This routine is used to load a single level of the RelationTree.
+!|
+!| First, we see where the load comes from. Since the alert-key handling sets
+!| %TreeControl{PropList:MouseDownRow} to CHOICE, we can rely on this property
+!| containing the correct selection.
+!|
+!| Next, we retrieve the %TreeQueue record that corresponds to the requested
+!| load row. If the requested load row is already loaded, we don't have to do
+!| anything. If the requested row is not loaded...
+!|
+!|   First, we set %InstancePrefix:Level to a positive value for the selected
+!|   row and put that record back into the queue %TreeQueue. The presence of
+!|   records with a greater Level below this record in the queue tells the
+!|   listbox that the level is opened.
+!|
+!|   Next, we add a record the the queue %InstancePrefix:LoadedQueue. This queue
+!|   is used to rebuild the display when necessary.
+!|
+!|   Next, we retrieve the file record that corresponds to the requested load row.
+!|
+!|   Finally, we reformat the %TreeQueue entry. This allows for any changes in icon
+!|   and colors based on conditional usage.
+!|
+  %InstancePrefix:CurrentChoice = %TreeControl{PropList:MouseDownRow}
+  GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+  IF NOT %InstancePrefix:Loaded
+    %InstancePrefix:Level = ABS(%InstancePrefix:Level)
+    PUT(%TreeQueue)
+    %InstancePrefix:Loaded = True
+    %InstancePrefix:LoadedLevel = ABS(%InstancePrefix:Level)
+    %InstancePrefix:LoadedPosition = %InstancePrefix:Position
+    ADD(%InstancePrefix:LoadedQueue,%InstancePrefix:LoadedLevel,%InstancePrefix:LoadedPosition)
+    EXECUTE(ABS(%InstancePrefix:Level))
+  #FOR(%TreeLevelFile)
+      BEGIN
+    #IF(%TreeLevel=1)
+      #IF(%PrimaryKey)
+        REGET(%PrimaryKey,%InstancePrefix:Position)
+      #ELSE
+        REGET(%Primary,%InstancePrefix:Position)
+      #ENDIF
+    #ELSE
+        REGET(%TreeLevelFile,%InstancePrefix:Position)
+    #ENDIF
+        DO %InstancePrefix:Format:%TreeLevelFile
+      END
+  #ENDFOR
+    END
+    PUT(%TreeQueue)
+    EXECUTE(ABS(%InstancePrefix:Level))
+  #FOR(%TreeLevelFile),WHERE(INSTANCE(%TreeLevelFile) > 1)
+      DO %InstancePrefix:Load:%TreeLevelFile
+  #ENDFOR
+    END
+  END
+!---------------------------------------------------------------------------
+%InstancePrefix:UnloadLevel ROUTINE
+!|
+!| This routine is used to unload a level of the RelationTree.
+!|
+!| First, we see where the unload comes from. Since the alert-key handling sets
+!| %TreeControl{PropList:MouseDownRow} to CHOICE, we can rely on this property
+!| containing the correct selection.
+!|
+!| Next, we retrieve the %TreeQueue record that corresponds to the requested
+!| unload row. If the requested load row isn't loaded, we don't have to do
+!| anything. If the requested row is loaded...
+!|
+!|   First, we set %InstancePrefix:Level to a negative value for the selected
+!|   row and put that record back into the queue %TreeQueue. Since there
+!|   won't be any records at lower levels, we use the negative value to signal
+!|   the listbox that the level is closed, but children exist.
+!|
+!|   Next, we retrieve the record the the queue %InstancePrefix:LoadedQueue that
+!|   corresponds to the unloaded level. This queue record is then deleted.
+!|
+!|   Next, we retrieve the file record that corresponds to the requested load row.
+!|
+!|   Next, we reformat the %TreeQueue entry. This allows for any changes in icon
+!|   and colors based on conditional usage.
+!|
+!|   Finally, we run through all of the %TreeQueue entries for branches below the
+!|   unloaded level, and delete these entries.
+!|
+  %InstancePrefix:CurrentChoice = %TreeControl{PropList:MouseDownRow}
+  GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+  IF %InstancePrefix:Loaded
+    %InstancePrefix:Level = -ABS(%InstancePrefix:Level)
+    PUT(%TreeQueue)
+    %InstancePrefix:Loaded = False
+    %InstancePrefix:LoadedLevel = ABS(%InstancePrefix:Level)
+    %InstancePrefix:LoadedPosition = %InstancePrefix:Position
+    GET(%InstancePrefix:LoadedQueue,%InstancePrefix:LoadedLevel,%InstancePrefix:LoadedPosition)
+    IF NOT ERRORCODE()
+      DELETE(%InstancePrefix:LoadedQueue)
+    END
+    EXECUTE(ABS(%InstancePrefix:Level))
+  #FOR(%TreeLevelFile)
+      BEGIN
+    #IF(%TreeLevel=1)
+      #IF(%PrimaryKey)
+        REGET(%PrimaryKey,%InstancePrefix:Position)
+      #ELSE
+        REGET(%Primary,%InstancePrefix:Position)
+      #ENDIF
+    #ELSE
+        REGET(%TreeLevelFile,%InstancePrefix:Position)
+    #ENDIF
+        DO %InstancePrefix:Format:%TreeLevelFile
+      END
+  #ENDFOR
+    END
+    PUT(%TreeQueue)
+    %InstancePrefix:CurrentLevel = ABS(%InstancePrefix:Level)
+    %InstancePrefix:CurrentChoice += 1
+    LOOP
+      GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+      IF ERRORCODE() THEN BREAK.
+      IF ABS(%InstancePrefix:Level) <= %InstancePrefix:CurrentLevel THEN BREAK.
+      DELETE(%TreeQueue)
+    END
+  END
+#FOR(%TreeLevelFile),WHERE(INSTANCE(%TreeLevelFile) > 1)
+!---------------------------------------------------------------------------
+%InstancePrefix:Load:%TreeLevelFile ROUTINE
+!|
+!| This routine is used to load the base level of the RelationTree.
+!|
+#IF(%TreeChildFile)
+!| For each record of the file %TreeLevelFile is read. If the record is not filtered,
+!| then the following happens:
+!|
+!|   First, the queue %InstancePrefix:LoadedQueue is searched, to see if the tree branch
+!|   corresponding to the record is "loaded", that is, if the branch is currently opened.
+!|
+!|   If the branch is open, then the records for that branch are read from the file
+!|   %TreeChildFile. This is done in the routine %InstancePrefix:Load:%TreeChildFile.
+!|
+!|   If the branch is not open, then the RelationTree looks for a single record from
+!|   %TreeChildFile, to see if any child records are available. If they are, the
+!|   branch can be expanded, so %InstancePrefix:Level gets a -%TreeLevel. This
+!|   value is used by the list box to display a "closed" box next to the entry.
+!|
+!|   Finally, the queue record that corresponds to the %TreeLevelFile record read is
+!|   formatted and added to the queue %TreeQueue. This is done in the routine
+!|   %InstancePrefix:Format:%TreeLevelFile.
+#ELSE
+!| Next, each record of the file %TreeLevelFile is read. If the record is not filtered,
+!| the queue record that corresponds to this record is formatted and added to the queue
+!| %TreeQueue. This is done in the routine %InstancePrefix:Format:%TreeLevelFile.
+#ENDIF
+!|
+  #FIX(%File,%TreeLevelFile)
+  #FIX(%Secondary,%TreeLevelFile)
+  #FIX(%Relation,%TreeParentFile)
+  #FIX(%Key,%FileKey)
+  #FOR(%RelationKeyField)
+    #IF(%RelationKeyField)
+  %RelationKeyFieldLink = %RelationKeyField
+    #ELSE
+      #FIX(%KeyField,%RelationKeyFieldLink)
+      #IF(%KeyFieldSequence = 'ASCENDING')
+  CLEAR(%RelationKeyFieldLink)
+      #ELSE
+  CLEAR(%RelationKeyFieldLink,1)
+      #ENDIF
+    #ENDIF
+  #ENDFOR
+  SET(%FileKey,%FileKey)
+  LOOP
+    #EMBED(%BeforeSecondaryNext,'Relation Tree, Before NEXT on secondary file'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription)
+    NEXT(%File)
+    IF ERRORCODE()
+      IF ERRORCODE() = BadRecErr
+        BREAK
+      ELSE
+        StandardWarning(Warn:RecordFetchError,'%File')
+        POST(Event:CloseWindow)
+        EXIT
+      END
+    END
+  #FOR(%RelationKeyField),WHERE(%RelationKeyField)
+    IF %RelationKeyFieldLink <> %RelationKeyField THEN BREAK.
+  #ENDFOR
+    #EMBED(%AfterSecondaryNext,'Relation Tree, After NEXT on secondary file'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription)
+    #IF(%SecondaryFilter)
+    IF NOT (%SecondaryFilter) THEN CYCLE.
+    #ENDIF
+    %InstancePrefix:Loaded = 0
+    %InstancePrefix:Position = POSITION(%TreeLevelFile)
+    %InstancePrefix:Level = %TreeLevel
+  #IF(%TreeChildFile)
+    %InstancePrefix:LoadedLevel = ABS(%InstancePrefix:Level)
+    %InstancePrefix:LoadedPosition = %InstancePrefix:Position
+    GET(%InstancePrefix:LoadedQueue,%InstancePrefix:LoadedLevel,%InstancePrefix:LoadedPosition)
+    IF ERRORCODE() AND %InstancePrefix:LoadAll = False
+    #FIX(%File,%TreeChildFile)
+    #FIX(%Secondary,%TreeChildFile)
+    #FIX(%Relation,%TreeLevelFile)
+    #FIX(%Key,%FileKey)
+    #FOR(%RelationKeyField)
+      #IF(%RelationKeyField)
+      %RelationKeyFieldLink = %RelationKeyField
+      #ELSE
+        #FIX(%KeyField,%RelationKeyFieldLink)
+        #IF(%KeyFieldSequence = 'ASCENDING')
+      CLEAR(%KeyField,0)
+        #ELSE
+      CLEAR(%KeyField,1)
+        #ENDIF
+      #ENDIF
+    #ENDFOR
+      SET(%FileKey,%FileKey)
+      LOOP
+        #EMBED(%BeforeSecondaryNext,'Relation Tree, Before NEXT on secondary file'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription)
+        NEXT(%File)
+        IF ERRORCODE()
+          IF ERRORCODE() = BadRecErr
+            BREAK
+          ELSE
+            StandardWarning(Warn:RecordFetchError,'%File')
+            POST(Event:CloseWindow)
+            EXIT
+          END
+        END
+    #FOR(%RelationKeyField),WHERE(%RelationKeyField)
+      #IF(%KeyNoCase)
+        IF UPPER(%RelationKeyFieldLink) <> UPPER(%RelationKeyField) THEN BREAK.
+      #ELSE
+        IF %RelationKeyFieldLink <> %RelationKeyField THEN BREAK.
+      #ENDIF
+    #ENDFOR
+        #EMBED(%AfterSecondaryNext,'Relation Tree, After NEXT on secondary file'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription)
+    #IF(%SecondaryFilter)
+        IF NOT (%SecondaryFilter) THEN CYCLE.
+    #ENDIF
+        %InstancePrefix:Level = -%TreeLevel
+        BREAK
+      END
+      DO %InstancePrefix:Format:%TreeLevelFile
+      ADD(%TreeQueue,POINTER(%TreeQueue)+1)
+    ELSE
+      IF %InstancePrefix:LoadAll
+        ADD(%InstancePrefix:LoadedQueue,%InstancePrefix:LoadedLevel,%InstancePrefix:LoadedPosition)
+      END
+      %InstancePrefix:Level = %TreeLevel
+      %InstancePrefix:Loaded = True
+      DO %InstancePrefix:Format:%TreeLevelFile
+      ADD(%TreeQueue,POINTER(%TreeQueue)+1)
+      DO %InstancePrefix:Load:%TreeChildFile
+    END
+  #ELSE
+    DO %InstancePrefix:Format:%TreeLevelFile
+    ADD(%TreeQueue,POINTER(%TreeQueue)+1)
+  #ENDIF
+  END
+
+!-------------------------------------------------------
+%InstancePrefix:Format:%TreeLevelFile ROUTINE
+!|
+!| This routine formats a line of the display queue %TreeQueue to display the
+!| contents of a record of %TreeLevelFile.
+!|
+!| First, the variable DisplayString is assigned the formatted value.
+!|
+!| Next, the queue variable %InstancePrefix:Display is assigned the value in
+!| DisplayString. It is possible for the display string to be reformatted in
+!| the EMBED point "Relation Tree, Before Setting Display on Primary File".
+!|
+#IF(%ControlHasColor)
+!| Next, any coloring done to the line is performed.
+!|
+#ENDIF
+#IF(%ControlHasIcon)
+!| Next, any icon assigments are made.
+!|
+#ENDIF
+  #INSERT(%StandardFormula,'Format Tree')
+  #FIX(%File,%Primary)
+  #FIX(%Secondary,%TreeLevelFile)
+  #EMBED(%BeforeSecondaryDisplayCreate,'Relation Tree, Before Creating Display on Secondary File'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+  #IF(%TreeDisplay)
+  DisplayString = %TreeDisplay
+  #ELSE
+  CLEAR(DisplayString)
+  #ENDIF
+  #EMBED(%BeforeSecondaryDisplay,'Relation Tree, Before Setting Display on Secondary File'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),MAP(%Secondary,' on ' & %Secondary)
+  #FIX(%File,%TreeLevelFile)
+  #FIX(%Relation,%TreeParentFile)
+  %InstancePrefix:Display = DisplayString
+  #IF(%ControlHasColor)
+    #IF(ITEMS(%SecondaryConditionalColors))
+      #FOR(%SecondaryConditionalColors)
+        #IF(INSTANCE(%SecondaryConditionalColors) = 1)
+  IF %SecondaryColorCondition
+        #ELSE
+  ELSIF %SecondaryColorCondition
+        #ENDIF
+    %InstancePrefix:NormalFG = %ConditionalSecondaryForegroundNormal
+    %InstancePrefix:NormalBG = %ConditionalSecondaryBackgroundNormal
+    %InstancePrefix:SelectedFG = %ConditionalSecondaryForegroundSelected
+    %InstancePrefix:SelectedBG = %ConditionalSecondaryBackgroundSelected
+      #ENDFOR
+  ELSE
+    %InstancePrefix:NormalFG = %DefaultSecondaryForegroundNormal
+    %InstancePrefix:NormalBG = %DefaultSecondaryBackgroundNormal
+    %InstancePrefix:SelectedFG = %DefaultSecondaryForegroundSelected
+    %InstancePrefix:SelectedBG = %DefaultSecondaryBackgroundSelected
+  END
+    #ELSE
+  %InstancePrefix:NormalFG = %DefaultSecondaryForegroundNormal
+  %InstancePrefix:NormalBG = %DefaultSecondaryBackgroundNormal
+  %InstancePrefix:SelectedFG = %DefaultSecondaryForegroundSelected
+  %InstancePrefix:SelectedBG = %DefaultSecondaryBackgroundSelected
+    #ENDIF
+  #ENDIF
+  #IF(%ControlHasIcon)
+    #IF(ITEMS(%SecondaryConditionalIcons))
+      #FOR(%SecondaryConditionalIcons)
+        #IF(INSTANCE(%SecondaryConditionalIcons) = 1)
+  IF %SecondaryIconCondition
+        #ELSE
+  ELSIF %SecondaryIconCondition
+        #ENDIF
+        #FIX(%IconList,%SecondaryConditionalIcon)
+        #IF(%IconList)
+          #CASE(%IconListType)
+          #OF('Variable')
+    %InstancePrefix:Icon = %IconList
+          #ELSE
+            #SET(%ValueConstruct,INSTANCE(%IconList))
+    %InstancePrefix:Icon = %ValueConstruct
+          #ENDCASE
+        #ELSE
+    %InstancePrefix:Icon = 0
+        #ENDIF
+      #ENDFOR
+  ELSE
+      #FIX(%IconList,%SecondaryDefaultIcon)
+      #IF(%IconList)
+        #CASE(%IconListType)
+        #OF('Variable')
+    %InstancePrefix:Icon = %IconList
+        #ELSE
+          #SET(%ValueConstruct,INSTANCE(%IconList))
+    %InstancePrefix:Icon = %ValueConstruct
+        #ENDCASE
+      #ELSE
+    %InstancePrefix:Icon = 0
+      #ENDIF
+  END
+    #ELSE
+      #FIX(%IconList,%SecondaryDefaultIcon)
+      #IF(%IconList)
+        #CASE(%IconListType)
+        #OF('Variable')
+  %InstancePrefix:Icon = %IconList
+        #ELSE
+          #SET(%ValueConstruct,INSTANCE(%IconList))
+  %InstancePrefix:Icon = %ValueConstruct
+        #ENDCASE
+      #ELSE
+  %InstancePrefix:Icon = 0
+      #ENDIF
+    #ENDIF
+  #ENDIF
+  #EMBED(%BeforeAddingSecondaryToQueue,'Relation Tree, Before Adding Secondary Record to Queue'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription),MAP(%Secondary,' on ' & %Secondary)
+#ENDFOR
+
+#IF(%UpdatesPresent)
+%InstancePrefix:AddEntry ROUTINE
+  %InstancePrefix:Action = InsertRecord
+  DO %InstancePrefix:UpdateLoop
+
+%InstancePrefix:EditEntry ROUTINE
+  %InstancePrefix:Action = ChangeRecord
+  DO %InstancePrefix:UpdateLoop
+
+%InstancePrefix:RemoveEntry ROUTINE
+  %InstancePrefix:Action = DeleteRecord
+  DO %InstancePrefix:UpdateLoop
+
+%InstancePrefix:UpdateLoop ROUTINE
+  #IF ( %AcceptToolbarControl )
+  LOOP
+    VCRRequest = VCRNone
+    %TreeControl{PROPLIST:MouseDownRow} = CHOICE(%TreeControl)
+  #ENDIF
+    CASE %InstancePrefix:Action
+      OF InsertRecord
+        DO %InstancePrefix:AddEntryServer
+      OF DeleteRecord
+        DO %InstancePrefix:RemoveEntryServer
+      OF ChangeRecord
+        DO %InstancePrefix:EditEntryServer
+    END
+  #IF ( %AcceptToolbarControl )
+    CASE VCRRequest
+      OF VCRForward
+        DO %InstancePrefix:NextRecord
+      OF VCRBackward
+        DO %InstancePrefix:PreviousRecord
+      OF VCRPageForward
+        DO %InstancePrefix:NextLevel
+      OF VCRPageBackward
+        DO %InstancePrefix:PreviousLevel
+      OF VCRFirst
+        DO %InstancePrefix:PreviousParent
+      OF VCRLast
+        DO %InstancePrefix:NextParent
+      OF VCRInsert
+        DO %InstancePrefix:PreviousParent
+        %InstancePrefix:Action = InsertRecord
+      OF VCRNone
+        BREAK
+    END
+  END
+  #ENDIF
+!---------------------------------------------------------------------------
+%InstancePrefix:AddEntryServer ROUTINE
+!|
+!| This routine calls the RelationTree's update procedure to insert a new record.
+!|
+!| First, we see where the insert request comes from. Since no alert-key handling
+!| is present for editing, %TreeControl{PropList:MouseDownRow} is all that is
+!| necessary for editing, and we can rely on this property containing the
+!| correct selection.
+!|
+!| Next, we retrieve the %TreeQueue record that corresponds to the requested
+!| insert row. The new record will be added to the RelationTree level BELOW
+!| the requested insert row. To add a first-level record, the RelationTree
+!| header must be selected for the insert.
+!|
+!| Next, the record is cleared, and any related values are primed.
+!|
+!| Next, GlobalRequest is set to InsertRecord, and the appropriate update procedure
+!| is called.
+!|
+!| Finally, if the insert is successful (GlobalRequest = RequestCompleted) then the
+!| RelationTree is refreshed, and the newly inserted record highlighted.
+!|
+  #EMBED(%BeginAddEntryRoutine,'Relation Tree, Beginning of Add Record Routine'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+  %InstancePrefix:CurrentChoice = %TreeControl{PropList:MouseDownRow}
+  GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+  CASE ABS(%InstancePrefix:Level)
+  #IF(%PrimaryUpdate)
+  OF 0
+    #EMBED(%BeforePreparingRecordOnAdd,'Relation Tree, Before Preparing Record for Add'),%ActiveTemplateInstance,%Primary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    #FIX(%File,%Primary)
+    GET(%File,0)
+    #FOR(%Field),WHERE(%FieldType = 'MEMO')
+    CLEAR(%Field)
+    #ENDFOR
+    CLEAR(%FilePrefix:Record)
+    GlobalRequest = InsertRecord
+    #EMBED(%BeforeCallingUpdateOnAdd,'Relation Tree, Before Update Procedure on Add'),%ActiveTemplateInstance,%Primary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    %PrimaryUpdate
+    IF GlobalResponse = RequestCompleted
+      %InstancePrefix:NewItemLevel = 1
+      %InstancePrefix:NewItemPosition = POSITION(%File)
+      DO %InstancePrefix:RefreshTree
+    END
+    #EMBED(%AfterCallingUpdateOnAdd,'Relation Tree, After Update Procedure on Add'),%ActiveTemplateInstance,%Primary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+  #ENDIF
+  #FOR(%TreeLevelFile),WHERE(INSTANCE(%TreeLevelFile) > 1)
+    #SUSPEND
+      #SET(%ValueConstruct,INSTANCE(%TreeLevelFile)-1)
+  #?OF %ValueConstruct
+      #IF(INSTANCE(%TreeLevelFile) = ITEMS(%TreeLevelFile))
+        #SET(%ValueConstruct,%ValueConstruct + 1)
+  #?OROF %ValueConstruct
+    #?LOOP WHILE ABS(%InstancePrefix:Level) = %ValueConstruct
+      #?%InstancePrefix:CurrentChoice -= 1
+      #?GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+    #?UNTIL ERRORCODE()
+      #ENDIF
+    #?REGET(%TreeParentFile,%InstancePrefix:Position)
+    #EMBED(%BeforePreparingRecordOnAdd,'Relation Tree, Before Preparing Record for Add'),%ActiveTemplateInstance,%Primary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    #?GET(%TreeLevelFile,0)
+      #FIX(%File,%TreeLevelFile)
+    #?CLEAR(%FilePrefix:Record)
+      #FOR(%Field),WHERE(%FieldType = 'MEMO')
+    #?CLEAR(%Field)
+      #ENDFOR
+      #FIX(%Relation,%TreeParentFile)
+      #FOR(%FileKeyField),WHERE(%FileKeyField AND %FileKeyFieldLink)
+    #?%FileKeyField = %FileKeyFieldLink
+      #ENDFOR
+    #?GlobalRequest = InsertRecord
+      #FIX(%File,%Primary)
+      #FIX(%Secondary,%TreeLevelFile)
+    #EMBED(%BeforeCallingUpdateOnAdd,'Relation Tree, Before Update Procedure on Add'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    %SecondaryUpdate
+    #?IF GlobalResponse = RequestCompleted
+      #SET(%ValueConstruct,INSTANCE(%TreeLevelFile))
+      #?%InstancePrefix:NewItemLevel = %ValueConstruct
+      #?%InstancePrefix:NewItemPosition = POSITION(%Secondary)
+      #?DO %InstancePrefix:RefreshTree
+    #?END
+    #EMBED(%AfterCallingUpdateOnAdd,'Relation Tree, After Update Procedure on Add'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription)
+    #RESUME
+  #ENDFOR
+  END
+!---------------------------------------------------------------------------
+%InstancePrefix:EditEntryServer ROUTINE
+!|
+!| This routine calls the RelationTree's update procedure to change a record.
+!|
+!| First, we see where the change request comes from. Since no alert-key handling
+!| is present for editing, %TreeControl{PropList:MouseDownRow} is all that is
+!| necessary for editing, and we can rely on this property containing the
+!| correct selection.
+!|
+!| Next, we retrieve the %TreeQueue record that corresponds to the requested
+!| change row. and retrieve the appropriate record from disk.
+!|
+!| Next, GlobalRequest is set to ChangeRecord, and the appropriate update procedure
+!| is called.
+!|
+!| Finally, if the change is successful (GlobalRequest = RequestCompleted) then the
+!| RelationTree is refreshed, and the newly changed record highlighted.
+!|
+  #EMBED(%BeginEditEntryRoutine,'Relation Tree, Beginning of Edit Record Routine'),%ActiveTemplateInstance,HIDE
+  %InstancePrefix:CurrentChoice = %TreeControl{PropList:MouseDownRow}
+  GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+  CASE ABS(%InstancePrefix:Level)
+  #FIX(%File,%Primary)
+  #FOR(%TreeLevelFile)
+    #SUSPEND
+      #SET(%ValueConstruct,INSTANCE(%TreeLevelFile))
+  #?OF %ValueConstruct
+    #?REGET(%TreeLevelFile,%InstancePrefix:Position)
+    #?GlobalRequest = ChangeRecord
+      #IF(%ValueConstruct = 1)
+    #EMBED(%BeforeCallingUpdateOnEdit,'Relation Tree, Before Update Procedure on Edit'),%ActiveTemplateInstance,%Primary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    %PrimaryUpdate
+      #ELSE
+        #FIX(%Secondary,%TreeLevelFile)
+    #EMBED(%BeforeCallingUpdateOnEdit,'Relation Tree, Before Update Procedure on Edit'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    %SecondaryUpdate
+      #ENDIF
+    #?IF GlobalResponse = RequestCompleted
+      #?%InstancePrefix:NewItemLevel = 1
+      #?%InstancePrefix:NewItemPosition = POSITION(%TreeLevelFile)
+      #?DO %InstancePrefix:RefreshTree
+    #?END
+      #IF(%ValueConstruct = 1)
+    #EMBED(%AfterCallingUpdateOnEdit,'Relation Tree, After Update Procedure on Edit'),%ActiveTemplateInstance,%Primary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+      #ELSE
+    #EMBED(%AfterCallingUpdateOnEdit,'Relation Tree, After Update Procedure on Edit'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+      #ENDIF
+    #RESUME
+  #ENDFOR
+  END
+!---------------------------------------------------------------------------
+%InstancePrefix:RemoveEntryServer ROUTINE
+!|
+!| This routine calls the RelationTree's update procedure to delete a record.
+!|
+!| First, we see where the delete request comes from. Since no alert-key handling
+!| is present for editing, %TreeControl{PropList:MouseDownRow} is all that is
+!| necessary for editing, and we can rely on this property containing the
+!| correct selection.
+!|
+!| Next, we retrieve the %TreeQueue record that corresponds to the requested
+!| delete row. and retrieve the appropriate record from disk.
+!|
+!| Next, GlobalRequest is set to DeleteRecord, and the appropriate update procedure
+!| is called.
+!|
+!| Finally, if the change is successful (GlobalRequest = RequestCompleted) then the
+!| RelationTree is refreshed, and the record below the deleted record is highlighted.
+!|
+  #EMBED(%BeginRemoveEntryRoutine,'Relation Tree, Beginning of Remove Record Routine'),%ActiveTemplateInstance,HIDE
+  %InstancePrefix:CurrentChoice = %TreeControl{PropList:MouseDownRow}
+  GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+  CASE ABS(%InstancePrefix:Level)
+  #FIX(%File,%Primary)
+  #FOR(%TreeLevelFile)
+    #SUSPEND
+      #SET(%ValueConstruct,INSTANCE(%TreeLevelFile))
+  #?OF %ValueConstruct
+    #?REGET(%TreeLevelFile,%InstancePrefix:Position)
+    #?GlobalRequest = DeleteRecord
+      #IF(%ValueConstruct = 1)
+    #EMBED(%BeforeCallingUpdateOnRemove,'Relation Tree, Before Update Procedure on Remove'),%ActiveTemplateInstance,%Primary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    %PrimaryUpdate
+      #ELSE
+        #FIX(%Secondary,%TreeLevelFile)
+    #EMBED(%BeforeCallingUpdateOnRemove,'Relation Tree, Before Update Procedure on Remove'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    %SecondaryUpdate
+      #ENDIF
+    #?IF GlobalResponse = RequestCompleted
+      #?DO %InstancePrefix:RefreshTree
+    #?END
+      #IF(%ValueConstruct = 1)
+    #EMBED(%AfterCallingUpdateOnRemove,'Relation Tree, After Update Procedure on Remove'),%ActiveTemplateInstance,%Primary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+      #ELSE
+    #EMBED(%AfterCallingUpdateOnRemove,'Relation Tree, After Update Procedure on Remove'),%ActiveTemplateInstance,%Secondary,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+      #ENDIF
+    #RESUME
+  #ENDFOR
+  END
+#ENDIF
+!---------------------------------------------------------------------------
+%InstancePrefix:RefreshTree ROUTINE
+!|
+!| This routine is used to refresh the RelationTree.
+!|
+!| First, the queue %TreeQueue is FREEd. The display is always completely rebuilt.
+!|
+!| Next, the routine %InstancePrefix:Load:%Primary is called. This routine will
+!| call any other routines necessary to rebuild the display.
+!|
+!| Finally, if a new item has been added (via %InstancePrefix:AddEntry), then the
+!| queue is searched for that entry, and the record is highlighted.
+!|
+  FREE(%TreeQueue)
+  DO %InstancePrefix:Load:%Primary
+  IF %InstancePrefix:NewItemLevel
+    %InstancePrefix:CurrentChoice = 0
+    LOOP
+      %InstancePrefix:CurrentChoice += 1
+      GET(%TreeQueue,%InstancePrefix:CurrentChoice)
+      IF ERRORCODE() THEN BREAK.
+      IF ABS(%InstancePrefix:Level) <> ABS(%InstancePrefix:NewItemLevel) THEN CYCLE.
+      IF %InstancePrefix:Position <> %InstancePrefix:NewItemPosition THEN CYCLE.
+      SELECT(%TreeControl,%InstancePrefix:CurrentChoice)
+      BREAK
+    END
+  END
+!---------------------------------------------------------------------------
+%InstancePrefix:ContractAll ROUTINE
+!|
+!| This routine re-initializes the RelationTree.
+!|
+!| The two queues used by the RelationTree (%TreeQueue and %InstancePrefix:LoadedQueue)
+!| are FREEd, and the routine %InstancePrefix:Load:%Primary is called, which loads
+!| the first level of the RelationTree.
+!|
+  FREE(%TreeQueue)
+  FREE(%InstancePrefix:LoadedQueue)
+  DO %InstancePrefix:Load:%Primary
+!---------------------------------------------------------------------------
+%InstancePrefix:ExpandAll ROUTINE
+!|
+!| This routine expands every branch of the RelationTree.
+!|
+!| First, The two queues used by the RelationTree (%TreeQueue and %InstancePrefix:LoadedQueue)
+!| are FREEd.
+!|
+!| Next, the variable %InstancePrefix:LoadAll is set to true, and the routine %InstancePrefix:Load:%Primary
+!| is called. Since %InstancePrefix:LoadAll is True, all branches are completely loaded.
+!|
+  FREE(%TreeQueue)
+  FREE(%InstancePrefix:LoadedQueue)
+  %InstancePrefix:LoadAll = True
+  DO %InstancePrefix:Load:%Primary
+  %InstancePrefix:LoadAll = False
+#ENDAT
+#!---------------------------------------------------------------------------
+#CONTROL(RelTreeUpdateButtons,'Update buttons for a Relation Tree'),DESCRIPTION('Update buttons for a Relation Tree for ' & %Primary),REQ(RelationTree),HLP('~TPLControlRelTreeUpdateButtons')
+  CONTROLS
+       BUTTON('&Insert'),AT(,,45,14),USE(?Insert)
+       BUTTON('&Change'),AT(50,0,45,14),USE(?Change)
+       BUTTON('&Delete'),AT(50,0,45,14),USE(?Delete)
+  END
+#ATSTART
+  #DECLARE(%HelpControl)
+  #FOR(%Control)
+    #IF(UPPER(EXTRACT(%ControlStatement,'STD',1))='STD:HELP')
+      #SET(%HelpControl,%Control)
+      #BREAK
+    #ENDIF
+  #ENDFOR
+  #DECLARE(%AddControl)
+  #DECLARE(%EditControl)
+  #DECLARE(%RemoveControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #CASE(%ControlOriginal)
+    #OF('?Insert')
+    #OROF('?Add')
+      #SET(%AddControl,%Control)
+      #SET(%ValueConstruct,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%InsertPopupText,SUB(%ValueConstruct,2,LEN(%ValueConstruct)-2))
+    #OF('?Change')
+    #OROF('?Edit')
+      #SET(%EditControl,%Control)
+      #SET(%ValueConstruct,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%ChangePopupText,SUB(%ValueConstruct,2,LEN(%ValueConstruct)-2))
+    #OF('?Delete')
+    #OROF('?Remove')
+      #SET(%RemoveControl,%Control)
+      #SET(%ValueConstruct,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%DeletePopupText,SUB(%ValueConstruct,2,LEN(%ValueConstruct)-2))
+    #ENDCASE
+  #ENDFOR
+#ENDAT
+#AT(%ControlEventHandling,%AddControl,'Accepted')
+%TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+DO %InstancePrefix:AddEntry
+#ENDAT
+#AT(%ControlEventHandling,%RemoveControl,'Accepted')
+%TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+DO %InstancePrefix:RemoveEntry
+#ENDAT
+#AT(%ControlEventHandling,%EditControl,'Accepted')
+%TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+DO %InstancePrefix:EditEntry
+#ENDAT
+#AT(%ReltreeToolbarDispatch,%ActiveTemplateParentInstance),WHERE(%AcceptToolbarControl)
+OF TBarBrwInsert TO TBarBrwDelete
+  %TreeControl{PROPLIST:MouseDownRow} = CHOICE(%TreeControl) !! Server routines assume this
+  EXECUTE(ACCEPTED()-TBarBrwInsert+1)
+    DO %InstancePrefix:AddEntry
+    DO %InstancePrefix:EditEntry
+    DO %InstancePrefix:RemoveEntry
+  END
+#ENDAT
+#AT(%BeginAddEntryRoutine)
+  #IF(%Control=%TreeControl)
+    #IF(%AddControl)
+IF %AddControl{Prop:Disable}
+  EXIT
+      #IF (~%AcceptToolbarControl)
+ELSIF %AddControl{Prop:Visible} = False
+  EXIT
+      #ENDIF
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BeginRemoveEntryRoutine)
+  #IF(%Control=%TreeControl)
+    #IF(%RemoveControl)
+IF %RemoveControl{Prop:Disable}
+  EXIT
+      #IF (~%AcceptToolbarControl)
+ELSIF %RemoveControl{Prop:Visible} = False
+  EXIT
+      #ENDIF
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BeginRemoveEntryRoutine)
+  #IF(%Control=%TreeControl)
+    #IF(%EditControl)
+IF %EditControl{Prop:Disable}
+  EXIT
+      #IF (~%AcceptToolbarControl)
+ELSIF %EditControl{Prop:Visible} = False
+  EXIT
+      #ENDIF
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%AssignToolbarButtons,%ActiveTemplateParentInstance),WHERE(%AcceptToolBarControl)
+  #IF (%RemoveControl)
+IF %RemoveControl{PROP:Disable} THEN
+  #ENDIF
+  DISABLE(TBarBrwDelete)
+  #IF (%RemoveControl)
+ELSE
+  ENABLE(TBarBrwDelete)
+END
+  #ENDIF
+  #IF (%AddControl)
+IF %AddControl{PROP:Disable} THEN
+  #ENDIF
+  DISABLE(TBarBrwInsert)
+  #IF (%AddControl)
+ELSE
+  ENABLE(TBarBrwInsert)
+END
+  #ENDIF
+  #IF (%EditControl)
+IF %EditControl{PROP:Disable} THEN
+  #ENDIF
+  DISABLE(TBarBrwChange)
+  #IF (%EditControl)
+ELSE
+  ENABLE(TBarBrwChange)
+END
+  #ENDIF
+  #IF (%HelpControl)
+IF %HelpControl{PROP:Disable} THEN
+  #ENDIF
+  DISABLE(TBarBrwHelp)
+  #IF (%HelpControl)
+ELSE
+  ENABLE(TBarBrwHelp)
+END
+  #ENDIF
+#ENDAT
+
+#!---------------------------------------------------------------------------
+#CONTROL(RelTreeExpandContractButtons,'Expand/Contract buttons for a Relation Tree'),DESCRIPTION('Expand/Contract buttons for a Relation Tree for ' & %Primary),REQ(RelationTree),HLP('~TPLControlRelTreeExpandContractButtons')
+  CONTROLS
+       BUTTON('&Expand All'),AT(,,45,14),USE(?Expand)
+       BUTTON('Co&ntract All'),AT(50,0,45,14),USE(?Contract)
+  END
+#ATSTART
+  #DECLARE(%ExpandControl)
+  #DECLARE(%ContractControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #CASE(%ControlOriginal)
+    #OF('?Expand')
+      #SET(%ExpandControl,%Control)
+      #SET(%ValueConstruct,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%ExpandPopupText,SUB(%ValueConstruct,2,LEN(%ValueConstruct)-2))
+    #OF('?Contract')
+      #SET(%ContractControl,%Control)
+      #SET(%ValueConstruct,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%ContractPopupText,SUB(%ValueConstruct,2,LEN(%ValueConstruct)-2))
+    #ENDCASE
+  #ENDFOR
+#ENDAT
+#AT(%ControlEventHandling,%ExpandControl,'Accepted')
+%TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+DO %InstancePrefix:ExpandAll
+#ENDAT
+#AT(%ControlEventHandling,%ContractControl,'Accepted')
+%TreeControl{PropList:MouseDownRow} = CHOICE(%TreeControl)
+DO %InstancePrefix:ContractAll
+#ENDAT
+

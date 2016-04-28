@@ -1,0 +1,1173 @@
+#GROUP(%GenerateStandardFunctions)
+#INSERT(%GenerateRICode)
+#CREATE(%BuildFile)
+#MESSAGE('Generating Module:    ' & %SFFileName, 1) #! Post generation message
+#MESSAGE('Generating Procedure:  CheckOpen', 2) #! Post generation message
+#INSERT(%GenerateScrollStops)
+#MESSAGE('Generating CheckOpen',3)
+CheckOpen         PROCEDURE(FILE File,<BYTE OverrideCreate>,<BYTE OverrideOpenMode>)
+OpenMode          BYTE
+  CODE
+  #EMBED(%CheckOpenSetup,'CheckOpen: Setup Procedure')
+  #CASE(%DefaultOpenMode)
+  #OF('Share')
+    #SET(%AccessMode,'42h')
+  #OF('Open')
+    #SET(%AccessMode,'22h')
+  #OF('Other')
+    #CASE(%DefaultOtherAccess)
+    #OF('Deny None')
+      #SET(%AccessMode,'+DenyNone')
+    #OF('Deny Read')
+      #SET(%AccessMode,'+DenyRead')
+    #OF('Deny Write')
+      #SET(%AccessMode,'+DenyWrite')
+    #OF('Deny All')
+      #SET(%AccessMode,'+DenyAll')
+    #OF('Any Access')
+      #SET(%AccessMode,'+AnyAccess')
+    #ENDCASE
+    #CASE(%DefaultUserAccess)
+    #OF('Read/Write')
+      #SET(%AccessMode,'ReadWrite' & %AccessMode)
+    #OF('Read Only')
+      #SET(%AccessMode,'ReadOnly' & %AccessMode)
+    #OF('Write Only')
+      #SET(%AccessMode,'WriteOnly' & %AccessMode)
+    #ENDCASE
+  #ENDCASE
+  IF OMITTED(3)
+    OpenMode = %AccessMode
+  ELSE
+    OpenMode = OverrideOpenMode
+  END
+  #EMBED(%COBeforeOpeningFile,'Before OPENing the file in CheckOpen')
+  OPEN(File,OpenMode)
+  IF ERRORCODE() = IsLockedErr
+    SEND(File,'Recover=%LockRecoverTime')
+    OPEN(File,OpenMode)
+  END
+  CASE ERRORCODE()                             #<! and check for errors
+  OF NoError                                   #<!Return if no error
+    #EMBED(%CheckOpenNoError,'CheckOpen: No Error')
+  OROF IsOpenErr                               #<! or if already open.
+    #EMBED(%CheckOpenFileOpen,'CheckOpen: File Open Error')
+    DO ProcedureReturn
+  OF NoFileErr                                 #<!If file was not found
+    #EMBED(%CheckOpenNoFile,'CheckOpen: No File Error')
+    IF OMITTED(2)
+    #IF(%DefaultCreate = 'Create All')
+      DO CreateFile
+    #ELSIF(%DefaultCreate = 'Create None')
+      IF StandardWarning(Warn:CreateError,NAME(File)).
+    #ENDIF
+    ELSIF OverrideCreate = TRUE
+      DO CreateFile
+    ELSE
+      IF StandardWarning(Warn:CreateError,NAME(File)).
+    END
+  OF InvalidFileErr                            #<!Invalid Record Declaration
+    #EMBED(%CheckOpenBadFile,'CheckOpen: Invalid File Error')
+    IF StandardWarning(Warn:InvalidFile,NAME(File)).
+  OF BadKeyErr                                 #<!Key Files must be rebuilt
+    #EMBED(%CheckOpenBadKey,'CheckOpen: Bad Key Error')
+    IF StandardWarning(Warn:InvalidKey,NAME(File))
+      BUILD(File)                              !Rebuild the key files
+    END
+    IF ERRORCODE()
+      IF StandardWarning(Warn:RebuildError,NAME(File)).
+    ELSE
+      IF OMITTED(3)
+        OPEN(File,%AccessMode)                 #<!Attempt to open the file
+      ELSE
+        OPEN(File,OverrideOpenMode)
+      END
+    END
+  END                                          #<!End of Case Structure
+  IF ERRORCODE()
+    #EMBED(%CheckOpenFileError,'Check Open: Driver Error Handling')
+    IF StandardWarning(Warn:DiskError,NAME(File)) THEN HALT(0,'Disk Error').
+  END
+  DO ProcedureReturn
+!--------------------------------------
+ProcedureReturn ROUTINE
+!|
+!| This routine provides a common procedure exit point for all template
+!| generated procedures.
+!|
+  #EMBED(%CheckOpenExit,'CheckOpen: Directly before return')
+  RETURN
+!--------------------------------------
+CreateFile ROUTINE
+!|
+!| This routine is called to CREATE the file passed to CheckOpen.
+!|
+  CREATE(File)                               #<!Create the file
+  IF ERRORCODE()
+    IF ERRORCODE() = 90
+      IF StandardWarning(Warn:CreateError,NAME(File)).
+    ELSE
+      IF StandardWarning(Warn:CreateError,NAME(File)).
+    END
+  END
+  IF OMITTED(3)
+    OPEN(File,%AccessMode)                 #<!Attempt to open the file
+  ELSE
+    OPEN(File,OverrideOpenMode)
+  END
+  IF ~ERRORCODE()                            #<!  And return if it opened
+    DO ProcedureReturn
+  ELSE
+    IF StandardWarning(Warn:CreateOpenError,NAME(File)).
+  END
+
+#MESSAGE('Generating Procedure:  ReportPreview', 2) #! Post generation message
+ReportPreview              PROCEDURE(QUEUE PrintPreviewQueue)
+CurrentPage                    LONG
+PagesAcross                    LONG
+PagesDown                      LONG
+DisplayedPagesAcross           LONG
+DisplayedPagesDown             LONG
+
+ZoomNoZoom                     BYTE
+ZoomPageWidth                  BYTE
+Zoom50                         BYTE
+Zoom75                         BYTE
+Zoom100                        BYTE
+Zoom200                        BYTE
+Zoom300                        BYTE
+ZoomModifier                   REAL
+
+PopupSelection                 BYTE
+PopupText                      STRING(50)
+
+ThumbnailsPresent              LONG
+ZoomPresent                    BYTE
+
+TemporaryImage                   EQUATE(100)
+ZoomImage                        EQUATE(102)
+LowestBorderEquate               EQUATE(104)
+LowestImageEquate                EQUATE(204)
+HighestControlEquate             EQUATE(404)
+MinimumXSeparation               EQUATE(3)
+MinimumYSeparation               EQUATE(3)
+ReturnValue                      BYTE
+
+ImageCount                       LONG
+ImageWidth                       LONG
+ImageHeight                      LONG
+ImageAspectRatio                 REAL
+
+ThumbnailsRequired               LONG
+CurrentThumbnail                 LONG
+ThumbnailXPosition               LONG
+ThumbnailYPosition               LONG
+ThumbnailHeight                  LONG
+ThumbnailWidth                   LONG
+ThumbnailAspectRatio             REAL
+ThumbnailRow                     LONG
+ThumbnailColumn                  LONG
+
+ProcessedPage                    LONG
+
+PageZoom                         REAL
+
+CurrentImageBox                  LONG
+CurrentBorderBox                 LONG
+
+TotalXSeparation                 LONG
+TotalYSeparation                 LONG
+
+PreviewWindowX                   STRING(20)
+PreviewWindowY                   STRING(20)
+PreviewWindowWidth               STRING(20)
+PreviewWindowHeight              STRING(20)
+
+Zoomed                           BYTE
+ZoomRatio                        STRING(20)
+
+ClickedControl                   LONG
+
+Preview:Window WINDOW('Report Preview'),AT(,,,),FONT('MS Sans Serif',10,,),COLOR(0808080H), |
+         IMM,ICON(Icon:Print),STATUS(-1,90,70),GRAY,MAX,RESIZE,MAXIMIZE,ALRT(PgUpKey),ALRT(PgDnKey)
+       MENUBAR
+         MENU('&File'),USE(?FileMenu)
+           ITEM('&Print'),USE(?Print),MSG('Print the report')
+           ITEM,SEPARATOR
+           ITEM('E&xit'),USE(?Exit),MSG('Exit without printing the report')
+         END
+         MENU('&View'),USE(?ViewMenu)
+           ITEM('&Next Page(s)'),USE(?Next),MSG('View the next page or pages of the report')
+           ITEM('&Previous Page(s)'),USE(?Previous),DISABLE,MSG('View the next page or pages of the report')
+           ITEM,SEPARATOR
+           ITEM('&Jump to a page'),USE(?Jump),MSG('Jump to a specific page of the report')
+           ITEM,SEPARATOR
+           ITEM('&Change Display'),USE(?ChangeDisplay),MSG('Change the number of pages displayed')
+         END
+         MENU('&Zoom'),USE(?ZoomMenu)
+           ITEM('No &Zoom'),USE(ZoomNoZoom),CHECK
+           ITEM,SEPARATOR
+           ITEM('Page &Width'),USE(ZoomPageWidth),CHECK
+           ITEM,SEPARATOR
+           ITEM('&50 Percent'),USE(Zoom50),CHECK
+           ITEM('&75 Percent'),USE(Zoom75),CHECK
+           ITEM('&100 Percent'),USE(Zoom100),CHECK
+           ITEM('&200 Percent'),USE(Zoom200),CHECK
+           ITEM('&300 Percent'),USE(Zoom300),CHECK
+         END
+       END
+       TOOLBAR,AT(0,0,341,18)
+         BUTTON,AT(3,2,14,14),TIP('Print this report'),USE(?PrintButton),ICON(ICON:Print)
+         BUTTON,AT(19,2,14,14),TIP('Exit without printing the report'),USE(?ExitButton),ICON(ICON:NoPrint)
+         BUTTON,AT(37,2,14,14),TIP('Zoom in on a page of the report'),USE(?ZoomButton),ICON(ICON:Zoom)
+         PROMPT('&Page:'),AT(60,4)
+         SPIN(@n4),AT(85,3,33,12),USE(CurrentPage),RANGE(1,10),STEP(1)
+         PROMPT('&Across:'),AT(123,4)
+         SPIN(@N2),AT(152,3,20,12),USE(PagesAcross),RANGE(1,10),STEP(1),MSG('Select the number of thumbnails in a row'),VSCROLL
+         PROMPT('&Down:'),AT(177,4)
+         SPIN(@n2),AT(202,3,20,12),USE(PagesDown),RANGE(1,10),STEP(1),MSG('Select the number of thumbnails in a column')
+       END
+     END
+#EMBED(%DataOfReportPreview),HIDE
+   CODE
+   ReturnValue       = False
+ #EMBED(%StartOfReportPreview,'Start of Print Preview Routine - INTERNAL'),HIDE
+   OPEN(Preview:Window)
+   TARGET{Prop:MinWidth} = 315
+   ! Retrieve first image to get image aspect ratio, then destroy the image
+   GET(PrintPreviewQueue,1)
+   CREATE(TemporaryImage,CREATE:Image)
+   TemporaryImage{Prop:Text} = PrintPreviewQueue
+   ImageWidth = TemporaryImage{Prop:MaxWidth}
+   ImageHeight = TemporaryImage{Prop:MaxHeight}
+   ImageAspectRatio = ImageHeight / ImageWidth
+   DESTROY(TemporaryImage)
+   ImageCount           = RECORDS(PrintPreviewQueue)
+   CurrentPage          = 1
+   PagesAcross          = 1
+   PagesDown            = 1
+   PagesDown            = 1
+   DisplayedPagesAcross = 0
+   DisplayedPagesDown   = 0
+   ThumbnailsPresent    = 0
+   ZoomPresent          = False
+   IF ImageCount = 1
+     DISABLE(?CurrentPage,?PagesDown)
+     DISABLE(?ViewMenu)
+   ELSE
+     ?CurrentPage{Prop:RangeHigh} = ImageCount
+     ?CurrentPage{Prop:Msg} = 'Enter a page number from 1 to ' & ImageCount
+   END
+   ZoomNoZoom          = True
+   DO ChangeDisplay
+   ACCEPT
+     CASE EVENT()
+     OF Event:Sized
+       DO ChangeDisplay
+     OF Event:NewSelection
+       CASE FIELD()
+       OF ?PagesAcross
+       OROF ?PagesDown
+         DO ClearZoomValues
+         ZoomNoZoom = True
+         DO ChangeDisplay
+       OF ?CurrentPage
+         DO ChangeDisplay
+       END
+     OF Event:Rejected
+       CASE REJECTCODE()
+       OF Reject:RangeHigh
+         CHANGE(FIELD(),FIELD(){Prop:RangeHigh})
+       OF Reject:RangeLow
+         CHANGE(FIELD(),FIELD(){Prop:RangeLow})
+       END
+       DO ChangeDisplay
+     OF Event:AlertKey
+       CASE KEYCODE()
+       OF PgUpKey
+         POST(Event:Accepted,?Previous)
+       OF PgDnKey
+         POST(Event:Accepted,?Next)
+       ELSE
+         CASE FIELD()
+         OF ZoomImage
+           DO ClearZoomValues
+           ZoomNoZoom = True
+           DO ChangeDisplay
+         ELSE
+           CurrentPage = (FIELD() - LowestImageEquate) + CurrentPage
+           ZoomNoZoom = False
+           ZoomPageWidth = True
+           DO ChangeDisplay
+         END
+       END
+     OF Event:Accepted
+       CASE FIELD()
+       OF ?Print
+       OROF ?PrintButton
+         POST(Event:CloseWindow)
+         ReturnValue = True
+       OF ?Exit
+       OROF ?ExitButton
+         POST(Event:CloseWindow)
+       OF ?ZoomButton
+         PopupText = '-No Zoom|-|-Page Width|-50%%|-75%%|-100%%|-200%%|-300%%'
+         IF ZoomNoZoom
+           PopupText[1] = '+'
+         ELSIF ZoomPageWidth
+           PopupText[12] = '+'
+         ELSIF Zoom50
+           PopupText[24] = '+'
+         ELSIF Zoom75
+           PopupText[29] = '+'
+         ELSIF Zoom100
+           PopupText[34] = '+'
+         ELSIF Zoom200
+           PopupText[40] = '+'
+         ELSIF Zoom300
+           PopupText[46] = '+'
+         END
+         PopupSelection = POPUP(PopupText)
+         IF PopupSelection
+           DO ClearZoomValues
+           EXECUTE(PopupSelection)
+             ZoomNoZoom = True
+             ZoomPageWidth = True
+             Zoom50 = True
+             Zoom75 = True
+             Zoom100 = True
+             Zoom200 = True
+             Zoom300 = True
+           END
+           DO ChangeDisplay
+         END
+       OF ?CurrentPage
+         DO ChangeDisplay
+       OF ?Next
+         DO GetNextPage
+         DO ChangeDisplay
+       OF ?Previous
+         DO GetPrevPage
+         DO ChangeDisplay
+       OF ?Jump
+         CurrentPage = Preview:JumpToPage(CurrentPage,ImageCount)
+         DO ChangeDisplay
+       OF ?ChangeDisplay
+         Preview:SelectDisplay(PagesAcross,PagesDown)
+         DO ChangeDisplay
+       OF ?ZoomNoZoom TO ?Zoom300
+         DO ClearZoomValues
+         EXECUTE((FIELD() - ?ZoomNoZoom) + 1)
+           ZoomNoZoom = True
+           ZoomPageWidth = True
+           Zoom50 = True
+           Zoom75 = True
+           Zoom100 = True
+           Zoom200 = True
+           Zoom300 = True
+         END
+         DO ChangeDisplay
+       END
+     END
+   END
+  #EMBED(%EndOfReportPreview,'End of Print Preview Routine - INTERNAL'),HIDE
+   IF ReturnValue
+     GlobalResponse = RequestCompleted
+   ELSE
+     GlobalResponse = RequestCancelled
+   END
+   RETURN
+
+!------------------------------------------------------
+ChangeDisplay ROUTINE
+!|
+!| This routine is called to select the current display mode of the ReportPreview
+!| window.
+!|
+!| If any zooming is being done (ZoomNoZoom = False) then any thumbnails present
+!| are destroyed. If the Zoom control is not present, it is created. Finally, the
+!| Zoom control is filled with the current page and zoomed.
+!|
+!| If no zooming is being done, then the Zoom control, if present, is destroyed.
+!| Next, if the number of pages to be displayed has changed, then any existing
+!| thumbnails are destroyed, and the new thumbnails are created. Finally, the
+!| thumbnails are positioned and filled.
+!|
+  IF ZoomNoZoom
+    IF ZoomPresent
+      DO DestroyZoomControl
+    END
+    IF PagesDown <> DisplayedPagesDown OR PagesAcross <> DisplayedPagesAcross
+      IF ThumbnailsPresent
+        DO DestroyThumbnails
+      END
+      DO CreateThumbnails
+      DisplayedPagesDown = PagesDown
+      DisplayedPagesAcross = PagesAcross
+    END
+    DO PositionThumbnails
+    DO FillThumbnails
+    TARGET{Prop:StatusText,3} = 'No Zoom'
+  ELSE
+    IF ThumbnailsPresent
+      DO DestroyThumbnails
+    END
+    IF NOT ZoomPresent
+      DO CreateZoomControl
+    END
+    DO FillZoomControl
+    DisplayedPagesAcross = 0
+    DisplayedPagesDown   = 0
+  END
+  DISPLAY(?ZoomNoZoom,?Zoom300)
+  DISPLAY(?CurrentPage,?PagesDown)
+
+!------------------------------------------------------
+CreateZoomControl ROUTINE
+!|
+!| This routine is used to create the Zoom control and its background.
+!|
+  CREATE(ZoomImage,CREATE:Image)
+  SETPOSITION(ZoomImage,0,0)
+  ZoomImage{Prop:VScroll} = True
+  ZoomImage{Prop:HScroll} = True
+  ZoomImage{Prop:Full} = True
+  ZoomImage{Prop:FillColor} = 0FFFFFFh
+  ZoomImage{Prop:Alrt} = MouseLeft
+  ZoomImage{Prop:Cursor} = Cursor:Zoom
+  UNHIDE(ZoomImage)
+  ZoomPresent = True
+
+!------------------------------------------------------
+DestroyZoomControl ROUTINE
+!|
+!| This routine is used to destroy the zoom control and its background.
+!|
+  HIDE(ZoomImage)
+  DESTROY(ZoomImage)
+  ZoomPresent = False
+
+!------------------------------------------------------
+FillZoomControl ROUTINE
+!|
+!| This routine is used to fill the Zoom control with an image, and to set the
+!| image's zoom ration to the correct value.
+!|
+  DO ConfigureZoomRatio
+  GET(PrintPreviewQueue,CurrentPage)
+  ZoomImage{Prop:Text} = PrintPreviewQueue
+  TARGET{Prop:StatusText,2} = 'Page ' & CurrentPage & ' of ' & ImageCount
+  ZoomImage{Prop:MaxWidth} = ImageWidth * ZoomModifier
+  ZoomImage{Prop:MaxHeight} = ImageHeight * ZoomModifier
+
+!------------------------------------------------------
+GetNextPage ROUTINE
+!|
+!| This routine increments the CurrentPage variable so that the next
+!| "page" of images are displayed.
+!|
+   IF ZoomNoZoom
+     IF CurrentPage + ThumbnailsPresent <= ImageCount
+       CurrentPage += ThumbnailsPresent
+     END
+   ELSE
+     IF CurrentPage <> ImageCount
+       CurrentPage += 1
+     END
+   END
+
+!------------------------------------------------------
+GetPrevPage ROUTINE
+!|
+!| This routine decrements the CurrentPage variable so that the previous
+!| "page" of images are displayed.
+!|
+   IF ZoomNoZoom
+     CurrentPage -= ThumbnailsPresent
+     IF CurrentPage < 1
+       CurrentPage = 1
+     END
+   ELSE
+     IF CurrentPage <> 1
+       CurrentPage -= 1
+     END
+   END
+
+!------------------------------------------------------
+CreateThumbnails ROUTINE
+!|
+!| This routine is used to create all thumbnail images and their backgrounds
+!|
+   ZoomRatio = 'No Zoom'
+   CurrentBorderBox = LowestBorderEquate
+   CurrentImageBox = LowestImageEquate
+   ThumbnailsRequired = (PagesAcross * PagesDown)
+   LOOP CurrentThumbnail = 1 TO ThumbnailsRequired
+     CREATE(CurrentBorderBox,CREATE:Box)
+     CREATE(CurrentImageBox,CREATE:Image)
+     CurrentBorderBox += 1
+     CurrentImageBox += 1
+   END
+   ThumbnailsPresent = ThumbnailsRequired
+
+!------------------------------------------------------
+DestroyThumbnails ROUTINE
+!|
+!| This routine is used to destroy all thumbnail images and their backgrounds
+!|
+   HIDE(LowestBorderEquate,HighestControlEquate)
+   DESTROY(LowestBorderEquate,HighestControlEquate)
+   ThumbnailsPresent = 0
+
+!------------------------------------------------------
+PositionThumbnails ROUTINE
+!|
+!| This routine is used to position all of the thumbnails and their backgrounds.
+!|
+   TotalXSeparation = 2 + ((PagesAcross - 1) * MinimumXSeparation)
+   TotalYSeparation = 2 + ((PagesDown - 1) * MinimumYSeparation)
+   ThumbnailWidth = (TARGET{Prop:Width} - TotalXSeparation) / PagesAcross
+   ThumbnailHeight = ((TARGET{Prop:Height} -18) - TotalYSeparation) / PagesDown
+   ThumbnailAspectRatio = ThumbnailHeight / ThumbnailWidth
+   IF ThumbnailAspectRatio < ImageAspectRatio
+     ThumbnailWidth = ThumbnailHeight / ImageAspectRatio
+   ELSE
+     ThumbnailHeight = ThumbnailWidth * ImageAspectRatio
+   END
+   CurrentBorderBox = LowestBorderEquate
+   CurrentImageBox = LowestImageEquate
+   ThumbnailYPosition = 1
+   LOOP ThumbnailRow = 1 TO PagesDown
+     ThumbnailXPosition = 1
+     LOOP ThumbnailColumn = 1 TO PagesAcross
+       SETPOSITION(CurrentBorderBox,ThumbnailXPosition,ThumbnailYPosition,ThumbnailWidth,ThumbnailHeight)
+       SETPOSITION(CurrentImageBox,ThumbnailXPosition,ThumbnailYPosition,ThumbnailWidth,ThumbnailHeight)
+       CurrentBorderBox{Prop:Color} = 0
+       CurrentBorderBox{Prop:Fill} = 0FFFFFFh
+       CurrentImageBox{Prop:Cursor} = Cursor:Zoom
+       CurrentImageBox{Prop:Alrt} = MouseLeft
+       ThumbnailXPosition += MinimumXSeparation + ThumbnailWidth
+       CurrentBorderBox += 1
+       CurrentImageBox += 1
+     END
+     ThumbnailYPosition += MinimumYSeparation + ThumbnailHeight
+   END
+
+!------------------------------------------------------
+FillThumbnails ROUTINE
+!|
+!| This routine is used to fill all of the thumbnails.
+!|
+   CurrentBorderBox = LowestBorderEquate
+   CurrentImageBox = LowestImageEquate
+   LOOP CurrentThumbnail = 1 TO ThumbnailsPresent
+     ProcessedPage = (CurrentPage + CurrentThumbnail) - 1
+     IF ProcessedPage > ImageCount
+       IF CurrentImageBox{Prop:Hide} = False
+         HIDE(CurrentBorderBox)
+         HIDE(CurrentImageBox)
+       END
+     ELSE
+       GET(PrintPreviewQueue,ProcessedPage)
+       CurrentImageBox{Prop:Text} = PrintPreviewQueue
+       IF CurrentImageBox{Prop:Hide} = True
+         UNHIDE(CurrentBorderBox)
+         UNHIDE(CurrentImageBox)
+       END
+     END
+     CurrentBorderBox += 1
+     CurrentImageBox += 1
+   END
+   IF ImageCount > 1
+     IF CurrentPage = 1
+       DISABLE(?Previous)
+     ELSE
+       ENABLE(?Previous)
+     END
+     IF CurrentPage + ThumbnailsPresent > ImageCount
+       DISABLE(?Next)
+     ELSE
+       ENABLE(?Next)
+     END
+   END
+   IF ThumbnailsPresent > 1
+     ProcessedPage = CurrentPage + ThumbnailsPresent - 1
+     IF ProcessedPage > ImageCount
+       ProcessedPage = ImageCount
+     END
+     IF CurrentPage = ImageCount
+       TARGET{Prop:StatusText,2} = 'Page ' & CurrentPage & ' of ' & ImageCount
+     ELSE
+       TARGET{Prop:StatusText,2} = 'Pages ' & CurrentPage & '-' & ProcessedPage & ' of ' & ImageCount
+     END
+   ELSE
+     TARGET{Prop:StatusText,2} = 'Page ' & CurrentPage & ' of ' & ImageCount
+   END
+!------------------------------------------------------
+ConfigureZoomRatio        ROUTINE
+!|
+!| This routine is used to set the Zoom modifier, and to set the status bar
+!| text which displays the current zoom mode.
+!|
+  IF ZoomPageWidth
+    ZoomModifier = TARGET{Prop:Width} / ImageWidth
+    ZoomImage{Prop:HScroll} = False
+    TARGET{Prop:StatusText,3} = 'Zoom (Page Width)'
+  ELSIF Zoom50
+    ZoomModifier = .5
+    ZoomImage{Prop:HScroll} = True
+    TARGET{Prop:StatusText,3} = 'Zoom (50%%)'
+  ELSIF Zoom75
+    ZoomModifier = .75
+    ZoomImage{Prop:HScroll} = True
+    TARGET{Prop:StatusText,3} = 'Zoom (75%%)'
+  ELSIF Zoom100
+    ZoomModifier = 1
+    ZoomImage{Prop:HScroll} = True
+    TARGET{Prop:StatusText,3} = 'Zoom (100%%)'
+  ELSIF Zoom200
+    ZoomModifier = 2
+    ZoomImage{Prop:HScroll} = True
+    TARGET{Prop:StatusText,3} = 'Zoom (200%%)'
+  ELSIF Zoom300
+    ZoomModifier = 3
+    ZoomImage{Prop:HScroll} = True
+    TARGET{Prop:StatusText,3} = 'Zoom (300%%)'
+  END
+
+!---------------------------------------------------------
+ClearZoomValues ROUTINE
+!|
+!| Since the zoom status is kept in seven different flags, this routine
+!| is used to clear all of the flags during any zoom mode change.
+!|
+  ZoomNoZoom    = False
+  ZoomPageWidth = False
+  Zoom50        = False
+  Zoom75        = False
+  Zoom100       = False
+  Zoom200       = False
+  Zoom300       = False
+
+!=========================================================
+Preview:JumpToPage FUNCTION(LONG Input:CurrentPage, LONG Input:TotalPages)
+JumpPage    LONG
+ReturnPage  LONG
+JumpWindow WINDOW('Jump to a Report Page'),AT(,,181,26),FONT('MS Sans Serif',10,,),CENTER,STATUS,GRAY
+       PROMPT('&Page:'),AT(5,8),USE(?JumpPrompt)
+       SPIN(@n5),AT(30,7,50,12),MSG('Select a page of the report'),USE(JumpPage),STEP(1)
+       BUTTON('OK'),AT(89,7,40,12),MSG('Jump to the selected page'),USE(?OKButton),DEFAULT
+       BUTTON('Cancel'),AT(134,7,40,12),MSG('Cancel this selection'),USE(?CancelButton)
+     END
+  CODE
+  JumpPage   = Input:CurrentPage
+  ReturnPage = Input:CurrentPage
+  OPEN(JumpWindow)
+  ?JumpPage{Prop:RangeLow} = 1
+  ?JumpPage{Prop:RangeHigh} = Input:TotalPages
+  ACCEPT
+    CASE ACCEPTED()
+    OF ?OKButton
+      ReturnPage = JumpPage
+      BREAK
+    OF ?CancelButton
+      BREAK
+    END
+  END
+  CLOSE(JumpWindow)
+  RETURN(ReturnPage)
+
+!=========================================================
+Preview:SelectDisplay PROCEDURE(*LONG Input:PagesAcross, *LONG Input:PagesDown)
+SelectWindow WINDOW('Change the Report Display'),AT(,,141,64),FONT('MS Sans Serif',10,,),GRAY
+       GROUP('Pages Displayed'),AT(3,2,135,43),USE(?Group1),BOXED
+         GROUP('Across'),AT(7,10,62,32),BOXED
+           SPIN(@N2),AT(13,22,50,12),USE(Input:PagesAcross),HSCROLL,RANGE(1,10),STEP(1)
+         END
+         GROUP('Down'),AT(72,10,62,32),BOXED
+           SPIN(@N2),AT(79,22,50,12),USE(Input:PagesDown),HVSCROLL,RANGE(1,10),STEP(1)
+         END
+       END
+       BUTTON('OK'),AT(98,47,40,14),KEY(EnterKey),USE(?OK),STD(STD:Close)
+     END
+  CODE
+  OPEN(SelectWindow)
+  ACCEPT
+  END
+  RETURN
+
+#MESSAGE('Generating Procedure:  INIRestoreWindow', 2) #! Post generation message
+INIRestoreWindow   PROCEDURE(STRING ProcedureName,STRING INIFileName)
+
+INI::XPosit        LONG,AUTO
+INI::YPosit        LONG,AUTO
+INI::Width         LONG,AUTO
+INI::Height        LONG,AUTO
+INI::String        STRING(20),AUTO
+
+  CODE
+  INI::XPosit = GETINI(ProcedureName,'XPosit',,INIFileName)
+  IF NOT INI::XPosit THEN RETURN.
+  LOOP
+    IF TARGET{Prop:Maximize} = FALSE
+      INI::XPosit = GETINI(ProcedureName,'XPosit',,INIFileName)
+      IF NOT INI::XPosit THEN BREAK.
+      INI::YPosit = GETINI(ProcedureName,'YPosit',,INIFileName)
+      IF NOT INI::YPosit THEN BREAK.
+      IF TARGET{Prop:Resize}
+        INI::Width = GETINI(ProcedureName,'Width',,INIFileName)
+        IF NOT INI::Width THEN BREAK.
+        INI::Height = GETINI(ProcedureName,'Height',,INIFileName)
+        IF NOT INI::Height THEN BREAK.
+      ELSE
+        INI::Width = TARGET{Prop:Width}
+        INI::Height = TARGET{Prop:Height}
+      END
+      SETPOSITION(0,INI::XPosit,INI::YPosit,INI::Width,INI::Height)
+    END
+    BREAK
+  END
+  INI::String = GETINI(ProcedureName,'Maximize',,INIFileName)
+  IF INI::String = 'Yes'
+    TARGET{Prop:Maximize}=1
+  ELSE
+    TARGET{Prop:Maximize}=0
+  END
+  RETURN
+
+#MESSAGE('Generating Procedure:  INISaveWindow', 2) #! Post generation message
+INISaveWindow   PROCEDURE(STRING ProcedureName,STRING INIFileName)
+INI::Section       CSTRING(80)
+INI::String        CSTRING(20)
+INI::Entry         CSTRING(20)
+  CODE
+  INI::Section = ProcedureName
+  INI::Entry = 'Maximize'
+  IF Target{Prop:Maximize}
+    INI::String = 'Yes'
+  ELSE
+    INI::String = 'No'
+  END
+  TARGET{PROP:Maximize} = 0
+  IF Target{Prop:Iconize}
+    RETURN
+  END
+  PUTINI(INI::Section,INI::Entry,INI::String,INIFileName)
+  INI::Entry = 'XPosit'
+  INI::String = TARGET{Prop:XPos}
+  PUTINI(INI::Section,INI::Entry,INI::String,INIFileName)
+  INI::Entry = 'YPosit'
+  INI::String = TARGET{Prop:YPos}
+  PUTINI(INI::Section,INI::Entry,INI::String,INIFileName)
+  INI::Entry = 'Width'
+  INI::String = TARGET{Prop:Width}
+  PUTINI(INI::Section,INI::Entry,INI::String,INIFileName)
+  INI::Entry = 'Height'
+  INI::String = TARGET{Prop:Height}
+  PUTINI(INI::Section,INI::Entry,INI::String,INIFileName)
+  RETURN
+
+#MESSAGE('Generating Procedure:  StandardWarning', 2) #! Post generation message
+StandardWarning      FUNCTION(LONG WarningID)
+  CODE
+  RETURN(StandardWarning(WarningID,'',''))
+
+StandardWarning      FUNCTION(LONG WarningID,STRING WarningText1)
+  CODE
+  RETURN(StandardWarning(WarningID,WarningText1,''))
+
+StandardWarning      FUNCTION(LONG WarningID,STRING WarningText1,STRING WarningText2)
+ErrorText            STRING(150),AUTO
+CurrentErrorCode     LONG,AUTO
+ReturnValue          LONG
+  CODE
+  IF SaveErrorCode
+    CurrentErrorCode = SaveErrorCode
+    IF SaveErrorCode <> 90
+      ErrorText = CLIP(SaveError) & ' (' & SaveErrorCode & ')'
+    ELSE
+      ErrorText = CLIP(SaveFileError) & ' (' & SaveFileErrorCode & ')'
+    END
+  ELSE
+    CurrentErrorCode = ERRORCODE()
+    IF ERRORCODE() <> 90
+      ErrorText = CLIP(ERROR()) & ' (' & ERRORCODE() & ')'
+    ELSE
+      ErrorText = CLIP(FILEERROR()) & ' (' & CLIP(FILEERRORCODE()) & ')'
+    END
+  END
+  SaveErrorCode = 0
+  SaveError = ''
+  SaveFileErrorCode = 0
+  SaveFileError = ''
+  #EMBED (%BeforeStandardWarningCase, 'Before Standard Warning'), HIDE
+  CASE WarningID
+  OF Warn:InvalidFile
+    MESSAGE('Error: (' & CLIP(ErrorText) & ') accessing ' |
+    & CLIP(WarningText1) & '.  Press OK to end this application.'|
+    ,'Invalid File',ICON:Exclamation,Button:OK,BUTTON:OK,0)
+    HALT(0,'Invalid File!')
+  OF Warn:InvalidKey
+    IF MESSAGE(CLIP(WarningText1) & ' key file is invalid.  Do you '|
+    &'want to rebuild the key?','Invalid Key',Icon:Question,|
+    Button:Yes+Button:No,Button:Yes,0)=Button:No
+      HALT(0,'Invalid Key!')
+    ELSE
+      RETURN(Button:Yes)
+    END
+  OF Warn:RebuildError
+    MESSAGE('Error: (' & CLIP(ErrorText) & ') repairing key for ' |
+    & CLIP(WarningText1) & '.  Press OK to end this application.',|
+    'Key Rebuild Error',ICON:Exclamation,Button:OK,BUTTON:OK,0)
+    HALT(0,'Error Rebuilding Key!')
+  OF Warn:CreateError
+    MESSAGE('Error: (' & CLIP(ErrorText) & ') creating ' |
+    & CLIP(WarningText1) & '.  Press OK to end this application.',|
+    'File Creation Error',ICON:Exclamation,Button:OK,BUTTON:OK,0)
+    HALT(0,'File Creation Error!')
+  OF Warn:CreateOpenError
+    MESSAGE('Error: (' & CLIP(ErrorText) & ') opening created ' |
+    & 'file:' & CLIP(WarningText1) & '.  Press OK to end this application.',|
+    'File Creation Error',ICON:Exclamation,Button:OK,BUTTON:OK,0)
+    HALT(0,'File Creation Error!')
+  OF Warn:ProcedureToDo
+    RETURN(MESSAGE('The Procedure ' & CLIP(WarningText1) & ' has not '|
+    &'been defined.','Procedure not defined',ICON:Exclamation,|
+    Button:OK,BUTTON:OK,0))
+  OF Warn:BadKeyedRec
+    RETURN(MESSAGE('Unable to read keyed record.  Error: ' |
+    & CLIP(ErrorText) & '.  Insert Aborted',ICON:Exclamation,|
+    Button:OK,Button:OK,0))
+  OF Warn:OutOfRangeHigh
+    RETURN(MESSAGE('The value of ' & CLIP(WarningText1) & ' must'|
+    &' be lower than ' & CLIP(WarningText2) & '.','Range Error',|
+    ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:OutOfRangeLow
+    RETURN(MESSAGE('The value of ' & CLIP(WarningText1) & ' must be'|
+    &' higher than ' & CLIP(WarningText2) & '.','Range Error',|
+    ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:OutOfRange
+    RETURN(MESSAGE('The value of ' & CLIP(WarningText1) & ' must be '|
+    &'between ' & CLIP(WarningText2)|
+    & '.','Range Error',ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:NotInFile
+    RETURN(MESSAGE('The value for ' & CLIP(WarningText1) & ' must be '|
+    &'found in the ' & CLIP(WarningText2) & ' file.','Field Contents '|
+    &'Error',ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:RestrictUpdate
+    RETURN(MESSAGE('This record is referenced from the file '|
+    & CLIP(WarningText1) & '.  Linking field(s) have been restricted'|
+    & ' from change and have been reset to original values.',|
+    'Referential Integrity Update Error',ICON:Exclamation,|
+    Button:OK,Button:OK,0))
+  OF Warn:RestrictDelete
+    RETURN(MESSAGE('This record is referenced from the file '|
+    & CLIP(WarningText1) & '.  This record cannot be deleted while'|
+    & ' these references exist.','Referential Integrity Delete Error'|
+    ,ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:InsertError
+    RETURN(MESSAGE('An error was experienced during the update of'|
+    & ' record.  Error: ' & CLIP(ErrorText) & '.'|
+    ,'Record Insert Error'|
+    ,ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:RIUpdateError
+    IF CurrentErrorCode AND CurrentErrorCode <> RecordChangedErr
+      RETURN(MESSAGE('An error (' & CLIP(ErrorText) & ') was experienced'|
+      &' when attempting to update a record from the file.  Probable Cause: ' |
+      & CLIP(WarningText1) & '.','Update Operation Error',Icon:Exclamation,|
+      Button:OK,Button:OK,0))
+    ELSE
+      RETURN(MESSAGE('This record was changed by another station.'|
+      ,'Update Operation Error',Icon:Exclamation,|
+      Button:OK,Button:OK,0))
+    END
+  OF Warn:RIFormUpdateError
+    RETURN(MESSAGE('This record was changed by another station. '|
+    &'Those changes will now be displayed. Use the Ditto Button or Ctrl+'''|
+    &' to recall your changes.'|
+    ,'Record Was Not Updated',Icon:Exclamation,|
+    Button:OK,Button:OK,0))
+  OF Warn:UpdateError
+    RETURN(MESSAGE('An error was experienced changing this record.  '|
+    &'Do you want to try to save again?','Record Update Error',|
+    Icon:Exclamation,Button:Yes+Button:No+Button:Cancel,Button:Cancel,0))
+  OF Warn:RIDeleteError
+    RETURN(MESSAGE('An error (' & CLIP(ErrorText) & ') was experienced'|
+    &' when attempting to delete a record from the file ' |
+    & CLIP(WarningText1) & '.','Delete Operation Error',Icon:Exclamation,|
+    Button:OK,Button:OK,0))
+  OF Warn:DeleteError
+    RETURN(MESSAGE('An error was experienced deleting this record.  '|
+    &'Do you want to try to save again?','Record Update Error',|
+    Icon:Exclamation,Button:Yes+Button:No+Button:Cancel,Button:Cancel,0))
+  OF Warn:InsertDisabled
+    RETURN(MESSAGE('This procedure was called to insert a record, '|
+    & 'however inserts are not allowed for this procedure.  Press OK '|
+    & 'to return to the calling procedure','Invalid Request',|
+    Icon:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:UpdateDisabled
+    RETURN(MESSAGE('This procedure was called to change a record, '|
+    & 'however changes are not allowed for this procedure.  Press OK '|
+    & 'to return to the calling procedure','Invalid Request',|
+    ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:DeleteDisabled
+    RETURN(MESSAGE('This procedure was called to delete a record, '|
+    & 'however deletions are not allowed for this procedure.  Press OK '|
+    & 'to return to the calling procedure','Invalid Request',|
+    ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:NoCreate
+    MESSAGE('The File ' & CLIP(WarningText1) & 'was not found, '|
+    &'and creation of the file is not allowed.  Press OK to end '|
+    &'this application.','File Creation Not Allowed',ICON:Exclamation,|
+    Button:OK,BUTTON:OK,0)
+    HALT(0,'File Creation Error!')
+  OF Warn:ConfirmCancel
+    RETURN(MESSAGE('Are you sure you want to cancel?'|
+    ,'Update Cancelled',ICON:Question,Button:Yes+Button:No,|
+    Button:No,0))
+  OF Warn:DuplicateKey
+    RETURN(MESSAGE('Adding this record creates a duplicate entry '|
+    &'for the key:' & CLIP(WarningText1),'Duplicate Key Error',|
+    ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:AutoIncError
+    RETURN(MESSAGE('Attempts to automatically number this record have '|
+    &'failed.  Error: ' & CLIP(ErrorText) & '.',|
+    'Auto Increment Error',Icon:Exclamation,Button:Cancel+Button:Retry,|
+    Button:Cancel,0))
+  OF Warn:FileLoadError
+    RETURN(MESSAGE(CLIP(WarningText1) & ' File Load Error.  '|
+    &'Error: ' & CLIP(ErrorText) & '.','File Load Error',ICON:Exclamation,|
+    Button:OK,Button:OK,0))
+  OF Warn:ConfirmCancelLoad
+    RETURN(MESSAGE('Are you certain you want to stop loading ' |
+    & CLIP(WarningText1) & '?','Cancel Request',|
+    ICON:Question,Button:OK+Button:Cancel,Button:Cancel,0))
+  OF Warn:FileZeroLength
+    RETURN(MESSAGE(CLIP(WarningText1) & ' File Load Error.  '|
+    &'The file you''ve requested contains no text.','File Load Error',|
+    ICON:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:EndOfASCIIQueue
+    IF WarningText1 = 'Down'
+      RETURN(MESSAGE('The end of the viewed file was encountered.  '|
+      & 'Do you want to start again from the beginning?',|
+      'End of File Error',ICON:Question,Button:Yes+Button:No,Button:Yes,0))
+    ELSE
+      RETURN(MESSAGE('The beginning of the viewed file was encountered.  '|
+      & 'Do you want to start again from the end of the file?',|
+      'Beginning of File Error',ICON:Question,Button:Yes+Button:No,|
+      Button:Yes,0))
+    END
+  OF Warn:DiskError
+    RETURN(MESSAGE('File (' & CLIP(WarningText1) & ') could not be '|
+    & 'opened.  Error: ' & CLIP(ErrorText) & '.','File Access Error'|
+    ,Icon:Exclamation,Button:OK,Button:OK,0))
+  OF Warn:ProcessActionError
+    IF WarningText1 = 'Put'
+      RETURN(MESSAGE('An error was experienced when making changes'|
+      & ' to the ' & CLIP(WarningText2) & ' file.  Error: '|
+      & CLIP(ErrorText),'Process PUT Error',Icon:Exclamation|
+      ,Button:OK,Button:OK,0))
+    ELSE
+      RETURN(MESSAGE('An error was experienced when deleting a record'|
+      & ' from the ' & CLIP(WarningText2) & ' file.  Error: '|
+      & CLIP(ErrorText),'Process DELETE Error',Icon:Exclamation|
+      ,Button:OK,Button:OK,0))
+    END
+  OF Warn:StandardDelete
+    RETURN(MESSAGE('You''ve selected to delete the highlighted record.  '|
+    &'Press OK to confirm deletion of this record.',|
+    'Confirm Delete',Icon:Question,Button:OK+Button:Cancel,Button:Cancel,0))
+  OF Warn:SaveOnCancel
+    RETURN(MESSAGE('Do you want to save the changes to this record?'|
+    ,'Update Cancelled',ICON:Question,Button:Yes+Button:No+Button:Cancel,|
+    Button:No,0))
+  OF Warn:LogoutError
+    MESSAGE('Error: (' & CLIP(ErrorText) & ') attempting to frame the ' |
+    & LOWER(CLIP(WarningText1)) & ' transaction on ' & CLIP(WarningText2)|
+    & '.  ' & CLIP(WarningText1) & ' transaction cancelled.'            |
+    ,'Transaction Framing Error',ICON:Exclamation,Button:OK,BUTTON:OK,0)
+  OF Warn:RecordFetchError
+    MESSAGE('Error: (' & CLIP(ErrorText) & ') attempting to access a ' |
+    & 'record from the ' & CLIP(WarningText1) & ' file.  Returning to ' |
+    & 'previous window.' |
+    ,'Record Retrieval Error',ICON:Exclamation,Button:OK,Button:OK,0)
+  OF Warn:ViewOpenError
+    MESSAGE('Error: (' & CLIP(ErrorText) & ') attempting to open the ' |
+    & 'current VIEW. Filter and Range Limits ignored.' |
+    ,'View Open Error',ICON:Exclamation,Button:OK,BUTTON:OK,0)
+  OF Warn:NewRecordAdded
+    RETURN(MESSAGE('This record has been added to the file. Do you want to add another record?'|
+    ,'Record Added',ICON:Question,Button:Yes+Button:No,BUTTON:Yes,0))
+  END
+  #EMBED (%AfterStandardWarningCase, 'After Standard Warning'), HIDE
+
+RISaveError PROCEDURE
+  CODE
+  SaveErrorCode = ERRORCODE()
+  SaveError = ERROR()
+  SaveFileErrorCode = FILEERRORCODE()
+  SaveFileError = FILEERROR()
+  ROLLBACK
+
+#CLOSE(%BuildFile)
+#REPLACE(%SFFileName,%BuildFile)
+#GROUP(%GenerateScrollStops)
+#MESSAGE('Generating FirstStringStop',3)
+                  MEMBER('%Program')
+
+                   GROUP,PRE(CS:)
+OverrideCharacters   STRING('`!"£$%%^&*()''-=_+][#;~@:/.,?\| ')
+NumericCharacters    STRING('0123456789')
+SortCharacters       STRING(255)
+SortCharacterCount   LONG
+StringRoot           STRING(255)
+StringRootLen        LONG
+StepValue            LONG
+CurrentStep          LONG
+LowValue             LONG
+HighValue            LONG
+LowString            STRING(4)
+HighString           STRING(4)
+                   END
+
+                   GROUP,PRE(CR:)
+StepValue            REAL
+CurrentStep          LONG
+LowLimit             REAL
+HighLimit            REAL
+                   END
+
+SetupRealStops PROCEDURE(REAL InputLowLimit,REAL InputHighLimit)
+  CODE
+  CR::LowLimit = InputLowLimit
+  CR::HighLimit = InputHighLimit
+  CR::StepValue = (InputHighLimit - InputLowLimit) / 99
+  CR::CurrentStep = 0
+  RETURN
+
+NextRealStop  FUNCTION
+  CODE
+  CR::CurrentStep += 1
+  CASE CR::CurrentStep
+  OF 1
+    RETURN(CR::LowLimit)
+  OF 100
+    RETURN(CR::HighLimit)
+  ELSE
+    RETURN(CR::LowLimit + (CR::StepValue * (CR::CurrentStep-1)))
+  END
+
+SetupStringStops PROCEDURE(STRING ProcessLowLimit,STRING ProcessHighLimit,LONG InputStringSize,<LONG ListType>)
+InputLowLimit      STRING(255)
+InputHighLimit     STRING(255)
+CurrentStep        LONG
+CurrentVal         LONG
+LowCharacter       STRING(1)
+HighCharacter      STRING(1)
+NextCharacter      STRING(1)
+  CODE
+  IF OMITTED(4)
+    Listtype = ScrollSort:AllowAlpha
+  END
+  CS::SortCharacterCount = 0
+  CS::SortCharacters = ''
+  LOOP CurrentStep = 1 TO 255
+    NextCharacter = CHR(CurrentStep)
+    IF INSTRING(NextCharacter,CS::NumericCharacters,1,1)
+      IF BAND(Listtype,ScrollSort:AllowNumeric)
+        DO AddSortCharacter
+      END
+    ELSIF INSTRING(NextCharacter,CS::OverrideCharacters,1,1)
+      IF BAND(Listtype,ScrollSort:AllowAlt)
+        DO AddSortCharacter
+      END
+    ELSIF ISALPHA(NextCharacter)
+      IF BAND(Listtype,ScrollSort:AllowAlpha)
+        IF ISUPPER(NextCharacter)
+          DO AddSortCharacter
+        ELSIF BAND(Listtype,ScrollSort:CaseSensitive)
+          DO AddSortCharacter
+        END
+      END
+    END
+  END
+  CurrentStep = 0
+  InputLowLimit = SUB(ProcessLowLimit,1,InputStringSize)
+  InputHighLimit = SUB(ProcessHighLimit,1,InputStringSize)
+  IF LEN(CLIP(InputHighLimit))<InputStringSize
+    NextCharacter = SUB(CS::SortCharacters,CS::SortCharacterCount,1)
+    InputHighLimit = CLIP(InputHighLimit) & ALL(NextCharacter,(InputStringSize+1)-LEN(InputHighLimit))
+  END
+  LOOP CurrentStep = 1 TO InputStringSize
+    IF CurrentStep > LEN(InputLowLimit) THEN BREAK.
+    LowCharacter = SUB(InputLowLimit,CurrentStep,1)
+    HighCharacter = SUB(InputHighLimit,CurrentStep,1)
+    IF LowCharacter <> HighCharacter THEN BREAK.
+  END
+  CS::StringRootLen = CurrentStep - 1
+  CS::StringRoot = SUB(InputLowLimit,1,CS::StringRootLen)
+  CS::LowString = SUB(InputLowLimit,CurrentStep,4)
+  CS::HighString = SUB(InputHighLimit,CurrentStep,4)
+  IF BAND(ListType,ScrollSort:AllowAlpha) AND NOT BAND(ListType,ScrollSort:CaseSensitive)
+    CS::LowString = UPPER(CS::LowString)
+    CS::HighString = UPPER(CS::HighString)
+  END
+  CurrentStep = 0
+  CS::LowValue = 0
+  CS::HighValue = 0
+  LOOP
+    CurrentStep += 1
+    IF CurrentStep = 5 THEN BREAK.
+    CS::LowValue *= CS::SortCharacterCount + 1
+    CS::HighValue *= CS::SortCharacterCount + 1
+    This# = That#
+    IF CurrentStep ~> LEN(CLIP(CS::LowString))
+      NextCharacter = SUB(CS::LowString,CurrentStep,1)
+      CurrentVal = INSTRING(NextCharacter,CS::SortCharacters,1,1)
+      CS::LowValue += CurrentVal
+    END
+    IF CurrentStep ~> LEN(CLIP(CS::HighString))
+      NextCharacter = SUB(CS::HighString,CurrentStep,1)
+      CurrentVal = INSTRING(NextCharacter,CS::SortCharacters,1,1)
+      CS::HighValue += CurrentVal
+    END
+  END
+  CS::StepValue = (CS::HighValue - CS::LowValue) / 99
+  CS::CurrentStep = 0
+  RETURN
+
+#MESSAGE('Generating NextStringStop',3)
+AddSortCharacter ROUTINE
+  IF CS::SortCharacterCount
+    CS::SortCharacters = SUB(CS::SortCharacters,1,CS::SortCharacterCount) & NextCharacter
+  ELSE
+    CS::SortCharacters = NextCharacter
+  END
+  CS::SortCharacterCount += 1
+
+NextStringStop  FUNCTION
+StepString      STRING(4)
+CurrentStop     LONG
+CurrentStep     LONG
+CurrentVal      LONG
+  CODE
+  StepString = ''
+  CS::CurrentStep += 1
+  CASE CS::CurrentStep
+  OF 1
+    StepString = CS::LowString
+  OF 100
+    StepString = CS::HighString
+  ELSE
+    CurrentStop = CS::LowValue + (CS::StepValue * (CS::CurrentStep-1))
+    LOOP CurrentStep = 1 TO 4
+      CurrentVal = CurrentStop % (CS::SortCharacterCount + 1)
+      CurrentStop = (CurrentStop - CurrentVal) / (CS::SortCharacterCount + 1)
+      StepString = SUB(CS::SortCharacters,Currentval,1) & StepString
+    END
+  END
+  IF CS::StringRootLen
+    RETURN(SUB(CS::StringRoot,1,CS::StringRootLen) & StepString)
+  ELSE
+    RETURN(StepString)
+  END

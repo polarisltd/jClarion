@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.m2e.core.pom.dependencies">
+	</section>
+	<section name="org.eclipse.m2e.core.pom.overview">
+		<list key="ciManagementUrl">
+		</list>
+		<list key="ciManagementSystem">
+		</list>
+		<list key="issueManagementSystem">
+		</list>
+		<list key="issueManagementUrl">
+		</list>
+	</section>
+	<section name="MavenProjectImportWizardPage">
+		<list key="rootDirectory">
+			<item value="/home/robertsp/java/clarion2java/jclarion.netbeans.sf2/examples/invoice_55.j"/>
+			<item value="/home/robertsp/java/clarion2java/jclarion.netbeans.sf2/examples/Tutor"/>
+			<item value="/home/robertsp/java/clarion2java/jclarion.netbeans.sf2/examples/invoice.c"/>
+			<item value="/home/robertsp/java/clarion2java/jclarion.netbeans.sf2/examples/CookBook"/>
+			<item value="/home/robertsp/java/clarion2java/jclarion.netbeans.sf2/examples/HelloWorld"/>
+			<item value="/home/robertsp/java/clarion2java/jclarion.netbeans.sf2/plugin/trunk"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+</section>

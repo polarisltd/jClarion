@@ -1,0 +1,196 @@
+#GROUP(%ConstructExportFile)
+#MESSAGE('Generating Module:    ' & %Application & '.EXP', 1) #! Post generation message
+#MESSAGE('Generating Export File', 2) #! Post generation message
+#MESSAGE('',3)
+#SET(%ExportFile,%Application & '.exp')
+#CREATE(%BuildFile)
+#EMBED(%AfterCreatingExportFile,'Creating the export file')
+#IF(%Target32)
+NAME %Application GUI
+#ELSE
+  #IF(%ProgramExtension='DLL')
+LIBRARY %Application
+  #ELSE
+NAME %Application WINDOWAPI
+  #ENDIF
+
+CODE MOVEABLE DISCARDABLE PRELOAD
+DATA MOVEABLE SINGLE PRELOAD
+
+HEAPSIZE  1024
+
+SEGMENTS
+     ENTERCODE MOVEABLE DISCARDABLE PRELOAD
+
+EXETYPE WINDOWS
+
+#ENDIF
+#DECLARE(%ExpLineNumber)
+#IF(%ProgramExtension='DLL')
+#EMBED(%BeforeExportList,'Before the export list')
+EXPORTS
+  #EMBED(%BeginningExports,'Top of export list')
+  #FOR(%Procedure)
+    #IF(%ProcedureExported)
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %(LINKNAME(%Procedure & %Prototype)) @%ExpLineNumber
+    #ENDIF
+  #ENDFOR
+  #FOR(%File)
+    #IF(%DefaultGenerate)
+    #ELSIF(%OverrideGenerate)
+    #ELSE
+      #FIX(%UsedFile,%File)
+      #IF(NOT %UsedFile)
+        #CYCLE
+      #ENDIF
+    #ENDIF
+    #IF(%OverrideExternal='Not External')
+      #IF(%OverrideExport)
+        #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $%File @%ExpLineNumber
+        #FOR(%Key)
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$%Key @%ExpLineNumber
+        #ENDFOR
+        #FOR(%Field),WHERE(%FieldType = 'MEMO')
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$%Field @%ExpLineNumber
+        #ENDFOR
+        #FOR(%Field),WHERE(%FieldType = 'BLOB')
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$%Field @%ExpLineNumber
+        #ENDFOR
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$%FilePrefix:RECORD @%ExpLineNumber
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$TYPE$%FilePrefix:RECORD @%ExpLineNumber
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $%File::Used @%ExpLineNumber
+      #ENDIF
+    #ELSIF((NOT %OverrideExternal) OR %OverrideExternal = 'Use Default')
+      #IF(%DefaultExport)
+        #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $%File @%ExpLineNumber
+        #FOR(%Key)
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$%Key @%ExpLineNumber
+        #ENDFOR
+        #FOR(%Field),WHERE(%FieldType = 'MEMO')
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$%Field @%ExpLineNumber
+        #ENDFOR
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$%FilePrefix:RECORD @%ExpLineNumber
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  %File$TYPE$%FilePrefix:RECORD @%ExpLineNumber
+          #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $%File::Used @%ExpLineNumber
+      #ENDIF
+    #ENDIF
+  #ENDFOR
+  #IF(NOT %GlobalExternal)
+    #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $GlobalRequest @%ExpLineNumber
+    #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $GlobalResponse @%ExpLineNumber
+    #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $VCRRequest @%ExpLineNumber
+    #SET(%ValueConstruct,1)
+    #FOR(%GlobalData)
+      #IF(NOT EXTRACT(%GlobalDataStatement,'EXTERNAL'))
+        #IF(%ValueConstruct = 1)
+          #IF(EXTRACT(%GlobalDataStatement,'GROUP'))
+            #SET(%ValueConstruct,%ValueConstruct + 1)
+              #IF(NOT EXTRACT(%GlobalDataStatement,'OVER'))
+                #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  TYPE$%GlobalData @%ExpLineNumber
+                #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $%GlobalData @%ExpLineNumber
+              #ENDIF
+          #ELSIF(EXTRACT(%GlobalDataStatement,'QUEUE'))
+            #SET(%ValueConstruct,%ValueConstruct + 1)
+              #IF(NOT EXTRACT(%GlobalDataStatement,'OVER'))
+                #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  TYPE$%GlobalData @%ExpLineNumber
+                #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  TCB$%GlobalData @%ExpLineNumber
+                #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $%GlobalData @%ExpLineNumber
+              #ENDIF
+          #ELSE
+            #IF(NOT EXTRACT(%GlobalDataStatement,'OVER'))
+              #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  $%GlobalData @%ExpLineNumber
+            #ENDIF
+          #ENDIF
+        #ELSE
+          #IF(EXTRACT(%GlobalDataStatement,'GROUP'))
+            #SET(%ValueConstruct,%ValueConstruct + 1)
+          #ELSIF(EXTRACT(%GlobalDataStatement,'QUEUE'))
+            #SET(%ValueConstruct,%ValueConstruct + 1)
+          #ELSIF(NOT %GlobalData)
+            #SET(%ValueConstruct,%ValueConstruct - 1)
+          #ENDIF
+        #ENDIF
+      #ENDIF
+    #ENDFOR
+  #ENDIF
+#ENDIF
+#IF(%ApplicationDebug)
+  #IF(%ApplicationLocalLibrary)
+    #IF(NOT %Target32)
+      #IF(%ProgramExtension<>'DLL')
+#EMBED(%BeforeExportList,'Before the export list')
+EXPORTS
+  #EMBED(%BeginningExports,'Top of export list')
+      #ENDIF
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$ACCEPTED @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$SELECTED @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$FIELD @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$FIRSTFIELD @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$LASTFIELD @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$EVENT @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$ERRCODE @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$KEYCODE @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$MOUSEX @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$MOUSEY @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$FOCUS @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$THREAD @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  WSL$LIBRARYALIVE @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$FIELDNAME @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$BLOADFLOAT4 @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$BLOADFLOAT @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$LOADDEC @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$PLOADDEC @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$PUSHUFO @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  CLA$POPCSTRING @%ExpLineNumber
+      #SET(%ExpLineNumber,%ExpLineNumber + 1)
+  WSL$DEBUGHOOK @%ExpLineNumber
+    #ENDIF
+  #ENDIF
+#ENDIF
+#EMBED(%DLLExportList,'Inside the export list')
+#EMBED(%BeforeClosingExports,'Closing the export file')
+#CLOSE(%BuildFile)
+#REPLACE(%ExportFile,%BuildFile)

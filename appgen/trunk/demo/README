@@ -1,0 +1,15 @@
+converting .txd to .dict
+
+known unsupported
+
+CREATED
+UPDATED
+REAL      workaround: DECIMAL or LONG
+ULONG    workaround: LONG
+
+
+
+
+.txa conversion
+2744: -- Generated
+TODO at line 2983 (!!> IDENT(4294966533),PROMPT('CLIENT:'),HEADER('CLIENT'),PICTURE(@s45))

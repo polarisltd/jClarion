@@ -1,0 +1,99 @@
+#!-----------------------------------------------------------------------------------
+#!-----------------------------------------------------------------------------------
+#!-----------------------------------------------------------------------------------
+#GROUP(%iQWelcome)
+#Boxed(' iQ-XML - General ')
+#DISPLAY('Written by: Robert Paresi')
+#DISPLAY('© 2005, InnQuest Software Corporation')
+#DISPLAY('All Rights Reserved.')
+#DISPLAY('Updates: http://www.par2.com')
+#DISPLAY('email: iQxml@innquest.com')
+#ENDBOXED
+
+#GROUP(%iQWelcomeShort)
+#BOXED(' iQ-XML - Information ')
+#DISPLAY('See Global Information for copyright notice and updates.')
+#ENDBOXED
+
+#GROUP(%iQErrorsMes)
+   #IF(%iQIncludeError=1)
+     #IF(%iQErrorCheckOptions=1)
+        Message('%IOErrorMessageText||Error: ' & XML:GetError(),'%IOErrorMessageTitle')
+     #ENDIF
+
+     #IF(%iQErrorCheckOptions=2)
+        Glo:iQErrorMessageText= XML:GetError()
+     #ENDIF
+   #ENDIF
+#GROUP(%iQSourceComment)
+
+#GROUP(%iQXMLVersion)
+#Boxed(' Version ')
+#DISPLAY('Template: Version 1.01')
+#DISPLAY('Last Date: April 20, 2005')
+#ENDBOXED
+
+#Group(%ParserGroup)
+#Boxed(' Parser API''s Supported ')
+#DISPLAY(' ')
+#DISPLAY('Y - XML:AutoRootClear ')
+#DISPLAY('Y - XML:AutoRootSet')
+#DISPLAY('Y - XML:DebugMyQueue')
+#DISPLAY('Y - XML:DebugQueue')
+#DISPLAY('Y - XML:FindNextContent')
+#DISPLAY('Y - XML:FindNextNode')
+#DISPLAY('Y - XML:Free')
+#DISPLAY('Y - XML:FreeState')
+#DISPLAY('Y - XML:GetError')
+#DISPLAY('Y - XML:GetPointer')
+#DISPLAY('Y - XML:GotoChild')
+#DISPLAY('Y - XML:GotoParent')
+#DISPLAY('Y - XML:GotoSibling')
+#DISPLAY('Y - XML:GotoTop')
+#DISPLAY('Y - XML:LoadFromFile')
+#DISPLAY('Y - XML:LoadFromString')
+#DISPLAY('Y - XML:LoadQueue')
+#DISPLAY('Y - XML:PrimaryFieldCascade')
+#DISPLAY('Y - XML:PrimaryFieldClear')
+#DISPLAY('Y - XML:PrimaryKeyCascade')
+#DISPLAY('Y - XML:PrimaryKeyClear')
+#DISPLAY('Y - XML:ReadCurrentRecord')
+#DISPLAY('Y - XML:ReadNextRecord')
+#DISPLAY('Y - XML:ReadPreviousRecord')
+#DISPLAY('Y - XML:RestoreState')
+#DISPLAY('Y - XML:SaveState')
+#DISPLAY('Y - XML:SetPointer')
+#DISPLAY('Y - XML:SkipDebug')
+#DISPLAY('Y - XML:ViewFile')
+#DISPLAY(' ')
+#ENDBOXED
+
+#Group(%WriteGroup)
+#Boxed(' Write API''s Supported ')
+#DISPLAY(' ')
+#DISPLAY('Y - XML:AddComment')
+#DISPLAY('Y - XML:AddElement')
+#DISPLAY('Y - XML:AddFromGroup')
+#DISPLAY('Y - XML:AddFromQueue')
+#DISPLAY('Y - XML:AddParent')
+#DISPLAY('Y - XML:AddStringText')
+#DISPLAY('Y - XML:CloseParent')
+#DISPLAY('Y - XML:CloseXMLFile')
+#DISPLAY('Y - XML:CloseXMLString')
+#DISPLAY('Y - XML:CreateAttribute')
+#DISPLAY('Y - XML:CreateParent')
+#DISPLAY('Y - XML:CreateXMLFile')
+#DISPLAY('Y - XML:CreateXMLString')
+#DISPLAY('Y - XML:SetElementPrefix')
+#DISPLAY(' ')
+#ENDBOXED
+
+#Group(%ElseEndWarning)
+#DISPLAY(' ')
+#DISPLAY('You must remember to add the appropriate ELSE/END')
+#DISPLAY('statements in your code when using this option.')
+#DISPLAY(' ')
+#!-----------------------------------------------------------------------------------
+#!-----------------------------------------------------------------------------------
+#!-----------------------------------------------------------------------------------
+

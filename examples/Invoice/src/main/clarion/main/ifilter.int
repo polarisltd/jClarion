@@ -1,0 +1,9 @@
+!ABCIncludeFile(ABC)
+
+IFilter         interface
+Save              procedure(string pQueryName)
+SaveAs            procedure(string pQueryName)
+Load              procedure(string pQueryName)
+GetFilter         procedure(), string
+AddCol            procedure(string pColName, string pCOLSQLName, long pDataType, string pPicture, byte pCase)
+                end

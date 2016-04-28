@@ -1,0 +1,67 @@
+! Field equate labels for toolbar buttons
+Toolbar           ITEMIZE(3000),PRE
+First               EQUATE
+Toolbar             EQUATE(Toolbar:First)
+Insert              EQUATE
+Change              EQUATE
+Delete              EQUATE
+Select              EQUATE
+Bottom              EQUATE
+Top                 EQUATE
+PageDown            EQUATE
+PageUp              EQUATE
+Down                EQUATE
+Up                  EQUATE
+Locate              EQUATE
+History             EQUATE
+Help                EQUATE
+ToolbarGroup        EQUATE
+FrameEditGroup      EQUATE
+FrameNavigateGroup  EQUATE
+FrameHistoryGroup   EQUATE
+FrameSelectGroup    EQUATE
+FrameHelpGroup      EQUATE
+Last                EQUATE(Toolbar:FrameHelpGroup)
+                  END
+
+!VCRequest Codes
+  ITEMIZE,PRE(VCR)
+Forward              EQUATE(Toolbar:Down)
+Backward             EQUATE(Toolbar:Up)
+PageForward          EQUATE(Toolbar:PageDown)
+PageBackward         EQUATE(Toolbar:PageUp)
+First                EQUATE(Toolbar:Top)
+Last                 EQUATE(Toolbar:Bottom)
+Insert               EQUATE(Toolbar:Insert)
+None                 EQUATE(0)
+  END
+
+!CW
+!Constant field equate values for Toolbar browse control
+
+TBarBrwFirst            EQUATE(2000)
+TBarBrwInsert           EQUATE(TBarBrwFirst)
+TBarBrwChange           EQUATE(TBarBrwFirst+1)
+TBarBrwDelete           EQUATE(TBarBrwFirst+2)
+TBarBrwSelect           EQUATE(TBarBrwFirst+3)
+TBarBrwBottom           EQUATE(TBarBrwFirst+4)
+TBarBrwTop              EQUATE(TBarBrwFirst+5)
+TBarBrwPageDown         EQUATE(TBarBrwFirst+6)
+TBarBrwPageUp           EQUATE(TBarBrwFirst+7)
+TBarBrwDown             EQUATE(TBarBrwFirst+8)
+TBarBrwUp               EQUATE(TBarBrwFirst+9)
+TBarBrwLocate           EQUATE(TBarBrwFirst+10)
+TBarBrwHistory          EQUATE(TBarBrwFirst+11)
+TBarBrwHelp             EQUATE(TBarBrwFirst+12)
+TBarBrwLast             EQUATE(TBarBrwHelp)
+
+!Form VCR Request Codes
+
+VCRForward              EQUATE(TBarBrwDown)
+VCRBackward             EQUATE(TBarBrwUp)
+VCRPageForward          EQUATE(TBarBrwPageDown)
+VCRPageBackward         EQUATE(TBarBrwPageUp)
+VCRFirst                EQUATE(TBarBrwTop)
+VCRLast                 EQUATE(TBarBrwBottom)
+VCRInsert               EQUATE(TBarBrwInsert)
+VCRNone                 EQUATE(0)

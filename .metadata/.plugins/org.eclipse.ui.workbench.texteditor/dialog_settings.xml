@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="%%%" key="selection"/>
+		<item value="true" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="%%%"/>
+			<item value="guid"/>
+			<item value="IDENT("/>
+			<item value="ReportControl"/>
+			<item value="DetailFilter"/>
+			<item value="tpw"/>
+			<item value="import"/>
+			<item value="ReportContro"/>
+		</list>
+		<list key="replacehistory">
+			<item value=""/>
+			<item value="DECIMAL(10,2)"/>
+			<item value="LONG"/>
+			<item value="System.out.println(&quot;Procedure/Method not defined&quot;);"/>
+			<item value="system.out.println(&quot;Procedure/Method not defined&quot;);"/>
+			<item value="&apos;ODBC&apos;"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="338" key="DIALOG_WIDTH"/>
+		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
+		<item value="510" key="DIALOG_HEIGHT"/>
+		<item value="73" key="DIALOG_X_ORIGIN"/>
+		<item value="235" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

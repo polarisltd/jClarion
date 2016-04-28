@@ -43,6 +43,7 @@ import org.jclarion.clarion.lang.LexType;
  * @author barney
  */
 public class AppLoader {
+	private static int n = 0;
 	public static void main(String args[]) throws IOException 
 	{
 		TemplateChain chain = new TemplateChain();
@@ -79,9 +80,10 @@ public class AppLoader {
 	{
 		App a=loadApplication(new BufferedReader(
 			new InputStreamReader(
-				new FileInputStream(fileName),"windows-1252")
+				new FileInputStream(fileName),"windows-1257")  // %%%robertsp 1252 -> 1257(LV)
 			)
 		);
+		System.out.println("loading app "+fileName);
 		a.setFile(fileName);
 		return a;
 	}
@@ -800,6 +802,16 @@ public class AppLoader {
 				last.setGuiDefinition(DefinitionLoader.loadItem(s.substring(4)));
 				continue;
 			}
+
+			if (s.startsWith("!!> IDENT")) {            // %%% IDENT() ignoring
+				
+				System.out.println("IGNORED TODO (1) "+"  "+s); //%%%
+				last.setGuiDefinition(DefinitionLoader.loadItem(s.substring(4))); // %%% IDENT() adapt like this method
+				next();                 // %%% IDENT() ignoring
+				continue;				// %%% IDENT() ignoring
+			}
+			
+			
 			
 			if (s.startsWith("[")) {
 				return;
@@ -837,7 +849,8 @@ public class AppLoader {
 				continue;
 			}
 			
-			lineError("TODO");
+			lineError("TODO");	            
+
 		}
 	}
 	

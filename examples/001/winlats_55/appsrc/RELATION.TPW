@@ -1,0 +1,780 @@
+#!----------------------------------------------------------------------
+#! The RIGather group gathers the Referential Integrity (RI) symbols.
+#!
+#! We start with the assumption that every file declared for use in AppGen
+#! can be used for either record update or delete.  This assumption is
+#! made because it is possible that developers will want to code their
+#! to perform these action in their own code.
+#!
+#! %UpdateRelationPrimary and %UpdateRelationSecondary keep all of the
+#! relations with update constraints used in the application.
+#!
+#! %UpdateAttachedFile is a complete list of files used in the RI update
+#! for each file used in the AppGen process
+#!
+#! %DeleteRelationPrimary and %DeleteRelationSecondary keep all of the
+#! relations with delete constraints used in the application.
+#!
+#! %DeleteAttachedFile is a complete list of files used in the RI delete
+#! for each file used in the AppGen process
+#!----------------------------------------------------------------------
+#GROUP(%RIGather)
+#FOR(%UsedFile)
+  #ADD(%UpdateRelationPrimary,%UsedFile)
+  #ADD(%DeleteRelationPrimary,%UsedFile)
+  #INSERT(%RIGatherUpdateRelations,%UsedFile)
+  #INSERT(%RIGatherDeleteRelations,%UsedFile)
+#ENDFOR
+#FOR(%UsedFile)
+  #ADD(%AllFile,%UsedFile)
+  #FOR(%UpdateAttachedFile)
+    #ADD(%AllFile,%UpdateAttachedFile)
+  #ENDFOR
+  #FOR(%DeleteAttachedFile)
+    #ADD(%AllFile,%DeleteAttachedFile)
+  #ENDFOR
+#ENDFOR
+#FOR(%AllFile)
+  #ADD(%UsedFile,%AllFile)
+#ENDFOR
+#!----------------------------------------------------------------------
+#GROUP(%RIGatherUpdateRelations,%CurrentPrimary)
+#FIX(%File,%CurrentPrimary)
+#FOR(%Relation),WHERE(%FileRelationType='1:MANY')
+  #IF(%RelationConstraintUpdate AND %RelationConstraintUpdate<>'NONE')
+    #IF(%RelationAlias)
+      #ADD(%UpdateAttachedFile,%RelationAlias)
+    #ENDIF
+    #ADD(%UpdateAttachedFile,%Relation)
+    #ADD(%UpdateRelationPrimary,%File)
+    #FIX(%UpdateRelationSecondary,%Relation)
+    #IF(NOT %UpdateRelationSecondary)
+      #ADD(%UpdateRelationSecondary,%Relation)
+    #ENDIF
+    #IF(%RelationConstraintUpdate<>'RESTRICT')
+      #INSERT(%RIGatherUpdateRelations,%Relation)
+      #FIX(%File,%CurrentPrimary)
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!----------------------------------------------------------------------
+#GROUP(%RIGatherDeleteRelations,%CurrentPrimary)
+#FIX(%File,%CurrentPrimary)
+#FOR(%Relation),WHERE(%FileRelationType='1:MANY')
+  #IF(%RelationConstraintDelete AND %RelationConstraintDelete<>'NONE')
+    #IF(%RelationAlias)
+      #ADD(%DeleteAttachedFile,%RelationAlias)
+    #ENDIF
+    #ADD(%DeleteAttachedFile,%Relation)
+    #ADD(%DeleteRelationPrimary,%File)
+    #FIX(%DeleteRelationSecondary,%Relation)
+    #IF(NOT %DeleteRelationSecondary)
+      #ADD(%DeleteRelationSecondary,%Relation)
+    #ENDIF
+    #IF(%RelationConstraintDelete='CASCADE')
+      #INSERT(%RIGatherDeleteRelations,%Relation)
+    #ELSIF(%RelationConstraintDelete='CLEAR')
+      #INSERT(%RIGatherDeleteClearRelations,%Relation)
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!----------------------------------------------------------------------
+#GROUP(%RIGatherDeleteClearRelations,%CurrentPrimary)
+#FIX(%File,%CurrentPrimary)
+#FOR(%Relation),WHERE(%FileRelationType='1:MANY')
+  #IF(%RelationConstraintUpdate AND %RelationConstraintUpdate<>'NONE')
+    #IF(%RelationAlias)
+      #ADD(%DeleteAttachedFile,%RelationAlias)
+    #ENDIF
+    #ADD(%DeleteAttachedFile,%Relation)
+    #ADD(%UpdateRelationPrimary,%File)
+    #FIX(%UpdateRelationSecondary,%Relation)
+    #IF(NOT %UpdateRelationSecondary)
+      #ADD(%UpdateRelationSecondary,%Relation)
+    #ENDIF
+    #IF(%RelationConstraintUpdate='CASCADE')
+      #INSERT(%RIGatherDeleteClearRelations,%Relation)
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!----------------------------------------------------------------------
+#! The RIDeclare group declares the Referential Integrity (RI) functions.
+#! The RICode group writes the actual RI functions.
+#!
+#! For every file declared for use in AppGen, we declare a function for
+#! update and a function for delete.
+#!
+#! Update functions are named RIUpdate:%File, where %File is the label
+#! of the file being updated.  The single parameter for these update
+#! functions is the record buffer of the record being updated as it
+#! was before the update took place.  This record buffer is used to
+#! establish a starting point for RI updates.
+#!
+#! Delete functions are named RIDelete:%File, where %File is the label
+#! of the file being deleted.  There are no parameters for RI delete
+#! functions.
+#!
+#! For every constrained update relation we write a single function.
+#! These functions are named RIUpdate:%File:%Relation, where %File is
+#! the label of the "1" side (parent) of a 1:MANY, and %Relation is the
+#! label of the "MANY" side (child).  The parameter(s) for these relation
+#! update functions are the values of the fields of the relation key of
+#! the child file which directly link to fields in the relation key of
+#! the parent file, as they (the key values) were before the update.
+#!
+#! For every constrained delete relation we write a single function.
+#! These functions are named RIDelete:%File:%Relation, where %File is
+#! the label of the "1" side (parent) of a 1:MANY, and %Relation is the
+#! label of the "MANY" side (child).  There are no parameters for these
+#! functions.
+#!
+#! All RI functions return a value of 1 if the function fails, and a
+#! value of 0 is the function completes normally.
+#!----------------------------------------------------------------------
+#GROUP(%RIDeclare,%RIGenLocation)
+#DECLARE(%RIParameters)
+#IF(%RIGenLocation = 'UPDATE')
+  #FOR(%UsedFile)
+    #FIX(%File,%UsedFile)
+    #FIX(%UpdateRelationPrimary,%UsedFile)
+    #IF(%UpdateRelationPrimary)
+RIUpdate:%UsedFile(BYTE=0),LONG
+RISnap:%UsedFile
+    #ENDIF
+  #ENDFOR
+  #FOR(%UpdateRelationPrimary)
+    #FOR(%UpdateRelationSecondary)
+      #FIX(%File,%UpdateRelationPrimary)
+      #FIX(%Relation,%UpdateRelationSecondary)
+RIUpdate:%File:%Relation,LONG
+    #ENDFOR
+  #ENDFOR
+#ELSIF(%RIGenLocation = 'DELETE')
+  #FOR(%UsedFile)
+    #FIX(%File,%UsedFile)
+    #FIX(%DeleteRelationPrimary,%UsedFile)
+    #IF(%DeleteRelationPrimary)
+RIDelete:%UsedFile,LONG
+    #ENDIF
+  #ENDFOR
+  #FOR(%DeleteRelationPrimary)
+    #FOR(%DeleteRelationSecondary)
+      #FIX(%File,%DeleteRelationPrimary)
+      #FIX(%Relation,%DeleteRelationSecondary)
+RIDelete:%File:%Relation,LONG,PRIVATE
+    #ENDFOR
+  #ENDFOR
+#ENDIF
+#!----------------------------------------------------------------------
+#GROUP(%GenerateRICode),AUTO
+#CREATE(%BuildFile)
+#MESSAGE('Generating Module:    ' & %RIUpdFileName, 1) #! Post generation message
+#MESSAGE('Generating Referential Update Code',2)
+#MESSAGE('',3)
+                     MEMBER('%Program')
+#DECLARE(%LinkedFields),UNIQUE
+#FOR ( %UpdateRelationPrimary )
+  #FIX( %File, %UpdateRelationPrimary )
+  #FOR( %UpdateRelationSecondary )
+    #FIX( %Relation, %UpdateRelationSecondary )
+    #FOR ( %FileKeyField ), WHERE(%FileKeyField)
+      #ADD(%LinkedFields,%FileKeyField)
+    #ENDFOR
+  #ENDFOR
+#ENDFOR
+
+HoldPosition         STRING(512),THREAD
+#IF ( ITEMS(%LinkedFields) )
+Sav                 GROUP,THREAD
+  #FOR( %LinkedFields )
+    #FIND(%Field,%LinkedFields)
+    #IF(%FieldType = 'GROUP')
+%[22]LinkedFields LIKE(%LinkedFields)
+    #ELSE
+%[22]LinkedFields LIKE(%LinkedFields)
+    #ENDIF
+  #ENDFOR
+                     END
+#ENDIF
+
+#FOR(%UsedFile)
+  #FIX(%UpdateRelationPrimary,%UsedFile)
+  #IF(%UpdateRelationPrimary)
+    #FIX(%File,%UpdateRelationPrimary)
+
+!--------------------------------------------------
+RISnap:%[11]UsedFile  PROCEDURE
+  CODE
+    #FREE(%LinkedFields)
+    #FOR (%UpdateRelationSecondary)
+      #FIX( %Relation, %UpdateRelationSecondary )
+      #FOR ( %FileKeyField ),WHERE( %FileKeyField )
+        #ADD(%LinkedFields,%FileKeyField)
+      #ENDFOR
+    #ENDFOR
+    #FOR (%LinkedFields)
+  Sav.%LinkedFields = %LinkedFields
+    #ENDFOR
+#INSERT(%RIWritePrimaryUpdateFunction,%UsedFile)
+  #ENDIF
+#ENDFOR
+#FOR(%UpdateRelationPrimary)
+  #FOR(%UpdateRelationSecondary)
+#INSERT(%RIWriteSecondaryUpdateFunction,%UpdateRelationPrimary,%UpdateRelationSecondary)
+  #ENDFOR
+#ENDFOR
+#CLOSE(%BuildFile)
+#REPLACE(%RIUpdFileName,%BuildFile)
+#CREATE(%BuildFile)
+#MESSAGE('Generating Module:    ' & %RIDelFileName, 1) #! Post generation message
+#MESSAGE('Generating Referential Delete Code',2)
+#MESSAGE('',3)
+                     MEMBER('%Program')
+
+#FOR(%UsedFile)
+  #FIX(%DeleteRelationPrimary,%UsedFile)
+  #IF(%DeleteRelationPrimary)
+#INSERT(%RIWritePrimaryDeleteFunction,%UsedFile)
+  #ENDIF
+#ENDFOR
+#FOR(%DeleteRelationPrimary)
+  #FOR(%DeleteRelationSecondary)
+#INSERT(%RIWriteSecondaryDeleteFunction,%DeleteRelationPrimary,%DeleteRelationSecondary)
+  #ENDFOR
+#ENDFOR
+#CLOSE(%BuildFile)
+#REPLACE(%RIDelFileName,%BuildFile)
+#!----------------------------------------------------------------------
+#GROUP(%RIWritePrimaryUpdateFunction,%CurrentPrimary)
+#DECLARE(%LogoutDesired)
+#DECLARE(%LogoutAllowed)
+#DECLARE(%PrimaryDriver)
+#DECLARE(%LogoutParameters)
+#DECLARE(%ElementCount)
+#DECLARE(%ProcessedElements)
+#DECLARE(%RIParameters)
+#DECLARE(%SaveName)
+#DECLARE(%PrimaryPrefix)
+#DECLARE(%PrimaryFileTrueName)
+#FIX(%File,%CurrentPrimary)
+#SET(%SaveName,'Sav.'&%FilePrefix)
+#SET(%PrimaryPrefix,%FilePrefix)
+#SET(%LogoutDesired,%False)
+#IF(%OverrideRILogout = 'Use Default' OR NOT %OverrideRILogout)
+  #IF(%DefaultRILogout)
+    #SET(%LogoutDesired,%True)
+  #ENDIF
+#ELSIF(%OverrideRILogout = 'Yes')
+  #SET(%LogoutDesired,%True)
+#ENDIF
+#IF(%LogoutDesired)
+  #SET(%PrimaryDriver,%FileDriver)
+  #FIX(%Driver,%FileDriver)
+  #FIX(%DriverOpCode,'LOGOUT')
+  #IF(%DriverOpCode)
+    #IF(%AliasFile)
+      #SET(%LogoutParameters,'2,' & %AliasFile)
+      #SET(%PrimaryFileTrueName,%AliasFile)
+    #ELSE
+      #SET(%LogoutParameters,'2,' & %File)
+      #SET(%PrimaryFileTrueName,%File)
+    #ENDIF
+    #FOR(%UpdateAttachedFile)
+      #FIX(%File,%UpdateAttachedFile)
+      #IF(%OverrideRILogout = 'No')
+        #SET(%LogoutDesired,%False)
+        #BREAK
+      #ELSIF(%FileDriver <> %PrimaryDriver)
+        #SET(%LogoutDesired,%False)
+        #IF(%WarnOnLogoutError)
+          #ERROR('Error writing Update LOGOUT code for ' & %CurrentPrimary & '.  File Driver for ' & %File & ' does not match.')
+        #ENDIF
+        #BREAK
+      #ENDIF
+      #IF(NOT(%AliasFile))
+        #IF(%File <> %PrimaryFileTrueName)
+          #SET(%LogoutParameters,%LogoutParameters & ',' & %File)
+        #ENDIF
+      #ENDIF
+    #ENDFOR
+  #ELSE
+    #SET(%LogoutDesired,%False)
+  #ENDIF
+#ENDIF
+#FIX(%File,%CurrentPrimary)
+#MESSAGE('Generating RIUpdate' & %File,3)
+
+!--------------------------------------------------
+RIUpdate:%[11]File FUNCTION(BYTE FromForm)
+  CODE
+  #FOR(%UpdateAttachedFile)
+  #INSERT(%FileControlOpenFile,%UpdateAttachedFile)
+  #ENDFOR
+  #IF(%LogoutDesired)
+  LOGOUT(%LogoutParameters)
+  IF ERRORCODE()
+    RISaveError
+    StandardWarning(Warn:LogoutError,'Update','%CurrentPrimary')
+    DO RICloseFiles
+    RETURN(1)
+  END
+  #ENDIF
+  #FIX(%File,%CurrentPrimary)
+  #IF (%FilePrimaryKey)
+  HoldPosition = POSITION(%FilePrimaryKey)
+  #ELSE
+  HoldPosition = POSITION(%File)
+  #ENDIF
+  PUT(%File)
+  IF ERRORCODE()
+    RISaveError
+    IF SaveErrorCode = RecordChangedErr THEN
+      IF FromForm THEN
+        StandardWarning(Warn:RIFormUpdateError)
+      ELSE
+        StandardWarning(Warn:RIUpdateError,'Record Changed by Another Station')
+      END
+      WATCH(%File)
+      REGET(%File,HoldPosition)
+      DO RICloseFiles
+      RETURN(2)
+    ELSE
+      StandardWarning(Warn:RIUpdateError,'%CurrentPrimary')
+      DO RICloseFiles
+      RETURN(1)
+    END
+  END
+  #FIX(%UpdateRelationPrimary,%CurrentPrimary)
+  #FOR(%UpdateRelationSecondary)
+    #FIX(%File,%UpdateRelationPrimary)
+    #FIX(%Relation,%UpdateRelationSecondary)
+    #SET(%ElementCount,0)
+    #FOR(%FileKeyField),WHERE(%FileKeyField)
+      #SET(%ElementCount,%ElementCount+1)
+    #ENDFOR
+    #SET(%ProcessedElements,0)
+    #FOR(%FileKeyField),WHERE(%FileKeyField)
+      #FIX(%Field,%FileKeyField)
+      #SET(%ProcessedElements,%ProcessedElements+1)
+      #IF(%ElementCount = 1)
+  IF %SaveName:%FieldID <> %PrimaryPrefix:%FieldID
+      #ELSIF(%ProcessedElements = 1)
+  IF %SaveName:%FieldID <> %PrimaryPrefix:%FieldID |
+      #ELSIF(%ElementCount = %ProcessedElements)
+  OR %SaveName:%FieldID <> %PrimaryPrefix:%FieldID
+      #ELSE
+  OR %SaveName:%FieldID <> %PrimaryPrefix:%FieldID |
+      #ENDIF
+    #ENDFOR
+    IF RIUpdate:%File:%Relation()
+  #IF(%LogoutDesired)
+      ROLLBACK
+  #ENDIF
+  #FOR(%RelationKeyField)
+    #IF(%RelationKeyField)
+      %RelationKeyField = %RelationKeyFieldLink
+    #ENDIF
+  #ENDFOR
+      DO RICloseFiles
+      RETURN(1)
+    END
+  END
+  #ENDFOR
+  #IF(%LogoutDesired)
+  COMMIT
+  #ENDIF
+  DO RICloseFiles
+  RETURN(0)
+!----------------------------------------------------------------------
+RICloseFiles ROUTINE
+!|
+!| This routine is called to close any files opened durint RI processing
+!|
+  #FOR(%UpdateAttachedFile)
+  #INSERT(%FileControlCloseFile,%UpdateAttachedFile)
+  #ENDFOR
+  EXIT
+#!----------------------------------------------------------------------
+#GROUP(%RIWritePrimaryDeleteFunction,%CurrentPrimary)
+#DECLARE(%LogoutDesired)
+#DECLARE(%LogoutAllowed)
+#DECLARE(%PrimaryDriver)
+#DECLARE(%LogoutParameters)
+#DECLARE(%RegetParameter)
+#DECLARE(%PrimaryFileTrueName)
+#FIX(%File,%CurrentPrimary)
+#SET(%LogoutDesired,%False)
+#IF(%OverrideRILogout = 'Use Default' OR NOT %OverrideRILogout)
+  #IF(%DefaultRILogout)
+    #SET(%LogoutDesired,%True)
+  #ENDIF
+#ELSIF(%OverrideRILogout = 'Yes')
+  #SET(%LogoutDesired,%True)
+#ENDIF
+#IF(%LogoutDesired)
+  #SET(%PrimaryDriver,%FileDriver)
+  #FIX(%Driver,%FileDriver)
+  #FIX(%DriverOpCode,'LOGOUT')
+  #IF(%DriverOpCode)
+    #IF(%AliasFile)
+      #SET(%LogoutParameters,'2,' & %AliasFile)
+      #SET(%PrimaryFileTrueName,%AliasFile)
+    #ELSE
+      #SET(%LogoutParameters,'2,' & %File)
+      #SET(%PrimaryFileTrueName,%File)
+    #ENDIF
+    #FOR(%DeleteAttachedFile)
+      #FIX(%File,%DeleteAttachedFile)
+      #IF(%OverrideRILogout = 'No')
+        #SET(%LogoutDesired,%False)
+        #BREAK
+      #ELSIF(%FileDriver <> %PrimaryDriver)
+        #SET(%LogoutDesired,%False)
+        #IF(%WarnOnLogoutError)
+          #ERROR('Error writing Update LOGOUT code for ' & %CurrentPrimary & '.  File Driver for ' & %File & ' does not match.')
+        #ENDIF
+        #BREAK
+      #ENDIF
+      #IF(NOT(%AliasFile))
+        #IF(%File <> %PrimaryFileTrueName)
+          #SET(%LogoutParameters,%LogoutParameters & ',' & %File)
+        #ENDIF
+      #ENDIF
+    #ENDFOR
+  #ELSE
+    #SET(%LogoutDesired,%False)
+  #ENDIF
+#ENDIF
+#FIX(%File,%CurrentPrimary)
+#MESSAGE('Generating RIDelete' & %File,3)
+
+!--------------------------------------------------
+RIDelete:%[11]File FUNCTION
+Current:Position     STRING(512)
+  CODE
+  #SET(%RegetParameter,%Null)
+  #FOR(%Key),WHERE(EXTRACT(%KeyStruct,'PRIMARY'))
+    #SET(%RegetParameter,%Key)
+  #ENDFOR
+  #IF(NOT(%RegetParameter))
+    #FOR(%Key)
+      #SET(%RegetParameter,%Key)
+      #BREAK
+    #ENDFOR
+  #ENDIF
+  #IF(NOT(%RegetParameter))
+    #SET(%RegetParameter,%File)
+  #ENDIF
+  Current:Position = POSITION(%RegetParameter)
+  #FOR(%DeleteAttachedFile)
+  #INSERT(%FileControlOpenFile,%DeleteAttachedFile)
+  #ENDFOR
+  #IF(%LogoutDesired)
+  LOGOUT(%LogoutParameters)
+  IF ERRORCODE()
+    RISaveError
+    StandardWarning(Warn:LogoutError,'Delete','%CurrentPrimary')
+    DO RICloseFiles
+    RETURN(1)
+  END
+  #ENDIF
+  #FIX(%File,%CurrentPrimary)
+  REGET(%RegetParameter,Current:Position)
+  #FIX(%DeleteRelationPrimary,%CurrentPrimary)
+  #FOR(%DeleteRelationSecondary)
+  IF RIDelete:%DeleteRelationPrimary:%DeleteRelationSecondary()
+  #IF(%LogoutDesired)
+    ROLLBACK
+  #ENDIF
+    DO RICloseFiles
+    RETURN(1)
+  END
+  #ENDFOR
+  DELETE(%CurrentPrimary)
+  IF ERRORCODE()
+    RISaveError
+    StandardWarning(Warn:RIDeleteError,'%CurrentPrimary')
+    DO RICloseFiles
+    RETURN(1)
+  ELSE
+  #IF(%LogoutDesired)
+    COMMIT
+  #ENDIF
+    DO RICloseFiles
+    RETURN(0)
+  END
+!----------------------------------------------------------------------
+RICloseFiles ROUTINE
+!|
+!| This routine is called to close any files opened durint RI processing
+!|
+  #FOR(%DeleteAttachedFile)
+  #INSERT(%FileControlCloseFile,%DeleteAttachedFile)
+  #ENDFOR
+  EXIT
+#!----------------------------------------------------------------------
+#GROUP(%RIWriteSecondaryUpdateFunction,%CurrentPrimary,%CurrentSecondary)
+#DECLARE(%RIParameters)
+#DECLARE(%ChangedField),MULTI
+#DECLARE(%ChangedFieldLink,%ChangedField)
+#DECLARE(%ElementCount)
+#DECLARE(%ProcessedElements)
+#DECLARE(%UpdateRequired)
+#FIX(%File,%CurrentSecondary)
+#FIX(%Relation,%CurrentPrimary)
+#FIX(%Key,%FileKey)
+#SET(%RIParameters,%Null)
+#SET(%ElementCount,0)
+#FOR(%RelationKeyField),WHERE(%RelationKeyField AND %RelationKeyFieldLink)
+  #SET(%ElementCount,%ElementCount+1)
+  #SET(%RIParameters,%RIParameters & 'Sav.' & %RelationKeyField & ',')
+  #ADD(%ChangedField,%RelationKeyFieldLink)
+  #SET(%ChangedFieldLink,'Sav.' & %RelationKeyField)
+#ENDFOR
+#SET(%RIParameters,SUB(%RIParameters,1,LEN(%RIParameters)-1))
+#MESSAGE('Generating RIUpdate:' & %File & ':' & %Relation, 3)
+!--------------------------------------------------
+RIUpdate:%Relation:%File FUNCTION
+
+    CODE
+    CLEAR(%FilePrefix:Record,0)
+    #FOR(%RelationKeyField)
+      #IF(%RelationKeyField)
+    %RelationKeyFieldLink = Sav.%RelationKeyField
+      #ELSE
+        #FOR(%KeyField)
+          #IF(%KeyField=%RelationKeyFieldLink)
+            #IF(%KeyFieldSequence = 'ASCENDING')
+    CLEAR(%RelationKeyFieldLink,-1)
+            #ELSE
+    CLEAR(%RelationKeyFieldLink,1)
+            #ENDIF
+            #BREAK
+          #ENDIF
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+    SET(%FileKey,%FileKey)
+    LOOP
+      NEXT(%File)
+      IF ERRORCODE()
+        IF ERRORCODE() = BadRecErr
+          RETURN(0)
+        ELSE
+          RISaveError
+          StandardWarning(Warn:RecordFetchError,'%File')
+          RETURN(1)
+        END
+      END
+    #SET(%ProcessedElements,0)
+    #FOR(%RelationKeyField),WHERE(%RelationKeyField AND %RelationKeyFieldLink)
+      #SET(%ProcessedElements,%ProcessedElements+1)
+      #IF(%ElementCount=1)
+      IF %RelationKeyFieldLink <> Sav.%RelationKeyField
+      #ELSIF(%ProcessedElements = 1)
+      IF %RelationKeyFieldLink <> Sav.%RelationKeyField |
+      #ELSIF(%ProcessedElements = %ElementCount)
+      OR %RelationKeyFieldLink <> Sav.%RelationKeyField
+      #ELSE
+      OR %RelationKeyFieldLink <> Sav:%RelationKeyField |
+      #ENDIF
+    #ENDFOR
+        RETURN(0)
+      END
+    #IF(%RelationConstraintUpdate='RESTRICT')
+      RISaveError
+      StandardWarning(Warn:RestrictUpdate,'%CurrentSecondary')
+      #FOR(%RelationKeyField),WHERE(%RelationKeyField AND %RelationKeyFieldLink)
+      %RelationKeyField = Sav:%RelationKeyField
+      #ENDFOR
+      RETURN(1)
+    #ELSE
+      #FIX(%UpdateRelationPrimary,%CurrentSecondary)
+      #IF ( %UpdateRelationPrimary )
+      RISnap:%CurrentSecondary
+      #ENDIF
+      #CASE(%RelationConstraintUpdate)
+      #OF('CASCADE')
+        #FOR(%RelationKeyField),WHERE(%RelationKeyFieldLink AND %RelationKeyField)
+      %RelationKeyFieldLink = %RelationKeyField
+        #ENDFOR
+      #OF('CLEAR')
+        #FOR(%RelationKeyField),WHERE(%RelationKeyFieldLink AND %RelationKeyField)
+      CLEAR(%RelationKeyFieldLink)
+        #ENDFOR
+      #ENDCASE
+      #FOR(%UpdateRelationSecondary)
+        #SUSPEND
+          #SET(%UpdateRequired,%False)
+          #FIX(%File,%UpdateRelationPrimary)
+          #FIX(%Relation,%UpdateRelationSecondary)
+          #SET(%ElementCount,0)
+          #FOR(%FileKeyField),WHERE(%FileKeyFieldLink AND %FileKeyField)
+            #FIX(%ChangedField,%FileKeyField)
+            #IF(%ChangedField)
+              #SET(%ElementCount,%ElementCount+1)
+            #ENDIF
+          #ENDFOR
+          #SET(%ProcessedElements,0)
+          #FOR(%FileKeyField),WHERE(%FileKeyFieldLink AND %FileKeyField)
+            #FIX(%ChangedField,%FileKeyField)
+            #IF(%ChangedField)
+              #SET(%ProcessedElements,%ProcessedElements+1)
+              #IF(%ElementCount=1)
+      IF %ChangedField <> %ChangedFieldLink
+              #ELSIF(%ProcessedElements=1)
+      IF %ChangedField <> %ChangedFieldLink |
+              #ELSIF(%ProcessedElements=%ElementCount)
+      OR %ChangedField <> %ChangedFieldLink
+              #ELSE
+      OR %ChangedField <> %ChangedFieldLink |
+              #ENDIF
+            #ENDIF
+          #ENDFOR
+          #SET(%ElementCount,%Null)
+        #?IF RIUpdate:%File:%Relation()
+          #FIX(%File,%CurrentSecondary)
+          #FIX(%Relation,%CurrentPrimary)
+          #FOR(%RelationKeyField)
+            #IF(%RelationKeyField)
+          #?%RelationKeyField = %RelationKeyFieldLink
+            #ENDIF
+          #ENDFOR
+          #?RETURN(1)
+        #?END
+      #?END
+        #RESUME
+      #ENDFOR
+      PUT(%CurrentSecondary)
+      IF ERRORCODE()
+        RISaveError
+        StandardWarning(Warn:RIUpdateError,'%CurrentSecondary')
+        RETURN(1)
+      END
+    #ENDIF
+    END
+#!----------------------------------------------------------------------
+#GROUP(%RIWriteSecondaryDeleteFunction,%CurrentPrimary,%CurrentSecondary)
+#DECLARE(%ElementCount)
+#DECLARE(%ProcessedElements)
+#DECLARE(%ChangedField),MULTI
+#DECLARE(%RIParameters)
+#DECLARE(%UpdateRequired)
+#FIX(%File,%CurrentSecondary)
+#FIX(%Relation,%CurrentPrimary)
+#FIX(%Key,%FileKey)
+#FOR(%RelationKeyField),WHERE(%RelationKeyField)
+  #SET(%ElementCount,%ElementCount+1)
+  #ADD(%ChangedField,%RelationKeyFieldLink)
+#ENDFOR
+
+#MESSAGE('Generating RIDelete:' & %File & ':' & %Relation, 3)
+!--------------------------------------------------
+RIDelete:%Relation:%File FUNCTION
+    CODE
+    CLEAR(%FilePrefix:Record,0)
+    #FOR(%RelationKeyField)
+      #IF(%RelationKeyField)
+    %RelationKeyFieldLink = %RelationKeyField
+      #ELSE
+        #FOR(%KeyField)
+          #IF(%KeyField=%RelationKeyFieldLink)
+            #IF(%KeyFieldSequence = 'ASCENDING')
+    CLEAR(%RelationKeyFieldLink,-1)
+            #ELSE
+    CLEAR(%RelationKeyFieldLink,1)
+            #ENDIF
+            #BREAK
+          #ENDIF
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+    SET(%FileKey,%FileKey)
+    LOOP
+      NEXT(%File)
+      IF ERRORCODE()
+        IF ERRORCODE() = BadRecErr
+          RETURN(0)
+        ELSE
+          RISaveError
+          StandardWarning(Warn:RecordFetchError,'%File')
+          RETURN(1)
+        END
+      END
+    #SET(%ProcessedElements,0)
+    #FOR(%RelationKeyField),WHERE(%RelationKeyField AND %RelationKeyFieldLink)
+      #SET(%ProcessedElements,%ProcessedElements+1)
+      #IF(%ElementCount=1)
+      IF %RelationKeyField <> %RelationKeyFieldLink
+      #ELSIF(%ProcessedElements = 1)
+      IF %RelationKeyField <> %RelationKeyFieldLink |
+      #ELSIF(%ElementCount = %ProcessedElements)
+      OR %RelationKeyField <> %RelationKeyFieldLink
+      #ELSE
+      OR %RelationKeyField <> %RelationKeyFieldLink |
+      #ENDIF
+    #ENDFOR
+        RETURN(0)
+      END
+    #CASE(%RelationConstraintDelete)
+    #OF('CASCADE')
+      #FIX(%DeleteRelationPrimary,%CurrentSecondary)
+      #FOR(%DeleteRelationSecondary)
+      IF RIDelete:%DeleteRelationPrimary:%DeleteRelationSecondary()
+        RETURN(1)
+      END
+      #ENDFOR
+      DELETE(%CurrentSecondary)
+      IF ERRORCODE()
+        RISaveError
+        StandardWarning(Warn:RIDeleteError,'%CurrentSecondary')
+        RETURN(1)
+      END
+    #OF('CLEAR')
+      #FIX(%UpdateRelationPrimary,%CurrentSecondary)
+      #IF(ITEMS(%UpdateRelationSecondary))
+      RISnap:%CurrentSecondary
+      #ENDIF
+      #FOR(%RelationKeyField),WHERE(%RelationKeyField AND %RelationKeyFieldLink)
+      CLEAR(%RelationKeyFieldLink)
+      #ENDFOR
+      #FOR(%UpdateRelationSecondary)
+        #SUSPEND
+          #SET(%UpdateRequired,%False)
+          #FIX(%File,%UpdateRelationPrimary)
+          #FIX(%Relation,%UpdateRelationSecondary)
+          #SET(%ElementCount,0)
+          #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+            #SET(%ElementCount,%ElementCount+1)
+          #ENDFOR
+          #SET(%ProcessedElements,0)
+          #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+            #SET(%ProcessedElements,%ProcessedElements+1)
+            #FIX(%ChangedField,%FileKeyFieldLink)
+            #IF(%ChangedField)
+              #RELEASE
+            #ENDIF
+            #IF(%ElementCount=1)
+      #?IF %FileKeyField <> %FileKeyFieldLink
+            #ELSIF(%ProcessedElements=1)
+      #?IF %FileKeyField <> %FileKeyFieldLink |
+            #ELSIF(%ProcessedElements=%ElementCount)
+      #?OR %FileKeyField <> %FileKeyFieldLink
+            #ELSE
+      #?OR %FileKeyField <> %FileKeyFieldLink |
+            #ENDIF
+          #ENDFOR
+          #SET(%ElementCount,%Null)
+        #?IF RIUpdate:%CurrentPrimary:%CurrentSecondary()
+          #?RETURN(1)
+        #?END
+      #?END
+        #RESUME
+      #ENDFOR
+      PUT(%CurrentSecondary)
+    #OF('RESTRICT')
+      RISaveError
+      StandardWarning(Warn:RestrictDelete,'%CurrentSecondary')
+      RETURN(1)
+    #ENDCASE
+    END

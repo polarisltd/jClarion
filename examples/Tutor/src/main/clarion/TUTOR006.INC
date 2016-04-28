@@ -1,0 +1,3 @@
+  MODULE('TUTOR006.CLW')
+BrowseORDERS           PROCEDURE
+  END

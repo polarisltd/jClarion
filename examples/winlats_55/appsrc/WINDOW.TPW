@@ -1,0 +1,189 @@
+#PROCEDURE(Window,'Generic Window Handler'),WINDOW,HLP('~TPLProcWindow')
+#LOCALDATA
+LocalRequest         LONG
+OriginalRequest      LONG
+LocalResponse        LONG
+FilesOpened          LONG
+WindowOpened         LONG
+WindowInitialized    LONG
+ForceRefresh         LONG
+#ENDLOCALDATA
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','Refresh Window ROUTINE, before lookups')
+#CLASS('After Lookups','Refresh Window ROUTINE, after lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#PROMPT('P&arameters:',@s255),%Parameters
+#ENABLE(%ProcedureType='FUNCTION')
+  #PROMPT('Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#PROMPT('Window Operation Mode:',DROP('Use WINDOW setting|Normal|MDI|Modal')),%WindowOperationMode
+#ENABLE(%INIActive)
+  #BOXED('INI File Settings')
+    #PROMPT('Save and Restore Window Location',CHECK),%INISaveWindow,DEFAULT(1),AT(10,,150)
+  #ENDBOXED
+#ENDENABLE
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#INSERT(%StandardWindowCode)
+#!---------------------------------------------------------
+#GROUP(%StandardWindowCode)
+#IF(NOT %Window)
+  #ERROR(%Procedure & ' Error: No Window Defined!')
+  #RETURN
+#ENDIF
+#DECLARE(%FirstField)
+#DECLARE(%LastField)
+#DECLARE(%ProgressWindowRequired)
+#INSERT(%FieldTemplateStandardButtonMenuPrompt)
+#INSERT(%FieldTemplateStandardEntryPrompt)
+#INSERT(%FieldTemplateStandardCheckBoxPrompt)
+#EMBED(%GatherSymbols,'Gather Template Symbols'),HIDE
+#DECLARE(%GenerateBRWInstance,LONG)
+#DECLARE(%GenerateSelectInstance,LONG)
+#DECLARE(%GenerateUpdateInstance,LONG)
+#DECLARE(%GenerateReltreeInstance,LONG)
+#EMBED(%GenerateInstanceUpdate,''),HIDE
+#!
+#!
+#INSERT(%FileControlInitialize)
+%Procedure %ProcedureType%Parameters
+
+#SECTION
+#CREATE ('ICBODY.$$$')
+#INSERT (%StandardProcedureBody)
+#CLOSE
+#ENDSECTION
+
+#EMBED (%LocalClassDefinition),HIDE
+#APPEND ('ICBODY.$$$'),SECTION
+#!
+#!
+#GROUP (%StandardProcedureBody)
+#FOR(%LocalData)
+%[20]LocalData %LocalDataStatement
+#ENDFOR
+#INSERT(%StandardWindowGeneration)
+#IF(%ProgressWindowRequired)
+#INSERT(%StandardProgressWindow)
+#ENDIF
+  CODE
+  PUSHBIND
+  #EMBED(%ProcedureInitialize,'Initialize the Procedure')
+  LocalRequest = GlobalRequest
+  OriginalRequest = GlobalRequest
+  LocalResponse = RequestCancelled
+  ForceRefresh = False
+  CLEAR(GlobalRequest)
+  CLEAR(GlobalResponse)
+  #EMBED(%ProcedureSetup,'Procedure Setup')
+  IF KEYCODE() = MouseRight
+    SETKEYCODE(0)
+  END
+  #INSERT(%StandardFormula,'Procedure Setup')
+  DO PrepareProcedure
+  #EMBED(%BeforeAccept,'Preparing to Process the Window')
+  #MESSAGE('Accept Handling',3)
+  ACCEPT
+    #EMBED(%AcceptLoopBeforeEventHandling,'Accept Loop, Before CASE EVENT() handling')
+    CASE EVENT()
+    #EMBED(%EventCaseBeforeGenerated,'CASE EVENT() structure, before generated code')
+    #INSERT(%StandardWindowHandling)
+    #EMBED(%EventCaseAfterGenerated,'CASE EVENT() structure, after generated code')
+    END
+    #EMBED(%AcceptLoopAfterEventHandling,'Accept Loop, After CASE EVENT() handling')
+    #SUSPEND
+    #?CASE ACCEPTED()
+    #INSERT(%StandardAcceptedHandling)
+    #?END
+    #RESUME
+    #EMBED(%AcceptLoopBeforeFieldHandling,'Accept Loop, Before CASE FIELD() handling')
+    #SUSPEND
+    #?CASE FIELD()
+    #EMBED(%FieldCaseBeforeGenerated,'CASE FIELD() structure, before generated code')
+    #INSERT(%StandardControlHandling)
+    #EMBED(%FieldCaseAfterGenerated,'CASE FIELD() structure, after generated code')
+    #?END
+    #RESUME
+    #EMBED(%AcceptLoopAfterFieldHandling,'Accept Loop, After CASE FIELD() handling')
+  END
+  DO ProcedureReturn
+!---------------------------------------------------------------------------
+PrepareProcedure ROUTINE
+  #INSERT(%FileControlOpen)
+  #INSERT(%StandardWindowOpening)
+  #EMBED(%PrepareAlerts,'Preparing Window Alerts')
+!---------------------------------------------------------------------------
+ProcedureReturn ROUTINE
+!|
+!| This routine provides a common procedure exit point for all template
+!| generated procedures.
+!|
+!| First, all of the files opened by this procedure are closed.
+!|
+!| Next, if it was opened by this procedure, the window is closed.
+!|
+!| Next, GlobalResponse is assigned a value to signal the calling procedure
+!| what happened in this procedure.
+!|
+!| Next, we replace the BINDings that were in place when the procedure initialized
+!| (and saved with PUSHBIND) using POPBIND.
+!|
+#IF(%ReturnValue)
+!| Finally, we return to the calling procedure, passing %ReturnValue back.
+#ELSE
+!| Finally, we return to the calling procedure.
+#ENDIF
+!|
+  #INSERT(%FileControlClose)
+  #INSERT(%StandardWindowClosing)
+  #EMBED(%EndOfProcedure,'End of Procedure')
+  #INSERT(%StandardFormula,'Procedure Exit')
+  IF LocalResponse
+    GlobalResponse = LocalResponse
+  ELSE
+    GlobalResponse = RequestCancelled
+  END
+  POPBIND
+  #IF(%ProcedureType='FUNCTION')
+  RETURN(%ReturnValue)
+  #ELSE
+  RETURN
+  #ENDIF
+!---------------------------------------------------------------------------
+InitializeWindow ROUTINE
+!|
+!| This routine is used to prepare any control templates for use. It should be called once
+!| per procedure.
+!|
+  #EMBED(%WindowInitializationCode,'Window Initialization Code')
+  DO RefreshWindow
+!---------------------------------------------------------------------------
+RefreshWindow ROUTINE
+!|
+!| This routine is used to keep all displays and control templates current.
+!|
+  IF %Window{Prop:AcceptAll} THEN EXIT.
+  #EMBED(%RefreshWindowBeforeLookup,'Refresh Window routine, before lookups')
+  #INSERT(%StandardFormula,'Before Lookups')
+  #INSERT(%StandardSecondaryLookups)
+  #INSERT(%StandardFormula,'After Lookups')
+  #EMBED(%RefreshWindowAfterLookup,'Refresh Window routine, after lookups')
+  #EMBED(%RefreshWindowBeforeDisplay,'Refresh Window routine, before DISPLAY()')
+  DISPLAY()
+  ForceRefresh = False
+!---------------------------------------------------------------------------
+SyncWindow ROUTINE
+!|
+!| This routine is used to insure that any records pointed to in control
+!| templates are fetched before any procedures are called via buttons or menu
+!| options.
+!|
+  #EMBED(%SyncWindowBeforeLookup,'Sync Record routine, before lookups')
+  #INSERT(%StandardFormula,'Before Lookups')
+  #INSERT(%StandardSecondaryLookups)
+  #INSERT(%StandardFormula,'After Lookups')
+  #EMBED(%SyncWindowAfterLookup,'Sync Record routine, after lookups')
+!---------------------------------------------------------------------------
+#EMBED(%ProcedureRoutines,'Procedure Routines'),LABEL
+#EMBED(%LocalProcedures,'Local Procedures'),HIDE

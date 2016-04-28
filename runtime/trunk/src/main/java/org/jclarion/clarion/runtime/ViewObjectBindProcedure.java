@@ -23,10 +23,16 @@ public class ViewObjectBindProcedure extends ObjectBindProcedure
 {
     public String          sqlColumn;
     public int             sqlType;
+    private ClarionObject value;  // keep it for toString use
         
     public ViewObjectBindProcedure(ClarionObject value,String sqlColumn,int sqlType) {
         super(value);
         this.sqlColumn=sqlColumn;
         this.sqlType=sqlType;
+        this.value=value;
+    }
+
+    public String toString(){
+    	return this.getClass().getName()+""+sqlColumn+":"+sqlType+":"+value;
     }
 }

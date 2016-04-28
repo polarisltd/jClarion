@@ -1,0 +1,47 @@
+!ABCIncludeFile(SV)
+
+! -----------------------------------------------------------------------------------------------------
+! ADO_SQL Interface definition
+! -----------------------------------------------------------------------------------------------------
+
+
+! Following is used to pass information to the db interface about potential update done by the user (ex EIP process)
+TUpdateGrp      group, type
+ColName_SQL       string(25)    ! SQL col to update
+ColValue          any           ! Reference to the variable that hold the value
+                end
+
+TUpdateQ        queue(TUpdateGrp), type
+                end
+
+
+ADO_SQL             interface
+ExecuteQuery          procedure(string sQuery), bool
+ExecuteUpdate         procedure(string sUpdate)
+_Execute              procedure(string sStatement)
+Next                  procedure(), byte
+Previous              procedure(), byte
+GotoPage              procedure(long pPageNbr), long
+GotoPos               procedure(long pPos), long
+GetNextPage           procedure(), byte
+GetFirstPage          procedure(), byte
+GetLastPage           procedure(), byte
+GetPageSize           procedure(), long
+GetPageCount          procedure(), long
+GetRowCount           procedure(), long
+GetEOF                procedure(), long
+GetBOF                procedure(), long
+Move                  procedure(long pNumRec)
+Persist               procedure(string sFileName)
+PersistXML            procedure(string sXMLFileName)
+InsertRow             procedure(string sInsert)
+DeleteRow             procedure(string sDelete)
+SetCursorAtRow        procedure(), byte
+SetToPos              procedure(), byte
+UpdateRow             procedure(TUpdateQ pQ), byte
+DeleteRow             procedure(), byte
+Find                  procedure(*cstring szCriteria), long
+_Sort                 procedure(*cstring szSort), long
+SetSort               procedure(*cstring szSort)
+SetFilter             procedure(*cstring szFilter)
+                    end

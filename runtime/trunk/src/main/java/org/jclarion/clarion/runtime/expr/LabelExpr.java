@@ -13,6 +13,7 @@ package org.jclarion.clarion.runtime.expr;
 import java.sql.Types;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.jclarion.clarion.ClarionDecimal;
 import org.jclarion.clarion.ClarionFile;
@@ -23,11 +24,13 @@ import org.jclarion.clarion.ClarionString;
 import org.jclarion.clarion.runtime.ObjectBindProcedure;
 import org.jclarion.clarion.runtime.SQLBindProcedure;
 import org.jclarion.clarion.runtime.ViewObjectBindProcedure;
+import org.jclarion.clarion.view.ClarionView;
 
 public class LabelExpr extends CExpr {
 
     private String name;
     private CExpr params[];
+    private static Logger log = Logger.getLogger(LabelExpr.class.getName());   
     
     public LabelExpr(String name)
     {
@@ -50,6 +53,7 @@ public class LabelExpr extends CExpr {
 
     private LabelExprResult resolveProcedure(CExprScope scope)
     {
+    	log.fine("LE resolveProcedure "+scope);
         return scope.resolveBind(name,params!=null);
     }
 
@@ -60,8 +64,11 @@ public class LabelExpr extends CExpr {
     
     @Override
     public ClarionObject eval(CExprScope scope) {
+    	//log.entering("LE","eval",scope);
+    	log.fine("LE eval "+scope);
     	LabelExprResult bp = resolveProcedure(scope);
         if (bp==null) {
+        	log.fine("Cannot find bind:"+bp);
         	throw new NullPointerException("Cannot find bind:"+bp);
         }
         return bp.execute(scope,params);

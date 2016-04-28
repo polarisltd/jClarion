@@ -1,0 +1,93 @@
+package clarion;
+
+import clarion.Main;
+import clarion.QueueBrowse_1_2;
+import clarion.equates.Color;
+import clarion.equates.Font;
+import clarion.equates.Std;
+import org.jclarion.clarion.ClarionDecimal;
+import org.jclarion.clarion.ClarionString;
+import org.jclarion.clarion.ClarionWindow;
+import org.jclarion.clarion.control.BoxControl;
+import org.jclarion.clarion.control.ButtonControl;
+import org.jclarion.clarion.control.ListControl;
+import org.jclarion.clarion.control.SheetControl;
+import org.jclarion.clarion.control.StringControl;
+import org.jclarion.clarion.control.TabControl;
+
+public class QuickWindow_4 extends ClarionWindow
+{
+	public int _browse_1=0;
+	public int _button5=0;
+	public int _insert_2=0;
+	public int _change_2=0;
+	public int _delete_2=0;
+	public int _close=0;
+	public int _box1=0;
+	public int _string3=0;
+	public int _lOCAvailableFunds=0;
+	public int _aCCAccountBalance=0;
+	public int _string5=0;
+	public int _currentTab=0;
+	public int _tab2=0;
+	public QuickWindow_4(QueueBrowse_1_2 queueBrowse_1,ClarionDecimal lOCAvailableFunds)
+	{
+		this.setText("Browse Transaction History").setAt(0,10,338,171).setFont("MS Sans Serif",8,null,null,null).setImmediate().setIcon("CREDCARD.ICO").setHelp("~BrowseTransactions").setSystem().setGray().setMDI();
+		this.setId("browsetransactionhistory.quickwindow");
+		ListControl _C1=new ListControl();
+		_C1.setHVScroll().setFormat(ClarionString.staticConcat("[53C|M~Date~@d2@145L(2)|M~Description~C(0)@s35@45C|M~Type~@s10@57R(10)|M*~Amount","~C(0)@n$(10.2)@]|M~Transaction~")).setFrom(queueBrowse_1).setAt(13,26,295,103).setImmediate().setFont(null,9,null,Font.BOLD,null).setMsg("Browsing Records");
+		this._browse_1=this.register(_C1,"browsetransactionhistory.quickwindow.browse:1");
+		this.add(_C1);
+		ButtonControl _C2=new ButtonControl();
+		_C2.setText("Help").setAt(319,112,13,17).setHidden().setStandard(Std.HELP);
+		this._button5=this.register(_C2,"browsetransactionhistory.quickwindow.button5");
+		this.add(_C2);
+		ButtonControl _C3=new ButtonControl();
+		_C3.setText("&Insert").setAt(233,2,21,12).setHidden();
+		this._insert_2=this.register(_C3,"browsetransactionhistory.quickwindow.insert:2");
+		this.add(_C3);
+		ButtonControl _C4=new ButtonControl();
+		_C4.setDefault().setText("&Change").setAt(257,2,21,12).setHidden();
+		this._change_2=this.register(_C4,"browsetransactionhistory.quickwindow.change:2");
+		this.add(_C4);
+		ButtonControl _C5=new ButtonControl();
+		_C5.setText("&Delete").setAt(283,2,21,12).setHidden();
+		this._delete_2=this.register(_C5,"browsetransactionhistory.quickwindow.delete:2");
+		this.add(_C5);
+		ButtonControl _C6=new ButtonControl();
+		_C6.setText("Close").setAt(307,2,19,12).setHidden();
+		this._close=this.register(_C6,"browsetransactionhistory.quickwindow.close");
+		this.add(_C6);
+		BoxControl _C7=new BoxControl();
+		_C7.setRound().setLineWidth(2).setAt(13,136,287,18).setColor(Color.BLACK,null,null);
+		this._box1=this.register(_C7,"browsetransactionhistory.quickwindow.box1");
+		this.add(_C7);
+		StringControl _C8=new StringControl();
+		_C8.setText("Available Funds:").setAt(183,139,null,null).setTransparent().setFont("Arial",8,null,Font.BOLD,null);
+		this._string3=this.register(_C8,"browsetransactionhistory.quickwindow.string3");
+		this.add(_C8);
+		StringControl _C9=new StringControl();
+		_C9.setPicture("@n$_10.2").setAt(249,139,null,null).setTransparent().setRight(null).setFont("Arial",8,null,Font.BOLD,null);
+		this._lOCAvailableFunds=this.register(_C9.use(lOCAvailableFunds),"browsetransactionhistory.quickwindow.loc:availablefunds");
+		this.add(_C9);
+		StringControl _C10=new StringControl();
+		_C10.setPicture("@n$12.2B").setAt(94,139,null,null).setTransparent().setRight(null).setFont("Arial",8,null,Font.BOLD,null);
+		this._aCCAccountBalance=this.register(_C10.use(Main.accounts.accountBalance),"browsetransactionhistory.quickwindow.acc:accountbalance");
+		this.add(_C10);
+		StringControl _C11=new StringControl();
+		_C11.setText("Account Balance:").setAt(25,139,null,null).setTransparent().setFont("Arial",8,null,Font.BOLD,null);
+		this._string5=this.register(_C11,"browsetransactionhistory.quickwindow.string5");
+		this.add(_C11);
+		SheetControl _C12=new SheetControl();
+		_C12.setAt(7,8,313,155);
+		this._currentTab=this.register(_C12,"browsetransactionhistory.quickwindow.currenttab");
+		this.add(_C12);
+		TabControl _C13=new TabControl();
+		_C13.setText("Transactions by Date").setTip("Browse Transactions by Date").setFont("Arial",9,null,Font.BOLD,null);
+		_C12.add(_C13);
+		TabControl _C14=new TabControl();
+		_C14.setText("Transactions by Type").setFont("Arial",9,null,Font.BOLD,null);
+		this._tab2=this.register(_C14,"browsetransactionhistory.quickwindow.tab2");
+		_C12.add(_C14);
+	}
+}

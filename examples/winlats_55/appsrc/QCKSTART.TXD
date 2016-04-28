@@ -1,0 +1,29 @@
+##define name####prompt(field)####end|##
+[DICTIONARY]
+[FILES]
+##filename##   FILE,DRIVER('##driver##'),PRE(##prefix##),CREATE,THREAD
+##local keynum = 0        |##
+##loop                    |##
+##  if key                |##
+##    keynum = keynum + 1 |##
+Key##field##  KEY(##prefix##:##field##)##keyoptions##
+##    if keytype == 3     |##
+!!> AUTO
+##    end                 |##
+##  end                   |##
+##end                     |##
+                 RECORD
+##loop|##
+##  if key                |##
+##    if keytype == 3     |##
+[SCREENCONTROLS]
+! PROMPT('&##name##:'),USE(?##prefix##:##name##:Prompt)
+! STRING(@##picture##),USE(##prefix##:##name##),RIGHT(1)
+##    end                 |##
+##  end                   |##
+##field##        ##type##
+!!> PROMPT('&##name##:'),JUSTIFY(QUICKSTART,0),HEADER('##name##'),PICTURE(@##picture##),QCK:DERIVEDFROM('##derivedfrom##')
+##end|##
+                 END
+               END
+

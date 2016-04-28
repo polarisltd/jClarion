@@ -1,0 +1,242 @@
+#GROUP(%ConstructExportFile)
+#CALL(%ReadABCFiles)
+#!
+#MESSAGE('Generating Module:    ''' & %Application & '''.EXP', 1) #! Post generation message
+#MESSAGE('Generating Export File',2) #! Post generation message
+#MESSAGE('',3)
+#CALL(%ReadABCFiles)
+#! Limitation: Does not work for targets that have a dot in their name.  Eg This.Is.A.Test.DLL
+#SET(%ExportFile,UPPER(SUB(%ProjectTarget,1,INSTRING('.',%ProjectTarget)-1)))
+#CREATE(%BuildFile)
+#!
+#EMBED(%AfterCreatingExportFile,'Creating the export file')
+#IF(%Target32)
+NAME '%ExportFile' GUI
+#ELSE
+  #IF(%ProgramExtension='DLL')
+LIBRARY '%ExportFile'
+  #ELSE
+NAME '%ExportFile' WINDOWAPI
+  #ENDIF
+
+CODE MOVEABLE DISCARDABLE PRELOAD
+DATA MOVEABLE SINGLE PRELOAD
+
+HEAPSIZE  1024
+
+SEGMENTS
+     ENTERCODE MOVEABLE DISCARDABLE PRELOAD
+
+EXETYPE WINDOWS
+
+#ENDIF
+#IF(%ProgramExtension='DLL')
+#EMBED(%BeforeExportList,'Before the export list')
+EXPORTS
+  #EMBED(%BeginningExports,'Top of export list')
+  #IF(~%GlobalExternal)
+    #IF(~%NoGenerateGlobals)
+  #INSERT(%AddExpItem,'$GLOBALREQUEST')
+  #INSERT(%AddExpItem,'$GLOBALRESPONSE')
+  #INSERT(%AddExpItem,'$VCRREQUEST')
+    #SUSPEND
+#?;Start of Exported File information
+      #FOR(%File),WHERE(%OverrideExport OR %DefaultExport)
+  #INSERT(%AddExpFileInfo)
+  #INSERT(%AddExpItem,'$Access:'&%File)
+  #INSERT(%AddExpItem,'$Relate:'&%File)
+      #ENDFOR
+#?;End of Exported file information
+    #RESUME
+#!
+    #ENDIF
+
+#SUSPEND
+#?;Start of TopSpeed ABC library exports
+    #FOR(%pClassName)
+      #FIX (%Category, %pClassCategory)
+      #IF (%Category AND %CategoryLinkMode)
+  #INSERT(%AddExpItem,'VMT$'&%pClassName)
+  #INSERT(%AddExpItem,'TYPE$'&%pClassName)
+        #FOR(%pClassMethod)
+          #FOR(%pClassMethodPrototype),WHERE((~%pClassMethodPrivate OR %pClassMethodVirtual) AND  ~%pClassMethodInherited)
+            #IF (%pClassMethodExtName)
+  %[55]pClassMethodExtName @?
+            #ELSE
+  %[55](LINKNAME(%pClassMethod & %pClassMethodPrototype & ',' & %pClassMethodCallConv, %pClassName)) @?
+            #ENDIF
+          #ENDFOR
+        #ENDFOR
+        #FOR(%pClassImplements)
+          #FIX(%pInterface,%pClassImplements)
+          #FOR(%pInterfaceMethod)
+            #FOR(%pInterfaceMethodPrototype)
+  %[55](LINKNAME(%pInterfaceMethod & %pInterfaceMethodPrototype & ',' & %pInterfaceMethodCallConv, %pClassName, %pInterface, %pInterfaceMethodDefined)) @?
+            #ENDFOR
+          #ENDFOR
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+    #!
+    #FOR(%pProcedure)
+      #FIX (%Category, %pProcedureCategory)
+      #IF (%Category AND %CategoryLinkMode)
+        #FOR(%pProcedurePrototype)
+          #IF (%pProcedureExtName)
+  %[55]pProcedureExtName @?
+          #ELSE
+  %[55](LINKNAME(%pProcedure & %pProcedurePrototype & ',' & %pProcedureCallConv)) @?
+          #ENDIF
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+#?;End of TopSpeed ABC library exports
+#?
+#RESUME
+  #ENDIF
+#!
+  #IF(~%NoGenerateGlobals)
+    #SUSPEND
+#?;Start of initialisation function
+    #FOR (%Category)
+      #IF (%CategoryDllInit)
+  #INSERT(%AddExpPrototype(ABC),%Application&':'&%CategoryDllInit&%GetCategoryInitPrototype())
+      #ENDIF
+      #IF (%CategoryDllKill)
+  #INSERT(%AddExpPrototype(ABC),%Application&':'&%CategoryDllKill)
+      #ENDIF
+    #ENDFOR
+#?;End of initialisation functions
+#?
+    #RESUME
+  #ENDIF
+#!
+  #SUSPEND
+#?;Start of Exported Procedures
+  #FOR(%Procedure)
+    #IF(%ProcedureExported)
+  #INSERT(%AddExpPrototype,%Procedure&%Prototype)
+    #ENDIF
+  #ENDFOR
+#?;End of Exported Procedures
+#?
+  #RESUME
+#!
+  #SUSPEND
+#?;Start of Exported Global Data
+  #IF(NOT %GlobalExternal)
+    #SET(%ValueConstruct,1)
+    #FOR(%GlobalData)
+      #IF(NOT EXTRACT(%GlobalDataStatement,'EXTERNAL'))
+        #IF(%ValueConstruct = 1)
+          #IF(EXTRACT(%GlobalDataStatement,'GROUP'))
+            #SET(%ValueConstruct,%ValueConstruct + 1)
+              #IF(NOT EXTRACT(%GlobalDataStatement,'OVER'))
+  #INSERT(%AddExpItem,'TYPE$'&%GlobalData)
+  #INSERT(%AddExpDataItem,%GlobalData)
+              #ENDIF
+          #ELSIF(EXTRACT(%GlobalDataStatement,'QUEUE'))
+            #SET(%ValueConstruct,%ValueConstruct + 1)
+              #IF(NOT EXTRACT(%GlobalDataStatement,'OVER'))
+  #INSERT(%AddExpItem,'TYPE$'&%GlobalData)
+  #INSERT(%AddExpItem,'TCB$'&%GlobalData)
+  #INSERT(%AddExpDataItem,%GlobalData)
+              #ENDIF
+          #ELSE
+            #IF(NOT EXTRACT(%GlobalDataStatement,'OVER'))
+  #INSERT(%AddExpDataItem,%GlobalData)
+            #ENDIF
+          #ENDIF
+        #ELSE
+          #IF(EXTRACT(%GlobalDataStatement,'GROUP'))
+            #SET(%ValueConstruct,%ValueConstruct + 1)
+          #ELSIF(EXTRACT(%GlobalDataStatement,'QUEUE'))
+            #SET(%ValueConstruct,%ValueConstruct + 1)
+          #ELSIF(NOT %GlobalData)
+            #SET(%ValueConstruct,%ValueConstruct - 1)
+          #ENDIF
+        #ENDIF
+      #ENDIF
+    #ENDFOR
+  #ENDIF
+#?;End of Exported Global Data
+#?
+#RESUME
+#ENDIF
+#!
+#IF(%ApplicationDebug)
+  #IF(%ApplicationLocalLibrary)
+    #IF(NOT %Target32)
+      #IF(%ProgramExtension<>'DLL')
+#EMBED(%BeforeExportList,'Before the export list')
+EXPORTS
+  #EMBED(%BeginningExports,'Top of export list')
+      #ENDIF
+  #INSERT(%AddExpItem,'CLA$ACCEPTED')
+  #INSERT(%AddExpItem,'CLA$SELECTED')
+  #INSERT(%AddExpItem,'CLA$FIELD')
+  #INSERT(%AddExpItem,'CLA$FIRSTFIELD')
+  #INSERT(%AddExpItem,'CLA$LASTFIELD')
+  #INSERT(%AddExpItem,'CLA$EVENT')
+  #INSERT(%AddExpItem,'CLA$ERRCODE')
+  #INSERT(%AddExpItem,'CLA$KEYCODE')
+  #INSERT(%AddExpItem,'CLA$MOUSEX')
+  #INSERT(%AddExpItem,'CLA$MOUSEY')
+  #INSERT(%AddExpItem,'CLA$FOCUS')
+  #INSERT(%AddExpItem,'CLA$THREAD')
+  #INSERT(%AddExpItem,'WSL$LIBRARYALIVE')
+  #INSERT(%AddExpItem,'CLA$FIELDNAME')
+  #INSERT(%AddExpItem,'CLA$BLOADFLOAT4')
+  #INSERT(%AddExpItem,'CLA$BLOADFLOAT')
+  #INSERT(%AddExpItem,'CLA$LOADDEC')
+  #INSERT(%AddExpItem,'CLA$PLOADDEC')
+  #INSERT(%AddExpItem,'CLA$PUSHUFO')
+  #INSERT(%AddExpItem,'CLA$POPCSTRING')
+  #INSERT(%AddExpItem,'WSL$DEBUGHOOK')
+    #ENDIF
+  #ENDIF
+#ENDIF
+#EMBED(%DLLExportList,'Inside the export list')
+#EMBED(%BeforeClosingExports,'Closing the export file')
+
+
+#CLOSE(%BuildFile)
+#REPLACE(%ExportFile & '.EXP',%BuildFile)
+#! Added for C5.5 Gold
+#EMBED(%AfterClosingExports,'After Closing the export file')
+#!
+#!
+#GROUP(%AddExpItem,%ItemText,%UpperCase=%True)
+#IF(%UpperCase)
+%[55](UPPER(%ItemText)) @?
+#ELSE
+%[55]ItemText @?
+#ENDIF
+#!
+#GROUP(%AddExpPrototype,%ItemPrototype),AUTO
+#INSERT(%AddExpItem,LINKNAME(%ItemPrototype))
+#!
+#GROUP(%AddExpFileInfo)
+#INSERT(%AddExpItem,'$'&%File)
+        #FOR(%Key)
+#INSERT(%AddExpItem,%File&'$'&%Key)
+        #ENDFOR
+        #FOR(%Field),WHERE(%FieldType = 'MEMO')
+#INSERT(%AddExpItem,%File&'$'&%Field)
+        #ENDFOR
+        #FOR(%Field),WHERE(%FieldType = 'BLOB')
+#INSERT(%AddExpItem,%File&'$'&%Field)
+        #ENDFOR
+#INSERT(%AddExpItem,%File&'$'&%FilePrefix&':RECORD')
+#INSERT(%AddExpItem,%File&'$TYPE$'&%FilePrefix&':RECORD')
+#!
+#!
+#GROUP(%AddExpDataItem,%DataItem)
+#IF(%DataItem)
+  #IF(EXTRACT(%DataItem,'NAME',1))
+#INSERT(%AddExpItem,EXTRACT(%DataItem,'NAME',1))
+  #ELSE
+#INSERT(%AddExpItem,'$'&%DataItem)
+  #ENDIF
+#ENDIF
+#!

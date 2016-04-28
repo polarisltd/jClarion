@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.StringTokenizer;
-
-
+import java.util.logging.Logger;
 
 //import org.jclarion.Params;
 import org.jclarion.clarion.memory.CMem;
@@ -26,6 +25,7 @@ import org.jclarion.clarion.primative.ThreadStateGetter;
 import org.jclarion.clarion.runtime.CErrorImpl;
 import org.jclarion.clarion.runtime.CMemory;
 import org.jclarion.clarion.util.FileState;
+import org.mortbay.log.Log;
 import org.jclarion.clarion.constants.*;
 import org.jclarion.clarion.hooks.FilecallbackParams;
 import org.jclarion.clarion.hooks.Filecallbackinterface;
@@ -40,7 +40,7 @@ import org.jclarion.clarion.jdbc.JDBCSource;
 public abstract class ClarionFile extends ClarionGroup
 {
     private List<ClarionKey> keys=new ArrayList<ClarionKey>();
-
+    private static Logger log = Logger.getLogger(ClarionFile.class.getName());
     public int getSQLType(ClarionObject o)
     {
         FileState fs=  getFileState();
@@ -66,7 +66,8 @@ public abstract class ClarionFile extends ClarionGroup
 
     public void setCreate()
     {
-        setProperty(Prop.CREATE,true);
+        log.fine("setCreate() := true");
+    	setProperty(Prop.CREATE,true);
     }
     
     /**
@@ -115,6 +116,7 @@ public abstract class ClarionFile extends ClarionGroup
      */
     public ClarionFile setSource(ClarionString source)
     {
+    	log.info("Clarionfile Source: "+source.getName());
         setProperty(Prop.OWNER,source);
         return this;
     }
@@ -128,13 +130,15 @@ public abstract class ClarionFile extends ClarionGroup
      */
     public ClarionFile setName(String name)
     {
-        setProperty(Prop.NAME,name);
+    	log.info("Clarionfile NAME: "+name);
+    	setProperty(Prop.NAME,name);
         return this;
     }
 
     public ClarionFile setName(ClarionString name)
     {
-        setProperty(Prop.NAME,name);
+    	log.info("Clarionfile NAME: "+name);
+    	setProperty(Prop.NAME,name);
         return this;
     }
 

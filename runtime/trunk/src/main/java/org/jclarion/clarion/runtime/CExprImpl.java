@@ -14,6 +14,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 /*
 import org.antlr.runtime.ANTLRStringStream;
@@ -38,9 +39,11 @@ import org.jclarion.clarion.runtime.expr.CExprType;
 import org.jclarion.clarion.runtime.expr.LabelExprResult;
 import org.jclarion.clarion.runtime.expr.ParseException;
 import org.jclarion.clarion.runtime.expr.Parser;
+import org.jclarion.clarion.view.ClarionView;
 
 public class CExprImpl {
-
+	private static Logger log = Logger.getLogger(CExprImpl.class.getName());
+	
     private static ActiveThreadMap<CExprImpl> instance =new ActiveThreadMap<CExprImpl>();
     
 
@@ -68,10 +71,20 @@ public class CExprImpl {
         systemBindings.put("upper",new SQLBindProcedure("UPPER",CExprType.STRING,CExprType.STRING) {        	
 			@Override
 			public ClarionObject execute(ClarionObject[] p) {
+				log.fine("UPPER() execute "+p[0].getString());
 				return p[0].getString().upper();
 			}
         });
-
+        systemBindings.put("sub",new SQLBindProcedure("SUB",CExprType.STRING,CExprType.NUMERIC,CExprType.NUMERIC) {        	
+			@Override
+			public ClarionObject execute(ClarionObject[] p) {
+				log.fine("SUB() execute "+p[0].getString());
+				return p[0].getString();
+			}
+        });
+        
+        
+        
         CRun.addShutdownHook(new Runnable() { 
             public void run()
             {
@@ -82,25 +95,33 @@ public class CExprImpl {
 
     public CExpr compile(String aString)
     {
-        CErrorImpl.getInstance().clearError();
+    	aString = aString.replaceAll("\\u000A", "");
+    	log.fine("compile(String) "+aString+" ENTRY");
+    	CErrorImpl.getInstance().clearError();
         
         StringReader sr = new StringReader(aString);
         Lexer l = new Lexer(sr);
         l.setJavaMode(false);
-        l.setIgnoreWhitespace(true);       
-        return compile(aString,l,LexType.eof);
+        l.setIgnoreWhitespace(true);   
+        CExpr expr = compile(aString,l,LexType.eof);
+        log.fine("compile(String) "+aString+" RETURN");
+        return expr;
     }
 
     public CExpr compile(String aString,Lexer l,LexType end)
     {
-        Parser p = new Parser(l);
+
+     	log.fine("compile(String,Lexer,LexType) "+aString+" ENTRY");
+    	Parser p = new Parser(l);
         
         try {
             return p.expr(end);
         } catch (ParseException e) { 
+        	log.fine("CExprError error 800, "+aString+" := "+e.getMessage());
             CErrorImpl.getInstance().setError(800,e.getMessage());
             return null;
         } catch (CExprError e) {
+        	log.fine("CExprError error 801, "+aString+" := "+e.getMessage());
             CErrorImpl.getInstance().setError(801,e.getMessage());
             return null;
         }
@@ -123,7 +144,8 @@ public class CExprImpl {
     
     public ClarionString evaluate(String aString)
     {
-        CExpr exp = compile(aString);
+    	log.fine("evaluate() "+aString+" ENTRY");
+    	CExpr exp = compile(aString);
         if (exp==null) {
             return new ClarionString("");
         }
@@ -133,10 +155,13 @@ public class CExprImpl {
         try {
             ClarionObject o = exp.eval();
             if (o instanceof ClarionBool) {
+            	log.fine("evaluate() "+aString + " := "+o.boolValue());
                 return new ClarionString(o.boolValue() ? "1" : "0");
             }
+            log.fine("evaluate() "+aString + " := "+o.getString());
             return o.getString();
         } catch (CExprError e) {
+        	log.fine("CExprError error 801 "+aString+" := "+e.getMessage());
             CErrorImpl.getInstance().setError(801,e.getMessage());
             return new ClarionString("");
         }
@@ -159,6 +184,7 @@ public class CExprImpl {
     public void popBind()
     {
         if (stack.isEmpty()) {
+        	log.fine("!!! Nothing to pop!");
             throw new RuntimeException("Nothing to pop!");
         }
         
@@ -167,21 +193,25 @@ public class CExprImpl {
 
     public void bind(String name,LabelExprResult procedure)
     {
+    	log.fine("bind() "+name+" procedure:LabelExprResult: "+procedure);
         bindings.put(name.toLowerCase(),procedure);
     }
     
     public void bind(String name,ClarionObject object)
     {
-        bindings.put(name.toLowerCase(),new ObjectBindProcedure(object));
+    	log.fine("bind() "+name+" ClarionObject: "+object);
+    	bindings.put(name.toLowerCase(),new ObjectBindProcedure(object));
     }
 
     public void bind(String name,ClarionObject object,String sqlColumn,int sqlType)
     {
-        bindings.put(name.toLowerCase(),new ViewObjectBindProcedure(object,sqlColumn,sqlType));
+    	log.fine("bind() "+name+" ClarionObject: "+object+" sqlColumn: "+sqlColumn+" sqlType: "+sqlType);
+    	bindings.put(name.toLowerCase(),new ViewObjectBindProcedure(object,sqlColumn,sqlType));
     }
     
     public void bind(ClarionGroup group)
     {
+    	log.fine("bind() ClarionGroup: "+group);
         for (int scan=1;scan<=group.getVariableCount();scan++) {
             ClarionObject co = group.flatWhat(scan);
             if (co==null) continue;
@@ -192,12 +222,14 @@ public class CExprImpl {
 
     public void unbind(String name)
     {
-        bindings.remove(name.toLowerCase());
+    	log.fine("unbind() name: "+name);
+    	bindings.remove(name.toLowerCase());
     }
 
     public void unbind(ClarionGroup group)
     {
-        for (int scan=1;scan<=group.getVariableCount();scan++) {
+       	log.fine("unbind() ClarionGroup: "+group);
+    	for (int scan=1;scan<=group.getVariableCount();scan++) {
             ClarionObject co = group.flatWhat(scan);
             if (co==null) continue;
             
@@ -207,28 +239,34 @@ public class CExprImpl {
     
     public LabelExprResult resolveBind(String name,boolean mustBeProcedure)
     {
-        
     	LabelExprResult result = bindings.get(name.toLowerCase());
-
         if (result==null) {
             result = systemBindings.get(name.toLowerCase());
         }
 
+        log.fine("resolveBind()  bindings.get() name: "+name+" = "+result);
+        
         if (result==null) {
-            throw new CExprError("Binding not found");
+            log.fine("resolveBind !!!binding not found "+name);        	
+            throw new CExprError("Binding not found "+name);
         }
         
         if (mustBeProcedure) {
         	if (!(result instanceof BindProcedure) && !(result instanceof BindProcedure2)) {
+        		log.fine("resolveBind !!!throwing cannot Access Variable as procedure: "+result.getClass());
         		throw new CExprError("Cannot Access Variable as procedure: "+result.getClass());
         	}
         }
         
         return result;
     }
-    
-    public String toString()
+    @Override
+    public String toString()  // hopefully we are allowed to update this?
     {
-        return bindings.toString();
+        String items = "";
+    	for(String s :bindings.keySet()){
+        	items += (s+"  ");
+        }
+    	return bindings.toString()+" "+items;
     }
 }

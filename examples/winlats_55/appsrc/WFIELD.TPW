@@ -1,0 +1,564 @@
+#!--------------------------------------------------------------------------
+#GROUP(%QuickDeclareFields)
+#!Buttons
+#DECLARE(%ButtonControlID,%ProcedureList),MULTI
+#DECLARE(%ButtonControl,%ButtonControlID)
+#DECLARE(%ButtonAction,%ButtonControlID)
+#DECLARE(%ButtonRunName,%ButtonControlID)
+#DECLARE(%ButtonRunParameters,%ButtonControlID)
+#DECLARE(%ButtonProcedure,%ButtonControlID)
+#DECLARE(%ButtonThread,%ButtonControlID)
+#DECLARE(%ButtonThreadStack,%ButtonControlID)
+#DECLARE(%ButtonParameters,%ButtonControlID)
+#DECLARE(%ButtonRequest,%ButtonControlID)
+#!------------------------------------------------------------------------------
+#!Entry
+#DECLARE(%EntryControlID,%ProcedureList),MULTI
+#DECLARE(%EntryControl,%EntryControlID)
+#DECLARE(%PreLookupKey,%EntryControlID)
+#DECLARE(%PreLookupField,%EntryControlID)
+#DECLARE(%PreLookupProcedure,%EntryControlID)
+#DECLARE(%PostLookupKey,%EntryControlID)
+#DECLARE(%PostLookupField,%EntryControlID)
+#DECLARE(%PostLookupProcedure,%EntryControlID)
+#DECLARE(%ForceWindowRefresh,%EntryControlID)
+#!--------------------------------------------------------------------------
+#GROUP(%GenerateFieldPrompts)
+#SET(%ValueConstruct,ITEMS(%ButtonControlID))
+%%ButtonAction DEPEND %%Control STRING TIMES %ValueConstruct
+#FOR(%ButtonControlID)
+WHEN  ('%ButtonControl') ('%ButtonAction')
+#ENDFOR
+
+%%ButtonRunName DEPEND %%Control STRING TIMES %ValueConstruct
+#FOR(%ButtonControlID)
+WHEN  ('%ButtonControl') ('%ButtonRunName')
+#ENDFOR
+
+%%ButtonRunParameters DEPEND %%Control STRING TIMES %ValueConstruct
+#FOR(%ButtonControlID)
+WHEN  ('%ButtonControl') ('%ButtonRunParameters')
+#ENDFOR
+
+%%ButtonProcedure DEPEND %%Control PROCEDURE TIMES %ValueConstruct
+#FOR(%ButtonControlID)
+WHEN  ('%ButtonControl') (%ButtonProcedure)
+#ENDFOR
+
+%%ButtonThread DEPEND %%Control LONG TIMES %ValueConstruct
+#FOR(%ButtonControlID)
+WHEN  ('%ButtonControl') (%ButtonThread)
+#ENDFOR
+
+%%ButtonThreadStack DEPEND %%Control @n7 TIMES %ValueConstruct
+#FOR(%ButtonControlID)
+WHEN  ('%ButtonControl') (%ButtonThreadStack)
+#ENDFOR
+
+%%ButtonParameters DEPEND %%Control STRING TIMES %ValueConstruct
+#FOR(%ButtonControlID)
+WHEN  ('%ButtonControl') ('%ButtonParameters')
+#ENDFOR
+
+%%ButtonRequest DEPEND %%Control STRING TIMES %ValueConstruct
+#FOR(%ButtonControlID)
+WHEN  ('%ButtonControl') ('%ButtonRequest')
+#ENDFOR
+
+#SET(%ValueConstruct,ITEMS(%EntryControlID))
+%%PreLookupKey DEPEND %%Control KEY TIMES %ValueConstruct
+#FOR(%EntryControlID)
+WHEN  ('?%EntryControl') (%PreLookupKey)
+#ENDFOR
+
+%%PreLookupField DEPEND %%Control COMPONENT TIMES %ValueConstruct
+#FOR(%EntryControlID)
+WHEN  ('?%EntryControl') (%PreLookupField)
+#ENDFOR
+
+%%PreLookupProcedure DEPEND %%Control PROCEDURE TIMES %ValueConstruct
+#FOR(%EntryControlID)
+WHEN  ('?%EntryControl') (%PreLookupProcedure)
+#ENDFOR
+
+%%PostLookupKey DEPEND %%Control KEY TIMES %ValueConstruct
+#FOR(%EntryControlID)
+WHEN  ('?%EntryControl') (%PostLookupKey)
+#ENDFOR
+
+%%PostLookupField DEPEND %%Control COMPONENT TIMES %ValueConstruct
+#FOR(%EntryControlID)
+WHEN  ('?%EntryControl') (%PostLookupField)
+#ENDFOR
+
+%%PostLookupProcedure DEPEND %%Control PROCEDURE TIMES %ValueConstruct
+#FOR(%EntryControlID)
+WHEN  ('?%EntryControl') (%PostLookupProcedure)
+#ENDFOR
+
+%%ForceWindowRefresh DEPEND %%Control LONG TIMES %ValueConstruct
+#FOR(%EntryControlID)
+WHEN  ('?%EntryControl') (%ForceWindowRefresh)
+#ENDFOR
+#!--------------------------------------------------------------------------
+#GROUP(%AccumulateFieldList,%CurrentFile)
+#!--------------------------
+#DECLARE(%QControlType)
+#DECLARE(%QPicture)
+#DECLARE(%QControlText)
+#DECLARE(%CurrentRadioX)
+#DECLARE(%CurrentRadioY)
+#DECLARE(%CurrentRadioRow)
+#DECLARE(%MaximumRadioRows)
+#DECLARE(%ControlCheckColumn)
+#DECLARE(%CheckColumnsPossible)
+#DECLARE(%LastControlCheckColumn)
+#!--------------------------
+#FIX(%File,%CurrentFile)
+#FIX(%Driver,%FileDriver)
+#SET(%FileListSQL,%DriverSQL)
+#IF(%FileListSQL)
+  #SET(%SQLUsed,%True)
+  #FIX(%SQLDrivers,%Driver)
+  #IF(NOT %SQLDrivers)
+    #ADD(%SQLDrivers,%Driver)
+    #SET(%SQLFile,%File)
+  #ENDIF
+#ENDIF
+#SET(%FileListPromptWidth,%DefaultPromptWidth)
+#FOR(%Field),WHERE(NOT EXTRACT(%FieldQuickOptions,'NOPOPULATE'))
+  #MESSAGE('Collecting Field Information: ' & %Field,3)
+  #CASE(%FieldType)
+  #OF('GROUP')
+  #OROF('BLOB')
+  #OROF('END')
+    #CYCLE
+  #ENDCASE
+  #IF(%FieldDimension1 <> '0')
+    #CYCLE
+  #ENDIF
+  #SET(%ValueConstruct,UPPER(EXTRACT(%FieldQuickOptions,'ORDER',1)))
+  #IF(%FieldType = 'MEMO')
+    #ADD(%FieldListID,%TextControlOffset + ITEMS(%FieldListID))
+  #ELSIF(%ValueConstruct = 'FIRST')
+    #ADD(%FieldListID,%TopControlOffset + ITEMS(%FieldListID))
+  #ELSIF(%ValueConstruct = 'LAST')
+    #ADD(%FieldListID,%BottomControlOffset + ITEMS(%FieldListID))
+  #ELSE
+    #ADD(%FieldListID,%MiddleControlOffset + ITEMS(%FieldListID))
+  #ENDIF
+  #SET(%FieldList,%Field)
+  #SET(%FieldListType,%FieldType)
+  #SET(%FieldListJustification,%FieldJustType)
+  #IF(%FieldJustIndent)
+    #SET(%FieldListJustification,%FieldListJustification & '(' & %FieldJustIndent & ')')
+  #ENDIF
+  #CASE(%FieldType)
+  #OF('MEMO')
+    #SET(%FieldListTab,%FieldID)
+  #ELSE
+    #SET(%FieldListTab,EXTRACT(%FieldQuickOptions,'TAB',1))
+    #IF(NOT %FieldListTab)
+      #SET(%FieldListTab,'General')
+    #ELSE
+      #SET(%FieldListTab,SUB(%FieldListTab,2,LEN(%FieldListTab)-2))
+    #ENDIF
+    #INSERT(%DeterminePictureLength,%FieldPicture)
+    #SET(%FieldListBrowseWidth,%ValueConstruct)
+    #SET(%FieldListBrowseHeaderWidth,(LEN(%FieldHeader) * 4) + 4)
+    #IF(%FieldListBrowseHeaderWidth > %FieldListBrowseWidth)
+      #SET(%FieldListBrowseWidth,%FieldListBrowseHeaderWidth)
+    #ENDIF
+    #IF(%FieldListBrowseWidth > %MaximumBrowseItemWidth)
+      #SET(%FieldListBrowseWidth,%MaximumBrowseItemWidth)
+    #ENDIF
+    #SET(%ValueConstruct,UPPER(SUB(%FieldPicture,2,1)))
+    #CASE(%ValueConstruct)
+    #OF('D')
+    #OROF('T')
+      #SET(%FieldListBrowseHeaderJust,'C')
+      #SET(%FieldListBrowseHeaderIndent,0)
+      #SET(%FieldListBrowseColumnJust,'R')
+      #IF(%FieldListBrowseHeaderWidth > %FieldListBrowseWidth)
+        #SET(%HoldConstruct,((%FieldListBrowseHeaderWidth - %FieldListBrowseWidth) / 2) + 2)
+        #SET(%FieldListBrowseColumnIndent,%HoldConstruct)
+      #ELSE
+        #SET(%FieldListBrowseColumnIndent,2)
+      #ENDIF
+    #OF('N')
+      #SET(%FieldListBrowseHeaderJust,'C')
+      #SET(%FieldListBrowseHeaderIndent,0)
+      #SET(%ValueConstruct,0)
+      #SET(%ValueConstruct,INSTRING('.',%FieldPicture,1,1))
+      #IF(NOT %ValueConstruct)
+        #SET(%ValueConstruct,INSTRING('`',%FieldPicture,1,1))
+        #IF(NOT %ValueConstruct)
+          #SET(%ValueConstruct,INSTRING('V',UPPER(%FieldPicture),1,1))
+        #ENDIF
+      #ELSE
+        #IF(SUB(%FieldPicture,%ValueConstruct + 1,1) = '`')
+          #SET(%ValueConstruct,%ValueConstruct + 1)
+        #ENDIF
+      #ENDIF
+      #IF(NOT %ValueConstruct)
+        #SET(%FieldListBrowseColumnJust,'R')
+        #IF(%FieldListBrowseHeaderWidth > %FieldListBrowseWidth)
+          #SET(%HoldConstruct,((%FieldListBrowseHeaderWidth - %FieldListBrowseWidth) / 2) + 2)
+          #SET(%FieldListBrowseColumnIndent,%HoldConstruct)
+        #ELSE
+          #SET(%FieldListBrowseColumnIndent,2)
+        #ENDIF
+      #ELSE
+        #SET(%DecimalPortion,0)
+        #LOOP
+          #SET(%ValueConstruct,%ValueConstruct+1)
+          #SET(%HoldConstruct,SUB(%FieldPicture,%ValueConstruct,1))
+          #IF(NOT %HoldConstruct)
+            #BREAK
+          #ELSIF(NOT NUMERIC(%HoldConstruct))
+            #BREAK
+          #ENDIF
+          #SET(%DecimalPortion,(%DecimalPortion * 10) + %HoldConstruct)
+        #ENDLOOP
+        #IF(%DecimalPortion)
+          #SET(%FieldListBrowseColumnJust,'D')
+          #IF(%FieldListBrowseHeaderWidth < %FieldListBrowseWidth)
+            #SET(%HoldConstruct,((%FieldListBrowseWidth - %FieldListBrowseHeaderWidth) / 2) + (5 * %DecimalPortion) - 2)
+          #ELSE
+            #SET(%HoldConstruct,((%FieldListBrowseHeaderWidth - %FieldListBrowseWidth) / 2) + (5 * %DecimalPortion) + 2)
+          #ENDIF
+          #SET(%FieldListBrowseColumnIndent,%HoldConstruct)
+        #ELSE
+          #SET(%FieldListBrowseColumnJust,'R')
+          #IF(%FieldListBrowseHeaderWidth > %FieldListBrowseWidth)
+            #SET(%HoldConstruct,((%FieldListBrowseHeaderWidth - %FieldListBrowseWidth) / 2) + 2)
+            #SET(%FieldListBrowseColumnIndent,%HoldConstruct)
+          #ELSE
+            #SET(%FieldListBrowseColumnIndent,2)
+          #ENDIF
+        #ENDIF
+      #ENDIF
+    #ELSE
+      #IF(%FieldListBrowseHeaderWidth > %FieldListBrowseWidth)
+        #SET(%FieldListBrowseHeaderJust,'C')
+        #SET(%FieldListBrowseHeaderIndent,0)
+        #SET(%FieldListBrowseColumnJust,'D')
+        #SET(%HoldConstruct,((%FieldListBrowseHeaderWidth - %FieldListBrowseWidth) / 2) + 2)
+        #SET(%FieldListBrowseColumnIndent,%HoldConstruct)
+      #ELSE
+        #SET(%FieldListBrowseHeaderJust,'L')
+        #SET(%FieldListBrowseHeaderIndent,2)
+        #SET(%FieldListBrowseColumnJust,'L')
+        #SET(%FieldListBrowseColumnIndent,2)
+      #ENDIF
+    #ENDCASE
+  #ENDCASE
+  #FIX(%FileListTab,%FieldListTab)
+  #IF(NOT %FileListTab)
+    #ADD(%FileListTab,%FieldListTab)
+  #ENDIF
+  #SET(%FileListDescription,QUOTE(%FileDescription))
+  #IF(EXTRACT(%FieldQuickOptions,'VERTICALSPACE'))
+    #SET(%FieldListVerticalSpace,%True)
+  #ENDIF
+  #IF(%FieldLookup)
+    #SET(%FieldListLookup,%FieldLookup)
+    #FIX(%Relation,%FieldListLookup)
+    #SET(%FieldListLookupKey,%RelationKey)
+    #FOR(%FileKeyField),WHERE(%FileKeyFieldLink AND %FileKeyField)
+      #SET(%FieldListLookupField,%FileKeyFieldLink)
+    #ENDFOR
+  #ENDIF
+  #SET(%FieldListHeader,%FieldHeader)
+  #SET(%FieldListPicture,%FieldPicture)
+  #SET(%FieldListPromptWidth,%DefaultPromptWidth)
+  #FOR(%FieldScreenControl)
+    #ADD(%FieldListControl,%FieldScreenControl)
+    #SET(%FieldListControlOrig,EXTRACT(%FieldScreenControl,'USE',1))
+    #ADD(%FieldListLinkList,%FieldListControlOrig)
+    #SET(%FieldListControlWidth,%DefaultControlWidth)
+    #SET(%FieldListControlHeight,%DefaultControlHeight)
+    #SET(%QControlType,SUB(%FieldScreenControl,1,4))
+    #CASE(%QControlType)
+    #OF('PROM')
+      #SET(%FieldListControlType,'PROMPT')
+      #SET(%QControlText,EXTRACT(%FieldScreenControl,'PROMPT',1))
+      #IF(NOT %QControlText)
+        #FREE(%FieldListControl)
+        #CYCLE
+      #ENDIF
+      #SET(%FieldListPromptWidth,(LEN(%QControlText) - 2) * 4)
+      #IF(%FieldListPromptWidth > %FileListPromptWidth)
+        #SET(%FileListPromptWidth,%FieldListPromptWidth)
+      #ENDIF
+      #SET(%FileListTabHasPrompts,%True)
+    #OF('ENTR')
+      #SET(%FieldListControlType,'ENTRY')
+      #SET(%QControlText,EXTRACT(%FieldScreenControl,'ENTRY',1))
+      #INSERT(%DeterminePictureLength,%QControlText)
+      #SET(%FieldListControlWidth,%ValueConstruct)
+    #OF('STRI')
+      #SET(%FieldListControlType,'STRING')
+      #SET(%QControlText,EXTRACT(%FieldScreenControl,'STRING',1))
+      #IF(SUB(%QControlText,1,1)<>'@')
+        #SET(%FieldListControlWidth,(LEN(%QControlText)-2) * 4)
+      #ELSE
+        #INSERT(%DeterminePictureLength,%QControlText)
+        #SET(%FieldListControlWidth,%ValueConstruct)
+      #ENDIF
+    #OF('OPTI')
+      #SET(%FieldListControlType,'OPTION')
+      #SET(%FieldListRequiresEnd,%True)
+      #SET(%FieldListTotalWidth,EXTRACT(%FieldScreenControl,'AT',3))
+      #SET(%FieldListTotalHeight,EXTRACT(%FieldScreenControl,'AT',4))
+      #SET(%FieldListControlWidth,%FieldListTotalWidth)
+      #SET(%FieldListControlHeight,%FieldListTotalHeight)
+      #SET(%MaximumRadioRows,(%FieldListTotalHeight / 12) - 1)
+      #SET(%CurrentRadioX,%DefaultRadioXOffset)
+      #SET(%CurrentRadioY,%RadioInitialYOffset)
+      #SET(%CurrentRadioRow,1)
+    #OF('RADI')
+      #SET(%FieldListControlType,'RADIO')
+      #SET(%FieldListControlXOffset,%CurrentRadioX)
+      #SET(%FieldListControlYOffset,%CurrentRadioY)
+      #SET(%FieldListControlHeight,%DefaultRadioHeight)
+      #SET(%FieldListControlWidth,%DefaultRadioWidth)
+      #SET(%CurrentRadioRow,%CurrentRadioRow + 1)
+      #IF(%CurrentRadioRow > %MaximumRadioRows)
+        #SET(%CurrentRadioRow,1)
+        #SET(%CurrentRadioX,%CurrentRadioX + %DefaultRadioWidth + %DefaultRadioXOffset)
+        #SET(%CurrentRadioY,%RadioInitialYOffset)
+      #ELSE
+        #SET(%CurrentRadioY,%CurrentRadioY + %DefaultRadioHeight + %DefaultRadioYOffset)
+      #ENDIF
+    #OF('SPIN')
+      #SET(%FieldListControlType,'SPIN')
+      #SET(%QControlText,EXTRACT(%FieldScreenControl,'SPIN',1))
+      #INSERT(%DeterminePictureLength,%QControlText)
+      #SET(%FieldListControlWidth,%ValueConstruct + %DefaultSpinWidthOffset)
+    #OF('CHEC')
+      #SET(%FieldListControlType,'CHECK')
+      #SET(%FieldListControlHeight,%DefaultCheckHeight)
+      #SET(%QControlText,EXTRACT(%FieldScreenControl,'CHECK',1))
+      #SET(%FieldListControlWidth,((LEN(%QControlText) - 2) * 4) + %DefaultCheckBoxXOffset)
+      #IF(%FieldListControlWidth < %CheckColumnWidth)
+        #SET(%FieldListControlWidth,%CheckColumnWidth)
+      #ENDIF
+    #OF('LIST')
+      #SET(%FieldListControlType,'LIST')
+      #IF(EXTRACT(%FieldScreenControl,'DROP'))
+        #SET(%FieldListControlHeight,%DefaultControlHeight)
+      #ELSE
+        #SET(%FieldListControlHeight,ITEMS(%FieldChoices) * %DefaultListItemHeight)
+      #ENDIF
+      #SET(%FieldListControlWidth,100)
+    #OF('TEXT')
+      #SET(%ValueConstruct,%FieldScreenControl & ',VSCROLL')
+      #SET(%FieldListControlType,'TEXT')
+      #SET(%FieldListControlOrig,EXTRACT(%FieldScreenControl,'USE',1))
+      #SET(%FieldListControlXOffset,0)
+      #SET(%FieldListControlYOffset,0)
+      #IF(%FieldType = 'MEMO')
+        #SET(%FieldListControlHeight,'FULL')
+      #ELSE
+        #SET(%FieldListControlHeight,%DefaultControlHeight * 3)
+      #ENDIF
+      #SET(%FieldListControlWidth,'FULL')
+    #ENDCASE
+  #ENDFOR
+  #FOR(%FieldReportControl)
+    #SET(%QControlType,SUB(%FieldReportControl,1,4))
+    #CASE(%QControlType)
+    #OF('TEXT')
+      #ADD(%FieldListReportControl,%FieldReportControl)
+      #SET(%FieldListReportControlType,'TEXT')
+    #OF('CHEC')
+      #ADD(%FieldListReportControl,%FieldReportControl)
+      #SET(%FieldListReportControlType,'CHECK')
+    #OF('STRI')
+      #ADD(%FieldListReportControl,%FieldReportControl)
+      #SET(%FieldListReportControlType,'STRING')
+    #ELSE
+      #SET(%ValueConstruct,'STRING(' & %FieldPicture & '),USE(' & %Field & ')')
+      #ADD(%FieldListReportControl,%ValueConstruct)
+      #SET(%FieldListReportControlType,'STRING')
+    #ENDCASE
+    #BREAK
+  #ENDFOR
+#ENDFOR
+#FOR(%Key),WHERE(%KeyIndex <> 'DYNAMIC')
+  #MESSAGE('Collecting Key Information: ' & %Key,3)
+  #SET(%ValueConstruct,UPPER(EXTRACT(%KeyQuickOptions,'ORDER',1)))
+  #IF(%ValueConstruct = 'FIRST')
+    #ADD(%KeyListID,%TopControlOffset + ITEMS(%KeyListID))
+  #ELSIF(%ValueConstruct = 'LAST')
+    #ADD(%KeyListID,%BottomControlOffset + ITEMS(%KeyListID))
+  #ELSE
+    #ADD(%KeyListID,%MiddleControlOffset + ITEMS(%KeyListID))
+  #ENDIF
+  #SET(%KeyList,%Key)
+  #SET(%KeyListDescription,QUOTE(%KeyDescription))
+  #IF(EXTRACT(%KeyQuickOptions,'TAB',1))
+    #SET(%KeyListTab,EXTRACT(%KeyQuickOptions,'TAB',1))
+    #SET(%KeyListTab,SUB(%KeyListTab,2,LEN(%KeyListTab)-2))
+  #ELSIF(%KeyDescription)
+    #SET(%KeyListTab,QUOTE(%KeyDescription))
+  #ELSE
+    #SET(%KeyListTab,%Key)
+  #ENDIF
+  #SET(%KeyListNoPopulate,EXTRACT(%KeyQuickOptions,'NOPOPULATE'))
+  #FOR(%FieldListID)
+    #FIX(%KeyField,%FieldList)
+    #IF(%KeyField)
+      #ADD(%KeyListField,%KeyField)
+    #ENDIF
+  #ENDFOR
+#ENDFOR
+#FOR(%FileListTab)
+  #SET(%LastControlCheckColumn,%Null)
+  #IF(%FileListTabHasPrompts)
+    #SET(%MaximumCheckColumns,3)
+  #ELSE
+    #SET(%MaximumCheckColumns,4)
+  #ENDIF
+  #SET(%CheckColumnsPossible,%False)
+  #FOR(%FieldListID),WHERE(%FieldListTab = %FileListTab)
+    #FOR(%FieldListControl)
+      #IF(ITEMS(%FieldListLinkList) > 1)
+        #IF(INSTANCE(%FieldListControl) = 1)
+          #SELECT(%FieldListLinkList,ITEMS(%FieldListControl))
+        #ELSE
+          #SELECT(%FieldListLinkList,INSTANCE(%FieldListControl) - 1)
+        #ENDIF
+        #SET(%FieldListControlLink,%FieldListLinkList)
+      #ENDIF
+      #CASE(%FieldListControlType)
+      #OF('PROMPT')
+        #SET(%FieldListControlHeight,-1)
+        #SET(%FieldListControlWidth,%FileListPromptWidth)
+        #SET(%FieldListControlXOffset,%DefaultXOffset)
+      #ELSE
+        #IF(%FileListTabHasPrompts)
+          #SET(%FieldListControlXOffset,%FieldListControlXOffset + %FileListPromptWidth + %DefaultXOffset)
+        #ELSE
+          #SET(%FieldListControlXOffset,%DefaultXOffset)
+        #ENDIF
+        #IF(%FieldListControlWidth <> 'FULL')
+          #IF(%FieldListTotalWidth < (%FieldListControlXOffset + %FieldListControlWidth))
+            #SET(%FieldListTotalWidth,(%FieldListControlXOffset + %FieldListControlWidth))
+          #ENDIF
+        #ENDIF
+        #IF(%FileListControlsWidth < %FieldListTotalWidth)
+          #SET(%FileListControlsWidth,%FieldListTotalWidth)
+        #ENDIF
+        #IF(%FieldListTotalHeight = 0)
+          #SET(%FieldListTotalHeight,%FieldListControlHeight)
+        #ENDIF
+      #ENDCASE
+      #IF(%FieldListControlType = 'CHECK')
+        #IF(%FieldListVerticalSpace)
+          #SET(%FieldListControlHeight,-1)
+          #SET(%FieldListCheckColumn,0)
+        #ELSE
+          #IF(%CheckColumnsPossible)
+            #SET(%FieldListCheckColumn,%LastControlCheckColumn + 1)
+            #IF(%FieldListCheckColumn = %MaximumCheckColumns)
+              #SET(%FieldListCheckColumn,0)
+            #ENDIF
+          #ELSE
+            #SET(%FieldListCheckColumn,0)
+          #ENDIF
+        #ENDIF
+        #IF(%FieldListControlWidth <= %CheckColumnWidth)
+          #SET(%CheckColumnsPossible,%True)
+        #ELSE
+          #SET(%CheckColumnsPossible,%False)
+        #ENDIF
+      #ELSE
+        #IF(%FieldListControlType = 'RADIO')
+          #SET(%FieldListControlHeight,-1)
+        #ENDIF
+        #SET(%FieldListCheckColumn,0)
+        #SET(%CheckColumnsPossible,%False)
+      #ENDIF
+      #IF(%FieldListCheckColumn)
+        #SET(%FieldListControlXOffset,%FieldListControlXOffset + (%FieldListCheckColumn * (%DefaultXOffset + %CheckColumnWidth)))
+      #ENDIF
+      #SET(%LastControlCheckColumn,%FieldListCheckColumn)
+    #ENDFOR
+  #ENDFOR
+#ENDFOR
+#!--------------------------------------------------------------------------
+#GROUP(%DeterminePictureLength,%TestPicture)
+#CASE(UPPER(SUB(%TestPicture,2,1)))
+#OF('S')
+  #SET(%ValueConstruct,(SUB(%TestPicture,3,LEN(%TestPicture)-2))*4)
+#OF('N')
+  #IF(INSTRING('.',%TestPicture,1,1))
+    #SET(%ValueConstruct,(SUB(%TestPicture,3,(INSTRING('.',%TestPicture,1,1))-3)))
+  #ELSE
+    #SET(%ValueConstruct,(SUB(%TestPicture,3,LEN(%TestPicture)-2)))
+  #ENDIF
+  #IF(NUMERIC(%ValueConstruct))
+    #IF(%ValueConstruct< 0)
+      #SET(%ValueConstruct,(%ValueConstruct - 1) * -4)
+    #ELSE
+      #SET(%ValueConstruct,%ValueConstruct * 4)
+    #ENDIF
+  #ELSE
+    #SET(%ValueConstruct,%DefaultControlWidth)
+  #ENDIF
+#OF('P')
+  #SET(%ValueConstruct,(LEN(%TestPicture)-2)*4)
+#ELSE
+  #SET(%ValueConstruct,%DefaultControlWidth)
+#ENDCASE
+#SET(%ValueConstruct,%ValueConstruct + 4)
+#!--------------------------------------------------------------------------
+#GROUP(%PopulateDictionaryControl,%LeftOffset,%TopOffset,%RightLimit,%BottomLimit)
+#DECLARE(%ConstructedControl)
+#DECLARE(%ConstructedX)
+#DECLARE(%ConstructedY)
+#FOR(%FieldListControl)
+  #IF(%FieldListControlXOffset <> %DefaultXOffset)
+    #SET(%ConstructedX,%LeftOffset + %FieldListControlXOffset)
+  #ELSE
+    #SET(%ConstructedX,%LeftOffset)
+  #ENDIF
+  #SET(%ConstructedY,%TopOffset + %FieldListControlYOffset)
+  #IF(%FieldListControlWidth = 'FULL')
+    #SET(%FieldListControlWidth,%RightLimit - %ConstructedX)
+  #ENDIF
+  #IF(%FieldListControlWidth < %MinimumControlWidth)
+    #SET(%FieldListControlWidth,%MinimumControlWidth)
+  #ENDIF
+  #IF(%ConstructedX + %FieldListControlWidth > %RightLimit)
+    #SET(%FieldListControlWidth,%RightLimit - %ConstructedX)
+  #ENDIF
+  #IF(%FieldListControlHeight = 'FULL')
+    #SET(%FieldListControlHeight,%BottomLimit - %TopOffset)
+  #ENDIF
+  #IF(%FieldListControlHeight <> '-1')
+    #SET(%ConstructedControl,',AT(' & %ConstructedX & ',' & %ConstructedY & ',' & %FieldListControlWidth & ',' & %FieldListControlHeight & ')')
+  #ELSE
+    #SET(%ConstructedControl,',AT(' & %ConstructedX & ',' & %ConstructedY & ')')
+  #ENDIF
+  #IF(%FieldListControlType = 'OPTION')
+    #SET(%ConstructedControl,%ConstructedControl & ',BOXED')
+  #ENDIF
+  #SET(%ConstructedControl,%ConstructedControl & ',#ORIG(' & %FieldListControlOrig & ')')
+  #IF(%FieldListControlLink)
+    #SET(%ConstructedControl,%ConstructedControl & ',#LINK(' & %FieldListControlLink & ')')
+  #ENDIF
+  #IF(EXTRACT(%FieldListControl,'AT'))
+    #SET(%ValueConstruct,SUB(%FieldListControl,1,INSTRING(',AT(',%FieldListControl,1,1) - 1))
+    #SET(%ValueConstruct,%ValueConstruct & SUB(%FieldListControl,INSTRING(',USE(',%FieldListControl,1,1),LEN(%FieldListControl)))
+  #ELSE
+    #SET(%ValueConstruct,%FieldListControl)
+  #ENDIF
+  #SET(%ConstructedControl,%ValueConstruct & %ConstructedControl)
+  %ConstructedControl
+#ENDFOR
+#IF(%FieldListRequiresEnd)
+END
+#ENDIF

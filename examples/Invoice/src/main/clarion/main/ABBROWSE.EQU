@@ -1,0 +1,11 @@
+
+  ITEMIZE,PRE(ScrollSort)
+AllowAlpha    EQUATE(1)
+AllowAlt      EQUATE(2)
+AllowNumeric  EQUATE(4)
+CaseSensitive EQUATE(8)
+Descending    EQUATE(16)
+  END
+
+FillBackward             EQUATE(1)
+FillForward              EQUATE(2)

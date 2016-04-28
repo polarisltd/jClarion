@@ -1,0 +1,82 @@
+#EXTENSION(WebProcessStaticHtmlGenerator, 'Web Application Process StaticHtml Extension'),SINGLE,HLP('~WebProcessStaticHtmlExt')
+#!
+#RESTRICT,WHERE(UPPER(%ProcedureTemplate)='PROCESS')
+  #IF(%ProcedureHasWebWindow())
+    #ACCEPT
+  #END
+  #REJECT
+#ENDRESTRICT
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'WbStaticGenerator', 'StaticHtmlGenerator', %WbStaticHtmlGeneratorClass)
+#ENDPREPARE
+#!
+#!
+#BOXED(''),AT(0,0),WHERE(%False),HIDE
+  #INSERT(%OOPHiddenPrompts(ABC))
+#ENDBOXED
+#SHEET,HSCROLL
+  #TAB('&Report Settings')
+    #PROMPT('Static Html Filename:',@s64),%HtmlFilename,DEFAULT('default.htm')
+    #PROMPT('Static Site Html Skeleton:',@s20),%HtmlSkeletonName,DEFAULT('static.htm'),REQ
+  #ENDTAB
+  #TAB('C&lasses'),HLP('~WbStaticSiteProcess_Classes'),AT(,,170)
+    #BOXED('')
+      #PROMPT('&Static Html Generator Class:',FROM(%pClassName)),%WbStaticHtmlGeneratorClass,DEFAULT('WebStaticHtml'),REQ
+    #ENDBOXED
+  #ENDTAB
+  #BUTTON('&WbStaticHtmlGenerator Class'),AT(,,170),HLP('~WbStaticSiteProcess_Classes')
+    #WITH(%ClassItem,'WbStaticGenerator')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDBUTTON
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'WbStaticGenerator', 'StaticHtmlGenerator', %WbStaticHtmlGeneratorClass)
+  #EQUATE(%WbStaticHtmlGeneratorObject, %ThisObjectName)
+#ENDAT
+#!
+#AT(%GatherObjects)
+  #CALL(%AddObjectList(ABC), 'WbStaticGenerator')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'WbStaticGenerator')
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'WbStaticGenerator', 'Local Objects|Web Objects|Web Report Detail Prpoerties', '%WbStaticHtmlGeneratorVirtuals(Web)')
+#ENDAT
+#!
+#!
+#AT(%DataSection),PRIORITY(8000)
+#INSERT(%MergeDocumentData(Skeletons),'SH_Interface','STATICHTML')
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8300)
+%WbStaticHtmlGeneratorObject.Init('%HtmlSkeletonName', WebFileAccess)
+#INSERT(%MergeDocument(Skeletons),%WbStaticHtmlGeneratorObject,%HtmlFilename,'SH_Interface')
+  #PRIORITY(9000)
+%Window{PROP:timer} = 0
+%Window{PROP:Text} = 'Generating Static Site HTML Page'
+%PctTextControl{Prop:Hide} = true
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Kill','(),BYTE'),PRIORITY(9000)
+#ENDAT
+#!
+#!
+#GROUP(%WbStaticHtmlGeneratorVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebStaticHtmlGeneratorMethodDataSection,'WebStaticHtmlGenerator Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('WbStaticGenerator'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebStaticHtmlGeneratorMethodCodeSection,'WebStaticHtmlGenerator Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('WbStaticGenerator'))),TREE(%TreeText & %CodeText)
+#!
+#!

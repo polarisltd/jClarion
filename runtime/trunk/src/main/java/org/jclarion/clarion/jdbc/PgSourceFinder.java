@@ -232,8 +232,10 @@ public class PgSourceFinder
     
     public PgSourceFinder(String select,String highlight)
     {
-        this.highlight=highlight;
+    	log.info("here we create Database Manager tool window.");
+    	this.highlight=highlight;
         dbTest=PgProperties.get().getProperty("dbtest");
+        log.info("dbtest is SQL statement to test database availability, if not present use default select. -> "+dbTest);
         if (dbTest==null) dbTest="SELECT 'Default Database Test'";
         
         try {
@@ -356,6 +358,8 @@ public class PgSourceFinder
 
     public static String[] getHostData(String in)
     {
+    	log.info("getHostData() <- "+in);
+
         if (in==null) return null;
         int count=1;
         int scan=0;
@@ -396,7 +400,7 @@ public class PgSourceFinder
             
             if (CWin.event()==Event.OPENWINDOW) {
                 
-                String good_hosts = CConfig.getProperty("db","good","X","db.properties");
+                String good_hosts = CConfig.getProperty("db","good","X","db.properties"); // this is a way db.properties is accessed key = good.
                 if (good_hosts.equals("X")) {
                     addHost("localhost","postgres","postgres",5432,false);
                     scanForServers();
@@ -463,12 +467,14 @@ public class PgSourceFinder
                     
                     if (c!=null) {
                         try {
+                        	log.info("instantiating PgRestore");
                             PgRestore rs = new PgRestore(c,view_hosts.mode.intValue()==MODE_DB_EMPTY);
                             rs.setFileName(".."+File.separator+view_hosts.service.toString().trim()+"backup"+File.separator);
                             if (rs.dialog()) {
                                 rs.restore();
                             }
                         } catch (SQLException e) {
+                        	log.info("database exception :"+e.getStackTrace()[0]+"\n "+e.getMessage());
                             CWin.message(
                             Clarion.newString("Database Error:\n"+e.getMessage()),
                             Clarion.newString("Restore Database"),
@@ -504,6 +510,7 @@ public class PgSourceFinder
                                 bk.backup();
                             }
                         } catch (SQLException e) {
+                        	log.info("database exception :"+e.getStackTrace()[0]+"\n "+e.getMessage());
                             CWin.message(
                             Clarion.newString("Database Error:\n"+e.getMessage()),
                             Clarion.newString("Install Database"),
@@ -599,7 +606,10 @@ public class PgSourceFinder
             }
             
             if (CWin.accepted()==_create) {
-                
+                //
+            	// create database did not load any objects, how did tables getting created from original clarion definition?
+            	// did that sitting into generated clarion code?
+            	//
                 view_hosts.get(CWin.choice(_list));
                 if (CError.errorCode()==0 && view_hosts.mode.intValue()==MODE_HOST_OK) {
                     ClarionWindow w = new ClarionWindow();
@@ -1088,6 +1098,7 @@ public class PgSourceFinder
         try {
             return DriverManager.getConnection("jdbc:postgresql://"+host+":"+port+"/"+db,p);
         } catch (SQLException e) {
+        	log.info("exception while connecting :"+e.getStackTrace()[0]+"\n "+e.getMessage());
         }
         return null;
     }

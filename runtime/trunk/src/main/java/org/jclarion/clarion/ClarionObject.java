@@ -334,6 +334,7 @@ public abstract class ClarionObject extends ClarionMemoryModel implements Clario
     	if (!(owner instanceof ClarionFile)) return false;
     	return ((ClarionFile)owner).isNull(this);
     }
+       
     
     protected void doSetName(String name)
     {

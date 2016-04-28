@@ -37,13 +37,14 @@ import org.jclarion.clarion.runtime.CDate;
 import org.jclarion.clarion.runtime.CErrorImpl;
 import org.jclarion.clarion.util.FileState;
 import org.jclarion.clarion.util.SharedWriter;
+import org.jclarion.clarion.util.UtilHelper;
 import org.jclarion.clarion.ClarionKey.Order;
 import org.jclarion.clarion.constants.*;
 
 public class ClarionSQLFile extends ClarionFile 
 {
     public static final String FORCED_AUTO_COMMIT = new String("FORCED_AUTO_COMMIT");
-    private static Logger log = Logger.getLogger(ClarionSQLFile.class.getName());
+    private static Logger log = Logger.getLogger(ClarionSQLFile.class.getName());	
     
     public void setLimit(int limit)
     {
@@ -70,6 +71,7 @@ public class ClarionSQLFile extends ClarionFile
     
     @Override
     public void add() {
+    	log.fine("add() ENTRY "+getFileState().global.name);
 
         if (!testOpen()) return;
 
@@ -143,7 +145,8 @@ public class ClarionSQLFile extends ClarionFile
 	private PreparedStatement prepare(FileState fs,String sql,List<Object> params)
         throws SQLException
     {
-        PreparedStatement ret =null;
+
+		PreparedStatement ret =null;
         PreparedStatement p = fs.global.source.getConnection().prepareStatement(sql); 
         try {
             int count=0;
@@ -194,6 +197,7 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void close() {
+        log.fine("close() ENTRY");
         FileState fs = getFileState();
         synchronized(fs.global) {
             if (fs.global.openCount>0) {
@@ -205,7 +209,8 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void delete() {
-        if (!testOpen()) return;
+        log.fine("delete() ENTRY"+getFileState().global.name);
+    	if (!testOpen()) return;
         
         FileState fs = getFileState();
         
@@ -266,7 +271,8 @@ public class ClarionSQLFile extends ClarionFile
     @Override 
     public boolean duplicateCheck(ClarionKey key)
     {
-        if (!testOpen()) return true;
+    	log.fine("duplicateCheck() ENTRY "+getFileState().global.name+" key:"+key.toString());
+    	if (!testOpen()) return true;
         if (key.isProperty(Prop.DUP)) return false;
 
         FileState fs = getFileState();
@@ -306,7 +312,8 @@ public class ClarionSQLFile extends ClarionFile
     
     @Override
     public void get(ClarionKey key) {
-        if (!testOpen()) return;
+    	log.fine("get() ENTRY "+getName()+" key:"+key.toString());
+    	if (!testOpen()) return;
         
         if (key!=null) {
             FileState fs = getFileState();
@@ -318,7 +325,8 @@ public class ClarionSQLFile extends ClarionFile
 
             String sql = get.toString();
             setInternalSQL(sql,params);
-        
+            log.fine("get() SQL "+sql);
+            
             PreparedStatement s = fs.statement;
             ResultSet rs = fs.result;
             
@@ -331,7 +339,7 @@ public class ClarionSQLFile extends ClarionFile
                             copyResultSetToBuffer(fs);
                             fs.primaryKeyFields=saveKeyPosition(fs,fs.primaryKey,fs.primaryKeyFields);
                         } else {
-                            CErrorImpl.getInstance().setError(35,"Reget Failed");
+                            CErrorImpl.getInstance().setError(35,"Reget Failed: "+sql);
                         }
                     } finally {
                         fs.result.close();
@@ -411,17 +419,21 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void next() {
-        iterate(1);
+        log.fine("next() ENTRY");
+    	iterate(1);
     }
 
     @Override
     public void previous() {
-        iterate(-1);
+    	log.fine("previous() ENTRY "+getName());
+    	iterate(-1);
     }
     
     public void iterate(int dir)
     {
-        if (!testOpen()) return;
+    	log.fine("iterate() ENTRY "+getName());
+
+    	if (!testOpen()) {log.fine("set() !open");return;}
         
         FileState fs = getFileState();
 
@@ -429,7 +441,7 @@ public class ClarionSQLFile extends ClarionFile
             fs.quickScanResetActivated=false;
             return;
         }
-        
+        log.fine("iterate() filestate "+getName());
         boolean resetOnKeyBound=false;
         
         while (true) {
@@ -469,10 +481,11 @@ public class ClarionSQLFile extends ClarionFile
             
             if (fs.result == null) {
                 // lets get a result set
-                if (fs.mode != FileState.Mode.Reset) {
-                    CErrorImpl.getInstance().setError(33, "Not reading data");
-                    return;
-                }
+                //if (fs.mode != FileState.Mode.Reset) {    // robertsp%%% do to this frequently queries didnt got executed,
+            	                                            //          whats wrong with fs.mode ? 
+                //    CErrorImpl.getInstance().setError(33, "Not reading data");
+                //    return;
+                //}
 
                 StringBuilder select = new StringBuilder();
                 genSelect(fs,select);
@@ -642,7 +655,7 @@ public class ClarionSQLFile extends ClarionFile
     private ClarionObject[] saveKeyPosition(FileState fis, ClarionKey key,
             ClarionObject[] fields) 
     {
-        
+        log.fine("saveKeyPosition() ENTRY "+getName());        
         if (key==null) return fields;
         
         ClarionKey.Order order[] = key.getOrder();
@@ -677,7 +690,8 @@ public class ClarionSQLFile extends ClarionFile
     @Override
     public void create() 
     {
-        CErrorImpl.getInstance().clearError();
+        log.fine("create() ENTRY \n"+UtilHelper.formatStackTrace(UtilHelper.setCodePoint()));
+    	CErrorImpl.getInstance().clearError();
 
         FileState fs = getFileState();
         if (fs.global.source==null) {
@@ -780,6 +794,7 @@ public class ClarionSQLFile extends ClarionFile
                 
                 Statement s = c.createStatement();
                 try {
+                	log.info("Creating table : "+builder.toString());
                     s.execute(builder.toString());
                     
                     for (ClarionKey key : getKeys() ) {
@@ -822,6 +837,7 @@ public class ClarionSQLFile extends ClarionFile
                             }
                         }
                         builder.append(")");
+                    	log.info("Creating index : "+builder.toString());
 
                         s.execute(builder.toString());
                     }
@@ -830,7 +846,7 @@ public class ClarionSQLFile extends ClarionFile
                 } finally {
                     s.close();
                 }
-                
+                log.fine("c.commit();c.setAutoCommit(true)");
                 c.commit();
                 c.setAutoCommit(true);
                 c=null;
@@ -838,14 +854,17 @@ public class ClarionSQLFile extends ClarionFile
             } finally {
                 if (c!=null) {
                     try {
-                        c.rollback();
+                    	log.fine("c.rollback()");
+                    	c.rollback();
                     } catch (SQLException ex) { }
                     try {
-                        c.setAutoCommit(true);
+                       	log.fine("c.setAutoCommit(true)");
+                    	c.setAutoCommit(true);
                     } catch (SQLException ex) { }
                 }
             }
         } catch (SQLException ex) {
+        	log.info("SQLException :"+ex.getMessage());
             setError(fs,ex);
         }
     }
@@ -853,7 +872,8 @@ public class ClarionSQLFile extends ClarionFile
     
     @Override
     public void open(int mode) {
-        CErrorImpl.getInstance().clearError();
+    	log.fine("open() ENTRY "+getName());
+    	CErrorImpl.getInstance().clearError();
         
         FileState fs = getFileState();
         synchronized(fs.global) {
@@ -872,6 +892,7 @@ public class ClarionSQLFile extends ClarionFile
                 try {
                     c = fs.global.source.getConnection();
                 } catch (SQLException ex) {
+                	log.info("SQL Exception during getConnection(): "+ex.getMessage());
                     CErrorImpl.getInstance().setError(90,ex.getMessage());
                     return;
                 }
@@ -901,6 +922,8 @@ public class ClarionSQLFile extends ClarionFile
                 }
 
                 if (!found) {
+                	log.info("Table not found, responding with error 2 File not found, table: "+tname+" source:"+fs.global.source);
+                	log.fine(UtilHelper.formatStackTrace(UtilHelper.setCodePoint()));
                 	CErrorImpl.getInstance().setError(2,"File not found");
                 	return;
                 }
@@ -924,6 +947,7 @@ public class ClarionSQLFile extends ClarionFile
                 CErrorImpl.getInstance().setError(90,e.getMessage());
                 String state = e.getSQLState();
                 if (state!=null && !state.startsWith("57") && !state.startsWith("08")) { // not operator error
+                	log.info("Throwing exception SQLError:"+state);
                     throw new RuntimeException("SQLError:"+state,e);
                 }
                 return;
@@ -943,6 +967,7 @@ public class ClarionSQLFile extends ClarionFile
                 if (name==null) name = whoNoPrefix(pos+1).toString();
                 int val[] = cl.get(name.toLowerCase());
                 if (val==null) { 
+                	log.info("Throwing exception Field not Found:"+name);
                     throw new RuntimeException("Field not Found:"+name);
                 }
                 fs.global.fieldNames[scan]=name;
@@ -958,7 +983,8 @@ public class ClarionSQLFile extends ClarionFile
 
     public boolean testWatch()
     {
-        FileState fs = getFileState();
+        log.fine("testWatch() ENTRY"+getName() );
+    	FileState fs = getFileState();
 
         if (fs.watchBuffer==null) return true;
 
@@ -977,6 +1003,7 @@ public class ClarionSQLFile extends ClarionFile
         
         try {
             watch.statement = prepare(fs,sql,params);
+            log.fine("testWatch() SQL "+sql );
             try {
                 watch.result = watch.statement.executeQuery();
                 try {
@@ -1013,6 +1040,7 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void put() {
+    	log.fine("put() ENTRY "+getFileState().global.name);
         if (!testOpen()) return;
         
         FileState fs = getFileState();
@@ -1053,7 +1081,7 @@ public class ClarionSQLFile extends ClarionFile
         try {
             
             int result=0;
-            
+            log.fine("put() SQL "+sql );
             PreparedStatement ps = prepare(fs,sql, params);
             try {
                 result = ps.executeUpdate();
@@ -1079,7 +1107,7 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public int records() {
-        
+    	log.fine("records() ENTRY "+getFileState().global.name);
         if (!testOpen()) return 0;
         
         FileState fs = getFileState();
@@ -1110,7 +1138,7 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void reget(ClarionKey key,ClarionString string) {
-
+        log.fine("reget() ENTRY key:"+key.toString()+" str:"+string);
         if (!testOpen()) return;
         
         if (key!=null) {
@@ -1161,6 +1189,7 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void remove() {
+        log.fine("remove() ENTRY ");
     	close();
         FileState fs = getFileState();
         if (fs.global.source==null) {
@@ -1192,7 +1221,9 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void reset(ClarionKey key,ClarionString string) {
-        if (!testOpen()) return;
+        log.fine("reset() ENTRY key:"+key.toString()+" str:"+string);
+
+    	if (!testOpen()) return;
 
         FileState fs = getFileState();
         
@@ -1226,6 +1257,7 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void restoreState(int state) {
+        log.fine("restoreState() ENTRY ");
         
         FileState fs = getFileState();
         
@@ -1260,7 +1292,9 @@ public class ClarionSQLFile extends ClarionFile
 
     @Override
     public void set(ClarionKey key) {
-        if (!testOpen()) return;
+        log.fine("set() ENTRY key:"+ ((key==null)?"NULL":key.toString()));
+        if (!testOpen()) {log.fine("set() !open");return;}
+        if (key==null) {log.fine("set(null KEY)");return;}
 
         FileState fs = getFileState();
         fs.closeCursor();
@@ -1269,6 +1303,7 @@ public class ClarionSQLFile extends ClarionFile
         fs.scanKey=key;
         fs.quickScanBuffer=null;
         fs.scanFields=null;
+        fs.result = null; // robertsp_160216 if we didnt reset result we will not be excuting query at next()/iterate()
     }
     
 
@@ -1827,17 +1862,23 @@ public class ClarionSQLFile extends ClarionFile
     private boolean appendPrimaryWhereClause(FileState fs,StringBuilder upd,List<Object> params) {
         
         ClarionKey ck = fs.primaryKey;
+        
+        
         if (ck==null) {
             CErrorImpl.getInstance().setError(33,"No Primary Key!");
             return false;
         }
+
+        if (fs.primaryKeyFields==null) {   // robertsp we fail always on err 33, can we just initialize that?
+            fs.primaryKeyFields=saveKeyPosition(fs,fs.primaryKey,fs.primaryKeyFields);
+        }
         
         if (fs.primaryKeyFields==null) {
-            CErrorImpl.getInstance().setError(33,"Primary Key position not established!");
+            CErrorImpl.getInstance().setError(33,"Primary Key position not established (1)! name:"+fs.global.name+" key:"+ck.toString());
             return false;
         }
         if (fs.primaryKeyFields.length>0 && fs.primaryKeyFields[0]==null) {
-            CErrorImpl.getInstance().setError(33,"Primary Key position not established!");
+            CErrorImpl.getInstance().setError(33,"Primary Key position not established (2)! "+fs.global.name+" key:"+ck.toString());
             return false;
         }
         CMem sos = CMem.create();
@@ -2016,7 +2057,7 @@ public class ClarionSQLFile extends ClarionFile
         } finally {
             internalSQL=false;
         }
-        log.fine(sql+" ["+params+"]");
+        log.fine("setInternalSQL() "+sql+" ["+params+"]");
     }
     
     public static void setError(FileState fs,SQLException ex) {
@@ -2139,7 +2180,8 @@ public class ClarionSQLFile extends ClarionFile
 
     public static void optCommit(AbstractJDBCSource source) 
     {
-        try {
+    	log.fine("optCommit() ENTRY ");
+    	try {
         	if (source==null) return;
             if (source.get(FORCED_AUTO_COMMIT)!=null) {
                 source.put(FORCED_AUTO_COMMIT,null);
@@ -2171,4 +2213,6 @@ public class ClarionSQLFile extends ClarionFile
 		CErrorImpl.getInstance().setError(91,"Not supported for this driver");
 	}
 
+ 	
+	
 }

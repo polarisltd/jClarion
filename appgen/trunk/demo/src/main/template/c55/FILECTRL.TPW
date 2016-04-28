@@ -1,0 +1,146 @@
+#!--------------------------------------------------------------------------
+#GROUP(%FileControlInitialize)
+#MESSAGE('Initializing File Control',3)
+#IF(%Primary)
+  #ADD(%ProcFilesUsed,%Primary)
+#ENDIF
+#FOR(%Secondary)
+  #ADD(%ProcFilesUsed,%Secondary)
+#ENDFOR
+#FOR(%OtherFiles)
+  #ADD(%ProcFilesUsed,%OtherFiles)
+#ENDFOR
+#!--------------------------------------------------------------------------
+#GROUP(%FileControlSetFlags)
+#IF(%Primary)
+  #ADD(%UsedFile,%Primary)
+#ENDIF
+#FOR(%Secondary)
+  #ADD(%UsedFile,%Secondary)
+#ENDFOR
+#FOR(%OtherFiles)
+  #ADD(%UsedFile,%OtherFiles)
+#ENDFOR
+#!--------------------------------------------------------------------------
+#GROUP(%FileControlOpen)
+#MESSAGE('File Control Open Code',3)
+#EMBED(%BeforeFileOpen,'Beginning of Procedure, Before Opening Files')
+#FOR(%ProcFilesUsed)
+#INSERT(%FileControlOpenFile,%ProcFilesUsed)
+#INSERT(%FileControlBindRecord,%ProcFilesUsed)
+#ENDFOR
+FilesOpened = True
+#EMBED(%AfterFileOpen,'Beginning of Procedure, After Opening Files')
+#!--------------------------------------------------------------------------
+#GROUP(%FileControlOpenFile,%CurrentFile)
+#DECLARE(%CheckOpenParameters)
+  #FIX(%File,%CurrentFile)
+  #CASE(%OverrideOpenMode)
+  #OF('Share')
+    #SET(%CheckOpenParameters,',42h')
+  #OF('Open')
+    #SET(%CheckOpenParameters,',22h')
+  #OF('Other')
+    #CASE(%OverrideOtherAccess)
+    #OF('Deny None')
+      #SET(%CheckOpenParameters,'+DenyNone')
+    #OF('Deny Read')
+      #SET(%CheckOpenParameters,'+DenyRead')
+    #OF('Deny Write')
+      #SET(%CheckOpenParameters,'+DenyWrite')
+    #OF('Deny All')
+      #SET(%CheckOpenParameters,'+DenyAll')
+    #OF('Any Access')
+      #SET(%CheckOpenParameters,'+AnyAccess')
+    #ENDCASE
+    #CASE(%OverrideUserAccess)
+    #OF('Read/Write')
+      #SET(%CheckOpenParameters,',ReadWrite' & %CheckOpenParameters)
+    #OF('Read Only')
+      #SET(%CheckOpenParameters,',ReadOnly' & %CheckOpenParameters)
+    #OF('Write Only')
+      #SET(%CheckOpenParameters,',WriteOnly' & %CheckOpenParameters)
+    #ENDCASE
+  #ENDCASE
+  #CASE(%OverrideCreate)
+  #OF('Use File Setting')
+    #IF(%FileCreate)
+      #SET(%CheckOpenParameters,',1' & %CheckOpenParameters)
+    #ELSE
+      #SET(%CheckOpenParameters,',0' & %CheckOpenParameters)
+    #ENDIF
+  #OF('Create File')
+    #SET(%CheckOpenParameters,',1' & %CheckOpenParameters)
+  #OF('Do Not Create File')
+    #SET(%CheckOpenParameters,',0' & %CheckOpenParameters)
+  #ELSE
+    #CASE(%DefaultCreate)
+    #OF('Use File Setting')
+      #IF(%FileCreate)
+        #SET(%CheckOpenParameters,',1' & %CheckOpenParameters)
+      #ELSE
+        #SET(%CheckOpenParameters,',0' & %CheckOpenParameters)
+      #ENDIF
+    #OF('Create All')
+      #SET(%CheckOpenParameters,',1' & %CheckOpenParameters)
+    #OF('Create None')
+      #SET(%CheckOpenParameters,',0' & %CheckOpenParameters)
+    #ENDCASE
+  #ENDCASE
+  #SET(%CheckOpenParameters,%File & %CheckOpenParameters)
+  #CASE(%OverrideCloseFile)
+  #OF('Close the File')
+IF %File::Used = 0
+  CheckOpen(%CheckOpenParameters)
+END
+%File::Used += 1
+  #OF('Keep the File Open')
+CheckOpen(%CheckOpenParameters)
+  #ELSE
+    #IF(%DefaultCloseFile ='Close the File')
+IF %File::Used = 0
+  CheckOpen(%CheckOpenParameters)
+END
+%File::Used += 1
+    #ELSE
+CheckOpen(%CheckOpenParameters)
+    #ENDIF
+  #ENDCASE
+#!--------------------------------------------------------------------------
+#GROUP(%FileControlBindRecord,%CurrentFile)
+#FIX(%File,%CurrentFile)
+BIND(%FilePrefix:RECORD)
+#FOR(%Field),WHERE(%FieldType = 'MEMO')
+BIND('%Field',%Field)
+#ENDFOR
+#FOR(%Field),WHERE(%FieldName)
+BIND('%Field',%Field)
+#ENDFOR
+#EMBED(%AfterBindingFileRecord,'Internal use, 2.003 only'),HIDE
+#!--------------------------------------------------------------------------
+#GROUP(%FileControlClose)
+#MESSAGE('File Control Close Code',3)
+IF FilesOpened
+  #EMBED(%BeforeFileClose,'End of Procedure, Before Closing Files')
+  #FOR(%ProcFilesUsed)
+  #INSERT(%FileControlCloseFile,%ProcFilesUsed)
+  #ENDFOR
+  #EMBED(%AfterFileClose,'End of Procedure, After Closing Files')
+END
+#!--------------------------------------------------------------------------
+#GROUP(%FileControlCloseFile,%CurrentFile)
+#FIX(%File,%CurrentFile)
+#CASE(%OverrideCloseFile)
+#OF('Close the File')
+%File::Used -= 1
+IF %File::Used = 0 THEN CLOSE(%File).
+#OF('Keep the File Open')
+IF %File::Used > 0
+  %File::Used -= 1
+END
+#ELSE
+  #IF(%DefaultCloseFile ='Close the File')
+%File::Used -= 1
+IF %File::Used = 0 THEN CLOSE(%File).
+  #ENDIF
+#ENDCASE

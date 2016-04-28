@@ -1,0 +1,744 @@
+#EXTENSION(SalesTaxModifier, 'Sales tax modifier'),PROCEDURE,SINGLE,HLP('~SalesTaxModifier'),REQ(InvoiceGenerator(ShoppingTrolley))
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'SalesTaxModifier', 'SalesTaxModifier', %SalesTaxModifierClass)
+#END
+#INSERT(%OOPPrompts(ABC))
+#SHEET,HSCROLL
+  #TAB('&General')
+    #PROMPT('Invoke &Priority:' ,SPIN(@n3, 1, 255, 1)),%InvokeAt,DEFAULT(100)
+    #PROMPT('&Tax Amnt Field (Optional):', FIELD),%TaxAmountField
+    #PROMPT('T&axable Field (Optional):', FIELD),%TaxableAmountField
+    #PROMPT('Tax &Code Source:', DROP('Constant Value|File')),%TaxCodeSource,DEFAULT('Constant Value'),REQ
+    #BOXED,SECTION
+      #BOXED,AT(0,0),WHERE(%TaxCodeSource = 'Constant Value')
+        #PROMPT('Tax &Rate:',SPIN(@N6.2,0,100)),%TaxRate,REQ
+      #ENDBOXED
+      #BOXED,AT(0,0),WHERE(%TaxCodeSource = 'File')
+        #PROMPT('Tax &Code File:', FILE),%TaxCodeFile,REQ
+        #ENABLE(%TaxCodeFile <> '')
+          #PROMPT('Tax Code File &Key:', KEY(%TaxCodeFile)),%TaxCodeFileKey,REQ
+          #PROMPT('Tax Code &Field:', FIELD(%TaxCodeFile)),%TaxCodeField,REQ
+          #PROMPT('Tax &Rate Field:', FIELD(%TaxCodeFile)),%TaxRateField,REQ
+          #BOXED('Product File Field')
+            #PROMPT('Ta&x Code Field:', FIELD),%ProductTaxCodeField,REQ
+          #ENDBOXED
+          #PROMPT('S&pecial Tax Code (Optional):', @S255),%ProductSpecialTaxCode
+          #ENABLE(%ProductSpecialTaxCode <> '')
+            #PROMPT('Tax Code Expression (Optional):', @S255),%ProductTaxCodeExpression
+          #ENDENABLE
+        #ENDENABLE
+      #ENDBOXED
+    #ENDBOXED
+  #ENDTAB
+  #TAB('&Classes')
+    #WITH(%ClassItem, 'SalesTaxModifier')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'SalesTaxModifier', 'SalesTaxModifier', %SalesTaxModifierClass)
+  #FIX(%ClassItem, 'SalesTaxModifier')
+  #EQUATE(%Me, %ThisObjectName)
+#ENDAT
+#!
+#!
+#AT(%AddInvoiceModifiers)
+  #IF(%TaxAmountField <> '')
+%Me.AddItem('TaxAmountField', %TaxAmountField)
+  #ENDIF
+  #IF(%TaxAbleAmountField <> '')
+%Me.AddItem('TaxableField', %TaxAbleAmountField)
+  #ENDIF
+  #CASE(%TaxCodeSource)
+  #OF('Constant Value')
+%Me.AddItem('TaxRate', , %(%StripPling(%TaxRate)))
+  #OF('File')
+%Me.AddItem('TaxCodeFileManager',,,Access:%TaxCodeFile)
+%Me.AddItem('TaxCodeFileKey',,,,%TaxCodeFileKey)
+%Me.AddItem('TaxCodeField',%TaxCodeField)
+%Me.AddItem('TaxRateField',%TaxRateField)
+%Me.AddItem('ProductTaxCodeField',%ProductTaxCodeField)
+    #IF(%ProductSpecialTaxCode <> '')
+%Me.AddItem('SpecialTaxCode',, %(%StripPling(%ProductSpecialTaxCode)))
+    #ENDIF
+    #IF(%ProductTaxCodeExpression <> '')
+%Me.AddItem('TaxCodeExpression',, %(%StripPling(%ProductTaxCodeExpression)))
+    #ENDIF
+  #ELSE
+    #ASSERT(%False, 'Bad value in %%TaxCodeSource')
+  #ENDCASE
+%InvoiceCopier.AddItem(%Me, %InvokeAt)
+#ENDAT
+#!
+#!
+#AT(%SalesTaxModifierMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'SalesTaxModifier', 'Local Objects|Shopping Trolley Objects|Sales Tax Modifier', '%SalesTaxModifierVirtuals(ShoppingTrolley)')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'SalesTaxModifier')
+#ENDAT
+#!
+#!
+#GROUP(%SalesTaxModifierVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%SalesTaxModifierMethodDataSection,'Sales Tax Modifier Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('SalesTaxModifier'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%SalesTaxModifierMethodCodeSection,'Sales Tax Modifier Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('SalesTaxModifier'))),TREE(%TreeText % %CodeText)
+#!
+#!
+#!
+#!
+#EXTENSION(QuantityDiscountModifier, 'Quantity Discount Modifier'),PROCEDURE,SINGLE,HLP('~QuantityDiscountModifier'),REQ(InvoiceGenerator(ShoppingTrolley))
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'QuantityDiscountModifier', 'QuantityDiscountModifier', %QuantityDiscountModifierClass)
+#END
+#INSERT(%OOPPrompts(ABC))
+#SHEET,HSCROLL
+  #TAB('&General')
+    #PROMPT('Invoke &Priority:' ,SPIN(@n3, 1, 255, 1)),%InvokeAt,DEFAULT(50)
+    #PROMPT('&Discount File: ', FILE),%DiscountFile,REQ
+    #PROMPT('Discount File &Key:', KEY(%DiscountFile)),%DiscountFileKey,REQ
+    #PROMPT('P&roduct ID Field:', FIELD(%DiscountFile)),%ProductIDField,REQ
+    #PROMPT('Quantity &Low:', FIELD(%DiscountFile)),%QuantityLowField
+    #PROMPT('Quantity &High:', FIELD(%DiscountFile)),%QuantityHighField
+    #PROMPT('Minimum &Spen&t:', FIELD(%DiscountFile)),%MinSpentField
+    #PROMPT('Di&scount Type Field (Optional):', FIELD(%DiscountFile)),%DiscountTypeField
+    #PROMPT('Per&cent Discount Field:', FIELD(%DiscountFile)),%PercentDiscountField
+    #PROMPT('Discounted &Amount Field:', FIELD(%DiscountFile)),%DiscountedAmountField
+    #PROMPT('Date L&ow Field (Optional):', FIELD(%DiscountFile)),%DateLowField
+    #PROMPT('Da&te High Field (Optional):', FIELD(%DiscountFile)),%DateHighField
+    #PROMPT('D&escription:', @S255),%Description
+    #PROMPT('De&fault Type:', @S255),%DefaultType
+    #PROMPT('Discount on &New Invoice Line', CHECK),%ExtraLine,DEFAULT(%True),AT(10)
+  #ENDTAB
+  #TAB('&Classes')
+    #WITH(%ClassItem, 'QuantityDiscountModifier')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'QuantityDiscountModifier', 'QuantityDiscountModifier', %QuantityDiscountModifierClass)
+  #FIX(%ClassItem, 'QuantityDiscountModifier')
+  #EQUATE(%Me, %ThisObjectName)
+#ENDAT
+#!
+#!
+#AT(%AddInvoiceModifiers)
+%Me.AddItem('FileManager',,,Access:%DiscountFile)
+%Me.AddItem('FileKey',,,,%DiscountFileKey)
+%Me.AddItem('ProductID',%ProductIDField)
+  #IF(%QuantityLowField<> '')
+%Me.AddItem('QuantityLow',%QuantityLowField)
+  #ENDIF
+  #IF(%QuantityHighField<> '')
+%Me.AddItem('QuantityHigh',%QuantityHighField)
+  #ENDIF
+  #IF(%MinSpentField <> '')
+%Me.AddItem('MinSpent', %MinSpentField)
+  #ENDIF
+  #IF(%DiscountTypeField <> '')
+%Me.AddItem('DiscountType', %DiscountTypeField)
+  #ENDIF
+  #IF(%PercentDiscountField <> '')
+%Me.AddItem('PercentDiscount', %PercentDiscountField)
+  #ENDIF
+  #IF(%DiscountedAmountField <> '')
+%Me.AddItem('DiscountAmount', %DiscountedAmountField)
+  #ENDIF
+  #IF(%DateLowField<> '')
+%Me.AddItem('DateLow',%DateLowField)
+  #ENDIF
+  #IF(%DateHighField<> '')
+%Me.AddItem('DateHigh',%DateHighField)
+  #ENDIF
+  #IF(%ExtraLine = %TRUE)
+%Me.AddItem('ExtraLine',,TRUE)
+  #ENDIF
+  #IF(%Description <> '')
+%Me.AddItem('Description',,%(%StripPling(%Description)))
+  #ENDIF
+  #IF(%DefaultType <> '')
+%Me.AddItem('DefaultType',,%(%StripPling(%DefaultType)))
+  #ENDIF
+%InvoiceCopier.AddItem(%Me, %InvokeAt)
+#ENDAT
+#!
+#!
+#AT(%QuantityDiscountModifierMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'QuantityDiscountModifier', 'Local Objects|Shopping Trolley Objects|Quantity Dicount Modifier', '%QuantityDiscountModifierVirtuals(ShoppingTrolley)')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'QuantityDiscountModifier')
+#ENDAT
+#!
+#!
+#GROUP(%QuantityDiscountModifierVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%QuantityDiscountModifierMethodDataSection,'Quantity Discount Modifier Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('QuantityDiscountModifier'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%QuantityDiscountModifierMethodCodeSection,'Quantity Discount Modifier Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('QuantityDiscountModifier'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!
+#!
+#EXTENSION(ShippingOnInvoiceLineModifier, 'Shipping On Invoice Line Modifier'),PROCEDURE,SINGLE,HLP('~ShippingOnInvoiceLineModifier'),REQ(InvoiceGenerator(ShoppingTrolley))
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'ShippingOnInvoiceLineModifier', 'ShippingOnInvoiceLineModifier', %ShippingOnInvoiceLineModifierClass)
+#END
+#INSERT(%OOPPrompts(ABC))
+#SHEET,HSCROLL
+  #TAB('&General')
+    #PROMPT('Invoke &Priority:' ,SPIN(@n3, 1, 255, 1)),%InvokeAt,DEFAULT(200)
+    #PROMPT('D&escription:', @S255),%Description
+    #BOXED('Shipping Cost File')
+      #PROMPT('Shipping Cost &File: ', FILE),%ShippingCostFile
+      #ENABLE(%ShippingCostFile <> '')
+        #PROMPT('Shipping Cost File &Key:', KEY(%ShippingCostFile)),%ShippingCostFileKey
+        #PROMPT('Minimum &Quantity:', FIELD(%ShippingCostFile)),%MinQuantityField
+        #PROMPT('Minimum &Spen&t:', FIELD(%ShippingCostFile)),%MinSpentField
+        #PROMPT('&Shipping:', FIELD(%ShippingCostFile)),%ShippingField,REQ
+        #PROMPT('&Is Percentage:', FIELD(%ShippingCostFile)),%IsPercentageField
+        #PROMPT('&Product ID (optional):', FIELD(%ShippingCostFile)),%ProductIDField
+        #PROMPT('&Destination: (optional)', FIELD(%ShippingCostFile)),%DestinationField
+      #ENDENABLE
+    #ENDBOXED
+    #BOXED('Shipping Per Item')
+      #PROMPT('Fixed Shipping Charge If Not Found In File?', CHECK),%FixedShippingPerItem,DEFAULT(%FALSE),AT(10)
+      #ENABLE(%FixedShippingPerItem= %TRUE)
+        #PROMPT('Fi&xed:', @N14.2),%FixedShipping
+      #ENDENABLE
+      #PROMPT('Percentage Shipping Charge If Not Found In File?', CHECK),%PercentageShippingPerItem,DEFAULT(%FALSE),AT(10)
+      #ENABLE(%PercentageShippingPerItem= %TRUE)
+        #PROMPT('Percenta&ge of Net Goods:', SPIN(@N14.2,0,100)),%PercentageShipping
+      #ENDENABLE
+    #ENDBOXED
+    #PROMPT('Cal&culate Shipping:', DROP('Total|Maximum|Minimum')),%CalculateResult,DEFAULT('Total'),REQ
+    #ENABLE(%DestinationField <> '' OR %WeightDestinationField <> '')
+      #PROMPT('Desti&nation Expression (Optional):', @S255),%DestinationExpression
+    #ENDENABLE
+    #ENABLE(%ProductIDField <> '' OR %WeightProductIDField <> '')
+      #PROMPT('IF Prod&uct ID Not Found:', DROP('Use Constant Values|Search for empty Product ID')),%ProductNotFound,DEFAULT('Use Constant Values')
+    #ENDENABLE
+  #ENDTAB
+  #TAB('&Shipping By Weight')
+    #BOXED('Product File Fields')
+      #PROMPT('&Weight Field (optional):', FIELD),%ProductWeightField
+      #ENABLE(%ProductWeightField <> '')
+        #PROMPT('Shipping Fie&ld (optional):', FIELD),%ProductShippingField
+      #ENDENABLE
+    #ENDBOXED
+    #ENABLE(%ProductWeightField <> '')
+      #BOXED('Shipping Weight File')
+        #PROMPT('Shipping Weight Fi&le: ', FILE),%ShippingWeightFile
+        #ENABLE(%ShippingWeightFile <> '')
+          #PROMPT('Shipping Weight File Ke&y:', KEY(%ShippingWeightFile)),%ShippingWeightFileKey
+          #PROMPT('&Minimum Weight:', FIELD(%ShippingWeightFile)),%MinWeightField
+          #PROMPT('S&hipping:', FIELD(%ShippingWeightFile)),%WeightShippingField,REQ
+          #PROMPT('P&roduct ID (optional):', FIELD(%ShippingWeightFile)),%WeightProductIDField
+          #PROMPT('D&estination: (optional)', FIELD(%ShippingWeightFile)),%WeightDestinationField
+        #ENDENABLE
+      #ENDBOXED
+      #PROMPT('Shipping Charge If Not Found In File?', CHECK),%EntryWeightShipping,DEFAULT(%FALSE),AT(10)
+      #ENABLE(%EntryWeightShipping= %TRUE)
+        #PROMPT('Shipping &By Weight (optional):', @S255),%ShippingByWeight
+      #ENDENABLE
+    #ENDENABLE
+  #ENDTAB
+  #TAB('&Classes')
+    #WITH(%ClassItem, 'ShippingOnInvoiceLineModifier')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'ShippingOnInvoiceLineModifier', 'ShippingOnInvoiceLineModifier', %ShippingOnInvoiceLineModifierClass)
+  #FIX(%ClassItem, 'ShippingOnInvoiceLineModifier')
+  #EQUATE(%Me, %ThisObjectName)
+#ENDAT
+#!
+#!
+#AT(%AddInvoiceModifiers)
+  #IF(%Description <> '')
+%Me.AddItem('Description',,%(%StripPling(%Description)))
+  #ENDIF
+  #IF(%ShippingCostFile <> '')
+%Me.AddItem('SCFileManager',,, Access:%ShippingCostFile)
+  #ENDIF
+  #IF(%ShippingCostFileKey <> '')
+%Me.AddItem('SCKey',,,, %ShippingCostFileKey)
+  #ENDIF
+  #IF(%MinQuantityField <> '')
+%Me.AddItem('SCMinQuantityField', %MinQuantityField)
+  #ENDIF
+  #IF(%MinSpentField <> '')
+%Me.AddItem('SCMinSpentField', %MinSpentField)
+  #ENDIF
+  #IF(%ShippingField <> '')
+%Me.AddItem('SCShippingField', %ShippingField)
+  #ENDIF
+  #IF(%IsPercentageField <> '')
+%Me.AddItem('SCIsPercentageField', %IsPercentageField)
+  #ENDIF
+  #IF(%ProductIDField <> '')
+%Me.AddItem('SCProductIDField', %ProductIDField)
+  #ENDIF
+  #IF(%DestinationField <> '')
+%Me.AddItem('SCDestinationCodeField', %DestinationField)
+  #ENDIF
+  #IF(%FixedShippingPerItem= %TRUE)
+%Me.AddItem('PerItemFixedShipping',, %FixedShipping)
+  #ENDIF
+  #IF(%PercentageShippingPerItem = %TRUE)
+%Me.AddItem('PerItemPercentageShipping',, %PercentageShipping)
+  #ENDIF
+  #IF(%DestinationExpression <> '')
+%Me.AddItem('DestinationExpression',, %(%StripPling(%DestinationExpression)))
+  #ENDIF
+  #IF(%ProductWeightField <> '')
+%Me.AddItem('PWeightField', %ProductWeightField)
+  #ENDIF
+  #IF(%ShippingWeightFile <> '')
+%Me.AddItem('SWFileManager',,, Access:%ShippingWeightFile)
+  #ENDIF
+  #IF(%ShippingWeightFileKey <> '')
+%Me.AddItem('SWKey',,,, %ShippingWeightFileKey)
+  #ENDIF
+  #IF(%MinWeightField <> '')
+%Me.AddItem('SWMinWeightField', %MinWeightField)
+  #ENDIF
+  #IF(%WeightShippingField <> '')
+%Me.AddItem('SWFixedWeightShippingField', %WeightShippingField)
+  #ENDIF
+  #IF(%WeightProductIDField <> '')
+%Me.AddItem('SWProductIDField', %WeightProductIDField)
+  #ENDIF
+  #IF(%WeightDestinationField <> '')
+%Me.AddItem('SWDestinationCodeField', %WeightDestinationField)
+  #ENDIF
+  #IF(%ProductShippingField <> '')
+%Me.AddItem('PFixedWeightShippingField', %ProductShippingField)
+  #ENDIF
+  #IF(%EntryWeightShipping= %TRUE)
+%Me.AddItem('FixedWeightShipping',, %ShippingByWeight)
+  #ENDIF
+%Me.AddItem('EndResult',,%(%StripPling(%CalculateResult)))
+  #IF(%ProductNotFound = 'Search for empty Product ID')
+%Me.AddItem('UseGenericProdID',,TRUE)
+  #ENDIF
+%InvoiceCopier.AddItem(%Me, %InvokeAt)
+#ENDAT
+#!
+#!
+#AT(%ShippingOnInvoiceLineModifierMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'ShippingOnInvoiceLineModifier', 'Local Objects|Shopping Trolley Objects|Shipping On Invoice Line Modifier', '%ShippingOnInvoiceLineModifierVirtuals(ShoppingTrolley)')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'ShippingOnInvoiceLineModifier')
+#ENDAT
+#!
+#!
+#GROUP(%ShippingOnInvoiceLineModifierVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ShippingOnInvoiceLineModifierMethodDataSection,'Shipping On Invoice Line Modifier Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('ShippingOnInvoiceLineModifier'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%ShippingOnInvoiceLineModifierMethodCodeSection,'Shipping On Invoice Line Modifier Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('ShippingOnInvoiceLineModifier'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!
+#!
+#EXTENSION(ShippingOnInvoiceModifier, 'Shipping On Invoice Modifier'),PROCEDURE,SINGLE,HLP('~ShippingOnInvoiceModifier'),REQ(InvoiceGenerator(ShoppingTrolley))
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'ShippingOnInvoiceModifier', 'ShippingOnInvoiceModifier', %ShippingOnInvoiceModifierClass)
+#END
+#INSERT(%OOPPrompts(ABC))
+#SHEET,HSCROLL
+  #TAB('&General')
+    #PROMPT('Invoke &Priority:' ,SPIN(@n3, 1, 255, 1)),%InvokeAt,DEFAULT(220)
+    #PROMPT('D&escription:', @S255),%Description
+    #PROMPT('One-Off Shipping Charge?', CHECK),%EntryOneOffShipping,DEFAULT(%FALSE),AT(10)
+    #ENABLE(%EntryOneOffShipping= %TRUE)
+      #PROMPT('One&-Off Shipping:', @N14.2),%OneOffShipping
+    #ENDENABLE
+    #BOXED('Shipping Cost File')
+      #PROMPT('Shipping Cost &File: ', FILE),%ShippingCostFile
+      #ENABLE(%ShippingCostFile <> '')
+        #PROMPT('Shipping Cost File &Key:', KEY(%ShippingCostFile)),%ShippingCostFileKey
+        #PROMPT('Minimum &Quantity:', FIELD(%ShippingCostFile)),%MinQuantityField
+        #PROMPT('Minimum Spen&t:', FIELD(%ShippingCostFile)),%MinSpentField
+        #PROMPT('&Shipping:', FIELD(%ShippingCostFile)),%ShippingField,REQ
+        #PROMPT('&Is Percentage:', FIELD(%ShippingCostFile)),%IsPercentageField
+        #PROMPT('&Destination: (optional)', FIELD(%ShippingCostFile)),%DestinationField
+      #ENDENABLE
+    #ENDBOXED
+    #BOXED('Shipping Per Item')
+      #PROMPT('Fixed Shipping Charge If Not Found In File?', CHECK),%FixedShippingPerItem,DEFAULT(%FALSE),AT(10)
+      #ENABLE(%FixedShippingPerItem= %TRUE)
+        #PROMPT('Fi&xed:', @N14.2),%FixedShipping
+      #ENDENABLE
+      #PROMPT('Percentage Shipping Charge If Not Found In File?', CHECK),%PercentageShippingPerItem,DEFAULT(%FALSE),AT(10)
+      #ENABLE(%PercentageShippingPerItem= %TRUE)
+        #PROMPT('Percenta&ge of Net Goods:', SPIN(@N14.2,0,100)),%PercentageShipping
+      #ENDENABLE
+    #ENDBOXED
+    #PROMPT('Cal&culate Shipping:', DROP('Total|Maximum|Minimum')),%CalculateResult,DEFAULT('Total'),REQ
+    #ENABLE(%DestinationField <> '' OR %WeightDestinationField <> '')
+      #PROMPT('Desti&nation Expression (Optional):', @S255),%DestinationExpression
+    #ENDENABLE
+    #PROMPT('Over&ride Invoice Line Shipping', CHECK),%OverRide,DEFAULT(%FALSE),AT(10)
+    #ENABLE(%OverRide = %TRUE)
+      #PROMPT('Credit Descripti&on:', @S255),%CreditDescription
+    #ENDENABLE
+  #ENDTAB
+  #TAB('&Shipping By Weight')
+    #BOXED('Product File Field')
+      #PROMPT('&Weight Field (optional):', FIELD),%ProductWeightField
+    #ENDBOXED
+    #ENABLE(%ProductWeightField <> '')
+      #BOXED('Shipping Weight File')
+        #PROMPT('Shipping Weight Fi&le: ', FILE),%ShippingWeightFile
+        #ENABLE(%ShippingWeightFile <> '')
+          #PROMPT('Shipping Weight File Ke&y:', KEY(%ShippingWeightFile)),%ShippingWeightFileKey
+          #PROMPT('&Minimum Weight:', FIELD(%ShippingWeightFile)),%MinWeightField
+          #PROMPT('S&hipping:', FIELD(%ShippingWeightFile)),%WeightShippingField,REQ
+          #PROMPT('D&estination: (optional)', FIELD(%ShippingWeightFile)),%WeightDestinationField
+        #ENDENABLE
+      #ENDBOXED
+      #PROMPT('Shipping Charge If Not Found In File?', CHECK),%EntryWeightShipping,DEFAULT(%FALSE),AT(10)
+      #ENABLE(%EntryWeightShipping= %TRUE)
+        #PROMPT('Shipping &By Weight (optional):', @S255),%ShippingByWeight
+      #ENDENABLE
+    #ENDENABLE
+  #ENDTAB
+  #TAB('&Classes')
+    #WITH(%ClassItem, 'ShippingOnInvoiceModifier')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'ShippingOnInvoiceModifier', 'ShippingOnInvoiceModifier', %ShippingOnInvoiceModifierClass)
+  #FIX(%ClassItem, 'ShippingOnInvoiceModifier')
+  #EQUATE(%Me, %ThisObjectName)
+#ENDAT
+#!
+#!
+#AT(%AddInvoiceModifiers)
+  #IF(%Description <> '')
+%Me.AddItem('Description',,%(%StripPling(%Description)))
+  #ENDIF
+  #IF(%ShippingCostFile <> '')
+%Me.AddItem('SCFileManager',,, Access:%ShippingCostFile)
+  #ENDIF
+  #IF(%ShippingCostFileKey <> '')
+%Me.AddItem('SCKey',,,, %ShippingCostFileKey)
+  #ENDIF
+  #IF(%MinQuantityField <> '')
+%Me.AddItem('SCMinQuantityField', %MinQuantityField)
+  #ENDIF
+  #IF(%MinSpentField <> '')
+%Me.AddItem('SCMinSpentField', %MinSpentField)
+  #ENDIF
+  #IF(%ShippingField <> '')
+%Me.AddItem('SCShippingField', %ShippingField)
+  #ENDIF
+  #IF(%IsPercentageField <> '')
+%Me.AddItem('SCIsPercentageField', %IsPercentageField)
+  #ENDIF
+  #IF(%DestinationField <> '')
+%Me.AddItem('SCDestinationCodeField', %DestinationField)
+  #ENDIF
+  #IF(%FixedShippingPerItem= %TRUE)
+%Me.AddItem('PerItemFixedShipping',, %FixedShipping)
+  #ENDIF
+  #IF(%PercentageShippingPerItem = %TRUE)
+%Me.AddItem('PerItemPercentageShipping',, %PercentageShipping)
+  #ENDIF
+  #IF(%DestinationExpression <> '')
+%Me.AddItem('DestinationExpression',, %(%StripPling(%DestinationExpression)))
+  #ENDIF
+  #IF(%ProductWeightField <> '')
+%Me.AddItem('PWeightField', %ProductWeightField)
+  #ENDIF
+  #IF(%ShippingWeightFile <> '')
+%Me.AddItem('SWFileManager',,, Access:%ShippingWeightFile)
+  #ENDIF
+  #IF(%ShippingWeightFileKey <> '')
+%Me.AddItem('SWKey',,,, %ShippingWeightFileKey)
+  #ENDIF
+  #IF(%MinWeightField <> '')
+%Me.AddItem('SWMinWeightField', %MinWeightField)
+  #ENDIF
+  #IF(%WeightShippingField <> '')
+%Me.AddItem('SWFixedWeightShippingField', %WeightShippingField)
+  #ENDIF
+  #IF(%WeightDestinationField <> '')
+%Me.AddItem('SWDestinationCodeField', %WeightDestinationField)
+  #ENDIF
+  #IF(%EntryWeightShipping= %TRUE)
+%Me.AddItem('FixedWeightShipping',, %ShippingByWeight)
+  #ENDIF
+  #IF(%EntryOneOffShipping= %TRUE)
+%Me.AddItem('OneOffFixedShipping',, %OneOffShipping)
+  #ENDIF
+  #IF(%OverRide = %TRUE)
+%Me.AddItem('OverRide',,%TRUE)
+  #ENDIF
+  #IF(%CreditDescription <> '')
+%Me.AddItem('OverRideDescription',, %(%StripPling(%CreditDescription)))
+  #ENDIF
+%Me.AddItem('EndResult',,%(%StripPling(%CalculateResult)))
+%InvoiceCopier.AddItem(%Me, %InvokeAt)
+#ENDAT
+#!
+#!
+#AT(%ShippingOnInvoiceModifierMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'ShippingOnInvoiceModifier', 'Local Objects|Shopping Trolley Objects|Shipping On Invoice Modifier', '%ShippingOnInvoiceModifierVirtuals(ShoppingTrolley)')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'ShippingOnInvoiceModifier')
+#ENDAT
+#!
+#!
+#GROUP(%ShippingOnInvoiceModifierVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ShippingOnInvoiceModifierMethodDataSection,'Shipping On Invoice Modifier Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('ShippingOnInvoiceModifier'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%ShippingOnInvoiceModifierMethodCodeSection,'Shipping On Invoice Modifier Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('ShippingOnInvoiceModifier'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!
+#!
+#EXTENSION(CategoryDiscountModifier, 'Category Discount Modifier'),PROCEDURE,SINGLE,HLP('~CategoryDiscountModifier'),REQ(InvoiceGenerator(ShoppingTrolley))
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'CategoryDiscountModifier', 'CategoryDiscountModifier', %CategoryDiscountModifierClass)
+#END
+#INSERT(%OOPPrompts(ABC))
+#SHEET,HSCROLL
+  #TAB('&General')
+    #PROMPT('Invoke &Priority:' ,SPIN(@n3, 1, 255, 1)),%InvokeAt,DEFAULT(40)
+    #PROMPT('D&escription:', @S255),%Description
+    #PROMPT('Category Discount on &New Invoice Line', CHECK),%ExtraLine,DEFAULT(%True),AT(10)
+    #BOXED('Category File')
+      #PROMPT('&Category File: ', FILE),%CategoryFile,REQ
+      #PROMPT('&Key on Category:', KEY(%CategoryFile)),%CategoryFileKey,REQ
+      #PROMPT('Category &ID Field:', FIELD(%CategoryFile)),%CategoryIDField,REQ
+      #PROMPT('Category Na&me Field:', FIELD(%CategoryFile)),%CategoryNameField
+      #PROMPT('Date L&ow Field (Optional):', FIELD(%CategoryFile)),%DateLowField
+      #PROMPT('Da&te High Field (Optional):', FIELD(%CategoryFile)),%DateHighField
+      #PROMPT('&Discount Field:', FIELD(%CategoryFile)),%DiscountField,REQ
+      #PROMPT('&Supersedes Other Discounts Field:', FIELD(%CategoryFile)),%SupersedesField
+    #ENDBOXED
+    #BOXED('Product Category File')
+      #PROMPT('P&roduct Category File: ', FILE),%ProdCatFile,REQ
+      #PROMPT('Ke&y on ProductID:', KEY(%ProdCatFile)),%ProdCatKey,REQ
+      #PROMPT('C&ategory ID Field:', FIELD(%ProdCatFile)),%ProdCatCatField,REQ
+      #PROMPT('P&roduct ID Field:', FIELD(%ProdCatFile)),%ProdCatProdField,REQ
+    #ENDBOXED
+  #ENDTAB
+  #TAB('&Classes')
+    #WITH(%ClassItem, 'CategoryDiscountModifier')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'CategoryDiscountModifier', 'CategoryDiscountModifier', %CategoryDiscountModifierClass)
+  #FIX(%ClassItem, 'CategoryDiscountModifier')
+  #EQUATE(%Me, %ThisObjectName)
+#ENDAT
+#!
+#!
+#AT(%AddInvoiceModifiers)
+%Me.AddItem('FileManagerCat',,,Access:%CategoryFile)
+%Me.AddItem('CatKey',,,,%CategoryFileKey)
+%Me.AddItem('CatCategory',%CategoryIDField)
+  #IF(%CategoryNameField<> '')
+%Me.AddItem('CatCategoryName',%CategoryNameField)
+  #ENDIF
+  #IF(%DateLowField<> '')
+%Me.AddItem('CatDateLow',%DateLowField)
+  #ENDIF
+  #IF(%DateHighField<> '')
+%Me.AddItem('CatDateHigh',%DateHighField)
+  #ENDIF
+%Me.AddItem('CatDiscountRate',%DiscountField)
+  #IF(%SuperSedesField <> '')
+%Me.AddItem('CatSupersedes',%SupersedesField)
+  #ENDIF
+%Me.AddItem('FileManagerProdCat',,,Access:%ProdCatFile)
+%Me.AddItem('ProdCatKey',,,,%ProdCatKey)
+%Me.AddItem('PCCategory',%ProdCatCatField)
+%Me.AddItem('PCProductID',%ProdCatProdField)
+  #IF(%ExtraLine = %TRUE)
+%Me.AddItem('ExtraLine',,TRUE)
+  #ENDIF
+  #IF(%Description <> '')
+%Me.AddItem('Description',,%(%StripPling(%Description)))
+  #ENDIF
+%InvoiceCopier.AddItem(%Me, %InvokeAt)
+#ENDAT
+#!
+#!
+#AT(%CategoryDiscountModifierMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'CategoryDiscountModifier', 'Local Objects|Shopping Trolley Objects|Category Discount Modifier', '%CategoryDiscountModifierVirtuals(ShoppingTrolley)')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'CategoryDiscountModifier')
+#ENDAT
+#!
+#!
+#GROUP(%CategoryDiscountModifierVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%CategoryDiscountModifierMethodDataSection,'Category Discount Modifier Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('CategoryDiscountModifier'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%CategoryDiscountModifierMethodCodeSection,'Category Discount Modifier Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('CategoryDiscountModifier'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!
+#!
+#EXTENSION(GiftWrapModifier, 'Gift Wrap Modifier'),PROCEDURE,SINGLE,HLP('~GiftWrapModifier'),REQ(InvoiceGenerator(ShoppingTrolley))
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'GiftWrapModifier', 'GiftWrapModifier', %GiftWrapModifierClass)
+#END
+#INSERT(%OOPPrompts(ABC))
+#SHEET,HSCROLL
+  #TAB('&General')
+    #PROMPT('Invoke &Priority:' ,SPIN(@n3, 1, 255, 1)),%InvokeAt,DEFAULT(30)
+    #PROMPT('Gift wrap option on &New Invoice Line', CHECK),%ExtraLine,DEFAULT(%True),AT(10)
+    #BOXED('Cart Line Field')
+      #PROMPT('Gift &Wrap ID Field:', FIELD),%CartLineOptionIDField,REQ
+    #ENDBOXED
+    #BOXED('Gift Wrap File')
+      #PROMPT('&Gift Wrap File: ', FILE),%OptionsFile,REQ
+      #PROMPT('File &Key:', KEY(%OptionsFile)),%OptionsFileKey,REQ
+      #PROMPT('Gift Wrap &ID Field:', FIELD(%OptionsFile)),%OptionIDField,REQ
+      #PROMPT('P&roduct ID Field (Optional):', FIELD(%OptionsFile)),%ProductIDField
+      #ENABLE(%ProductIDField <> '')
+        #PROMPT('IF Product &Not Found:', DROP('Do Nothing|Search for empty Product ID')),%ProductNotFound,DEFAULT('Do Nothing')
+      #ENDENABLE
+      #PROMPT('&Description Field (Optional):', FIELD(%OptionsFile)),%DescriptionField
+      #PROMPT('&Cost Field:', FIELD(%OptionsFile)),%CostField,REQ
+      #PROMPT('Cost Is Per&centage Field (Optional):', FIELD(%OptionsFile)),%IsPercentageField
+    #ENDBOXED
+  #ENDTAB
+  #TAB('&Classes')
+    #WITH(%ClassItem, 'GiftWrapModifier')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'GiftWrapModifier', 'GiftWrapModifier', %GiftWrapModifierClass)
+  #FIX(%ClassItem, 'GiftWrapModifier')
+  #EQUATE(%Me, %ThisObjectName)
+#ENDAT
+#!
+#!
+#AT(%AddInvoiceModifiers)
+%Me.AddItem('CartLineOptionID',%CartLineOptionIDField)
+%Me.AddItem('FileManager',,,Access:%OptionsFile)
+%Me.AddItem('FileKey',,,,%OptionsFileKey)
+%Me.AddItem('OptionID',%OptionIDField)
+  #IF(%ProductIDField<> '')
+%Me.AddItem('ProductID',%ProductIDField)
+  #ENDIF
+  #IF(%DescriptionField<> '')
+%Me.AddItem('Description',%DescriptionField)
+  #ENDIF
+%Me.AddItem('Cost',%CostField)
+  #IF(%IsPercentageField <> '')
+%Me.AddItem('IsPercentage',%IsPercentageField)
+  #ENDIF
+  #IF(%ProductNotFound = 'Search for empty Product ID')
+%Me.AddItem('UseGenericProdID',,TRUE)
+  #ENDIF
+  #IF(%ExtraLine = %TRUE)
+%Me.AddItem('ExtraLine',,TRUE)
+  #ENDIF
+%InvoiceCopier.AddItem(%Me, %InvokeAt)
+#ENDAT
+#!
+#!
+#AT(%GiftWrapModifierMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'GiftWrapModifier', 'Local Objects|Shopping Trolley Obejcts|Gift Wrap Modifier', '%GiftWrapModifierVirtuals(ShoppingTrolley)')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'GiftWrapModifier')
+#ENDAT
+#!
+#!
+#GROUP(%GiftWrapModifierVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%GiftWrapModifierMethodDataSection,'Gift Wrap Modifier Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('GiftWrapModifier'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%GiftWrapModifierMethodCodeSection,'Gift Wrap Modifier Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('GiftWrapModifier'))),TREE(%TreeText & %CodeText)
+#!
+#!

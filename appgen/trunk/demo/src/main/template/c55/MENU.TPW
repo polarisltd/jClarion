@@ -1,0 +1,48 @@
+#PROCEDURE(Menu,'Single Document Menu'),WINDOW,HLP('~TPLProcMenu')
+#LOCALDATA
+LocalRequest         LONG
+OriginalRequest      LONG
+LocalResponse        LONG
+FilesOpened          LONG
+WindowOpened         LONG
+WindowInitialized    LONG
+ForceRefresh         LONG
+CurrentTab           STRING(80)
+#ENDLOCALDATA
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','Refresh Window ROUTINE, before lookups')
+#CLASS('After Lookups','Refresh Window ROUTINE, after lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#PROMPT('&Parameters:',@s255),%Parameters
+#ENABLE(%ProcedureType='FUNCTION')
+  #PROMPT('Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#PROMPT('Window Operation Mode:',DROP('Use WINDOW setting|Normal|MDI|Modal')),%WindowOperationMode
+#ENABLE(%INIActive)
+  #BOXED('INI File Settings')
+    #PROMPT('Save and Restore Window Location',CHECK),%INISaveWindow,DEFAULT(1),AT(10,,150)
+  #ENDBOXED
+#ENDENABLE
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#INSERT(%StandardWindowCode)
+#!-----------------------------------------
+#DEFAULT
+NAME DefaultMenu
+[COMMON]
+DESCRIPTION 'Default SDI Menu'
+FROM Clarion Menu
+[PROMPTS]
+%INISaveWindow LONG  (1)
+[WINDOW]
+MenuWindow WINDOW('Caption'),AT(0,0,260,146)
+       MENUBAR
+         MENU('&File'),USE(?FileMenu)
+           ITEM('Item&2'),USE(?Item2),SEPARATOR
+           ITEM('E&xit'),USE(?Exit),STD(STD:Close)
+         END
+       END
+     END
+
+#ENDDEFAULT

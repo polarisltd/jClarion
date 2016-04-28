@@ -1,0 +1,46 @@
+!ABCIncludeFile
+
+OMIT('_EndOfInclude_',_LayValue_Interface_)
+_LayValue_Interface_ EQUATE(1)
+
+   INCLUDE('IBCBASE.INT'),ONCE
+
+!!--------------------------------------------------------------------------
+
+IValue                  INTERFACE(IInterface)
+toString                  PROCEDURE(DynStr ret),*CSTRING
+toInt                     PROCEDURE(*SIGNED ret),CBOOL
+toBool                    PROCEDURE(*CBOOL ret),CBOOL
+Select                    PROCEDURE(IId name),*IValue
+DoIndex                   PROCEDURE(SIGNED index),*IValue
+Call                      PROCEDURE(),*IFunction
+
+isString                  PROCEDURE,CBOOL
+isInt                     PROCEDURE,CBOOL
+isBool                    PROCEDURE,CBOOL
+                        END
+
+IId                     INTERFACE(IInterface)
+toString                  PROCEDURE(DynStr ret),*CSTRING        ! debug only!
+                        END
+
+IEvaluateContext        INTERFACE
+Lookup                    PROCEDURE(IId Name),*IValue
+CreateId                  PROCEDURE(CONST * CSTRING Name),*IId
+createInt                 PROCEDURE(SIGNED intval),*IValue
+createBool                PROCEDURE(CBOOL boolval),*IValue
+createString              PROCEDURE(CONST * CSTRING strval),*IValue
+ReportError               PROCEDURE(int code, CONST *CSTRING extra)
+                        END
+
+IFunction               INTERFACE(IInterface)
+addParam                  PROCEDURE(IValue parm)
+Result                    PROCEDURE(),*IValue
+                        END
+
+IPrivateEvaluateContext INTERFACE
+GetRepeatValue            PROCEDURE(ASTRING Name),STRING
+                        END
+
+_EndOfInclude_
+

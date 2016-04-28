@@ -1,0 +1,587 @@
+#!----------------------------------------------------------------
+#CONTROL(BrowseSelectButton,'Select record from a Browse Box'),DESCRIPTION('Select a Record from Browse on ' & %Primary),REQ(BrowseBox),FIRST,HLP('~TPLControlBrowseSelectButton')
+  CONTROLS
+    BUTTON('&Select'),USE(?Select)
+  END
+#BOXED('Select Button')
+  #PROMPT('Hide the Select button when not applicable',CHECK),%HideIfDisabled,AT(10,,150)
+  #PROMPT('&Allow Select via Popup',CHECK),%SelectViaPopup,DEFAULT(1),AT(10,,150)
+#ENDBOXED
+#ATSTART
+  #DECLARE(%SelectControl)
+  #DECLARE(%SelectText)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #SET(%SelectControl,%Control)
+    #IF(%SelectViaPopup)
+      #SET(%SelectText,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%SelectText,SUB(%SelectText,2,LEN(%SelectText)-2))
+    #ENDIF
+  #ENDFOR
+#ENDAT
+#!
+#AT(%GenerateInstanceUpdate),WHERE(%AcceptToolbarControl AND %GenerateSelectInstance=0)
+  #SET(%GenerateSelectInstance,%ActiveTemplateInstance)
+#ENDAT
+#AT(%AssignToolbarButtons,%ActiveTemplateParentInstance),WHERE(%AcceptToolBarControl)
+  #IF(%SelectControl)
+BrowseButtons.SelectButton=%SelectControl
+  #ENDIF
+#ENDAT
+#AT(%WindowOtherEventHandling),WHERE(%GenerateSelectInstance=%ActiveTemplateInstance)
+IF ToolBarMode=BrowseMode THEN
+  DO SelectDispatch
+END
+#ENDAT
+#!
+#AT(%InsideDisplayToolbar),WHERE(%GenerateSelectInstance=%ActiveTemplateInstance)
+  IF BrowseButtons.SelectButton THEN
+    TBarBrwSelect{PROP:DISABLE}=BrowseButtons.SelectButton{PROP:DISABLE}
+  END
+#ENDAT
+#!
+#AT(%ProcedureRoutines),WHERE(%GenerateSelectInstance=%ActiveTemplateInstance)
+
+SelectDispatch ROUTINE
+  IF ACCEPTED()=TBarBrwSelect THEN         !trap remote browse select control calls
+    POST(EVENT:ACCEPTED,BrowseButtons.SelectButton)
+  END
+
+#ENDAT
+#!
+#AT(%PrepareAlerts)
+%ListControl{Prop:Alrt,252} = MouseLeft2
+#ENDAT
+#AT(%BrowseBoxDoubleClick)
+  #IF(%SelectControl)
+    #IF(%Control=%ListControl)
+IF LocalRequest = SelectRecord
+  POST(Event:Accepted,%SelectControl)
+  EXIT
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowsePrepSelectRecord)
+  #IF(%Control=%ListControl)
+    #IF(%SelectControl)
+      #IF(~%AcceptToolbarControl)
+        #IF(%HideIfDisabled)
+UNHIDE(%SelectControl)
+        #ENDIF
+%SelectControl{Prop:Default} = True
+ENABLE(%SelectControl)
+      #ENDIF
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxPopupRecords)
+  #IF(%SelectControl AND %SelectViaPopup)
+    #IF(%Control=%ListControl)
+IF LocalRequest = SelectRecord
+  %InstancePrefix:PopupText = '%SelectText'
+ELSE
+  %InstancePrefix:PopupText = '~%SelectText'
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxPopupNoRecords)
+  #IF(%SelectControl AND %SelectViaPopup)
+    #IF(%Control=%ListControl)
+%InstancePrefix:PopupText = '~%SelectText'
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxSelectPopupHandling)
+  #IF(%SelectControl AND %SelectViaPopup)
+    #IF(%Control=%ListControl)
+POST(Event:Accepted,%SelectControl)
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowsePrepNormal)
+  #IF(%Control=%ListControl)
+    #IF(%SelectControl)
+      #IF(%HideIfDisabled)
+%SelectControl{Prop:Hide} = True
+      #ENDIF
+DISABLE(%SelectControl)
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%ControlEventHandling,%SelectControl,'Accepted')
+  #IF(%SelectControl)
+#EMBED(%BrowseBoxProcessSelected,'Browse Box, process selected record')
+LocalResponse = RequestCompleted
+POST(Event:CloseWindow)
+  #ENDIF
+#ENDAT
+#!----------------------------------------------------------------
+#CONTROL(BrowseUpdateButtons,'Update records from a Browse Box'),DESCRIPTION('Update a Record from Browse Box on ' & %Primary),REQ(BrowseBox),HLP('~TPLControlBrowseUpdateButtons')
+  CONTROLS
+       BUTTON('&Insert'),AT(,,42,12),USE(?Insert)
+       BUTTON('&Change'),AT(42,0,42,12),USE(?Change)
+       BUTTON('&Delete'),AT(42,0,42,12),USE(?Delete)
+  END
+#BOXED('Update Buttons')
+  #PROMPT('&Update Procedure',PROCEDURE),%UpdateProcedure
+  #PROMPT('&Allow Edit via Popup',CHECK),%EditViaPopup,DEFAULT(1)
+#ENDBOXED
+#ATSTART
+  #DECLARE(%InsertControl)
+  #DECLARE(%ChangeControl)
+  #DECLARE(%DeleteControl)
+  #DECLARE(%InsertText)
+  #DECLARE(%ChangeText)
+  #DECLARE(%DeleteText)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #CASE(%ControlOriginal)
+    #OF('?Insert')
+      #SET(%InsertControl,%Control)
+      #SET(%InsertText,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%InsertText,SUB(%InsertText,2,LEN(%InsertText)-2))
+    #OF('?Change')
+      #SET(%ChangeControl,%Control)
+      #SET(%ChangeText,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%ChangeText,SUB(%ChangeText,2,LEN(%ChangeText)-2))
+    #OF('?Delete')
+      #SET(%DeleteControl,%Control)
+      #SET(%DeleteText,EXTRACT(%ControlStatement,'BUTTON',1))
+      #SET(%DeleteText,SUB(%DeleteText,2,LEN(%DeleteText)-2))
+    #ENDCASE
+  #ENDFOR
+#ENDAT
+#AT(%GenerateInstanceUpdate),WHERE(%AcceptToolbarControl AND %GenerateUpdateInstance=0)
+  #SET(%GenerateUpdateInstance,%ActiveTemplateInstance)
+#ENDAT
+#AT(%WindowOtherEventHandling),WHERE(%GenerateUpdateInstance=%ActiveTemplateInstance)
+IF ToolBarMode=BrowseMode THEN
+  DO UpdateDispatch
+END
+#ENDAT
+#!
+#!
+#AT(%AssignToolbarButtons,%ActiveTemplateParentInstance),WHERE(%AcceptToolBarControl)
+  #IF(%InsertControl)
+BrowseButtons.InsertButton=%InsertControl
+  #ELSE
+BrowseButtons.InsertButton=0
+  #ENDIF
+  #IF(%ChangeControl)
+BrowseButtons.ChangeButton=%ChangeControl
+  #ELSE
+BrowseButtons.ChangeButton=0
+  #ENDIF
+  #IF(%DeleteControl)
+BrowseButtons.DeleteButton=%DeleteControl
+  #ELSE
+BrowseButtons.DeleteButton=0
+  #ENDIF
+#ENDAT
+#!
+#AT (%InsideDisplayToolbar), WHERE(%GenerateUpdateInstance=%ActiveTemplateInstance)
+IF BrowseButtons.InsertButton THEN
+  TBarBrwInsert{PROP:DISABLE}=BrowseButtons.InsertButton{PROP:DISABLE}
+END
+IF BrowseButtons.ChangeButton THEN
+  TBarBrwChange{PROP:DISABLE}=BrowseButtons.ChangeButton{PROP:DISABLE}
+END
+IF BrowseButtons.DeleteButton THEN
+  TBarBrwDelete{PROP:DISABLE}=BrowseButtons.DeleteButton{PROP:DISABLE}
+END
+#ENDAT
+#!
+#AT(%PrepareAlerts)
+  #IF(%InsertControl)
+%ListControl{Prop:Alrt,255} = InsertKey
+  #ENDIF
+  #IF(%DeleteControl)
+%ListControl{Prop:Alrt,254} = DeleteKey
+  #ENDIF
+  #IF(%ChangeControl)
+%ListControl{Prop:Alrt,253} = CtrlEnter
+%ListControl{Prop:Alrt,252} = MouseLeft2
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxDoubleClick)
+  #IF(%Control=%ListControl)
+    #IF(%ChangeControl)
+POST(Event:Accepted,%ChangeControl)
+DO %InstancePrefix:FillBuffer
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%ControlEventHandling,%InsertControl,'Accepted')
+DO %InstancePrefix:ButtonInsert
+#ENDAT
+#AT(%ControlEventHandling,%ChangeControl,'Accepted')
+DO %InstancePrefix:ButtonChange
+#ENDAT
+#AT(%ControlEventHandling,%DeleteControl,'Accepted')
+DO %InstancePrefix:ButtonDelete
+#ENDAT
+#AT(%BrowseBoxPopupRecords)
+  #IF(%Control=%ListControl AND %EditViaPopup)
+    #SET(%ValueConstruct,'')
+    #IF(%DeleteControl)
+      #SET(%ValueConstruct,%DeleteText)
+    #ENDIF
+    #IF(%ChangeControl)
+      #IF(%ValueConstruct)
+        #SET(%ValueConstruct,%ChangeText & '|' & %ValueConstruct)
+      #ELSE
+        #SET(%ValueConstruct,%ChangeText)
+      #ENDIF
+    #ENDIF
+    #IF(%InsertControl)
+      #IF(%ValueConstruct)
+        #SET(%ValueConstruct,%InsertText & '|' & %ValueConstruct)
+      #ELSE
+        #SET(%ValueConstruct,%InsertText)
+      #ENDIF
+    #ENDIF
+    #IF(%ValueConstruct)
+IF %InstancePrefix:PopupText
+  %InstancePrefix:PopupText = '%ValueConstruct|-|' & %InstancePrefix:PopupText
+ELSE
+  %InstancePrefix:PopupText = '%ValueConstruct'
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxPopupNoRecords)
+  #IF(%Control=%ListControl AND %EditViaPopup)
+    #SET(%ValueConstruct,'')
+    #IF(%DeleteControl)
+      #SET(%ValueConstruct,'~' & %DeleteText)
+    #ENDIF
+    #IF(%ChangeControl)
+      #IF(%ValueConstruct)
+        #SET(%ValueConstruct,'~' & %ChangeText & '|' & %ValueConstruct)
+      #ELSE
+        #SET(%ValueConstruct,'~' & %ChangeText)
+      #ENDIF
+    #ENDIF
+    #IF(%InsertControl)
+      #IF(%ValueConstruct)
+        #SET(%ValueConstruct,%InsertText & '|' & %ValueConstruct)
+      #ELSE
+        #SET(%ValueConstruct,%InsertText)
+      #ENDIF
+    #ENDIF
+    #IF(%ValueConstruct)
+IF %InstancePrefix:PopupText
+  %InstancePrefix:PopupText = '%ValueConstruct|-|' & %InstancePrefix:PopupText
+ELSE
+  %InstancePrefix:PopupText = '%ValueConstruct'
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxEditPopupHandling)
+  #IF(%Control=%ListControl)
+    #IF(%InsertControl)
+POST(Event:Accepted,%InsertControl)
+    #ENDIF
+    #IF(%ChangeControl)
+POST(Event:Accepted,%ChangeControl)
+    #ENDIF
+    #IF(%DeleteControl)
+POST(Event:Accepted,%DeleteControl)
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxKeyHandling)
+  #IF(%Control=%ListControl)
+    #IF(%DeleteControl)
+OF DeleteKey
+  POST(Event:Accepted,%DeleteControl)
+    #ENDIF
+    #IF(%ChangeControl)
+OF CtrlEnter
+  POST(Event:Accepted,%ChangeControl)
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxKeyHandlingNoRecords)
+  #IF(%Control=%ListControl)
+    #IF(%InsertControl)
+OF InsertKey
+  POST(Event:Accepted,%InsertControl)
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxEmpty)
+  #IF(%Control = %ListControl)
+    #IF(%ChangeControl)
+%ChangeControl{Prop:Disable} = 1
+    #ENDIF
+    #IF(%DeleteControl)
+%DeleteControl{Prop:Disable} = 1
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%BrowseBoxNotEmpty)
+  #IF(%Control = %ListControl)
+    #IF(%ChangeControl)
+%ChangeControl{Prop:Disable} = 0
+    #ENDIF
+    #IF(%DeleteControl)
+%DeleteControl{Prop:Disable} = 0
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%ProcedureRoutines)
+
+  #IF(%GenerateUpdateInstance=%ActiveTemplateInstance)
+UpdateDispatch ROUTINE
+  DISABLE(TBarBrwDelete)
+  DISABLE(TBarBrwChange)
+  IF BrowseButtons.DeleteButton AND BrowseButtons.DeleteButton{PROP:DISABLE} = 0 THEN
+    ENABLE(TBarBrwDelete)
+  END
+  IF BrowseButtons.ChangeButton AND BrowseButtons.ChangeButton{PROP:DISABLE} = 0 THEN
+    ENABLE(TBarBrwChange)
+  END
+    #IF ( UPPER(%ProcedureTemplate)='FORM' )
+  #EMBED (%StartOfBrowseFormFilter), HIDE
+  IF FOCUS() <> BrowseButtons.ListBox THEN  ! List box must have focus when on update form
+    EXIT
+  END
+  #EMBED (%EndOfBrowseFormFilter), HIDE
+    #ENDIF
+  IF INRANGE(ACCEPTED(),TBarBrwInsert,TBarBrwDelete) THEN         !trap remote browse update control calls
+    EXECUTE(ACCEPTED()-TBarBrwInsert+1)
+      POST(EVENT:ACCEPTED,BrowseButtons.InsertButton)
+      POST(EVENT:ACCEPTED,BrowseButtons.ChangeButton)
+      POST(EVENT:ACCEPTED,BrowseButtons.DeleteButton)
+    END
+  END
+  #ENDIF
+  #IF(%InsertControl)
+!----------------------------------------------------------------
+%InstancePrefix:ButtonInsert ROUTINE
+!|
+!| This routine calls the BrowseBox's update procedure (as specified in the
+!| BrowseUpdateButtons control template) to insert a new record.
+!|
+!| First, the primary file's record  buffer is cleared, as well as any memos
+!| or BLOBs. Next, any range-limit values are restored so that the inserted
+!| record defaults to being added to the current display set.
+!|
+!| Next, LocalRequest is set to InsertRecord, and the %InstancePrefix:CallRecord routine
+!| is called. This routine performs the actual call to the update procedure.
+!|
+!| If the insert is successful (GlobalRequest = RequestCompleted) then the newly added
+!| record is displayed in the BrowseBox, at the top of the listbox.
+!|
+!| If the insert is not successful, the current page of the browse is refreshed.
+!|
+!| Finally, The BrowseBox is re-initialized, resetting scroll bars and totals.
+!|
+  GET(%Primary,0)
+    #FIX(%File,%Primary)
+  CLEAR(%FilePrefix:Record,0)
+    #FOR(%Field),WHERE(%FieldType='MEMO')
+  CLEAR(%Field)
+    #ENDFOR
+    #FOR(%Field),WHERE(%FieldType='BLOB')
+  %Field{Prop:Size} = 0
+    #ENDFOR
+    #SUSPEND
+  #?CASE %InstancePrefix:SortOrder
+      #FOR(%BrowseAccessID)
+        #SUSPEND
+  #?OF %BrowseAccessID
+          #FOR(%BrowseRangeLimitField)
+    %BrowseRangeLimitField = %BrowsePrefix:Reset:%BrowseRangeLimitValue
+          #ENDFOR
+        #RESUME
+      #ENDFOR
+  #?END
+    #RESUME
+  LocalRequest = InsertRecord
+  #EMBED(%BrowseBeforeInsert,'Browse Box, Before Insert'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  DO %InstancePrefix:CallUpdate
+  #EMBED(%BrowseAfterInsert,'Browse Box, After Insert'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  IF GlobalResponse = RequestCompleted
+    %InstancePrefix:LocateMode = LocateOnEdit
+    DO %InstancePrefix:LocateRecord
+  ELSE
+    %InstancePrefix:RefreshMode = RefreshOnQueue
+    DO %InstancePrefix:RefreshPage
+  END
+  DO %InstancePrefix:InitializeBrowse
+  DO %InstancePrefix:PostNewSelection
+  SELECT(%ListControl)
+  LocalRequest = OriginalRequest
+  LocalResponse = RequestCancelled
+  DO RefreshWindow
+  #ENDIF
+  #IF(%ChangeControl)
+!----------------------------------------------------------------
+%InstancePrefix:ButtonChange ROUTINE
+!|
+!| This routine calls the BrowseBox's update procedure (as specified in the
+!| BrowseUpdateButtons control template) to change a selected record.
+!|
+!| Whenever a button is pressed, the first thing that happens is that the
+!| SyncWindow routine is called. This routine insures that the BrowseBox's
+!| VIEW corresponds to the highlighted record by calling the %InstancePrefix:GetRecord routine.
+!|
+!| First, LocalRequest is set to ChangeRecord, and the %InstancePrefix:CallRecord routine
+!| is called. This routine performs the actual call to the update procedure.
+!|
+!| If the change is successful (GlobalRequest = RequestCompleted) then the newly changed
+!| record is displayed in the BrowseBox.
+!|
+!| If the change is not successful, the current page of the browse is refreshed.
+!|
+!| Finally, The BrowseBox is re-initialized, resetting scroll bars and totals.
+!|
+  LocalRequest = ChangeRecord
+  #EMBED(%BrowseBeforeChange,'Browse Box, Before Change'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  DO %InstancePrefix:CallUpdate
+  #EMBED(%BrowseAfterChange,'Browse Box, After Change'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  IF GlobalResponse = RequestCompleted
+    %InstancePrefix:LocateMode = LocateOnEdit
+    DO %InstancePrefix:LocateRecord
+  ELSE
+    %InstancePrefix:RefreshMode = RefreshOnQueue
+    DO %InstancePrefix:RefreshPage
+  END
+  DO %InstancePrefix:InitializeBrowse
+  DO %InstancePrefix:PostNewSelection
+  SELECT(%ListControl)
+  LocalRequest = OriginalRequest
+  LocalResponse = RequestCancelled
+  DO RefreshWindow
+  #ENDIF
+  #IF(%DeleteControl)
+!----------------------------------------------------------------
+%InstancePrefix:ButtonDelete ROUTINE
+!|
+!| This routine calls the BrowseBox's update procedure (as specified in the
+!| BrowseUpdateButtons control template) to delete a selected record.
+!|
+!| Whenever a button is pressed, the first thing that happens is that the
+!| SyncWindow routine is called. This routine insures that the BrowseBox's
+!| VIEW corresponds to the highlighted record by calling the %InstancePrefix:GetRecord routine.
+!|
+!| First, LocalRequest is set to DeleteRecord, and the %InstancePrefix:CallRecord routine
+!| is called. This routine performs the actual call to the update procedure.
+!|
+!| If the delete is successful (GlobalRequest = RequestCompleted) then the deleted record is
+!| removed from the queue.
+!|
+!| Next, the BrowseBox is refreshed, redisplaying the current page.
+!|
+!| Finally, The BrowseBox is re-initialized, resetting scroll bars and totals.
+!|
+  LocalRequest = DeleteRecord
+  #EMBED(%BrowseBeforeDelete,'Browse Box, Before Delete'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  DO %InstancePrefix:CallUpdate
+  #EMBED(%BrowseAfterDelete,'Browse Box, After Delete'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  IF GlobalResponse = RequestCompleted
+    DELETE(%ListQueue)
+    %InstancePrefix:RecordCount -= 1
+  END
+  %InstancePrefix:RefreshMode = RefreshOnQueue
+  DO %InstancePrefix:RefreshPage
+  DO %InstancePrefix:InitializeBrowse
+  DO %InstancePrefix:PostNewSelection
+  SELECT(%ListControl)
+  LocalRequest = OriginalRequest
+  LocalResponse = RequestCancelled
+  DO RefreshWindow
+  #ENDIF
+!----------------------------------------------------------------
+%InstancePrefix:CallUpdate ROUTINE
+!|
+!| This routine performs the actual call to the update procedure.
+!|
+!| The first thing that happens is that the VIEW is closed. This is performed just in case
+!| the VIEW is still open.
+!|
+!| Next, GlobalRequest is set the the value of LocalRequest, and the update procedure
+!| (%UpdateProcedure) is called.
+!|
+!| Upon return from the update, the routine %InstancePrefix:Reset is called to reset the VIEW
+!| and reopen it.
+!|
+  #EMBED(%BrowseBoxBeforeUpdate,'Browse Box, before calling the update procedure'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  CLOSE(%ListView)
+  LOOP
+    GlobalRequest = LocalRequest
+    VCRRequest = VCRNone
+    %UpdateProcedure
+    LocalResponse = GlobalResponse
+    CASE VCRRequest
+    OF VCRNone
+      BREAK
+    OF VCRInsert
+      IF LocalRequest=ChangeRecord THEN
+        LocalRequest=InsertRecord
+      END
+    OROF VCRForward
+      IF LocalRequest=InsertRecord THEN
+        GET(%Primary,0)
+    #FIX(%File,%Primary)
+        CLEAR(%FilePrefix:Record,0)
+    #FOR(%Field),WHERE(%FieldType='MEMO')
+        CLEAR(%Field)
+    #ENDFOR
+    #FOR(%Field),WHERE(%FieldType='BLOB')
+        %Field{Prop:Size} = 0
+    #ENDFOR
+      ELSE
+        DO %InstancePrefix:PostVCREdit1
+        %InstancePrefix:CurrentEvent=Event:ScrollDown
+        DO %InstancePrefix:ScrollOne
+        DO %InstancePrefix:PostVCREdit2
+      END
+    OF VCRBackward
+      DO %InstancePrefix:PostVCREdit1
+      %InstancePrefix:CurrentEvent=Event:ScrollUp
+      DO %InstancePrefix:ScrollOne
+      DO %InstancePrefix:PostVCREdit2
+    OF VCRPageForward
+      DO %InstancePrefix:PostVCREdit1
+      %InstancePrefix:CurrentEvent=Event:PageDown
+      DO %InstancePrefix:ScrollPage
+      DO %InstancePrefix:PostVCREdit2
+    OF VCRPageBackward
+      DO %InstancePrefix:PostVCREdit1
+      %InstancePrefix:CurrentEvent=Event:PageUp
+      DO %InstancePrefix:ScrollPage
+      DO %InstancePrefix:PostVCREdit2
+    OF VCRFirst
+      DO %InstancePrefix:PostVCREdit1
+      %InstancePrefix:CurrentEvent=Event:ScrollTop
+      DO %InstancePrefix:ScrollEnd
+      DO %InstancePrefix:PostVCREdit2
+    OF VCRLast
+      DO %InstancePrefix:PostVCREdit1
+      %InstancePrefix:CurrentEvent=Event:ScrollBottom
+      DO %InstancePrefix:ScrollEND
+      DO %InstancePrefix:PostVCREdit2
+    END
+  END
+  DO %InstancePrefix:Reset
+  #EMBED(%BrowseBoxAfterUpdate,'Browse Box, returning from the update procedure'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+
+%InstancePrefix:PostVCREdit1 ROUTINE
+  DO %InstancePrefix:Reset
+  %InstancePrefix:LocateMode=LocateOnEdit
+  DO %InstancePrefix:LocateRecord
+  DO RefreshWindow
+
+%InstancePrefix:PostVCREdit2 ROUTINE
+  %ListControl{PROP:SelStart}=%InstancePrefix:CurrentChoice
+  DO %InstancePrefix:NewSelection
+  REGET(%ListView,%InstancePrefix:Position)
+  CLOSE(%ListView)
+
+#ENDAT
+#!
+#!

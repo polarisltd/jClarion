@@ -1,0 +1,60 @@
+#CODE (GetCookie, 'Read the value of a cookie'),DESCRIPTION(%CookieTarget & ' = GetCookie(''' & %CookieName & ''')'),HLP('~ICCodeGetCookie')
+#BOXED ('Get Cookie')
+  #DISPLAY ('This code template retrieves the value of a cookie from the client computer.  The cookie can only be got after a request from the broker has been processed.'), AT(,,180)
+  #PROMPT ('Cookie name:', @s255),%CookieName
+  #PROMPT ('Variable to set:', FIELD),%CookieTarget
+#END
+%CookieTarget = Broker.Http.GetCookie('%'CookieName')
+#!
+#!
+#CODE (SetCookie, 'Set the value of a cookie'), DESCRIPTION('SetCookie(''' & %CookieName & ''',' & %CookieSource & ')'),HLP('~ICCodeSetCookie')
+#BOXED ('Set Cookie')
+  #DISPLAY ('This code template stores a cookie onto the client computer that can be retrieved at a later date.  Note, the cookie is not sent until a new page has been requested by the user.'),AT(,,180)
+  #PROMPT ('Cookie name:', @s255),%CookieName
+  #PROMPT ('New value:', EXPR),%CookieSource
+#END
+Broker.Http.SetCookie('%'CookieName', %CookieSource)
+#!
+#!
+#CODE (GetServerProperty, 'Read the value of a HTTP header field'), DESCRIPTION('GetServerProperty(''' & %ServerPropName & ''')'),HLP('~ICCodeGetServerProperty')
+#BOXED ('Get Server Property')
+  #DISPLAY ('This code template retrieves a HTTP field from the header passed to the browser with each page.'),AT(,,180,20)
+  #PROMPT ('Property name:', @s255),%ServerPropertyName
+  #PROMPT ('Variable to set:', FIELD),%ServerPropertyTarget
+#END
+%ServerPropertyTarget = Broker.Http.GetServerProperty('%'ServerPropertyName')
+#!
+#!
+#CODE (AddServerProperty, 'Add or change a HTTP header field'), DESCRIPTION('AddServerProperty(''' & %ServerPropName & ''',' & %ServerPropSource & ')'),HLP('~ICCodeAddServerProperty')
+#BOXED ('Add Server Property')
+  #DISPLAY ('This code template adds or changes a HTTP field in the header passed to the browser with each page.'),AT(,,180,20)
+  #PROMPT ('Property name:', @s255),%ServerPropertyName
+  #PROMPT ('Property value:', EXPR),%ServerPropertySource
+#END
+Broker.Http.SetServerProperty('%'ServerPropertyName', %ServerPropertySource)
+#!
+#!
+#CODE (DynamicHTML, 'Insert Dynamic HTML'),DESCRIPTION('Dynamic HTML: ' & %DynamicText),HLP('~ICCodeDynamicHTML')
+#RESTRICT
+  #CALL(%ValidateHtmlEmbedPoint)
+#END
+#DISPLAY ('This template allows you to add dynamic HTML statements into the HTML file.'),AT(,,180)
+#PROMPT ('Dynamic Text:', EXPR), %DynamicText
+Target.Writeln(%DynamicText)
+#!
+#!
+#CODE (StaticHTML, 'Insert static HTML'),DESCRIPTION('Static HTML: ' & %FirstLine(%StaticHTMLText)),HLP('~ICCodeStaticHTML')
+#RESTRICT
+  #CALL(%ValidateHtmlEmbedPoint)
+#END
+#BOXED ('HTML to insert')
+  #PROMPT ('', TEXT), %StaticHTMLText,AT(,,,200)
+#END
+#INSERT (%GenerateLiteralHtml, %StaticHTMLText)
+#!
+#!
+#CODE (RedirectToPage, 'Redirect to another page'),DESCRIPTION('Redirect browser to ' & %TargetPage),HLP('~WBCodeRedirectToPage')
+#PROMPT ('Page to redirect to', @s255),%TargetPage
+Broker.TakeFile('%'TargetPage',false,false)
+WebServer.TakePageSent()
+

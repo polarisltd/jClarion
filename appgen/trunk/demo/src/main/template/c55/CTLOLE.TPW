@@ -1,0 +1,128 @@
+#CONTROL(OLEControl,'OLE or OCX Control'),DESCRIPTION('OLE / OCX Control(' & INSTANCE(%ActiveTemplateInstance) & ')'),MULTI,WINDOW,HLP('~TPLControlOLEControl'),WRAP(OLE)
+  CONTROLS
+    OLE,USE(?OLE)
+    END
+  END
+#BOXED('OLE Control')
+  #BOXED('Callback Generation')
+    #PROMPT('&Event Handler',CHECK),%GenerateEventCallback,AT(10)
+    #PROMPT('&Property Change',CHECK),%GenerateChangeCallback,AT(10)
+    #PROMPT('P&roperty Edit',CHECK),%GenerateEditCallback,AT(10)
+    #DISPLAY('Callback procedures will be generated in the procedure''s module.'),AT(20,,160,20)
+    #DISPLAY('NOTE: Callback procedures do NOT have access to this procedure''s data!'),AT(20,,160,20)
+    #ENABLE(%GenerateEventCallback OR %GenerateChangeCallback OR %GenerateEditCallback)
+      #PROMPT('&Include OCX.CLW in global MAP',CHECK),%IncludeOCXMap,DEFAULT(1),AT(10)
+    #ENDENABLE
+  #ENDBOXED
+  #PROMPT('I&nclude OCXEVENT.CLW in global data section',CHECK),%IncludeOCXEvent,DEFAULT(1),AT(10)
+  #PROMPT('OLE &BLOB Field',FIELD),%OLEBlobField
+#ENDBOXED
+#ATSTART
+  #DECLARE(%OLEControl)
+  #DECLARE(%OLEShortName)
+  #FOR(%Control),WHERE(%ControlInstance=%ActiveTemplateInstance)
+    #SET(%OLEControl,%Control)
+  #ENDFOR
+  #SET(%OLEShortName,SUB(%OLEControl,2,LEN(%OLEControl)-1))
+#ENDAT
+#AT(%CustomGlobalDeclarations)
+  #IF(%GenerateEventCallback OR %GenerateChangeCallback OR %GenerateEditCallback)
+    #IF(%IncludeOCXMap)
+      #ADD(%CustomGlobalMapIncludes,'OCX.CLW')
+    #ENDIF
+  #ENDIF
+  #IF(%IncludeOCXEvent)
+    #ADD(%CustomGlobalDeclarationIncludes,'OCXEVENT.CLW')
+  #ENDIF
+#ENDAT
+#AT(%CustomModuleDeclarations)
+  #DECLARE(%TempOLEName)
+  #FOR(%Control),WHERE(%ControlInstance=%ActiveTemplateInstance)
+    #SET(%ValueConstruct,%Control)
+  #ENDFOR
+  #SET(%TempOLEName,SUB(%ValueConstruct,2,LEN(%ValueConstruct)-1))
+  #IF(%GenerateEventCallback)
+    #ADD(%CustomModuleMapModule,'CURRENT MODULE')
+    #SET(%ValueConstruct,%Procedure & %TempOLEName & 'EventHandler')
+    #ADD(%CustomModuleMapProcedure,%ValueConstruct)
+    #SET(%CustomModuleMapProcedurePrototype,'(*SHORT ref,SIGNED OLEControlFEQ,LONG OLEEvent),LONG')
+  #ENDIF
+  #IF(%GenerateChangeCallback)
+    #ADD(%CustomModuleMapModule,'CURRENT MODULE')
+    #SET(%ValueConstruct,%Procedure & %TempOLEName & 'PropChange')
+    #ADD(%CustomModuleMapProcedure,%ValueConstruct)
+    #SET(%CustomModuleMapProcedurePrototype,'(SIGNED OLEControlFEQ,STRING ChangedProperty)')
+  #ENDIF
+  #IF(%GenerateEditCallback)
+    #ADD(%CustomModuleMapModule,'CURRENT MODULE')
+    #SET(%ValueConstruct,%Procedure & %TempOLEName & 'PropEdit')
+    #ADD(%CustomModuleMapProcedure,%ValueConstruct)
+    #SET(%CustomModuleMapProcedurePrototype,'(SIGNED OLEControlFEQ,STRING EditedProperty),LONG')
+  #ENDIF
+#ENDAT
+#AT(%AfterWindowOpening)
+#EMBED(%BeforeOLEInitialization,'Before initializing OLE control'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  #IF(%OLEBlobField)
+IF %OLEBlobField{PROP:size} > 0
+  #EMBED(%BeforeAssignToOLE,'Before assigning BLOB to OLE Control'),WHERE(%OLEBlobField),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  %OLEControl{PROP:Blob} = %OLEBlobField{PROP:handle}
+  #EMBED(%AfterAssignToOLE,'After assigning BLOB to OLE Control'),WHERE(%OLEBlobField),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+    #SUSPEND
+#?ELSE
+  #EMBED(%NoBlobContents,'When the OLE Blob is Empty'),WHERE(%OLEBlobField),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+    #RESUME
+END
+  #ENDIF
+  #IF(%GenerateEventCallback)
+    #SET(%ValueConstruct,%Procedure & %OLEShortName & 'EventHandler')
+OCXRegisterEventProc(%OLEControl,%ValueConstruct)
+  #ENDIF
+  #IF(%GenerateChangeCallback)
+    #SET(%ValueConstruct,%Procedure & %OLEShortName & 'PropChange')
+OCXRegisterPropChange(%OLEControl,%ValueConstruct)
+  #ENDIF
+  #IF(%GenerateEditCallback)
+    #SET(%ValueConstruct,%Procedure & %OLEShortName & 'PropEdit')
+OCXRegisterPropEdit(%OLEControl,%ValueConstruct)
+  #ENDIF
+#EMBED(%AfterOLEInitialization,'After initializing OLE control'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+#ENDAT
+#AT(%ControlOtherEventHandling,%OLEControl)
+  #SUSPEND
+#?IF EVENT()=EVENT:Accepted
+  #EMBED(%BeforeBlobAssign,'Before assigning from OLE control to BLOB'),WHERE(%OLEBlobField),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+    #IF(%OLEBlobField)
+  %OLEBlobField{PROP:handle} = %OLEControl{PROP:Blob}
+    #ENDIF
+  #EMBED(%AfterBlobAssign,'After assigning from OLE control to BLOB'),WHERE(%OLEBlobField),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+#?END
+  #RESUME
+#ENDAT
+#AT(%LocalProcedures)
+  #IF(%GenerateEventCallback)
+    #SET(%ValueConstruct,%Procedure & %OLEShortName & 'EventHandler')
+!---------------------------------------------------
+%ValueConstruct FUNCTION(*SHORT ref,SIGNED OLEControlFEQ,LONG OLEEvent)
+#EMBED(%EventHandlerDeclaration,'OLE Event Handler, Declaration Section'),DATA,%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  CODE
+#EMBED(%EventHandlerCode,'OLE Event Handler, Code Section'),LABEL,%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  RETURN(True)
+  #ENDIF
+  #IF(%GenerateChangeCallback)
+    #SET(%ValueConstruct,%Procedure & %OLEShortName & 'PropChange')
+!---------------------------------------------------
+%ValueConstruct PROCEDURE(SIGNED OLEControlFEQ,STRING ChangedProperty)
+#EMBED(%PropChangeDeclaration,'OLE Prop Change Callback, Declaration Section'),DATA,%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  CODE
+#EMBED(%PropChangeCode,'OLE Prop Change Callback, Code Section'),LABEL,%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  #ENDIF
+  #IF(%GenerateEditCallback)
+    #SET(%ValueConstruct,%Procedure & %OLEShortName & 'PropEdit')
+!---------------------------------------------------
+%ValueConstruct FUNCTION(SIGNED OLEControlFEQ,STRING EditedProperty)
+#EMBED(%PropEditDeclaration,'OLE Prop Edit Callback, Declaration Section'),DATA,%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  CODE
+#EMBED(%PropEditCode,'OLE Prop Edit Callback, Code Section'),LABEL,%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActivetemplateInstanceDescription)
+  RETURN(0)
+  #ENDIF
+#ENDAT

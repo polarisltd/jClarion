@@ -1,0 +1,82 @@
+#GROUP(%ReportEventOpenWindow)
+#EMBED(%BeforeOpeningReport,'Before Opening Report')
+OPEN(%Report)
+#EMBED(%AfterOpeningReport,'After Opening Report')
+#IF(%EnablePrintPreview)
+%Report{Prop:Preview} = PrintPreviewImage
+#ENDIF
+#!--------------------------------------------
+#GROUP(%ReportEventTimer)
+#DECLARE(%ReportPrefix)
+#SET(%ReportPrefix,EXTRACT(%ReportStatement,'PRE'))
+#IF(%ReportPrefix)
+  #SET(%ReportPrefix,SUB(%ReportPrefix,5,LEN(%ReportPrefix)-5))
+#ENDIF
+#INSERT(%StandardFormula,'Before Print Detail')
+#EMBED(%ReportBeforeLookups,'Before Lookups')
+#INSERT(%StandardFormula,'Before Lookups')
+#INSERT(%StandardSecondaryLookups)
+#INSERT(%StandardFormula,'After Lookups')
+#EMBED(%ReportAfterLookups,'After Lookups')
+#EMBED(%BeforePrint,'Before Printing Detail Section')
+PrintSkipDetails = FALSE
+#FOR(%ReportControl), WHERE( ~%ReportControl AND %ReportControlType = 'DETAIL' AND %DetailFilter )
+  #ERROR('A filtered report detail section must have a field equate label')
+  #BREAK
+#ENDFOR
+#! Do the filtered detail printing
+#FOR ( %ReportControl ), WHERE( %ReportControlType = 'DETAIL' AND %DetailFilter )
+IF %DetailFilter THEN
+  #IF (%DetailFilterExclusive)
+  PrintSkipDetails = TRUE
+  #ENDIF
+  #IF (%ReportPrefix)
+  PRINT(%ReportPrefix:%ReportControlLabel)
+  #ELSE
+  PRINT(%ReportControlLabel)
+  #ENDIF
+END
+#ENDFOR
+
+#! Print any unfiltered details if allowed
+#SUSPEND
+#?IF ~PrintSkipDetails THEN
+#FOR ( %ReportControl ), WHERE( %ReportControlType = 'DETAIL' AND ~%DetailFilter )
+  #IF (%ReportPrefix)
+  PRINT(%ReportPrefix:%ReportControlLabel)
+  #ELSE
+  PRINT(%ReportControlLabel)
+  #ENDIF
+#ENDFOR
+#?END
+#RESUME
+
+#EMBED(%AfterPrint,'After Printing Detail Section')
+#!--------------------------------------------
+#GROUP(%ReportEndOfProcedure)
+#IF(%EnableQuickScan)
+#EMBED(%BeforeTurnQuickScanOff,'Before Turning QuickScan Off'),WHERE(%EnableQuickScan)
+IF SEND(%Primary,'QUICKSCAN=off').
+#FOR(%Secondary),WHERE(%SecondaryType = '1:MANY')
+IF SEND(%Secondary,'QUICKSCAN=off').
+#ENDFOR
+#EMBED(%AfterTurnQuickScanOff,'After Turning QuickScan Off'),WHERE(%EnableQuickScan)
+#ENDIF
+#IF(%EnablePrintPreview)
+#EMBED(%BeforePrintPreview,'Before Print Preview'),WHERE(%EnablePrintPreview)
+IF LocalResponse = RequestCompleted
+  ENDPAGE(%Report)
+  ReportPreview(PrintPreviewQueue)
+  IF GlobalResponse = RequestCompleted
+    %Report{PROP:FlushPreview} = True
+  END
+END
+#EMBED(%BeforeClosingReport,'Before Closing Report')
+CLOSE(%Report)
+#EMBED(%AfterClosingReport,'After Closing Report')
+FREE(PrintPreviewQueue)
+#ELSE
+#EMBED(%BeforeClosingReport,'Before Closing Report')
+CLOSE(%Report)
+#EMBED(%AfterClosingReport,'After Closing Report')
+#ENDIF

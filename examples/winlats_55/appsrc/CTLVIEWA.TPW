@@ -1,0 +1,162 @@
+#!----------------------------------------------------------------
+#CONTROL(ASCIISearchButton,'Search for a string in an ASCII Box'),REQ(ASCIIBox),HLP('~TPLControlASCIISearchButton')
+       CONTROLS
+         BUTTON('Find...'),AT(,,42,12),USE(?ASCIISearch)
+         BUTTON('Find Next'),AT(42,0,42,12),USE(?ASCIIRepeat)
+       END
+#ATSTART
+  #DECLARE(%SearchControl)
+  #DECLARE(%RepeatControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #IF(%ControlOriginal = '?ASCIISearch')
+      #SET(%SearchControl,%Control)
+    #ELSE
+      #SET(%RepeatControl,%Control)
+    #ENDIF
+  #ENDFOR
+#ENDAT
+#AT(%DataSectionBeforeWindow)
+%InstancePrefix:WholeWord      BYTE
+%InstancePrefix:Matchcase      BYTE
+%InstancePrefix:Direction      CSTRING('Down')
+%InstancePrefix:SearchString   CSTRING(80)
+%InstancePrefix:CurrentPointer LONG
+%InstancePrefix:TextLocation   LONG
+%InstancePrefix:SearchWindow WINDOW('Searching Text...'),AT(43,25,267,60),FONT('MS Sans Serif',8,,),GRAY
+                         PROMPT('Find What:'),AT(11,5,,),USE(?%InstancePrefix:TextPrompt)
+                         ENTRY(@s20),AT(53,5,149,15),USE(%InstancePrefix:SearchString)
+                         CHECK('Match &Whole Word Only'),AT(11,30,,),USE(%InstancePrefix:WholeWord)
+                         CHECK('Match &Case'),AT(11,44,,),USE(%InstancePrefix:MatchCase)
+                         OPTION('Direction'),AT(111,28,81,26),USE(%InstancePrefix:Direction),BOXED
+                           RADIO('Up'),AT(117,39,,)
+                           RADIO('Down'),AT(149,39,,)
+                         END
+                         BUTTON('Find'),AT(208,5,53,15),USE(?%InstancePrefix:Search),DEFAULT
+                         BUTTON('Cancel'),AT(208,25,53,15),USE(?%InstancePrefix:CancelSearch)
+                         END
+#ENDAT
+#AT(%BeforeAccept)
+  #IF(%RepeatControl)
+%RepeatControl{Prop:Disable}=True
+  #ENDIF
+#ENDAT
+#AT(%ControlEventHandling,%SearchControl,'Accepted')
+OPEN(%InstancePrefix:SearchWindow)
+ACCEPT
+  CASE EVENT()
+  OF Event:OpenWindow
+    CLEAR(%InstancePrefix:SearchString)
+  OF Event:CloseWindow
+    CLOSE(%InstancePrefix:SearchWindow)
+  OF Event:Accepted
+    CASE FIELD()
+    OF ?%InstancePrefix:Search
+      LocalResponse = RequestCompleted
+      POST(Event:CloseWindow)
+    OF ?%InstancePrefix:CancelSearch
+      LocalResponse = RequestCancelled
+      POST(Event:CloseWindow)
+    END
+  END
+END
+IF LocalResponse = RequestCompleted
+  DO %InstancePrefix:FindText
+  #IF(%RepeatControl)
+  %RepeatControl{Prop:Disable}=False
+ELSE
+  %RepeatControl{Prop:Disable}=True
+  #ENDIF
+END
+#ENDAT
+#AT(%ControlEventHandling,%RepeatControl,'Accepted')
+DO %InstancePrefix:FindText
+#ENDAT
+#AT(%ProcedureRoutines)
+!----------------------------------------------------------------
+%InstancePrefix:FindText ROUTINE
+!|
+!| This routine is called to read the contents of the queue %ASCIIQueue
+!| and look at each line for the text in the variable %InstancePrefix:SearchString.
+!|
+  %InstancePrefix:CurrentPointer = CHOICE(%ASCIIControl)
+  SETCURSOR(CURSOR:Wait)
+  LOOP
+    IF %InstancePrefix:Direction = 'Down'
+      %InstancePrefix:CurrentPointer += 1
+      IF %InstancePrefix:CurrentPointer = RECORDS(%ASCIIQueue)
+        IF StandardWarning(Warn:EndOfASCIIQueue,'Down') = Button:Yes
+          %InstancePrefix:CurrentPointer = 1
+        ELSE
+          BREAK
+        END
+      END
+    ELSE
+      %InstancePrefix:CurrentPointer -= 1
+      IF %InstancePrefix:CurrentPointer = 0
+        IF StandardWarning(Warn:EndOfASCIIQueue,'Up') = Button:Yes
+          %InstancePrefix:CurrentPointer = RECORDS(%ASCIIQueue)
+        ELSE
+          BREAK
+        END
+      END
+    END
+    GET(%ASCIIQueue,%InstancePrefix:CurrentPointer)
+    IF %InstancePrefix:MatchCase
+      %InstancePrefix:TextLocation = INSTRING(%InstancePrefix:SearchString,%ASCIIQueue,1,1)
+    ELSE
+      %InstancePrefix:TextLocation = INSTRING(UPPER(%InstancePrefix:SearchString),UPPER(%ASCIIQueue),1,1)
+    END
+    IF NOT %InstancePrefix:TextLocation
+      CYCLE
+    END
+    IF %InstancePrefix:WholeWord
+      IF %InstancePrefix:TextLocation > 1
+        IF SUB(%ASCIIQueue,%InstancePrefix:TextLocation-1,1)
+          CYCLE
+        END
+      END
+      IF %InstancePrefix:TextLocation+LEN(CLIP(%InstancePrefix:SearchString))<LEN(CLIP(%ASCIIQueue))
+        IF SUB(%ASCIIQueue,%InstancePrefix:TextLocation+LEN(CLIP(%InstancePrefix:SearchString)),1)
+          CYCLE
+        END
+      END
+    END
+    %ASCIIControl{Prop:SelStart} = %InstancePrefix:CurrentPointer
+    BREAK
+  END
+  SETCURSOR
+#ENDAT
+#!----------------------------------------------------------------
+#CONTROL(ASCIIPrintButton,'Print the contents of an ASCII Box'),REQ(ASCIIBox),HLP('~TPLControlASCIIPrintButton')
+       CONTROLS
+         BUTTON('Print'),USE(?ASCIIPrint)
+       END
+#ATSTART
+  #DECLARE(%PrintControl)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #SET(%PrintControl,%Control)
+  #ENDFOR
+#ENDAT
+#AT(%DataSectionBeforeWindow)
+%InstancePrefix:ReportCounter   LONG
+%InstancePrefix:Report REPORT,AT(1000,2500,6000,6000),FONT('Fixedsys',9,,FONT:regular),THOUS,PRE(%InstancePrefix)
+Detail                 DETAIL,AT(,,,167)
+                         STRING(@s255),AT(104,0,,),USE(%ASCIIQueue)
+                       END
+                     END
+#ENDAT
+#AT(%ControlEventHandling,%PrintControl,'Accepted')
+SETCURSOR(CURSOR:Wait)
+%InstancePrefix:ReportCounter = 0
+OPEN(%InstancePrefix:Report)
+LOOP
+  %InstancePrefix:ReportCounter += 1
+  IF %InstancePrefix:ReportCounter > RECORDS(%ASCIIQueue)
+    BREAK
+  END
+  GET(%ASCIIQueue,%InstancePrefix:ReportCounter)
+  PRINT(%InstancePrefix:DETAIL)
+END
+CLOSE(%InstancePrefix:Report)
+SETCURSOR
+#ENDAT

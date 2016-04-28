@@ -1,0 +1,274 @@
+#PROCEDURE(Process,'Sequential Record Processor'),PRIMARY('File(s) to Process',OPTKEY),HLP('~TPLProcProcess')
+#! Note that range limits are considered to be loop invariant
+#! This reduces code and loop overhead and allows on-server filters
+#! To use fresh limits an explicit filter re-assignment is needed
+#LOCALDATA
+RejectRecord         LONG
+LocalRequest         LONG
+LocalResponse        LONG
+FilesOpened          LONG
+WindowOpened         LONG
+RecordsToProcess     LONG,AUTO
+RecordsProcessed     LONG,AUTO
+RecordsPerCycle      LONG,AUTO
+RecordsThisCycle     LONG,AUTO
+PercentProgress      BYTE
+RecordStatus         BYTE,AUTO
+#ENDLOCALDATA
+#PROMPT('P&arameters:', @s255), %Parameters
+#ENABLE(%ProcedureType='FUNCTION')
+  #PROMPT('Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#BUTTON('&Process Properties'),AT(10,,180)
+  #SHEET
+    #TAB('&General'),HLP('~TPLProcProcess_General')
+      #PROMPT('Window Message:',@S40),%WindowMessage
+      #PROMPT('Action for Process:',DROP('No record action|PUT record|DELETE record')),%ProcessAction,DEFAULT('No record action')
+      #ENABLE(%ProcessAction <> 'No record action')
+        #PROMPT('Use RI constraints on action',CHECK),%RIProcessAction,AT(10)
+        #DISPLAY('NOTE: Setting this flag will cause the "Action for Process" to occur only to the primary file. No action will occur on secondary files.'),AT(10,,180,30)
+      #ENDENABLE
+      #PROMPT('Quick-Scan Records',CHECK),%EnableQuickScan,DEFAULT(1)
+      #PROMPT('&Record Filter:',@S255),%RecordFilter
+      #ENABLE(%RecordFilter OR %RangeField)
+        #PROMPT('Approx. Record Count:',@N6),%ApproxRecordCount,REQ
+      #ENDENABLE
+    #ENDTAB
+    #TAB('Range Limits'),WHERE(%PrimaryKey),HLP('~TPLProcProcess_Range_Limits')
+      #ENABLE(%PrimaryKey),CLEAR
+        #PROMPT('Range Limit &Field:',COMPONENT(%PrimaryKey)),%RangeField
+      #ENDENABLE
+      #ENABLE(%RangeField)
+        #PROMPT('Range Limit &Type:',DROP('Current Value|Single Value|Range of Values|File Relationship')),%RangeLimitType,DEFAULT('Current Value')
+        #BOXED('Range Limit Boundary:'),WHERE(%RangeLimitType='Single Value'),AT(,60)
+          #PROMPT('&Range Limit Value:',FIELD),%RangeLimit
+        #ENDBOXED
+        #BOXED('Range Limit Boundaries:'),WHERE(%RangeLimitType='Range of Values'),AT(,60)
+          #PROMPT('&Low Limit Value:',FIELD),%RangeLow
+          #PROMPT('&High Limit Value:',FIELD),%RangeHigh
+        #ENDBOXED
+        #BOXED('Range limiting file'),WHERE(%RangeLimitType='File Relationship'),AT(,60)
+          #PROMPT('&Related file:',FILE),%RangeFile
+        #ENDBOXED
+      #ENDENABLE
+    #ENDTAB
+    #TAB('&Range Limits'),WHERE(NOT %PrimaryKey),HLP('~TPLProcProcess_Range_Limits')
+      #DISPLAY('To use a range limit, your process must use a key. You will not be able to specify a range limit until you''ve specified the process'' key.'),AT(10,30,175,30)
+    #ENDTAB
+    #TAB('&Hot Fields'),HLP('~TPLProcProcess_Hot_Fields')
+      #BUTTON('Hot Fields'),MULTI(%HotFields,%HotField),INLINE,HLP('~TPLProcProcess_Hot_Fields')
+        #PROMPT('Hot Field:',FIELD),%HotField
+        #PROMPT('BIND Field',CHECK),%HotFieldBound
+      #ENDBUTTON
+    #ENDTAB
+  #ENDSHEET
+#ENDBUTTON
+#DECLARE(%ListView)
+#SET(%ListView,'Process:View')
+#DECLARE(%QueueField),UNIQUE
+#DECLARE(%QueueFieldAssignment,%QueueField)
+#DECLARE(%ProcessFilter)
+#DECLARE(%InstancePrefix)
+#DECLARE(%Temp1)
+#DECLARE(%Temp2)
+#CASE(%RangeLimitType)
+#OF('Range of Values')
+  #SET(%Temp1,%RangeLow)
+  #SET(%Temp2,%RangeHigh)
+#OF('Single Value')
+  #SET(%Temp1,%RangeLimit)
+#OF('File Relationship')
+  #SET(%Temp1,%RangeFile)
+#ENDCASE
+#INSERT(%StandardViewFilter,%RecordFilter,%PrimaryKey,%RangeField,%RangeLimitType,'Process:Save:',%Temp1,%Temp2,'Construct')
+#SET(%ProcessFilter,%ValueConstruct)
+#DECLARE(%ListViewBoundField),UNIQUE
+#FOR (%QueueField)
+  #SET(%QueueFieldAssignment,%QueueField)
+  #ADD(%ListViewBoundField,%QueueField)
+#ENDFOR
+#FOR (%HotFields)
+  #ADD(%QueueField,%HotField)
+  #SET(%QueueFieldAssignment,%HotField)
+  #IF (%HotFieldBound)
+    #ADD(%ListViewBoundField,%HotField)
+  #ENDIF
+#ENDFOR
+#FOR (%Formula), WHERE( ITEMS(%FormulaField) )
+  #FOR (%FormulaField)
+    #ADD(%QueueField,%FormulaField)
+    #SET(%QueueFieldAssignment,%FormulaField)
+  #ENDFOR
+#ENDFOR
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','After Record Retrieved, Before Lookups')
+#CLASS('After Lookups','After Record Retrieved, After Lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#CLASS('Before Range Check','In Validate Record ROUTINE, Before Range Limit Code')
+#CLASS('Before Filter Check','In Validate Record ROUTINE, Before Filter Code')
+#INSERT(%FileControlInitialize)
+#EMBED(%GatherSymbols,'Gather Template Symbols'),HIDE
+%Procedure %ProcedureType%Parameters
+#INSERT(%StandardViewFilter,%RecordFilter,%PrimaryKey,%RangeField,%RangeLimitType,'Process:Save:',%Temp1,%Temp2,'Declare')
+#INSERT(%ProcessDeclarations)
+#INSERT(%ConstructView)
+#INSERT(%StandardProgressWindow)
+  CODE
+  PUSHBIND
+  #EMBED(%ProcedureSetup,'Procedure Setup')
+  DO BindFields
+  #INSERT(%StandardViewFilter,%RecordFilter,%PrimaryKey,%RangeField,%RangeLimitType,'Process:Save:',%Temp1,%Temp2,'Bind')
+  LocalRequest = GlobalRequest
+  LocalResponse = RequestCancelled
+  CLEAR(GlobalRequest)
+  CLEAR(GlobalResponse)
+  #INSERT(%StandardFormula,'Procedure Setup')
+  DO OpenFiles
+  #EMBED(%BeforeAccept,'Preparing to Process the Window')
+  #INSERT(%StandardViewFilter,%RecordFilter,%PrimaryKey,%RangeField,%RangeLimitType,'Process:Save:',%Temp1,%Temp2,'Save')
+  #MESSAGE('Accept Handling',3)
+  #IF(%PrimaryKey)
+    #IF(%RecordFilter OR %RangeField)
+  RecordsToProcess = %ApproxRecordCount
+    #ELSE
+  RecordsToProcess = RECORDS(%Primary)
+    #ENDIF
+  RecordsPerCycle = 25
+  #ELSE
+    #IF(%RecordFilter)
+  RecordsToProcess = %ApproxRecordCount
+    #ELSE
+  RecordsToProcess = BYTES(%Primary)
+    #ENDIF
+  RecordsPerCycle = 1000
+  #ENDIF
+  RecordsProcessed = 0
+  PercentProgress = 0
+  #EMBED(%BeforeOpeningWindow,'Before Opening Progress Window')
+  OPEN(ProgressWindow)
+  #CASE(%ProcessAction)
+  #OF('Put Record')
+  ProgressWindow{Prop:Text} = 'Updating Records'
+  #OF('Delete Record')
+  ProgressWindow{Prop:Text} = 'Deleting Records'
+  #ELSE
+  ProgressWindow{Prop:Text} = 'Processing Records'
+  #ENDCASE
+  ?Progress:PctText{Prop:Text} = '0% Completed'
+  #IF(SUB(%WindowMessage,1,1)='!')
+    #SET(%ValueConstruct,SUB(%WindowMessage,2,LEN(%WindowMessage)-1))
+  ?Progress:UserString{Prop:Text}=%ValueConstruct
+  #ELSE
+  ?Progress:UserString{Prop:Text}='%'WindowMessage'
+  #ENDIF
+  #EMBED(%AfterOpeningWindow,'After Opening Progress Window')
+  #IF(%EnableQuickScan)
+  #EMBED(%BeforeTurnQuickScanOn,'Before Turning QuickScan On'),WHERE(%EnableQuickScan)
+  SEND(%Primary,'QUICKSCAN=on')
+    #FOR(%Secondary),WHERE(%SecondaryType = '1:MANY')
+  SEND(%Secondary,'QUICKSCAN=on')
+    #ENDFOR
+  #EMBED(%AfterTurnQuickScanOn,'After Turning QuickScan On'),WHERE(%EnableQuickScan)
+  #ENDIF
+  ACCEPT
+    CASE EVENT()
+    OF Event:OpenWindow
+      #INSERT(%ProcessSaveLimits)
+    OF Event:Timer
+      RecordsThisCycle = 0
+      LOOP WHILE RecordsThisCycle < RecordsPerCycle
+        #INSERT(%ProcessEventTimer)
+        LOOP
+          #EMBED(%BeforeSubsequentRead,'Before subsequent record retrieval')
+          DO GetNextRecord
+          #EMBED(%AfterSubsequentRead,'After subsequent record retrieval')
+          DO ValidateRecord
+          CASE RecordStatus
+            OF Record:OutOfRange
+              LocalResponse = RequestCancelled
+              BREAK
+            OF Record:OK
+              BREAK
+          END
+        END
+        IF LocalResponse = RequestCancelled
+          LocalResponse = RequestCompleted
+          BREAK
+        END
+        LocalResponse = RequestCancelled
+      END
+      IF LocalResponse = RequestCompleted
+        ?Progress:PctText{Prop:Text} = 'Process Completed'
+        DISPLAY(?Progress:PctText)
+        POST(Event:CloseWindow)
+      END
+    END
+    CASE FIELD()
+    OF ?Progress:Cancel
+      CASE Event()
+      OF Event:Accepted
+        #EMBED(%ProgressCancel,'When the process is cancelled')
+        LocalResponse = RequestCancelled
+        POST(Event:CloseWindow)
+      END
+    END
+  END
+  #INSERT(%ProcessEndOfProcedure)
+  DO ProcedureReturn
+
+#!---------------------------------------------------------------------
+BindFields ROUTINE
+  #FOR( %ListViewBoundField )
+    #FIND(%Field,%ListViewBoundField)
+    #IF (NOT %FieldFile OR %FieldName)
+  BIND('%ListViewBoundField',%ListViewBoundField)
+    #ENDIF
+  #ENDFOR
+
+#!---------------------------------------------------------------------
+OpenFiles ROUTINE
+  #INSERT(%FileControlOpen)
+#!---------------------------------------------------------------------
+ProcedureReturn ROUTINE
+!|
+!| This routine provides a common procedure exit point for all template
+!| generated procedures.
+!|
+!| First, all of the files opened by this procedure are closed.
+!|
+!| Next, GlobalResponse is assigned a value to signal the calling procedure
+!| what happened in this procedure.
+!|
+!| Next, we replace the BINDings that were in place when the procedure initialized
+!| (and saved with PUSHBIND) using POPBIND.
+!|
+#IF(%ReturnValue)
+!| Finally, we return to the calling procedure, passing %ReturnValue back.
+#ELSE
+!| Finally, we return to the calling procedure.
+#ENDIF
+!|
+  #INSERT(%FileControlClose)
+  #EMBED(%EndOfProcedure,'End of Procedure')
+  #INSERT(%StandardFormula,'Procedure Exit')
+  IF LocalResponse
+    GlobalResponse = LocalResponse
+  ELSE
+    GlobalResponse = RequestCancelled
+  END
+  POPBIND
+  #IF(%ReturnValue)
+  RETURN(%ReturnValue)
+  #ELSE
+  RETURN
+  #ENDIF
+#INSERT(%ProcessValidateRecord)
+#INSERT(%ProcessGetRecords)
+#!---------------------------------------------------------------------
+#EMBED(%ProcRoutines,'Procedure Routines'),LABEL
+#EMBED(%ProcedureRoutines,'Procedure Routines'),HIDE
+#EMBED(%LocalProcedures,'Local Procedures'),HIDE
+#INCLUDE('GPProces.TPW')

@@ -1,0 +1,1661 @@
+#PROCEDURE(Window,'Generic Window Handler'),WINDOW,HLP('~TPLProcWindow')
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','Refresh Window ROUTINE, before lookups')
+#CLASS('After Lookups','Refresh Window ROUTINE, after lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CASE(%ProcedureTemplate)
+  #OF('Report')
+  #OROF('Process')
+    #CALL(%SetClassDefaults, 'Default','ThisWindow',%ReportManagerType)
+  #ELSE
+    #CALL(%SetClassDefaults, 'Default','ThisWindow',%WindowManagerType)
+    #CALL(%SetClassDefaults, 'WindowToolbar','Toolbar',%ToolbarClass)
+  #ENDCASE
+#ENDPREPARE
+#BOXED('Default WindowManager prompts'),AT(0,0),WHERE(%False),HIDE
+  #INSERT(%OOPHiddenPrompts)
+#ENDBOXED
+#PROMPT('P&arameters:',@s255),%Parameters
+#ENABLE(%ProcedureReturnType)
+  #PROMPT('Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#BUTTON(%GetWindowBehaviorButtonText()&' &Behavior'),AT(,,180)
+  #SHEET,HSCROLL
+    #TAB('&General'),HLP('~TPLProcWindow_General')
+      #INSERT(%GeneralProcedurePrompts)
+    #ENDTAB
+    #TAB('&Classes'),HLP('~TPLProcWindow_Classes')
+      #WITH(%ClassItem,'Default')
+        #INSERT(%ClassPrompts)
+      #ENDWITH
+      #ENABLE(~(%ProcedureTemplate='Report' OR %ProcedureTemplate='Process')),HIDE
+        #BUTTON('&Toolbar Class'),AT(,,180)
+          #WITH(%ClassItem,'WindowToolbar')
+            #INSERT(%ClassPrompts)
+          #ENDWITH
+        #ENDBUTTON
+      #ENDENABLE
+    #ENDTAB
+  #ENDSHEET
+#ENDBUTTON
+#DECLARE(%Indentation,LONG)
+#DECLARE(%TestValue)
+#DECLARE(%ProcsCalled),MULTI
+#CALL(%ReadABCFiles)
+#DECLARE(%WindowManager)
+#DECLARE(%ToolbarObject)
+#CASE(%ProcedureTemplate)
+#OF('Report')
+#OROF('Process')
+  #CALL(%SetClassDefaults, 'Default','ThisWindow',%ReportManagerType)
+  #SET(%WindowManager, %ThisObjectName)
+#ELSE
+  #CALL(%SetClassDefaults, 'Default','ThisWindow',%WindowManagerType)
+  #SET(%WindowManager, %ThisObjectName)
+  #CALL(%SetClassDefaults, 'WindowToolbar','Toolbar',%ToolbarClass)
+  #SET(%ToolbarObject, %ThisObjectName)
+#ENDCASE
+#DECLARE(%MenuBars),UNIQUE
+#FOR(%Control),WHERE(%Control AND %ControlType = 'MENUBAR')
+  #ADD(%MenuBars, %Control)
+#ENDFOR
+#!
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#!
+#AT(%GatherObjects)
+#IF(~(%ProcedureTemplate = 'Process' OR %ProcedureTemplate = 'Report'))     #! These don't have toolbars
+  #CALL(%AddObjectList, 'WindowToolbar')
+#ENDIF
+#CALL(%AddObjectList, 'Default')
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE')
+#PRIORITY(500),DESCRIPTION('Enter procedure scope')
+GlobalErrors.SetProcedureName('%Procedure')
+#PRIORITY(6000),DESCRIPTION('Setup Toolbar Object')
+#IF(~(%ProcedureTemplate='Report' OR %ProcedureTemplate='Process'))
+SELF.AddItem(%ToolbarObject)
+#ENDIF
+#FOR(%Control),WHERE(%PreLookupProcedure)
+  #ADD(%ProcsCalled,%PreLookupProcedure)
+#ENDFOR
+#FOR(%Control),WHERE(%PostLookupProcedure)
+  #ADD(%ProcsCalled,%PostLookupProcedure)
+#ENDFOR
+#ENDAT
+#AT(%ControlEventHandling,,'Selected'),WHERE(%ControlType='ENTRY')
+  #IF(%PreLookupKey)
+    #FIND(%Field,%ControlUse)
+    #FOR(%Relation),WHERE(%RelationKey = %PreLookupKey)
+      #IF(%FileRelationType = 'MANY:1')
+        #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+          #IF(%FileKeyFieldLink = %PreLookupField)
+            #BREAK
+          #ENDIF
+%FileKeyFieldLink = %FileKeyField
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+    #FIND(%Key,%PreLookupKey)
+    #IF(%Key)
+%PreLookupField = %ControlUse
+IF Access:%File.TryFetch(%Key)
+  IF SELF.Run(%(INLIST(%PreLookupProcedure,%ProcsCalled)),SelectRecord) = RequestCompleted
+    #FIND(%Field,%ControlUse)
+    #FOR(%Relation),WHERE(%RelationKey = %PreLookupKey)
+      #IF(%FileRelationType = 'MANY:1')
+        #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+          #IF(%FileKeyFieldLink = %PreLookupField)
+            #BREAK
+          #ENDIF
+    %FileKeyField = %FileKeyFieldLink
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+    %ControlUse = %PreLookupField
+    #INSERT(%MoreAssign)
+    #SUSPEND
+#?ELSE
+    #INSERT(%ClearAssign)
+    #RESUME
+  END
+END
+%WindowManager.Reset
+    #ENDIF
+  #ENDIF
+#ENDAT
+#AT(%ControlEventHandling,,'Accepted'),WHERE(%ControlType='ENTRY')
+  #IF(%PostLookupKey)
+    #FIND(%Key,%PostLookupKey)
+    #IF(%Key)
+      #FIND(%Field,%ControlUse)
+      #IF(%PostLookupDuringValidate)
+        #IF(%FieldLookup)
+#INSERT(%GeneratePostLookupFieldCode)
+        #ELSE
+IF %ControlUse OR %Control{Prop:Req}
+  #INSERT(%GeneratePostLookupFieldCode)
+END
+        #ENDIF
+      #ELSE
+IF %Window{Prop:AcceptAll} = False
+        #IF(%FieldLookup)
+  #INSERT(%GeneratePostLookupFieldCode)
+        #ELSE
+  IF %ControlUse OR %Control{Prop:Req}
+    #INSERT(%GeneratePostLookupFieldCode)
+  END
+        #ENDIF
+END
+      #ENDIF
+%WindowManager.Reset(%ForceWindowRefresh)
+    #ELSIF(%ForceWindowRefresh)
+%WindowManager.Reset(1)
+    #ENDIF
+  #ELSIF(%ForceWindowRefresh)
+%WindowManager.Reset(1)
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Run','(USHORT Number,BYTE Request),BYTE')
+#SUSPEND
+#?IF SELF.Request = ViewRecord
+  #?ReturnValue = RequestCancelled
+#?ELSE
+  #?GlobalRequest = Request
+  #SUSPEND
+  #?CASE Number
+  #FOR(%ProcsCalled)
+  #SUSPEND
+  #?OF %(INSTANCE(%ProcsCalled))
+    #EMBED(%BeforeProcedureCall,'Before calling procedure'),%ProcsCalled,HIDE
+  #RESUME
+  #ENDFOR
+  #?END
+  #RESUME
+  #IF(ITEMS(%ProcsCalled)>1)
+  #?EXECUTE Number
+  #FOR(%ProcsCalled)
+    %ProcsCalled
+  #ENDFOR
+  #?END
+  #ELSIF(ITEMS(%ProcsCalled))
+  %ProcsCalled
+  #ENDIF
+  #?ReturnValue = GlobalResponse
+#?END
+#RESUME
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Kill','(),BYTE'),PRIORITY(5100),AUTO,DESCRIPTION('Short-stop if kill called already')
+#?IF ReturnValue THEN RETURN ReturnValue.
+#MESSAGE('File Control Close Code',3)
+#SUSPEND
+#?IF SELF.FilesOpened
+  #EMBED(%BeforeFileClose,'End of Procedure, Before Closing Files'),LEGACY
+#PRIORITY(6000),DESCRIPTION('Call Close file methods')
+#DECLARE(%CumFileOpen),MULTI
+#FOR(%ProcFilesUsed)
+  #IF(~INLIST(%ProcFilesUsed,%CumFileOpen))
+    #ADD (%CumFileOpen,%ProcFilesUsed)
+    #INSERT(%AddRelatedFiles,%CumFileOpen,%ProcFilesUsed)
+  #INSERT(%FileControlCloseFile,%ProcFilesUsed)
+  #ENDIF
+#ENDFOR
+#PRIORITY(7000)
+  #EMBED(%AfterFileClose,'End of Procedure, After Closing Files'),LEGACY
+#?END
+#RESUME
+#MESSAGE('Standard Window Closing',3)
+#EMBED(%BeforeWindowClosing,'Before Closing the Window'),LEGACY
+#PRIORITY(7500),DESCRIPTION('Save window information')
+#IF(%INIActive AND %INISaveWindow)
+IF SELF.Opened
+  INIMgr.Update('%Procedure',%Window)
+END
+#ENDIF
+#EMBED(%AfterWindowClosing,'After Closing the Window'),LEGACY
+#EMBED(%EndOfProcedure,'End of Procedure'),LEGACY
+#INSERT(%StandardFormula,'Procedure Exit')
+#PRIORITY(9500),DESCRIPTION('Leave procedure scope')
+GlobalErrors.SetProcedureName
+#!
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(4900),AUTO,DESCRIPTION('Snap-shot GlobalRequest')
+SELF.Request = GlobalRequest
+#PRIORITY(5100),DESCRIPTION('Set options from global values')
+IF ReturnValue THEN RETURN ReturnValue.
+#IF (%FirstField)
+SELF.FirstField = %FirstField
+#ENDIF
+SELF.VCRRequest &= VCRRequest
+SELF.Errors &= GlobalErrors
+#IF(%ResetOnGainFocus NOT=%SysResetOnGainFocus)
+SELF.ResetOnGainFocus = %ResetOnGainFocus
+#ENDIF
+#IF(%AutoToolbar NOT=%SysAutoToolbar )
+SELF.AutoToolbar = %AutoToolbar
+#ENDIF
+#IF(%AutoRefresh NOT=%SysAutoRefresh )
+SELF.AutoRefresh = %AutoRefresh
+#ENDIF
+#PRIORITY(6000),DESCRIPTION('Initialize the procedure')
+#EMBED(%ProcedureInitialize,'Initialize the Procedure'),LEGACY
+CLEAR(GlobalRequest)
+CLEAR(GlobalResponse)
+#IF(%EnableRunTimeTranslator)
+SELF.AddItem(Translator)
+#ENDIF
+#PRIORITY(7000),DESCRIPTION('Procedure setup standard formulas')
+#EMBED(%ProcedureSetup,'Procedure Setup'),LEGACY
+#INSERT(%StandardFormula,'Procedure Setup')
+#PRIORITY(7500),DESCRIPTION('Open Files')
+#MESSAGE('File Control Open Code',3)
+#EMBED(%BeforeFileOpen,'Beginning of Procedure, Before Opening Files'),LEGACY
+#DECLARE(%CumFileOpen),MULTI
+#DECLARE(%RelOpen),MULTI
+#SUSPEND
+#FOR(%ProcFilesUsed)
+  #IF(~INLIST(%ProcFilesUsed,%CumFileOpen))
+    #ADD (%CumFileOpen,%ProcFilesUsed)
+    #INSERT(%AddRelatedFiles,%CumFileOpen,%ProcFilesUsed)
+    #ADD(%RelOpen,%ProcFilesUsed)
+Relate:%ProcFilesUsed.Open
+  #ENDIF
+#ENDFOR
+#FOR(%OtherFiles),WHERE(~INLIST(%OtherFiles,%RelOpen))
+Access:%OtherFiles.UseFile
+#ENDFOR
+#?SELF.FilesOpened = True
+#RESUME
+#EMBED(%AfterFileOpen,'Beginning of Procedure, After Opening Files'),LEGACY
+#MESSAGE('Standard Window Opening',3)
+#EMBED(%BeforeWindowOpening,'Before Opening the Window'),LEGACY
+#EMBED(%BeforeOpeningWindow,'Before Opening Progress Window'),LEGACY
+#PRIORITY(8000),DESCRIPTION('Open the window')
+OPEN(%Window)
+SELF.Opened=True
+#PRIORITY(8050)
+#EMBED(%AfterWindowOpening,'After Opening the Window'),LEGACY
+#EMBED(%AfterOpeningWindow,'After Opening Progress Window'),LEGACY
+#PRIORITY(8250),DESCRIPTION('Restore from INI file')
+#EMBED(%BeforeWindowIniResize,'Before Resizing Window From INI file'),LEGACY
+#IF(%INIActive AND %INISaveWindow)
+INIMgr.Fetch('%Procedure',%Window)
+#EMBED(%AfterWindowIniResize,'After Resizing Window From INI file'),HIDE
+#ENDIF
+#PRIORITY(8500),DESCRIPTION('Process field templates')
+#FOR(%Control)
+#INSERT(%FieldTemplateWindowSetup)
+#ENDFOR
+#PRIORITY(9000),DESCRIPTION('Prepare Alert Keys')
+#EMBED(%PrepareAlerts,'Preparing Window Alerts'),LEGACY
+SELF.SetAlerts()
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'SetResponse','(BYTE Response)'),PRIORITY(2500)
+#SUSPEND
+#?IF Response = RequestCancelled
+  #EMBED(%ProgressCancel,'When the report is cancelled'),LEGACY
+  #EMBED(%CancelBeforeCloseWindow,'Cancel Before Post(Event:CloseWindow)'),HIDE
+  #EMBED(%CloseBeforeCloseWindow,'Close Before Post(Event:CloseWindow)'),HIDE
+#?END
+#RESUME
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Open','()'),PRIORITY(1000)
+#EMBED(%WindowInitializationCode,'Window Initialization Code'),LEGACY
+#EMBED(%BeforeWindowTranslation,'Before Window Runtime Translation'),WHERE(%EnableRunTimeTranslator),LEGACY
+#PRIORITY(7500)
+#EMBED(%AfterWindowTranslation,'After Window Runtime Translation'),WHERE(%EnableRunTimeTranslator),LEGACY
+#EMBED(%WindowInitializationAfterRefresh,'Window Initialization Code After Refresh'),HIDE
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Reset','(BYTE Force=0)'),PRIORITY(1000),DESCRIPTION('Short-stop in AcceptAll case')
+#?SELF.ForcedReset += Force
+#?IF %Window{Prop:AcceptAll} THEN RETURN.
+#PRIORITY(2000),DESCRIPTION('Standard Formulas')
+#EMBED(%RefreshWindowBeforeLookup,'Refresh Window routine, before lookups'),LEGACY
+#INSERT(%StandardFormula,'Before Lookups')
+#PRIORITY(3000),DESCRIPTION('Secondary Lookups')
+#INSERT(%StandardSecondaryLookups)
+#INSERT(%StandardFormula,'After Lookups')
+#PRIORITY(4000)
+#EMBED(%RefreshWindowAfterLookup,'Refresh Window routine, after lookups'),LEGACY
+#EMBED(%RefreshWindowBeforeDisplay,'Refresh Window routine, before DISPLAY()'),LEGACY
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Update','()'),PRIORITY(7500),DESCRIPTION('Secondary Lookups')
+#EMBED(%SyncWindowBeforeLookup,'Sync Record routine, before lookups'),LEGACY
+#INSERT(%StandardFormula,'Before Lookups')
+#INSERT(%StandardSecondaryLookups)
+#INSERT(%StandardFormula,'After Lookups')
+#EMBED(%SyncWindowAfterLookup,'Sync Record routine, after lookups'),LEGACY
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Ask','()'),PRIORITY(1000)
+#SUSPEND
+#EMBED(%BeforeAccept,'Preparing to Process the Window'),LEGACY
+#PRIORITY(7500)
+#EMBED(%AfterAccept,'After Processing the Window'),LEGACY
+#RESUME
+#ENDAT
+#AT(%WindowManagerMethodDataSection,'TakeEvent','(),BYTE')
+#?Looped BYTE
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeEvent','(),BYTE'),PRIORITY(2500),DESCRIPTION('Top of CYCLE/BREAK support')
+#?LOOP
+  #?IF Looped
+    #?RETURN Level:Notify
+  #?ELSE
+    #?Looped = 1
+  #?END
+  #EMBED(%AcceptLoopBeforeEventHandling,'Accept Loop, Before TakeEvent'),LEGACY
+  #PRIORITY(7500),DESCRIPTION('Bottom of CYCLE/BREAK support')
+  #SUSPEND
+  #?IF ReturnValue THEN RETURN ReturnValue .
+  #EMBED(%AcceptLoopAfterFieldHandling,'Accept Loop, After CASE FIELD() handling'),LEGACY
+  #EMBED(%AcceptLoopAfterEventHandling,'Accept Loop, After TakeEvent'),LEGACY
+  #RESUME
+  #?RETURN ReturnValue
+#?END
+#?ReturnValue = Level:Fatal
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodDataSection,'TakeWindowEvent','(),BYTE')
+#?Looped BYTE
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeWindowEvent','(),BYTE'),PRIORITY(2500),DESCRIPTION('Top of CYCLE/BREAK support')
+#?LOOP
+  #?IF Looped
+    #?RETURN Level:Notify
+  #?ELSE
+    #?Looped = 1
+  #?END
+  #SUSPEND
+  #?CASE EVENT()
+  #PRIORITY(3000),DESCRIPTION('Handlers for each event')
+  #EMBED(%EventCaseBeforeGenerated,'CASE EVENT() structure, before generated code'),LEGACY
+  #FOR(%WindowEvent)
+    #SUSPEND
+  #?OF EVENT:%WindowEvent
+    #EMBED(%WindowEventHandling,'Window Event Handling'),%WindowEvent,PRIORITY(1,4999),TREE('Window Events{{PRIORITY(3000)}|'&%WindowEvent)
+    #RESUME
+  #ENDFOR
+  #?END
+  #RESUME
+  #PRIORITY(7500),DESCRIPTION('CASE EVENT()')
+  #SUSPEND
+  #?CASE EVENT()
+  #FOR(%WindowEvent)
+    #SUSPEND
+  #?OF EVENT:%WindowEvent
+    #EMBED(%WindowEventHandling,'Window Event Handling'),%WindowEvent,PRIORITY(5000,10000),TREE('Window Events{{PRIORITY(3000)}|'&%WindowEvent)
+    #EMBED(%PostWindowEventHandling,'Window Event Handling, after generated code'),%WindowEvent,LEGACY
+    #RESUME
+  #ENDFOR
+  #SUSPEND
+  #PRIORITY(7550),DESCRIPTION('ELSE Clause')
+  #?ELSE
+    #EMBED(%WindowOtherEventHandling,'Other Window Event Handling'),LEGACY
+  #PRIORITY(7600)
+  #RESUME
+  #EMBED(%EventCaseAfterGenerated,'CASE EVENT() structure, after generated code'),LEGACY
+  #?END
+  #RESUME
+  #PRIORITY(8000),DESCRIPTION('Bottom of CYCLE/BREAK support')
+  #?RETURN ReturnValue
+#?END
+#?ReturnValue = Level:Fatal
+#!
+#ENDAT
+#!
+#!
+#AT(%WindowEventHandling),PRIORITY(4999),DESCRIPTION('Generated Code')
+#! This At is simply there to force the inclusion of the decsription in the Embed Tree
+#! This is important because without it, you have the remember the 'Magic value' of
+#! the priority
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodDataSection,'TakeAccepted','(),BYTE')
+#?Looped BYTE
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeAccepted','(),BYTE'),PRIORITY(2500),DESCRIPTION('Top of CYCLE/BREAK support'),AUTO
+#SUSPEND
+#?LOOP
+  #?IF Looped
+    #?RETURN Level:Notify
+  #?ELSE
+    #?Looped = 1
+  #?END
+  #PRIORITY(3000),DESCRIPTION('CASE ACCEPTED()')
+  #SUSPEND
+  #?CASE ACCEPTED()
+  #INSERT(%StandardAcceptedHandling,'',1)
+  #FOR(%MenuBars)                               #! generate items that have menu bars as parents
+  #INSERT(%StandardAcceptedHandling, %MenuBars)
+  #ENDFOR
+    #SUSPEND
+  #PRIORITY(3050),DESCRIPTION('ELSE Clause')
+  #?ELSE
+  #IF(%ProcedureTemplate='Frame')
+    #FOR(%Control),WHERE(%ControlType='MENU' AND %Control)
+    DO Menu::%(SUB(%Control,2,LEN(%Control))) #<!Process menu items on %Control menu
+    #ENDFOR
+  #ENDIF
+    #EMBED(%AcceptedEventOtherHandling,'ELSE Clause of CASE ACCEPTED()'),LEGACY
+  #PRIORITY(3100)
+  #RESUME
+  #?END
+  #RESUME
+  #PRIORITY(7500)
+  #SUSPEND
+  #?CASE ACCEPTED()
+  #INSERT(%StandardAcceptedHandling,'',2)
+  #?END
+  #RESUME
+  #?RETURN ReturnValue
+#?END
+#?ReturnValue = Level:Fatal
+#RESUME
+#ENDAT
+#!
+#AT(%WindowManagerMethodDataSection,'TakeFieldEvent','(),BYTE')
+#?Looped BYTE
+#ENDAT
+#!
+#!
+#AT(%ControlHandling,%Control),PRIORITY(1000)#!,WHERE(%HasGeneralEvent(%Control)) Would reduce embeditor noise but stops user defined events
+#EMBED(%ControlPreEventCaseHandling,'Control Handling, before event handling'),%Control,LEGACY
+#SUSPEND
+#?CASE EVENT()
+#PRIORITY(2500)
+  #IF(NOT %ControlMenu)
+    #FOR(%ControlEvent),WHERE(~%HasSpecialistHandler(%ControlEvent))
+      #SUSPEND
+#?OF EVENT:%ControlEvent
+  #EMBED(%ControlPreEventHandling,'Control Event Handling, before generated code'),%Control,%ControlEvent,LEGACY
+  #EMBED(%ControlEventHandling,'Control Event Handling'),%Control,%ControlEvent,PRIORITY(1,4999),TREE('Control Events{{PRIORITY(4000)}|'&%Control&'|'&%ControlEvent)
+      #RESUME
+    #ENDFOR
+  #ENDIF
+  #SUSPEND
+#?ELSE
+#PRIORITY(3000)
+  #EMBED(%ControlOtherEventHandling,'Other Control Event Handling'),%Control,LEGACY
+  #RESUME
+#?END
+#RESUME
+#PRIORITY(6000)
+#SUSPEND
+#?CASE EVENT()
+#PRIORITY(7500)
+  #IF(NOT %ControlMenu)
+    #FOR(%ControlEvent),WHERE(~%HasSpecialistHandler(%ControlEvent))
+      #SUSPEND
+#?OF EVENT:%ControlEvent
+  #INSERT(%FieldTemplateStandardHandling)
+  #EMBED(%ControlEventHandling,'Control Event Handling'),%Control,%ControlEvent,PRIORITY(5000,10000),TREE('Control Events{{PRIORITY(4000)}|'&%Control&'|'&%ControlEvent)
+  #EMBED(%ControlPostEventHandling,'Control Event Handling, after generated code'),%Control,%ControlEvent,LEGACY
+      #RESUME
+    #ENDFOR
+  #ENDIF
+  #SUSPEND
+#?ELSE
+#PRIORITY(8000)
+  #RESUME
+#?END
+#RESUME
+#EMBED(%ControlPostEventCaseHandling,'Control Handling, after event handling'),%Control,LEGACY
+#ENDAT
+#!
+#!
+#AT(%ControlEventHandling),PRIORITY(4999),DESCRIPTION('Generated Code')
+#! This At is simply there to force the inclusion of the decsription in the Embed Tree
+#! This is important because without it, you have the remember the 'Magic value' of
+#! the priority
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeFieldEvent','(),BYTE'),PRIORITY(2500)
+#?LOOP
+  #?IF Looped
+    #?RETURN Level:Notify
+  #?ELSE
+    #?Looped = 1
+  #?END
+  #PRIORITY(3000)
+  #EMBED(%AcceptLoopBeforeFieldHandling,'Accept Loop, Before CASE FIELD() handling'),LEGACY
+#SUSPEND
+#?CASE FIELD()
+#PRIORITY(3100)
+#EMBED(%FieldCaseBeforeGenerated,'CASE FIELD() structure, before generated code'),LEGACY
+#FOR(%Control),WHERE(%Control)
+  #SUSPEND
+#?OF %Control
+  #EMBED(%ControlHandling,'Control Handling'),%Control,PRIORITY(0,4999),TREE('Control Events|'&%Control&'|All Events{{PRIORITY(9000)}')
+  #RESUME
+#ENDFOR
+#?END
+#RESUME
+  #PRIORITY(6000)
+#SUSPEND
+#?CASE FIELD()
+  #PRIORITY(6100)
+#FOR(%Control),WHERE(%Control)
+  #SUSPEND
+#?OF %Control
+  #EMBED(%ControlHandling,'Control Handling'),%Control,PRIORITY(5000,10000),TREE('Control Events|'&%Control&'|All Events{{PRIORITY(9000)}')
+  #RESUME
+#ENDFOR
+  #PRIORITY(6200)
+#EMBED(%FieldCaseAfterGenerated,'CASE FIELD() structure, after generated code'),LEGACY
+#?END
+#RESUME
+  #PRIORITY(7500)
+  #?RETURN ReturnValue
+#?END
+#?ReturnValue = Level:Fatal
+#ENDAT
+#AT(%WindowManagerMethodDataSection,'TakeSelected','(),BYTE')
+#?Looped BYTE
+#ENDAT
+#!
+#!
+#AT(%ControlHandling),PRIORITY(4999),DESCRIPTION('Generated Code')
+#! This At is simply there to force the inclusion of the decsription in the Embed Tree
+#! This is important because without it, you have the remember the 'Magic value' of
+#! the priority
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeSelected','(),BYTE'),PRIORITY(2500)
+#?LOOP
+  #?IF Looped
+    #?RETURN Level:Notify
+  #?ELSE
+    #?Looped = 1
+  #?END
+  #PRIORITY(3000)
+  #INSERT(%StandardSpecialistHandling,'Selected',1)
+  #PRIORITY(7500)
+  #INSERT(%StandardSpecialistHandling,'Selected',2)
+  #?RETURN ReturnValue
+#?END
+#?ReturnValue = Level:Fatal
+#ENDAT
+#AT(%WindowManagerMethodDataSection,'TakeNewSelection','(),BYTE')
+#?Looped BYTE
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeNewSelection','(),BYTE'),PRIORITY(2500)
+#?LOOP
+  #?IF Looped
+    #?RETURN Level:Notify
+  #?ELSE
+    #?Looped = 1
+  #?END
+  #PRIORITY(3000)
+  #INSERT(%StandardSpecialistHandling,'NewSelection',1)
+  #PRIORITY(7500)
+  #INSERT(%StandardSpecialistHandling,'NewSelection',2)
+  #?RETURN ReturnValue
+#?END
+#?ReturnValue = Level:Fatal
+#ENDAT
+#AT(%WindowManagerMethodDataSection,'TakeRejected','(),BYTE')
+#?Looped BYTE
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeRejected','(),BYTE'),PRIORITY(2500)
+#?LOOP
+  #?IF Looped
+    #?RETURN Level:Notify
+  #?ELSE
+    #?Looped = 1
+  #?END
+  #PRIORITY(3000)
+  #EMBED(%WindowEventHandlingBeforeRejected,'Window Event Handling - Before Rejected'),LEGACY
+  #INSERT(%StandardSpecialistHandling,'Rejected',1)
+  #PRIORITY(7500)
+  #INSERT(%StandardSpecialistHandling,'Rejected',2)
+  #EMBED(%WindowEventHandlingAfterRejected,'Window Event Handling - After Rejected'),LEGACY
+  #?RETURN ReturnValue
+#?END
+#?ReturnValue = Level:Fatal
+#ENDAT
+#!
+#AT(%DataSection),PRIORITY(2500)
+#FOR(%LocalData)
+%[20]LocalData %LocalDataStatement
+#ENDFOR
+#EMBED(%LocalDataClassData),LABEL,HIDE
+#ENDAT
+#!
+#AT(%DataSection),PRIORITY(5000),DESCRIPTION('Window Structure')
+#SUSPEND
+#MESSAGE('Standard Window Generation',3)
+#EMBED(%DataSectionBeforeWindow,'Data Section, Before Window Declaration'),DATA,LEGACY
+#IF(%WindowStatement)
+  #IF(SUB(%WindowStatement,1,11)='APPLICATION')
+    #SET(%NewWindowStatement,%WindowStatement)
+  #ELSIF(%WindowOperationMode='Use WINDOW setting')
+    #SET(%NewWindowStatement,%WindowStatement)
+  #ELSE
+    #SET(%CurrentOperationMode,SUB(%WindowStatement,LEN(%WindowStatement)-3,4))
+    #IF(%CurrentOperationMode = ',MDI')
+      #IF(%WindowOperationMode = 'MDI')
+        #SET(%NewWindowStatement,%WindowStatement)
+      #ELSE
+        #SET(%NewWindowStatement,SUB(%WindowStatement,1,LEN(%WindowStatement)-4))
+        #IF(%WindowOperationMode = 'MODAL')
+          #SET(%NewWindowStatement,%NewWindowStatement & ',MODAL')
+        #ENDIF
+      #ENDIF
+    #ELSIF(%CurrentOperationMode = 'ODAL')
+      #IF(%WindowOperationMode = 'MODAL')
+        #SET(%NewWindowStatement,%WindowStatement)
+      #ELSE
+        #SET(%NewWindowStatement,SUB(%WindowStatement,1,LEN(%WindowStatement)-6))
+        #IF(%WindowOperationMode = 'MDI')
+          #SET(%NewWindowStatement,%NewWindowStatement & ',MDI')
+        #ENDIF
+      #ENDIF
+    #ELSE
+      #SET(%NewWindowStatement,%WindowStatement)
+      #IF(%WindowOperationMode = 'MDI')
+        #SET(%NewWindowStatement,%NewWindowStatement & ',MDI')
+      #ELSIF(%WindowOperationMode = 'MODAL')
+        #SET(%NewWindowStatement,%NewWindowStatement & ',MODAL')
+      #ENDIF
+    #ENDIF
+  #ENDIF
+  #IF(EXTRACT(%WindowStatement,'ICON') AND NOT EXTRACT(%WindowStatement,'IMM'))
+    #SET(%NewWindowStatement,%NewWindowStatement & ',IMM')
+  #ELSIF(EXTRACT(%WindowStatement,'MAX') AND NOT EXTRACT(%WindowStatement,'IMM'))
+    #SET(%NewWindowStatement,%NewWindowStatement & ',IMM')
+  #ENDIF
+%[20]Window %NewWindowStatement
+  #SET(%Indentation,0)
+  #DECLARE(%ControlSourceLine)
+  #FOR(%Control)
+    #IF(%ControlIndent<%Indentation)
+      #LOOP
+        #SET(%Indentation,%Indentation-1)
+%[22+(2*%Indentation)]Null END
+        #IF(%ControlIndent=%Indentation)
+          #BREAK
+        #ENDIF
+      #ENDLOOP
+    #ENDIF
+    #SET(%ControlSourceLine,%ControlStatement)
+    #IF(%MessageDescription)
+      #IF(%ControlType <> 'STRING')
+        #IF(%ControlUse AND NOT EXTRACT(%ControlStatement,'MSG'))
+          #FIND(%Field,%ControlUse)
+          #IF(%FieldDescription)
+            #SET(%ControlSourceLine,%ControlSourceLine & ',MSG(''' & QUOTE(%FieldDescription) & ''')')
+          #ENDIF
+        #ENDIF
+      #ENDIF
+    #ENDIF
+%[22+(2*%Indentation)]Null %ControlSourceLine
+    #CASE(%ControlType)
+    #OF('OPTION')
+    #OROF('GROUP')
+    #OROF('SHEET')
+    #OROF('TAB')
+    #OROF('OLE')
+    #OROF('MENU')
+    #OROF('MENUBAR')
+    #OROF('TOOLBAR')
+      #SET(%Indentation,%Indentation+1)
+    #ELSE
+    #IF(NOT %FirstField)
+      #IF(NOT(%ControlMenu OR %ControlTool) AND (%ControlType <> 'TOOLBAR') AND (%ControlType <> 'MENUBAR'))
+        #SET(%FirstField,%Control)
+      #ENDIF
+    #ENDIF
+    #ENDCASE
+  #ENDFOR
+  #LOOP,WHILE(%Indentation)
+    #SET(%Indentation,%Indentation-1)
+%[22+(2*%Indentation)]Null END
+  #ENDLOOP
+%[20]Null END
+#ENDIF
+#IF(NOT(%FirstField))
+  #SET(%FirstField,1)
+#ENDIF
+#EMBED(%DataSectionAfterWindow,'Data Section, After Window Declaration'),DATA,LEGACY
+#IF(%ProgressWindowRequired)
+#INSERT(%StandardProgressWindow)
+#ENDIF
+#?
+#RESUME
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#END
+#!
+#AT(%ToolbarMethodCodeSection),PRIORITY(5000),WHERE(~(%ProcedureTemplate='Report' OR %ProcedureTemplate='Process') AND %ParentCallValid()),DESCRIPTION('Parent Call')
+  #CALL(%GenerateParentCall)
+#END
+#!
+#IF(NOT %Window)
+  #ERROR(%Procedure & ' Error: No Window Defined!')
+#ENDIF
+#DECLARE(%FirstField)
+#DECLARE(%LastField)
+#DECLARE(%ProgressWindowRequired)
+#INSERT(%FieldTemplateStandardButtonMenuPrompt)
+#INSERT(%FieldTemplateStandardEntryPrompt)
+#INSERT(%FieldTemplateStandardCheckBoxPrompt)
+#EMBED(%GatherSymbols,'Gather Template Symbols'),HIDE
+#DECLARE(%GenerateSelectInstance,LONG)
+#DECLARE(%GenerateUpdateInstance,LONG)
+#DECLARE(%GenerateReltreeInstance,LONG)
+#DECLARE(%GeneratePopupInstance,LONG)
+#EMBED(%GenerateInstanceUpdate,''),HIDE
+#!
+#INSERT(%FileControlInitialize)
+#!
+%Procedure PROCEDURE %Parameters        #<!Generated from procedure template - %ProcedureTemplate
+
+#INSERT(%LocalMapCheck)
+#DECLARE(%NewWindowStatement)
+#DECLARE(%CurrentOperationMode)
+#EMBED(%DataSection,'Data for the procedure'),DATA,TREE('Local Data{{PRIORITY(1000)}|Generated Declarations')
+#!
+#SECTION
+#CREATE('PBDY.$$$')
+#EMBED(%BeforeCODEStatement),HIDE
+
+  CODE
+  #CALL(%SetClassItem,'Default')
+  GlobalResponse = %ThisObjectName.Run()
+  #IF(%ProcedureReturnType)
+  RETURN(%ReturnValue)
+  #ENDIF
+  #IF(%False)
+    #CALL(%SetClassItem,'Default')
+    #EMBED(%NewMethodDataSection,'New Class Method Data Section'),''['Window Manager'],%ClassItem,%NewMethods[%ThisObjectName&'.'&%NewMethodName&%NewMethodPrototype],MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),MAP(%NewMethods,%ThisObjectName&'.'&%NewMethodName&%NewMethodPrototype),LABEL,WHERE(%DeriveFromBaseClass)
+    #EMBED(%NewMethodCodeSection,'New Class Method Code Section'),''['Window Manager'],%ClassItem,%NewMethods[%ThisObjectName&'.'&%NewMethodName&%NewMethodPrototype],MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),MAP(%NewMethods,%ThisObjectName&'.'&%NewMethodName&%NewMethodPrototype),WHERE(%DeriveFromBaseClass)
+  #ENDIF
+
+#EMBED(%ProcedureRoutines,'Procedure Routines'),LABEL,TREE('Procedure Routines{{PRIORITY(5000)}')
+#!
+#!
+#CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|Window Manager', '%WindowManagerVirtuals(ABC)')
+#IF(~(%ProcedureTemplate='Report' OR %ProcedureTemplate='Process'))
+  #CALL(%GenerateVirtuals, 'WindowToolbar', 'Local Objects|Abc Objects|Window Toolbar Manager', '%WindowToolbarVirtuals(ABC)')
+#ENDIF
+#!
+#!
+#!
+#EMBED(%LocalProcedures,'Local Procedures'),LABEL,TREE('Local Procedures{{PRIORITY(6000)}')
+#CLOSE('PBDY.$$$')
+#ENDSECTION
+#!
+#!----------------------------------------------------------------------------------
+#INSERT(%GenerateClass, 'Default')
+#IF(~(%ProcedureTemplate='Report' OR %ProcedureTemplate='Process'))
+#INSERT(%GenerateClass, 'WindowToolbar')
+#ENDIF
+#EMBED(%LocalDataClasses),LABEL,HIDE
+#EMBED(%LocalDataAfterClasses,'Local Data After Object Declarations'),LABEL,DATA,TREE('Local Data|Other Declarations{{PRIORITY(5000)}')
+#!
+#APPEND('PBDY.$$$'),SECTION
+#EMBED(%AfterAPPENDStatement),HIDE
+#REMOVE('PBDY.$$$')
+#!
+#!
+#GROUP(%WindowManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WindowManagerMethodDataSection,'WindowManager Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WindowManagerMethodCodeSection,'WindowManager Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%WindowToolbarVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ToolbarMethodDataSection,'Toolbar Manager Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('WindowToolbar'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%ToolbarMethodCodeSection,'Toolbar Manager Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('WindowToolbar'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%GetWindowBehaviorButtonText)
+#IF(%ProcedureTemplate='Report')
+  #RETURN('Report')
+#ELSIF(%ProcedureTemplate='Process')
+  #RETURN('Process')
+#ENDIF
+#RETURN('Window')
+#!
+#GROUP(%StandardAcceptedHandling,%RequiredParent='',%ParentSide=0)
+#FOR(%Control),WHERE(%Control)
+  #FIX(%ControlEvent,'Accepted')
+  #IF (~%ControlEvent)
+    #CYCLE
+  #ENDIF
+  #MESSAGE('Control Handling: ' & %Control,3)
+  #IF(%ProcedureTemplate='Frame' AND ( %ControlMenu OR %RequiredParent ) )
+    #IF(%Controltype NOT='ITEM')
+      #CYCLE
+    #ENDIF
+    #IF(%ControlParent NOT=%RequiredParent)
+      #CYCLE
+    #ENDIF
+  #ENDIF
+  #SUSPEND
+#?OF %Control
+  #IF(%ParentSide<>2)
+  #EMBED(%ControlPreEventHandling,'Control Event Handling, before generated code'),%Control,%ControlEvent,LEGACY
+  #EMBED(%ControlEventHandling,'Control Event Handling'),%Control,%ControlEvent,PRIORITY(1,4999),TREE('Control Events{{PRIORITY(4000)}|'&%Control&'|'&%ControlEvent)
+  #ENDIF
+  #IF(%ParentSide<>1)
+  #INSERT(%FieldTemplateStandardHandling)
+  #EMBED(%ControlEventHandling,'Control Event Handling'),%Control,%ControlEvent,PRIORITY(5000,10000),TREE('Control Events{{PRIORITY(4000)}|'&%Control&'|'&%ControlEvent)
+  #EMBED(%ControlPostEventHandling,'Control Event Handling, after generated code'),%Control,%ControlEvent,LEGACY
+  #ENDIF
+  #RESUME
+#ENDFOR
+#!
+#!
+#GROUP(%HasSpecialistHandler,%ThisEvent)
+#CASE (%ThisEvent)
+#OF('Accepted')
+#OROF('Selected')
+#OROF('Rejected')
+#OROF('NewSelection')
+  #RETURN(%True)
+#ELSE
+  #RETURN(%False)
+#ENDCASE
+#!
+#!
+#GROUP(%HasGeneralEvent,%ThisControl),PRESERVE
+  #FIX(%Control,%ThisControl)
+  #FOR(%ControlEvent),WHERE(~%HasSpecialistHandler(%ControlEvent))
+    #RETURN(%True)
+  #ENDFOR
+  #RETURN(%False)
+#!
+#!
+#GROUP(%StandardSpecialistHandling,%SpecialEvent,%ParentSide=0)
+#SUSPEND
+#?CASE FIELD()
+#FOR(%Control),WHERE(%Control)
+  #FIX(%ControlEvent,%SpecialEvent)
+  #IF(~%ControlEvent)
+    #CYCLE
+  #ENDIF
+  #SUSPEND
+#?OF %Control
+  #IF(%ParentSide<>2)
+  #EMBED(%ControlPreEventHandling,'Control Event Handling, before generated code'),%Control,%ControlEvent,LEGACY
+  #EMBED(%ControlEventHandling,'Control Event Handling'),%Control,%ControlEvent,PRIORITY(1,4999),TREE('Control Events{{PRIORITY(4000)}|'&%Control&'|'&%ControlEvent)
+  #ENDIF
+  #IF(%ParentSide<>1)
+  #INSERT(%FieldTemplateStandardHandling)
+  #EMBED(%ControlEventHandling,'Control Event Handling'),%Control,%ControlEvent,PRIORITY(5000,10000),TREE('Control Events{{PRIORITY(4000)}|'&%Control&'|'&%ControlEvent)
+  #EMBED(%ControlPostEventHandling,'Control Event Handling, after generated code'),%Control,%ControlEvent,LEGACY
+  #ENDIF
+  #RESUME
+#ENDFOR
+#?END
+#RESUME
+#!-------------------------------------------------------------------------
+#!----------------------------------------------------------------------------
+#GROUP(%GetControlQueue),PRESERVE                           #!Extracts FROM attrib from control statement of current active template
+#RETURN(%GetControlAttribute('FROM',1))
+#!----------------------------------------------------------------------------
+#GROUP(%GetControlAttribute,%Attrib,%Index),PRESERVE        #!Extracts attribue from the control statement of the current active template
+#FIX(%Control,%GetControlName())
+#RETURN(EXTRACT(%ControlStatement,%Attrib,%Index))
+#!----------------------------------------------------------------------------
+#GROUP(%ControlAttributePresent,%Attrib),PRESERVE           #!Tests if attribute is present in the current control statement
+#FIX(%Control,%GetControlName())
+#IF(EXTRACT(%ControlStatement,%Attrib))
+  #RETURN(%True)
+#ELSE
+  #RETURN(%False)
+#ENDIF
+#EXTENSION(DateTimeDisplay,'Display the date and/or time in the current window'),HLP('~TPLExtensionDateTimeDisplay'),PROCEDURE,LAST
+#BUTTON('Date and Time Display'),AT(10,,180),HLP('~TPLExtensionDateTimeDisplay')
+  #BOXED('Date Display...')
+    #PROMPT('Display the current day/date in the window',CHECK),%DisplayDate,DEFAULT(0),AT(10,,150)
+    #ENABLE(%DisplayDate)
+      #PROMPT('Date Picture:',DROP('October 31, 1959|OCT 31,1959|10/31/59|10/31/1959|31 OCT 59|31 OCT 1959|31/10/59|31/10/1959|Other')),%DatePicture,DEFAULT('October 31, 1959')
+      #ENABLE(%DatePicture = 'Other')
+        #PROMPT('Other Date Picture:',@S20),%OtherDatePicture,REQ
+      #ENDENABLE
+      #PROMPT('Show the day of the week before the date',CHECK),%ShowDayOfWeek,DEFAULT(1),AT(10,,150)
+      #PROMPT('&Location of Date Display:',DROP('Control|Status Bar')),%DateDisplayLocation
+      #ENABLE(%DateDisplayLocation='Status Bar')
+        #PROMPT('Status Bar Section:',@n1),%DateStatusSection,REQ,DEFAULT(1)
+      #ENDENABLE
+      #ENABLE(%DateDisplayLocation='Control')
+        #PROMPT('Date Display Control:',CONTROL),%DateControl,REQ
+      #ENDENABLE
+    #ENDENABLE
+  #ENDBOXED
+  #BOXED('Time Display...')
+    #PROMPT('Display the current time in the window',CHECK),%DisplayTime,DEFAULT(0),AT(10,,150)
+    #ENABLE(%DisplayTime)
+      #PROMPT('Time Picture:',DROP('5:30PM|5:30:00PM|17:30|17:30:00|1730|173000|Other')),%TimePicture,DEFAULT('5:30PM')
+      #ENABLE(%TimePicture = 'Other')
+        #PROMPT('Other Time Picture:',@S20),%OtherTimePicture,REQ
+      #ENDENABLE
+      #PROMPT('&Location of Time Display:',DROP('Control|Status Bar')),%TimeDisplayLocation
+      #ENABLE(%TimeDisplayLocation='Status Bar')
+        #PROMPT('Status Bar Section:',@n1),%TimeStatusSection,REQ,DEFAULT(2)
+      #ENDENABLE
+      #ENABLE(%TimeDisplayLocation='Control')
+        #PROMPT('Time Display Control:',CONTROL),%TimeControl,REQ
+      #ENDENABLE
+    #ENDENABLE
+  #ENDBOXED
+#ENDBUTTON
+#ATSTART
+  #DECLARE(%TimerEventGenerated)
+  #IF(%DisplayDate)
+    #DECLARE(%DateUsePicture)
+    #CASE(%DatePicture)
+    #OF('10/31/59')
+      #SET(%DateUsePicture,'@D1')
+    #OF('10/31/1959')
+      #SET(%DateUsePicture,'@D2')
+    #OF('OCT 31,1959')
+      #SET(%DateUsePicture,'@D3')
+    #OF('October 31, 1959')
+      #SET(%DateUsePicture,'@D4')
+    #OF('31/10/59')
+      #SET(%DateUsePicture,'@D5')
+    #OF('31/10/1959')
+      #SET(%DateUsePicture,'@D6')
+    #OF('31 OCT 59')
+      #SET(%DateUsePicture,'@D7')
+    #OF('31 OCT 1959')
+      #SET(%DateUsePicture,'@D8')
+    #OF('Other')
+      #SET(%DateUsePicture,%OtherDatePicture)
+    #ENDCASE
+  #ENDIF
+  #IF(%DisplayTime)
+    #DECLARE(%TimeUsePicture)
+    #CASE(%TimePicture)
+    #OF('17:30')
+      #SET(%TimeUsePicture,'@T1')
+    #OF('1730')
+      #SET(%TimeUsePicture,'@T2')
+    #OF('5:30PM')
+      #SET(%TimeUsePicture,'@T3')
+    #OF('17:30:00')
+      #SET(%TimeUsePicture,'@T4')
+    #OF('173000')
+      #SET(%TimeUsePicture,'@T5')
+    #OF('5:30:00PM')
+      #SET(%TimeUsePicture,'@T6')
+    #OF('Other')
+      #SET(%TimeUsePicture,%OtherTimePicture)
+    #ENDCASE
+  #ENDIF
+#ENDAT
+#AT(%DataSection),PRIORITY(4000)
+  #IF(%DisplayDate AND %ShowDayOfWeek)
+DisplayDayString STRING('Sunday   Monday   Tuesday  WednesdayThursday Friday   Saturday ')
+DisplayDayText   STRING(9),DIM(7),OVER(DisplayDayString)
+  #ENDIF
+#ENDAT
+#AT(%WindowManagerMethodCodeSection,'Ask','()'),PRIORITY(2500)
+  #IF(%DisplayTime OR %DisplayDate)
+IF NOT INRANGE(%Window{Prop:Timer},1,100)
+  %Window{Prop:Timer} = 100
+END
+#INSERT(%DateTimeDisplayCode)
+  #ENDIF
+#ENDAT
+#AT(%WindowEventHandling,'Timer')
+  #SET(%TimerEventGenerated,%True)
+  #IF(%DisplayDate OR %DisplayTime)
+#INSERT(%DateTimeDisplayCode)
+  #ENDIF
+#ENDAT
+#AT(%WindowManagerMethodCodeSection,'TakeWindowEvent','(),BYTE'),PRIORITY(7525)
+  #IF(%DisplayDate OR %DisplayTime)
+    #IF(NOT %TimerEventGenerated)
+  OF Event:Timer
+  #INSERT(%DateTimeDisplayCode)
+    #ENDIF
+  #ENDIF
+#ENDAT
+#GROUP(%DateTimeDisplayCode)
+  #IF(%DisplayDate)
+    #IF(%ShowDayOfWeek)
+      #CASE(%DateDisplayLocation)
+      #OF('Control')
+  %DateControl{Prop:Text} = CLIP(DisplayDayText[(TODAY()%%7)+1]) & ', ' & FORMAT(TODAY(),%DateUsePicture)
+  DISPLAY(%DateControl)
+      #ELSE
+  %Window{Prop:StatusText,%DateStatusSection} = CLIP(DisplayDayText[(TODAY()%%7)+1]) & ', ' & FORMAT(TODAY(),%DateUsePicture)
+      #ENDCASE
+    #ELSE
+      #CASE(%DateDisplayLocation)
+      #OF('Control')
+  %DateControl{Prop:Text} = FORMAT(TODAY(),%DateUsePicture)
+  DISPLAY(%DateControl)
+      #ELSE
+  %Window{Prop:StatusText,%DateStatusSection} = FORMAT(TODAY(),%DateUsePicture)
+      #ENDCASE
+    #ENDIF
+  #ENDIF
+  #IF(%DisplayTime)
+    #CASE(%TimeDisplayLocation)
+    #OF('Control')
+  %TimeControl{Prop:Text} = FORMAT(CLOCK(),%TimeUsePicture)
+  DISPLAY(%TimeControl)
+    #ELSE
+  %Window{Prop:StatusText,%TimeStatusSection} = FORMAT(CLOCK(),%TimeUsePicture)
+    #ENDCASE
+  #ENDIF
+#! --------------------------------------------------------------------------------------
+#!
+#!
+#EXTENSION (WindowResize, 'Allows controls to be resized with window'), PROCEDURE,HLP('~TPLExtensionWindowResize')
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default', 'Resizer', %ResizerType)
+  #CALL(%SynchronizeOverrides)
+#ENDPREPARE
+  #BOXED('Default Resizer prompts'),AT(0,0),WHERE(%False),HIDE
+    #INSERT(%OOPHiddenPrompts)
+  #ENDBOXED
+  #SHEET
+    #TAB('&General'),HLP('~TPLExtensionWindowResize_General')
+      #PROMPT('Resize Strategy: ',DROP('Resize|Spread|Surface|Don''t alter controls')),%AppStrategy,DEFAULT('Spread')
+      #PROMPT('Restrict Minimum Window Size',CHECK),%RestrictMinSize,DEFAULT(%False),AT(5)
+      #ENABLE(%RestrictMinSize=%True)
+        #BOXED('Minimum Window Size')
+          #PROMPT('Minimum Width:',@n5),%WindowMinWidth
+          #PROMPT('Minimum Height:',@n5),%WindowMinHeight
+        #ENDBOXED
+      #ENDENABLE
+      #PROMPT('Restrict Maximum Window Size',CHECK),%RestrictMaxSize,DEFAULT(%False),AT(5)
+      #ENABLE(%RestrictMaxSize=%True)
+        #BOXED('Maxmium Window Size')
+          #PROMPT('Maximum Width:',@n5),%WindowMaxWidth
+          #PROMPT('Maximum Height:',@n5),%WindowMaxHeight
+        #ENDBOXED
+      #ENDENABLE
+      #BUTTON('&Override Control Strategies'),MULTI(%OverrideControls,'Override for '&%OverrideControl),AT(,,175)
+        #PROMPT('&Window Control:',CONTROL),%OverrideControl
+        #PROMPT('&Disable Resizing for this Control?',CHECK),%DisableResize,DEFAULT(%False),AT(10)
+        #ENABLE(%DisableResize = %False)
+          #INSERT(%ResizeOptions)
+        #ENDENABLE
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('Classes'),HLP('~TPLExtensionWindowResize_Classes')
+      #BOXED('Resizer Configuration Options')
+        #PROMPT('&Auto-find Parent Controls?',DROP('Default|Yes|No')),%AutoFindParents,DEFAULT('Default'),AT(100,,60)
+        #PROMPT('Optimize &Moves?',DROP('Default|Yes|No')),%DeferMoves,DEFAULT('Default'),AT(100,,60)
+      #ENDBOXED
+      #WITH(%ClassItem,'Default')
+        #INSERT(%ClassPrompts)
+      #ENDWITH
+    #ENDTAB
+  #ENDSHEET
+#!
+#ATSTART
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default', 'Resizer', %ResizerType)
+  #EQUATE(%ResizerObjectName,%ThisObjectName)
+  #DECLARE(%InitParameters)
+#ENDAT
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'Default')
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8125),DESCRIPTION('Initialize resizer')
+  #IF(%RestrictMinSize)
+    #IF(%WindowMinWidth=0 AND %WindowMinHeight=0)
+      #SET(%InitParameters,',Resize:SetMinSize')
+    #ELSE
+      #IF(%WindowMinWidth=0)
+%Window{PROP:MinWidth}=%Window{PROP:Width}
+      #ELSE
+%Window{PROP:MinWidth}=%WindowMinWidth
+      #ENDIF
+      #IF(%WindowMinHeight=0)
+%Window{PROP:MinHeight}=%Window{PROP:Height}
+      #ELSE
+%Window{PROP:MinHeight}=%WindowMinHeight
+      #ENDIF
+    #ENDIF
+  #ENDIF
+  #IF(%RestrictMaxSize)
+    #IF(%WindowMaxWidth=0 AND %WindowMaxHeight=0)
+      #IF(%InitParameters)
+        #SET(%InitParameters,%InitParameters&',Resize:SetMaxSize')
+      #ELSE
+        #SET(%InitParameters,',,Resize:SetMaxSize')
+      #END
+    #ELSE
+      #IF(%WindowMaxWidth=0)
+%Window{PROP:MaxWidth}=%Window{PROP:Width}
+      #ELSE
+%Window{PROP:MaxWidth}=%WindowMaxWidth
+      #ENDIF
+      #IF(%WindowMaxHeight=0)
+%Window{PROP:MaxHeight}=%Window{PROP:Height}
+      #ELSE
+%Window{PROP:MaxHeight}=%WindowMaxHeight
+      #ENDIF
+    #ENDIF
+  #ENDIF
+  #CASE(%AppStrategy)
+  #OF('Don''t alter controls')
+%ResizerObjectName.Init(AppStrategy:NoResize%InitParameters)
+  #OF('Spread')
+%ResizerObjectName.Init(AppStrategy:Spread%InitParameters)
+  #OF('Resize')
+%ResizerObjectName.Init(AppStrategy:Resize%InitParameters)
+  #OF('Surface')
+%ResizerObjectName.Init(AppStrategy:Surface%InitParameters)
+  #ENDCASE
+SELF.AddItem(%ResizerObjectName)
+#PRIORITY(8175)
+#EMBED(%AfterInitializingResize,'After initializing resizer'),LEGACY
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8375),WHERE(%AppStrategy NOT='Don''t alter controls' AND %INIActive AND %INISaveWindow),DESCRIPTION('Resize window to INI saved size')
+%ResizerObjectName.Resize   #<!Resize/Reset required after window size altered by INI manager
+%ResizerObjectName.Reset
+#ENDAT
+#!
+#!
+#AT(%ResizerMethodCodeSection, %ActiveTemplateInstance, 'Init', '(BYTE AppStrategy=AppStrategy:Resize,BYTE SetWindowMinSize=False,BYTE SetWindowMaxSize=False)'),PRIORITY(7000)
+  #CALL(%SynchronizeOverrides)
+  #IF(%DeferMoves='No' OR (%DeferMoves='Default' AND ~%ResizerDefaultOptimizeMoves))
+SELF.DeferMoves=False
+  #ENDIF
+  #IF(%AutoFindParents='Yes' OR (%AutoFindParents='Default' AND %ResizerDefaultFindParents))
+SELF.SetParentDefaults
+  #ENDIF
+  #IF(ITEMS(%OverrideControls))
+    #FOR(%OverrideControls),WHERE(%DisableResize = %False)
+SELF.SetStrategy(%OverrideControl, %(%GetPositionalStrategy(%HorizPositional, %VertPositional)), %(%GetResizeStrategy(%HorizResize, %VertResize)))
+    #ENDFOR
+    #FOR(%OverrideControls),WHERE(%DisableResize = %True)
+SELF.RemoveControl(%OverrideControl)
+    #ENDFOR
+  #ENDIF
+  #FOR(%Control)
+#EMBED(%ResizeControlStrategy,'Set resize strategy'),%Control,MAP(%Control,%Control),LEGACY
+  #ENDFOR
+#EMBED(%SetupResizeControlStrategy,'Setup control resize strategies'),LEGACY
+#ENDAT
+#!
+#!
+#AT(%ResizerMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallvalid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+#CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|Window Resizer', '%WindowResizerVirtuals(ABC)')
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'Default')
+#END
+#!
+#!
+#GROUP(%WindowResizerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ResizerMethodDataSection,'Window Resizer Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+#?%NULL
+  #?CODE
+  #EMBED(%ResizerMethodCodeSection,'Window Resizer Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%ResizeOptions)
+  #PROMPT('&Horizonal Resize Strategy',OPTION),%HorizResize,REQ
+    #PROMPT('Resize', RADIO)
+    #PROMPT('Lock Width',RADIO)
+    #PROMPT('Constant Right Border',RADIO)
+  #PROMPT('&Vertical Resize Strategy',OPTION),%VertResize,REQ
+    #PROMPT('Resize', RADIO)
+    #PROMPT('Lock Height',RADIO)
+    #PROMPT('Constant Bottom Border',RADIO)
+  #PROMPT('Horizontal &Positional Strategy',OPTION),%HorizPositional,REQ
+    #PROMPT('Move' ,RADIO)
+    #PROMPT('Lock Position',RADIO)
+    #PROMPT('Fix Right',RADIO)
+    #PROMPT('Fix Left',RADIO)
+    #PROMPT('Fix Center',RADIO)
+    #PROMPT('Fix Nearest',RADIO)
+  #PROMPT('Vertical P&ositional Strategy',OPTION),%VertPositional,REQ
+    #PROMPT('Move', RADIO)
+    #PROMPT('Lock Position',RADIO)
+    #PROMPT('Fix Bottom',RADIO)
+    #PROMPT('Fix Top',RADIO)
+    #PROMPT('Fix Center',RADIO)
+    #PROMPT('Fix Nearest',RADIO)
+#!
+#GROUP(%SynchronizeOverrides)          #!this group removes entries from %OverrideControls that no longer exist on the window
+  #FOR(%OverrideControls)
+    #FIX(%Control,%OverrideControl)
+    #IF(~%Control)
+      #DELETE(%OverrideControls)
+    #ENDIF
+  #ENDFOR
+#!
+#!
+#CODE(ResizeSetStrategy,'Set a controls resize strategy'),HLP('~TPLCodeResizeSetStrategy'),REQ(WindowResize)
+  #INSERT(%ResizeOptions)
+%ResizerObjectName.SetStrategy(%Control, %(%GetPositionalStrategy(%HorizPositional, %VertPositional)), %(%GetResizeStrategy(%HorizResize, %VertResize)))
+#!
+#!
+#!------------------------------------------------------------------------------
+#GROUP(%GetPositionalStrategy, %HorizPositional, %VertPositional),AUTO
+  #DECLARE(%Positional)
+  #IF(%HorizPositional = 'Move' AND %VertPositional = 'Move')
+    #SET(%Positional, 'Resize:Reposition')
+  #ELSE
+  #CASE(%HorizPositional)
+  #OF('Move')
+    #!Nothing to do
+  #OF('Lock Position')
+    #SET(%Positional,'Resize:LockXPos')
+  #OF('Fix Right')
+    #SET(%Positional,'Resize:FixRight')
+  #OF('Fix Left')
+    #SET(%Positional,'Resize:FixLeft')
+  #OF('Fix Center')
+    #SET(%Positional,'Resize:FixXCenter')
+  #OF('Fix Nearest')
+    #SET(%Positional,'Resize:FixNearestX')
+  #ENDCASE
+  #IF(%VertPositional <> 'Move' AND %Positional <> '')
+    #SET(%Positional, %Positional & '+')
+  #ENDIF
+  #CASE(%VertPositional)
+  #OF('Move')
+    #!Nothing to do
+  #OF('Lock Position')
+    #SET(%Positional,%Positional & 'Resize:LockYPos')
+  #OF('Fix Bottom')
+    #SET(%Positional,%Positional & 'Resize:FixBottom')
+  #OF('Fix Top')
+    #SET(%Positional, %Positional & 'Resize:FixTop')
+  #OF('Fix Center')
+    #SET(%Positional, %Positional & 'Resize:FixYCenter')
+  #OF('Fix Nearest')
+    #SET(%Positional, %Positional & 'Resize:FixNearestY')
+  #ENDCASE
+  #ENDIF
+  #RETURN(%Positional)
+#!------------------------------------------------------------------------------
+#GROUP(%GetResizeStrategy, %HorizResize, %VertResize),AUTO
+  #DECLARE(%Resize)
+  #IF(%HorizResize = 'Lock Width' AND %VertResize = 'Lock Height')
+    #SET(%Resize, 'Resize:LockSize')
+  #ELSIF(%HorizResize = 'Resize' AND %VertResize = 'Resize')
+    #SET(%Resize, 'Resize:Resize')
+  #ELSE
+    #CASE(%HorizResize)
+    #OF('Resize')
+      #!Nothing to do
+    #OF('Lock Width')
+      #SET(%Resize,'Resize:LockWidth')
+    #OF('Constant Right Border')
+      #SET(%Resize,'Resize:ConstantRight')
+    #ENDCASE
+    #IF(%VertResize <> 'Resize' AND %Resize <> '')
+      #SET(%Resize, %Resize & '+')
+    #ENDIF
+    #CASE(%VertResize)
+    #OF('Resize')
+      #!Nothing to do
+    #OF('Lock Height')
+      #SET(%Resize,%Resize & 'Resize:LockHeight')
+    #OF('Constant Bottom Border')
+      #SET(%Resize,%Resize & 'Resize:ConstantBottom')
+    #ENDCASE
+  #ENDIF
+#RETURN(%Resize)
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardButtonMenuPrompt)
+#FIELD,WHERE(%ControlType = 'BUTTON' OR (%ControlType = 'ITEM' AND NOT EXTRACT(%ControlStatement,'SEPARATOR')))
+  #BOXED('Menu/Button Control Prompts')
+    #PROMPT('When Pressed',DROP('No Special Action|Call a Procedure|Run a Program')),%ButtonAction,DEFAULT('No Special Action')
+    #DISPLAY('')
+    #BOXED('Program Definition'),WHERE(%ButtonAction = 'Run a Program'),AT(,20),CLEAR
+      #PROMPT('Program Name:',@S40),%ButtonRunName,REQ
+      #PROMPT('Parameters:',@s255),%ButtonRunParameters
+    #ENDBOXED
+    #BOXED('Procedure Definition'),WHERE(%ButtonAction = 'Call a Procedure'),AT(,20)
+      #ENABLE(%ButtonAction = 'Call a Procedure'),CLEAR
+        #PROMPT('Procedure Name:',PROCEDURE),%ButtonProcedure,REQ
+        #PROMPT('Initiate Thread',CHECK),%ButtonThread
+      #ENDENABLE
+      #ENABLE(%ButtonThread = %True)
+        #PROMPT('Thread Stack:',SPIN(@n7,5000,64000,500)),%ButtonThreadStack,DEFAULT(25000)
+      #ENDENABLE
+      #BOXED,SECTION
+        #BOXED('Non Threaded Procedure Call Definition'),WHERE(%ButtonAction = 'Call a Procedure' AND %ButtonThread = %False),AT(8,0),SECTION,CLEAR
+          #PROMPT('&Parameters:',@s255),%ButtonParameters
+          #PROMPT('&Return Value Variable:', FIELD),%ButtonReturnValueAssignment
+          #ENABLE(%ButtonReturnValueAssignment <> ''),CLEAR
+            #PROMPT('Re&ference Assign?', CHECK),%ButtonReturnValueReferenceAssign
+          #ENDENABLE
+          #PROMPT('Requested File &Action:',DROP('None|Insert|Change|Delete|Select|View')),%ButtonRequest,DEFAULT('None')
+        #ENDBOXED
+        #BOXED('Theaded Procedure Call Definition'),WHERE(%ButtonAction = 'Call a Procedure' AND %ButtonThread = %True),AT(8,0),SECTION,CLEAR
+          #PROMPT('&Parameters:', @S255),%ButtonThreadParameters
+          #PROMPT('&Return Thread Variable:', FIELD),%ButtonThreadReturnValueAssignment
+        #ENDBOXED
+      #ENDBOXED
+    #ENDBOXED
+  #ENDBOXED
+#ENDFIELD
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardButtonMenuHandling),AUTO
+#DECLARE(%Params)
+#IF(%ControlEvent = 'Accepted')
+  #IF (UPPER(%ProcedureTemplate)<>'FRAME')
+#?%WindowManager.Update
+  #ENDIF
+  #IF(%ButtonAction = 'Call a Procedure')
+    #IF(%ButtonProcedure)
+      #IF(%ButtonThread)
+        #SET(%ValueConstruct, CHOOSE(%ButtonThreadReturnValueAssignment = '', '', %ButtonThreadReturnValueAssignment & ' = ') & 'START(' & %ButtonProcedure & ', ' & %ButtonThreadStack)
+        #IF(%ButtonThreadParameters)
+          #SET(%ValueConstruct, %ValueConstruct & ', ' & %ButtonThreadParameters)
+        #ENDIF
+        #SET(%ValueConstruct, %ValueConstruct & ')')
+%ValueConstruct
+      #ELSE
+        #IF(%ButtonRequest AND UPPER(%ButtonRequest) <> 'NONE')
+GlobalRequest = %(%ButtonRequest)Record
+        #ENDIF
+        #SET(%Params, %ButtonParameters)
+        #IF(%Params)
+          #IF(SUB(%Params, 1, 1) <> '(')
+            #SET(%Params, '(' & %Params)
+          #ENDIF
+          #IF(SUB(%Params, LEN(%Params), 1) <> ')')
+            #SET(%Params, %Params & ')')
+          #ENDIF
+        #ENDIF
+        #IF(%ButtonReturnValueAssignment)
+%ButtonReturnValueAssignment %(CHOOSE(%ButtonReturnValueReferenceAssign = %True, '&= ', '= ') & %ButtonProcedure & CHOOSE(%Params = '', '()', %Params))
+        #ELSE
+%ButtonProcedure%Params
+        #ENDIF
+      #ENDIF
+    #ENDIF
+    #IF (UPPER(%ProcedureTemplate)<>'FRAME')
+%WindowManager.Reset
+    #ENDIF
+  #ELSIF(%ButtonAction = 'Run a Program')
+RUN('%ButtonRunName %ButtonRunParameters')
+%WindowManager.Reset(1)
+  #ENDIF
+#ENDIF
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardEntryPrompt)
+#FIELD WHERE(%ControlType = 'ENTRY')
+  #BOXED('Entry Control Prompts')
+    #BOXED('When the Control Is Selected')
+      #PROMPT('Lookup Key',KEY),%PreLookupKey
+      #ENABLE(%PreLookupKey),CLEAR
+        #PROMPT('Lookup Field',COMPONENT(%PreLookupKey)),%PreLookupField,REQ
+        #PROMPT('Lookup Procedure',PROCEDURE),%PreLookupProcedure,REQ
+      #ENDENABLE
+      #PROMPT('Advanced...',EMBEDBUTTON(%ControlEventHandling,%Control,'Selected')),AT(100)
+    #ENDBOXED
+    #BOXED('When the Control Is Accepted')
+      #PROMPT('Lookup Key',KEY),%PostLookupKey
+      #ENABLE(%PostLookupKey),CLEAR
+        #PROMPT('Lookup Field',COMPONENT(%PostLookupKey)),%PostLookupField,REQ
+        #PROMPT('Lookup Procedure',PROCEDURE),%PostLookupProcedure,REQ
+        #PROMPT('Perform Lookup during Non-Stop Select',CHECK),%PostLookupDuringValidate,DEFAULT(1),AT(10,,180)
+      #ENDENABLE
+      #PROMPT('Advanced...',EMBEDBUTTON(%ControlEventHandling,%Control,'Accepted')),AT(100)
+    #ENDBOXED
+    #PROMPT('Force Window Refresh when Accepted',CHECK),%ForceWindowRefresh,AT(20,,160)
+    #BUTTON('More Field Assignments...'),Multi(%LookupAssign,%MoreTarget&'  <<--  '&%MoreField),AT(95,,90)
+      #PROMPT('Field to fill from:',EXPR),%MoreField,REQ
+      #PROMPT('Target field:',FIELD),%MoreTarget,REQ
+    #ENDBUTTON
+  #ENDBOXED
+#ENDFIELD
+#!------------------------------------------------------------------------------
+#!------------------------------------------------------------------------------
+#GROUP(%GeneratePostLookupFieldCode)
+  #FOR(%Relation),WHERE(%RelationKey = %PostLookupKey)
+    #IF(%FileRelationType = 'MANY:1')
+      #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+        #IF(%FileKeyFieldLink = %PostLookupField)
+          #BREAK
+        #ENDIF
+%FileKeyFieldLink = %FileKeyField
+      #ENDFOR
+    #ENDIF
+  #ENDFOR
+%PostLookupField = %ControlUse
+#FIND(%Key,%PostLookupKey)
+IF Access:%File.TryFetch(%Key)
+  IF SELF.Run(%(INLIST(%PostLookupProcedure,%ProcsCalled)),SelectRecord) = RequestCompleted
+  #FIND(%Field,%ControlUse)
+  #FOR(%Relation),WHERE(%RelationKey = %PostLookupKey)
+    #IF(%FileRelationType = 'MANY:1')
+      #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+        #IF(%FileKeyFieldLink = %PostLookupField)
+          #BREAK
+        #ENDIF
+    %FileKeyField = %FileKeyFieldLink
+      #ENDFOR
+    #ENDIF
+  #ENDFOR
+    %ControlUse = %PostLookupField
+    #INSERT(%MoreAssign)
+  ELSE
+    #INSERT(%ClearAssign)
+    SELECT(%Control)
+    CYCLE
+  END
+  #SUSPEND
+#?ELSE
+  #INSERT(%MoreAssign)
+  #RESUME
+END
+#!------------------------------------------------------------------------------
+#GROUP(%MoreAssign)
+#FOR(%LookupAssign)
+%MoreTarget = %MoreField
+#ENDFOR
+#!------------------------------------------------------------------------------
+#GROUP(%ClearAssign)
+#FOR(%LookupAssign)
+CLEAR(%MoreTarget)
+#ENDFOR
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardCheckBoxPrompt)
+#FIELD WHERE(%ControlType = 'CHECK')
+  #BOXED('Checkbox Control Prompts')
+    #BOXED('When the Checkbox is Checked')
+      #BUTTON('Assign Values'),MULTI(%CheckedAssigns,%CheckedAssignVariable & ' = ' & %CheckedAssignValue),AT(20,,160),HLP('~TPLFieldCheckBox_CheckedAssignValues')
+        #DISPLAY('Values to assign when the check box is checked')
+        #DISPLAY('')
+        #PROMPT('Variable to Assign',FIELD),%CheckedAssignVariable,REQ
+        #PROMPT('Value to Assign',@S40),%CheckedAssignValue,REQ
+      #ENDBUTTON
+      #BUTTON('Hide/Unhide Controls'),MULTI(%CheckedHides,%CheckedControl & ' - ' & %CheckedControlAction),AT(20,,160),HLP('~TPLFieldCheckBox_CheckedHideUnhide')
+        #DISPLAY('Controls to hide/unhide when the check box is checked')
+        #DISPLAY('')
+        #PROMPT('Control to hide/unhide:',CONTROL),%CheckedControl,REQ
+        #PROMPT('Hide or unhide control',DROP('Hide|Unhide')),%CheckedControlAction,REQ
+      #ENDBUTTON
+      #BUTTON('Enable/Disable Controls'),MULTI(%CheckedEnables,%CheckedControl1 & ' - ' & %CheckedControl1Action),AT(20,,160),HLP('~TPLFieldCheckBox_CheckedEnableDisable')
+        #DISPLAY('Controls to enable/disable when the check box is checked')
+        #DISPLAY('')
+        #PROMPT('Control to enable/disable:',CONTROL),%CheckedControl1,REQ
+        #PROMPT('Enable or disable control',DROP('Enable|Disable')),%CheckedControl1Action,REQ
+      #ENDBUTTON
+    #ENDBOXED
+    #BOXED('When the Checkbox is Unchecked')
+      #BUTTON('Assign Values'),MULTI(%UncheckedAssigns,%UncheckedAssignVariable & ' = ' & %UncheckedAssignValue),AT(20,,160),HLP('~TPLFieldCheckBox_UncheckedAssignValues')
+        #DISPLAY('Values to assign when the check box is unchecked')
+        #DISPLAY('')
+        #PROMPT('Variable to Assign',FIELD),%UncheckedAssignVariable,REQ
+        #PROMPT('Value to Assign',@S40),%UncheckedAssignValue,REQ
+      #ENDBUTTON
+      #BUTTON('Hide/Unhide Controls'),MULTI(%UnCheckedHides,%UnCheckedControl & ' - ' & %UnCheckedControlAction),AT(20,,160),HLP('~TPLFieldCheckBox_UncheckedHideUnhide')
+        #DISPLAY('Controls to hide/unhide when the check box is unchecked')
+        #DISPLAY('')
+        #PROMPT('Control to hide/unhide:',CONTROL),%UnCheckedControl,REQ
+        #PROMPT('Hide or unhide control',DROP('Hide|Unhide')),%UnCheckedControlAction,REQ
+      #ENDBUTTON
+      #BUTTON('Enable/Disable Controls'),MULTI(%UnCheckedEnables,%UnCheckedControl1 & ' - ' & %UnCheckedControl1Action),AT(20,,160),HLP('~TPLFieldCheckBox_UnCheckedEnableDisable')
+        #DISPLAY('Controls to enable/disable when the check box is unchecked')
+        #DISPLAY('')
+        #PROMPT('Control to enable/disable:',CONTROL),%UnCheckedControl1,REQ
+        #PROMPT('Enable or disable control',DROP('Enable|Disable')),%UnCheckedControl1Action,REQ
+      #ENDBUTTON
+    #ENDBOXED
+  #ENDBOXED
+#ENDFIELD
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardCheckBoxHandling)
+#IF(%ControlEvent='Accepted')
+  #SUSPEND
+    #IF(ITEMS(%CheckedAssigns) OR ITEMS(%CheckedHides) OR ITEMS(%CheckedEnables))
+IF %Control{Prop:Checked} = True
+      #FOR(%CheckedAssigns),WHERE(%CheckedAssignVariable)
+  %CheckedAssignVariable = %CheckedAssignValue
+      #ENDFOR
+      #FOR(%CheckedHides)
+        #IF(%CheckedControlAction='Hide')
+  HIDE(%CheckedControl)
+        #ELSE
+  UNHIDE(%CheckedControl)
+        #ENDIF
+      #ENDFOR
+      #FOR(%CheckedEnables)
+        #IF(%CheckedControl1Action='Enable')
+  ENABLE(%CheckedControl1)
+        #ELSE
+  DISABLE(%CheckedControl1)
+        #ENDIF
+      #ENDFOR
+END
+    #ENDIF
+    #IF(ITEMS(%UncheckedAssigns) OR ITEMS(%UncheckedHides) OR ITEMS(%UnCheckedEnables))
+IF %Control{Prop:Checked} = False
+      #FOR(%UncheckedAssigns),WHERE(%UncheckedAssignVariable)
+  %UncheckedAssignVariable = %UncheckedAssignValue
+      #ENDFOR
+      #FOR(%UncheckedHides)
+        #IF(%UncheckedControlAction='Hide')
+  HIDE(%UncheckedControl)
+        #ELSE
+  UNHIDE(%UncheckedControl)
+        #ENDIF
+      #ENDFOR
+      #FOR(%UnCheckedEnables)
+        #IF(%UnCheckedControl1Action='Enable')
+  ENABLE(%UnCheckedControl1)
+        #ELSE
+  DISABLE(%UnCheckedControl1)
+        #ENDIF
+      #ENDFOR
+END
+    #ENDIF
+#?%WindowManager.Reset
+  #RESUME
+#ENDIF
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardCheckBoxSetup)
+#IF(ITEMS(%CheckedAssigns) OR ITEMS(%CheckedHides))
+IF %Control{Prop:Checked} = True
+  #FOR(%CheckedAssigns),WHERE(%CheckedAssignVariable)
+  %CheckedAssignVariable = %CheckedAssignValue
+  #ENDFOR
+  #FOR(%CheckedHides)
+    #IF(%CheckedControlAction='Hide')
+  HIDE(%CheckedControl)
+    #ELSE
+  UNHIDE(%CheckedControl)
+    #ENDIF
+  #ENDFOR
+END
+#ENDIF
+#IF(ITEMS(%UncheckedAssigns) OR ITEMS(%UncheckedHides))
+IF %Control{Prop:Checked} = False
+  #FOR(%UncheckedAssigns),WHERE(%UncheckedAssignVariable)
+  %UncheckedAssignVariable = %UncheckedAssignValue
+  #ENDFOR
+  #FOR(%UncheckedHides)
+    #IF(%UncheckedControlAction='Hide')
+  HIDE(%UncheckedControl)
+    #ELSE
+  UNHIDE(%UncheckedControl)
+    #ENDIF
+  #ENDFOR
+END
+#ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardHandling)
+#CASE(%ControlType)
+#OF('ITEM')
+  #IF(NOT EXTRACT(%ControlStatement,'SEPARATOR'))
+#INSERT(%FieldTemplateStandardButtonMenuHandling)
+  #ENDIF
+#OF('CHECK')
+#INSERT(%FieldTemplateStandardCheckboxHandling)
+#OF('BUTTON')
+  #IF(INSTRING('?Toolbar:',%Control,1,1)<>1)
+#INSERT(%FieldTemplateStandardButtonMenuHandling)
+  #ENDIF
+#ENDCASE
+#!-------------------------------------------------------------------------
+#GROUP(%FieldTemplateWindowSetup)
+#CASE(%ControlType)
+#OF('CHECK')
+#INSERT(%FieldTemplateStandardCheckboxSetup)
+#ENDCASE
+#!
+#!
+#GROUP(%GeneralProcedurePrompts)
+#PROMPT('Window Operation Mode:',DROP('Use WINDOW setting|Normal|MDI|Modal')),%WindowOperationMode
+#ENABLE(%INIActive)
+  #BOXED('INI File Settings')
+    #PROMPT('Save and Restore Window Location',CHECK),%INISaveWindow,DEFAULT(1),AT(10,,150)
+  #ENDBOXED
+#ENDENABLE
+#!
+#GROUP(%GetControlName,%SearchReport=%False),PRESERVE      #!Gets the control name for the current active template
+#IF(%Searchreport)
+  #FIND(%ReportControlInstance,%ActiveTemplateInstance,%ReportControl)
+  #RETURN (%ReportControl)
+#ELSE
+  #FIND(%ControlInstance,%ActiveTemplateInstance,%Control)
+  #RETURN (%Control)
+#END
+#!

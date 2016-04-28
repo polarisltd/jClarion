@@ -1,0 +1,431 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#InternetConnect
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CenterWinOnPage),DEVIMP(BAROQUE),DTYPE(CHECK),HIDDEN(1),OUTPUT.NAME(AppCenterWindow),TYPE(BOOLEAN)
+  PROPERTY: NAME(PageBackgroundColour),DESCRIPTION(Page Background Color),DEVIMP(BAROQUE),DTYPE(COLOR),HIDDEN(1),OUTPUT.NAME(AppPageBackColor)
+  PROPERTY: NAME(PageBackgroundImage),DESCRIPTION(Page Background Image),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*'),HIDDEN(1),OUTPUT.NAME(AppPageBackImage),TYPE(STRING)
+  PROPERTY: NAME(SkeletonTheme),DESCRIPTION(Skeleton theme for this window)
+  PROPERTY: NAME(WindowBackgroundColour),DESCRIPTION(Window Background Color),DEVIMP(BAROQUE),DTYPE(COLOR),HIDDEN(1),OUTPUT.NAME(AppWindowBackColor)
+  PROPERTY: NAME(WindowBackgroundImage),DESCRIPTION(Window Background Image),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('GIF Images (*.gif)|*.gif|JPEG Images (*.jpg;*.jpeg)|*.jpg;*.jpeg|All Files (*.*)|*.*'),HIDDEN(1),OUTPUT.NAME(AppWindowBackImage),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CENTERWINONPAGE(1)
+    CONTROLTEMPLATE(Web)
+    PAGEBACKGROUNDCOLOUR(-1)
+    PAGEBACKGROUNDIMAGE()
+    SKELETONSTYLE()
+    TEMPLATECHAIN(Web)
+    WINDOWBACKGROUNDCOLOUR(-1)
+    WINDOWBACKGROUNDIMAGE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#QBE
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Interface),VALIDATION('@EVAL(CHOOSE(''%Scope.GenerateWebApp%''=''0'' OR (''%Scope.GenerateWebApp%''=''1'' AND ''%_Value_%''=''FORM'')))'),VALIDATIONTEXT(Interface may only be set to FORM in a web enabled application)
+  [DEFINITION]
+    INTERFACE('@EVAL(CHOOSE(''%Scope.GenerateWebApp%''=''1'', ''FORM'', ''LIST''))')
+    QKICON()
+    QKMENUICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(GenerateWebApp),ACORN(1),ACORN.NAME(Internet Connect),ACORN.WIZARD(ControlTemplate#GlobalTemplate#InternetConnect),DESCRIPTION(Generate Internert Connect Application),DEVIMP(ASK),DTYPE(CHECK),HIDDEN('@EVAL(CHOOSE(%PROCEDUREWIZATRON%))'),LOCKED('@EVAL(CHOOSE(%PROCEDUREWIZATRON%))'),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.SkeletonTheme),DESCRIPTION('Select a theme to use when generating the HTML files.'),QUICKSTART(TOPSPEED:Default),QUICKSTART.PRIORITY(200),QUICKSTART.PROMPT(Theme for HTML generation),QUICKSTART.TABLABEL(HTML),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#GlobalTemplate#InternetConnect.SkeletonTheme(%_Value_%)')
+  PROPERTY: NAME(TargetOS),VALIDATION('@EVAL(CHOOSE(''%_Value_%''=''Windows - 32bit''))'),VALIDATIONTEXT(Target OS must be 32bit in web enabled application)
+  [DEFINITION]
+    GENERATEWEBAPP(1)
+    TARGETOS(Windows - 32bit)
+    TARGETOS.LIST(Windows - 32bit)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#InternetProc
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CenterWinOnPage),DESCRIPTION(Center Window on Page),HIDDEN(1),OUTPUT.NAME(WinCenterWindow)
+  PROPERTY: NAME(ControlWebProperty),ACORN(1),ACORN.CONTEXT('ControlInstanceName(%_VALUE_%)'),ACORN.NAME('WebProperties: @EXTRACT(\%_VALUE_%,Name)'),ACORN.WIZARD(TOPSPEED:ControlTemplate#ControlWebProperties),DESCRIPTION(Set the Skeleton properties for Controls),DEVIMP(USEFUL),DTYPE(MULTIDROP),MULTI(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(ControlWebProperty.DisableFromBrowser),DEVIMP(INTERNAL),DTYPE(HIDDEN),HIDDEN(1),LOCKED(1),OUTPUT.DEPENDS(Control),OUTPUT.NAME(CtlDisableFromBrowser),OUTPUT.TYPE(LONG),TYPE(UNKNOWN)
+  PROPERTY: NAME(ControlWebProperty.HtmlFooterPrompt),DEVIMP(INTERNAL),DTYPE(HIDDEN),HIDDEN(1),LOCKED(1),OUTPUT.DEPENDS(Control),OUTPUT.NAME(CtlHtmlFooter),TYPE(UNKNOWN)
+  PROPERTY: NAME(ControlWebProperty.HtmlHeaderPrompt),DEVIMP(INTERNAL),DTYPE(HIDDEN),HIDDEN(1),LOCKED(1),OUTPUT.DEPENDS(Control),OUTPUT.NAME(CtlHtmlHeader),TYPE(UNKNOWN)
+  PROPERTY: NAME(ControlWebProperty.List),DESCRIPTION(List of Controls to apply Skeleton Info to),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO(1),LISTFILL.FUNC('@EXTRACT(Scope.WindowManager,node.controls)'),MULTI(1)
+  PROPERTY: NAME(ControlWebProperty.SkeletonCapabilitiesPrompt),DEVIMP(INTERNAL),DTYPE(HIDDEN),HIDDEN(1),LOCKED(1),OUTPUT.DEPENDS(Control),OUTPUT.NAME(CtlSkeletonCapabilities),TYPE(UNKNOWN)
+  PROPERTY: NAME(ControlWebProperty.SkeletonNamePrompt),DEVIMP(INTERNAL),DTYPE(HIDDEN),HIDDEN(1),LOCKED(1),OUTPUT.DEPENDS(Control),OUTPUT.NAME(CtlSkeletonName),TYPE(UNKNOWN)
+  PROPERTY: NAME(ControlWebProperty.SkeletonThemePrompt),DEVIMP(INTERNAL),DTYPE(HIDDEN),HIDDEN(1),LOCKED(1),OUTPUT.DEPENDS(Control),OUTPUT.NAME(CtlSkeletonStyle),TYPE(UNKNOWN)
+  PROPERTY: NAME(ControlWebProperty.SkeletonTypePrompt),DEVIMP(INTERNAL),DTYPE(HIDDEN),HIDDEN(1),LOCKED(1),OUTPUT.DEPENDS(Control),OUTPUT.NAME(CtlSkeletonType),TYPE(UNKNOWN)
+  PROPERTY: NAME(ControlWebProperty.SubmitOnChangePrompt),DEVIMP(INTERNAL),DTYPE(HIDDEN),HIDDEN(1),LOCKED(1),OUTPUT.DEPENDS(Control),OUTPUT.NAME(CtlSubmitOnChange),OUTPUT.TYPE(LONG),TYPE(UNKNOWN)
+  PROPERTY: NAME(HideInBrowser),DESCRIPTION(Return immediately if launched via a browser),DTYPE(CHECK),OUTPUT.NAME(WinDisableFromBrowser),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(HtmlGenerateTime),DESCRIPTION(Time to generate the HTML file),DTYPE(SINGLEDROP),OUTPUT.NAME(HtmlGenerateTime)
+  PROPERTY: NAME(HtmlGenerateTime.List),DESCRIPTION(Available occasions),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(OverrideGlobalPage),DESCRIPTION(Override Global Page settings),DEVIMP(BAROQUE),DTYPE(CHECK),OUTPUT.NAME(WinOverridePage),TYPE(BOOLEAN)
+  PROPERTY: NAME(OverrideGlobalWin),DESCRIPTION(Override Global Window settings),DEVIMP(BAROQUE),DTYPE(CHECK),OUTPUT.NAME(WinOverrideWindow),TYPE(BOOLEAN)
+  PROPERTY: NAME(OverrideSkeleton),DESCRIPTION(Override Global skeleton),DEVIMP(BAROQUE),DTYPE(CHECK),HIDDEN(1),OUTPUT.NAME(WinOverrideSkeleton),TYPE(BOOLEAN)
+  PROPERTY: NAME(PageBackgroundColour),HIDDEN(1),OUTPUT.NAME(WinPageBackColor)
+  PROPERTY: NAME(PageBackgroundImage),HIDDEN(1),OUTPUT.NAME(WinPageBackImage)
+  PROPERTY: NAME(RestrictAccess),DESCRIPTION(Use http password facility to restrict access),DTYPE(CHECK),OUTPUT.NAME(WinAuthorize),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(RestrictAccess.CaseSensitive),DESCRIPTION(Is password case sensitive?),DTYPE(CHECK),OUTPUT.NAME(WinAuthorizeCaseSensitive),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(RestrictAccess.Password),DESCRIPTION(Field containing the password),DTYPE(FIELD),OUTPUT.NAME(WinAuthorizePassword)
+  PROPERTY: NAME(SecureConnection),DESCRIPTION(Transfer page using a secure connection),DTYPE(CHECK),OUTPUT.NAME(WinSecure),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(SkeletonCapabilities),DESCRIPTION(Capabilities required by the window),OUTPUT.NAME(WinSkeletonCapabilities)
+  PROPERTY: NAME(SkeletonName),DESCRIPTION(Name of skeleton file to represent this window)
+  PROPERTY: NAME(SkeletonTheme),DESCRIPTION(Skeleton theme to represent this window),OUTPUT.NAME(WinSkeletonStyle)
+  PROPERTY: NAME(SkeletonToUse),DESCRIPTION(Name of skeleton file to use),HIDDEN(1),OUTPUT.NAME(WinSkeletonName)
+  PROPERTY: NAME(Web.MergeMenubar),DESCRIPTION(Merge menubar onto this window),DTYPE(CHECK),OUTPUT.NAME(WinMergeMenu),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(Web.MergeToolbar),DESCRIPTION(Merge toolbar onto this window),DTYPE(CHECK),OUTPUT.NAME(WinMergeTool),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(WindowBackgroundColour),HIDDEN(1),OUTPUT.NAME(WinWindowBackColor)
+  PROPERTY: NAME(WindowBackgroundImage),HIDDEN(1),OUTPUT.NAME(WinWindowBackImage)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(WebProc)
+    CONTROLWEBPROPERTY()
+    GENERATEPRIORITY(200)
+    HTMLGENERATETIME(Runtime)
+    HTMLGENERATETIME.LIST(Wizatron,Generator,Runtime)
+    OVERRIDEGLOBALPAGE(1)
+    OVERRIDEGLOBALWIN(1)
+    OVERRIDESKELETON('@EVAL(CHOOSE(''%SkeletonToUse%''<>'''' OR ''%SkeletonTheme%''<>'''') OR (''%HtmlGenerateTime%''=''Wizatron'' AND ''%SkeletonCapabilities%''<>''''))')
+    RESTRICTACCESS(0)
+    SKELETONCAPABILITIES('@EVAL(CHOOSE(''@CONTAINER(OUTPUT.CATEGORY)''=''Splash'','',splash'',''''))')
+    SKELETONSTYLE('@EXTRACT(Scope.GenerateWebApp,SkeletonTheme)')
+    SKELETONTOUSE('@EVAL(CHOOSE(''%HtmlGenerateTime%''=''Wizatron'',''%^Output.ProcName%.html'',''%SkeletonName%''))')
+    TEMPLATECHAIN(Web)
+    WEB.MERGEMENUBAR(1)
+    WEB.MERGETOOLBAR(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ProcedureComponent
+  DESCRIPTOR: 1
+  PROPERTY: NAME(InternetProcedure),ACORN(1),ACORN.NAME(InternetProcedure),ACORN.WIZARD(ControlTemplate#InternetProc),DESCRIPTION('Is an Internet Procedure|Set to ''Yes'' to make this an Internet Procedure.'),DEVIMP(BAROQUE),DTYPE(CHECK),TYPE(BOOLEAN),VALIDATION('@EVAL(CHOOSE(''%_Value_%''=''0'' OR (''%_Value_%''=''1'' AND ''%Scope.GenerateWebApp%''=''1'')))'),VALIDATIONTEXT(Internet procedure may only be set true in web enabled application)
+  [DEFINITION]
+    INTERNETPROCEDURE(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseUpdate
+  DESCRIPTOR: 1
+  PROPERTY: NAME(EIP),LOCKED(1)
+  [DEFINITION]
+    EIP(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl
+  DESCRIPTOR: 1
+  [DEFINITION]
+    HASBROWSETOOLBAR(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ControlWebProperties
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ControlInstanceName),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(ControlName),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(HideInBrowser),DTYPE(CHECK),HIDDEN(1),LOCKED(1),OUTPUT.INSTANCEPARENTVALUE('''%ControlName%'''),OUTPUT.INSTANCEVALUE(%HideInBrowser%),OUTPUT.NAME(CtlDisableFromBrowser),TYPE(BOOLEAN)
+  PROPERTY: NAME(HtmlPrefix),DTYPE(TEXT),HIDDEN(1),LOCKED(1),OUTPUT.INSTANCEPARENTVALUE('''%ControlName%'''),OUTPUT.INSTANCEVALUE(%HtmlPrefix%),OUTPUT.NAME(CtlHtmlHeader),TYPE(MEMO)
+  PROPERTY: NAME(HtmlSuffix),DTYPE(TEXT),HIDDEN(1),LOCKED(1),OUTPUT.INSTANCEPARENTVALUE('''%ControlName%'''),OUTPUT.INSTANCEVALUE(%HtmlSuffix%),OUTPUT.NAME(CtlHtmlFooter),TYPE(MEMO)
+  PROPERTY: NAME(SkeletonCapabilities),HIDDEN(1),OUTPUT.INSTANCEPARENTVALUE('''%ControlName%'''),OUTPUT.INSTANCEVALUE(%SkeletonCapabilities%),OUTPUT.NAME(CtlSkeletonCapabilities)
+  PROPERTY: NAME(SkeletonName),HIDDEN(1),LOCKED(1),OUTPUT.INSTANCEPARENTVALUE('''%ControlName%'''),OUTPUT.INSTANCEVALUE(%SkeletonName%),OUTPUT.NAME(CtlSkeletonName)
+  PROPERTY: NAME(SkeletonTheme),HIDDEN(1),LOCKED(1),OUTPUT.INSTANCEPARENTVALUE('''%ControlName%'''),OUTPUT.INSTANCEVALUE(%SkeletonTheme%),OUTPUT.NAME(CtlSkeletonStyle)
+  PROPERTY: NAME(SubmitOnChange),DTYPE(CHECK),HIDDEN(1),LOCKED(1),OUTPUT.INSTANCEPARENTVALUE('''%ControlName%'''),OUTPUT.INSTANCEVALUE(%SubmitOnChange%),OUTPUT.NAME(CtlSubmitOnChange),TYPE(BOOLEAN)
+  PROPERTY: NAME(Use.FieldType),HIDDEN(1),LOCKED(1),OUTPUT.INSTANCEPARENTVALUE('''%ControlName%'''),OUTPUT.INSTANCEVALUE(%Use.FieldType%),OUTPUT.NAME(CtlSkeletonType)
+  [DEFINITION]
+    CONTROLNAME('@EXTRACT(\%ControlInstanceName%,Use.FeqLabel)')
+    CONTROLTEMPLATEINSTANCE('@CONTAINER(Name)')
+    GENERATEPRIORITY(20)
+    HIDEINBROWSER('@EXTRACT(\%ControlInstanceName%,HideInBrowser)')
+    HTMLPREFIX('@EXTRACT(\%ControlInstanceName%,HtmlPrefix)')
+    HTMLSUFFIX('@EXTRACT(\%ControlInstanceName%,HtmlSuffix)')
+    SKELETONCAPABILITIES('@EVAL(CHOOSE(''%Scope.HtmlGenerateTime%''=''Wizatron'','''',''@EXTRACT(\%ControlInstanceName%,SkeletonCapabilities)''))')
+    SKELETONNAME('@EVAL(CHOOSE(''%Scope.HtmlGenerateTime%''=''Wizatron'','''',''@EXTRACT(\%ControlInstanceName%,SkeletonName)''))')
+    SKELETONSTYLE('@EXTRACT(\%ControlInstanceName%,SkeletonTheme)')
+    SUBMITONCHANGE('@EXTRACT(\%ControlInstanceName%,SubmitOnChange)')
+    USE.FIELDTYPE('@EXTRACT(\%ControlInstanceName%,Use.FieldType)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Control
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HideInBrowser),DESCRIPTION(Hide this control when displayed in a browser),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HtmlPrefix),DESCRIPTION(HTML to generate before the control),DTYPE(TEXT),TYPE(MEMO)
+  PROPERTY: NAME(HtmlSuffix),DESCRIPTION(HTML to generate after the control),DTYPE(TEXT),TYPE(MEMO)
+  PROPERTY: NAME(SkeletonCapabilities),DESCRIPTION(Capabilities required by this control)
+  PROPERTY: NAME(SkeletonListCapabilities),HIDDEN(1)
+  PROPERTY: NAME(SkeletonName),DESCRIPTION(Name of skeleton file to represent this control)
+  PROPERTY: NAME(SkeletonTheme),DESCRIPTION(Skeleton theme for this control)
+  PROPERTY: NAME(SubmitOnChange),DESCRIPTION(Cause the browser to submit when control is changed),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Use.FeqLabel),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))'),VALIDATIONTEXT(Control must has a field equate label)
+  PROPERTY: NAME(Use.FieldType),DESCRIPTION('Type of this field (e.g. money)')
+  [DEFINITION]
+    HIDEINBROWSER(0)
+    HTMLPREFIX()
+    HTMLSUFFIX()
+    SKELETONCAPABILITIES('@EVAL(CHOOSE(''%ControlType%''=''LIST'' OR ''%ControlType%''=''COMBO'',''%SkeletonListCapabilities%'',''''))')
+    SKELETONLISTCAPABILITIES('')
+    SKELETONNAME()
+    SKELETONSTYLE()
+    SUBMITONCHANGE(0)
+    USE.FIELDTYPE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ListBox
+  DESCRIPTOR: 1
+  [DEFINITION]
+    SKELETONLISTCAPABILITIES('@EVAL(CHOOSE(''%Immediate%''=''1'','',pageloaded'',''''))@EVAL(CHOOSE(@COUNT(DisplayColumns) > 1,'',multicolumn'',''''))@EVAL(CHOOSE(''%Drop.Count%''<>''0'','',drop'',''''))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Insert
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizIns.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Top
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizFirst.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#PageUp
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizPgUp.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#PageDown
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizPgDn.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Bottom
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizLast.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Up
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizUp.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Down
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizDown.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Locate
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizFind.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Select
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizMark.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Change
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizEdit.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Delete
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizDel.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#History
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizDitto.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Toolbar#Help
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON(wizHelp.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Image#Splash
+  DESCRIPTOR: 1
+  [DEFINITION]
+    IMAGE(wizsplsh.gif)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Entry#Locator
+  DESCRIPTOR: 1
+  [DEFINITION]
+    SUBMITONCHANGE(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuManager
+  DESCRIPTOR: 1
+  [DEFINITION]
+    STANDARDMENUITEMS.LIST(Quit,Splash)
+    USE.LABEL(?Menubar)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseQBE
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseQBE#ProcessReportQBE
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseSelect
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseView
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#BrowseToolbox
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Cancel
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#ProcessCancel
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Pause
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Change
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Up
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Down
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Close
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Close#About
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Delete
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#FieldLookup
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Insert
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Save
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#WebGuardLogon
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#FuzzyMatchSearch
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#FuzzyMatchClear
+  DESCRIPTOR: 1
+  [DEFINITION]
+    ICON()
+  [END]
+[END]

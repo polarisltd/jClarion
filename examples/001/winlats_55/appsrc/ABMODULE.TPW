@@ -1,0 +1,82 @@
+#MODULE(GENERATED,'Generated Source Module'),HLP('~TPLModuleGenerated') #! MODULE header
+#PREEMBED('! Before Embed Point: ' & %EmbedID & ') DESC(' & %EmbedDescription & ') ARG(' & %EmbedParameters & ')',%GenerateEmbedComments)
+#POSTEMBED('! After Embed Point: ' & %EmbedID & ') DESC(' & %EmbedDescription & ') ARG(' & %EmbedParameters & ')',%GenerateEmbedComments)
+#!
+#!
+#SET(%GenerationCompleted,%False)
+#SET(%RegenerateGlobalModule,%True)           #! Flag to regen the main module
+#FREE(%ModuleIncludeList)                     #! Built per module
+#FREE(%ClassDeclarations)                     #! ditto
+#FREE(%CalloutModules)                        #! ditto
+#SECTION
+  #CREATE(%BuildFile)
+  #FOR(%ModuleProcedure)
+    #FIX(%Procedure,%ModuleProcedure)
+    #MESSAGE('Generating Procedure: '&%Procedure,2)
+    #FREE(%ProcFilesUsed)
+    #GENERATE(%Procedure)
+  #ENDFOR
+  #CLOSE(%BuildFile)
+#ENDSECTION
+#CREATE(%BuildHeader)
+#MESSAGE('Generating Module Header',2)
+#MESSAGE('',3)
+
+
+   MEMBER('%Program')                      #<! This is a MEMBER module
+
+#EMBED(%StartOfModule,'Start of module'),DATA
+#!
+#FREE(%CustomModuleMapModule)
+#FREE(%CustomModuleData)
+#EMBED(%CustomModuleDeclarations,'Compile Module Declarations'),HIDE
+#SUSPEND
+#?%NULL
+#FOR(%ModuleIncludeList),WHERE(%ModuleIncludeList)
+   #?INCLUDE('%(CLIP(%ModuleIncludeList))'),ONCE
+  #RELEASE
+#ENDFOR
+#?%NULL
+#RESUME
+#SUSPEND
+                     #?MAP
+#INSERT(%GenerateMapStructure)
+                     #?END
+#?%NULL
+#?%NULL
+#RESUME
+#FOR(%ModuleData)
+%ModuleData   %ModuleDataStatement
+#ENDFOR
+#FOR(%CustomModuleData)
+%[20]CustomModuleData %CustomModuleDataDeclaration
+  #FOR(%CustomModuleDataComponent)
+%[20 + (%CustomModuleDataComponentIndent * 2)]CustomModuleDataComponent %CustomModuleDataComponentDeclaration
+  #ENDFOR
+#ENDFOR
+#EMBED(%ModuleDataSection,'Module Data Section'),DATA
+#!
+#!
+#APPEND(%BuildFile),SECTION                    #!append module code to module header
+#CLOSE(%BuildHeader)
+#REPLACE(%Module,%BuildHeader)
+#REMOVE(%BuildHeader)
+#SET(%GenerationCompleted,%True)
+#IF(%CreateLocalMap)                          #!Local maps require include file headers
+  #INSERT(%MakeModuleIncludeFile)
+#END
+#!
+#!
+#!
+#MODULE(ExternalSource,'External Source Module','External','.clw'),EXTERNAL,HLP('~TPLModuleExternalSource')
+#SET(%RegenerateGlobalModule,%True)
+#!
+#MODULE(ExternalObj,'External Object Module','External','.obj'),EXTERNAL,HLP('~TPLModuleExternalObj')
+#SET(%RegenerateGlobalModule,%True)
+#!
+#MODULE(ExternalLib,'External Library Module (LIB)','External','.lib'),EXTERNAL,HLP('~TPLModuleExternalLib')
+#SET(%RegenerateGlobalModule,%True)
+#!
+#MODULE(ExternalDLL,'External Dynamic Link Library (DLL)','External','.lib'),EXTERNAL,HLP('~TPLModuleExternalDll')
+#SET(%RegenerateGlobalModule,%True)
+#!

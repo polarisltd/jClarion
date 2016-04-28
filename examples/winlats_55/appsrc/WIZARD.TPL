@@ -1,0 +1,754 @@
+#TEMPLATE(Wizards,'Clarion for Windows Wizard Templates')
+#HELP('CW2TPL.HLP')
+#GROUP(%DeclareSymbols)
+#!
+#DECLARE(%ProgramType)
+#SET(%ProgramType,'Simple')         #!Mutually exclusive options
+#!SET(%ProgramType,'Full')
+#!
+#DECLARE(%BrowseRoutine)            #!Used to construct the browse routine name to call for a given tab
+#!
+#DECLARE(%GenerationReporting)
+#SET(%GenerationReporting,%False)
+#DECLARE(%ReplaceExistingProcedures)
+#DECLARE(%TXAFile)
+#DECLARE(%Comments)
+#DECLARE(%CurrentProcedure)
+#DECLARE(%CurrentTab)
+#DECLARE(%InitializeTab)
+#!
+#DECLARE(%WindowWidth)
+#DECLARE(%WindowHeight)
+#DECLARE(%WindowButtonRows)
+#DECLARE(%WindowButtonColumns)
+#!
+#DECLARE(%WorksheetWidth)
+#DECLARE(%WorksheetHeight)
+#DECLARE(%WorksheetButtonRows)
+#DECLARE(%WorksheetButtonColumns)
+#!
+#DECLARE(%MaximumTopOffset)
+#DECLARE(%CurrentX)
+#DECLARE(%CurrentY)
+#DECLARE(%CurrentLineLength)
+#DECLARE(%ValueConstruct)
+#DECLARE(%HoldConstruct)
+#DECLARE(%TestHeight)
+#DECLARE(%TestWidth)
+#DECLARE(%TestControlType)
+#DECLARE(%PictureType)
+#DECLARE(%RelationRows)
+#DECLARE(%RelationCols)
+#DECLARE(%TabLineCount)
+#DECLARE(%CheckIndentWidth)
+#DECLARE(%CurrentTabLength)
+#DECLARE(%CurrentTabLineLength)
+#DECLARE(%ControlPlacementTries)
+#DECLARE(%VerticalSpaceNextControl)
+#DECLARE(%GenerateProgramSection)
+#DECLARE(%GenerateInternet)
+#DECLARE(%ProcCount)
+#DECLARE(%ContCounter)
+#DECLARE(%DecimalPortion)
+#!
+#DECLARE(%RelationList),MULTI
+#DECLARE(%BrowseFiles),UNIQUE
+#DECLARE(%ChildBrowseFiles),UNIQUE
+#DECLARE(%SelectFiles),UNIQUE
+#DECLARE(%UpdateFiles),UNIQUE
+#!
+#DECLARE(%SQLUsed)
+#DECLARE(%SQLDrivers),UNIQUE
+#DECLARE(%SQLFile,%SQLDrivers)
+#!
+#DECLARE(%ProcedureList),MULTI
+#DECLARE(%QuickProcedureType,%ProcedureList)
+#DECLARE(%QuickProcedurePrimary,%ProcedureList)
+#DECLARE(%QuickProcedurePrimaryKey,%ProcedureList)
+#DECLARE(%QuickProcedureDescription,%ProcedureList)
+#DECLARE(%QuickProcedureDefault,%ProcedureList)
+#DECLARE(%QuickProcedureWindow,%ProcedureList)
+#DECLARE(%QuickProcedureReport,%ProcedureList)
+#DECLARE(%QuickProcedureReportColumns,%ProcedureList)
+#!
+#DECLARE(%FilledEmbed,%ProcedureList),UNIQUE
+#DECLARE(%FilledEmbedContents,%FilledEmbed),MULTI
+#!
+#DECLARE(%QuickOtherFiles,%ProcedureList),UNIQUE
+#!
+#DECLARE(%WindowLayerID,LONG),UNIQUE
+#DECLARE(%WindowLayerTabText,%WindowLayerID)
+#DECLARE(%WindowLayerTabREQ,%WindowLayerID)
+#DECLARE(%WindowLayerTopOffset,%WindowLayerID)
+#DECLARE(%WindowLayerBottomOffset,%WindowLayerID)
+#DECLARE(%WindowLayerSpecialCase,%WindowLayerID)
+#DECLARE(%WindowLayerCheckIndentLevel,%WindowLayerID)
+#DECLARE(%WindowLayerClosed,%WindowLayerID)
+#!
+#DECLARE(%WindowControlID,%WindowLayerID,LONG),MULTI
+#DECLARE(%WindowControl,%WindowControlID)
+#DECLARE(%WindowControlXOffset,%WindowControlID)
+#DECLARE(%WindowControlYOffset,%WindowControlID)
+#DECLARE(%WindowControlWidth,%WindowControlID)
+#DECLARE(%WindowControlHeight,%WindowControlID)
+#DECLARE(%WindowControlStatement,%WindowControlID)
+#!
+#DECLARE(%ProcedureDataItemID,LONG),MULTI
+#DECLARE(%ProcedureDataItem,%ProcedureDataItemID)
+#DECLARE(%ProceduredataItemType,%ProcedureDataItemID)
+#!
+#DECLARE(%QuickTemplateInstance,LONG),MULTI
+#DECLARE(%QuickTemplateType,%QuickTemplateInstance)
+#DECLARE(%QuickTemplateParent,%QuickTemplateInstance)
+#DECLARE(%QuickTemplatePrimary,%QuickTemplateInstance)
+#DECLARE(%QuickTemplatePrimaryKey,%QuickTemplateInstance)
+#DECLARE(%QuickTemplateProcProp,%QuickTemplateInstance)
+#DECLARE(%QuickTemplateControl,%QuickTemplateInstance),MULTI
+#DECLARE(%QuickTemplateSecondaryFiles,%QuickTemplateInstance),UNIQUE
+#!
+#DECLARE(%FileList),MULTI
+#DECLARE(%FileListPromptWidth,%FileList)
+#DECLARE(%FileListControlsWidth,%FileList)
+#DECLARE(%FileListDescription,%FileList)
+#DECLARE(%FileListSQL,%FileList)
+#DECLARE(%FileListTab,%FileList),MULTI
+#DECLARE(%FileListTabHasPrompts,%FileListTab)
+#!
+#DECLARE(%FieldListID,%FileList,LONG),UNIQUE
+#DECLARE(%FieldList,%FieldListID)
+#DECLARE(%FieldListType,%FieldListID)
+#DECLARE(%FieldListJustification,%FieldListID)
+#DECLARE(%FieldListLookup,%FieldListID)
+#DECLARE(%FieldListLookupKey,%FieldListID)
+#DECLARE(%FieldListLookupField,%FieldListID)
+#DECLARE(%FieldListVerticalSpace,%FieldListID)
+#DECLARE(%FieldListControl,%FieldListID),MULTI
+#DECLARE(%FieldListControlType,%FieldListControl)
+#DECLARE(%FieldListControlXOffset,%FieldListControl)
+#DECLARE(%FieldListControlYOffset,%FieldListControl)
+#DECLARE(%FieldListControlWidth,%FieldListControl)
+#DECLARE(%FieldListControlHeight,%FieldListControl)
+#DECLARE(%FieldListControlOrig,%FieldListControl)
+#DECLARE(%FieldListControlLink,%FieldListControl)
+#DECLARE(%FieldListCheckColumn,%FieldListID,LONG)
+#DECLARE(%FieldListLinkList,%FieldListID),MULTI
+#DECLARE(%FieldListTab,%FieldListID)
+#DECLARE(%FieldListHeader,%FieldListID)
+#DECLARE(%FieldListPicture,%FieldListID)
+#DECLARE(%FieldListPromptWidth,%FieldListID)
+#DECLARE(%FieldListBrowseWidth,%FieldListID)
+#DECLARE(%FieldListBrowseHeaderWidth,%FieldListID)
+#DECLARE(%FieldListBrowseHeaderJust,%FieldListID)
+#DECLARE(%FieldListBrowseHeaderIndent,%FieldListID)
+#DECLARE(%FieldListBrowseColumnJust,%FieldListID)
+#DECLARE(%FieldListBrowseColumnIndent,%FieldListID)
+#DECLARE(%FieldListTotalWidth,%FieldListID)
+#DECLARE(%FieldListTotalHeight,%FieldListID)
+#DECLARE(%FieldListRequiresEnd,%FieldListID)
+#DECLARE(%FieldListReportControl,%FieldListID),MULTI
+#DECLARE(%FieldListReportControlType,%FieldListReportControl)
+#DECLARE(%FieldListReportControlXOffset,%FieldListReportControl)
+#DECLARE(%FieldListReportControlYOffset,%FieldListReportControl)
+#DECLARE(%FieldListReportControlWidth,%FieldListReportControl)
+#DECLARE(%FieldListReportControlHeight,%FieldListReportControl)
+#!
+#DECLARE(%KeyListID,%FileList,LONG),UNIQUE
+#DECLARE(%KeyList,%KeyListID)
+#DECLARE(%KeyListTab,%KeyListID)
+#DECLARE(%KeyListNoPopulate,%KeyListID)
+#DECLARE(%KeyListDescription,%KeyListID)
+#DECLARE(%KeyListField,%KeyListID),MULTI
+#!
+#INSERT(%QuickBrowseDeclarations)
+#INSERT(%QuickFormDeclarations)
+#INSERT(%QuickAppDeclarations)
+#INSERT(%QuickDeclareAdditions)
+#INSERT(%QuickDeclareFields)
+#INSERT(%QuickDeclareProcedure)
+#INSERT(%QuickDeclareDefaults)
+#!--------------------------------------------------------------------------
+#GROUP(%QuickDeclareDefaults)
+#DECLARE(%HighestUserLevel)
+#DECLARE(%Menubar)
+#DECLARE(%LayerWindow)
+#DECLARE(%LayerPreSheet)
+#DECLARE(%LayerPostSheet)
+#DECLARE(%LayerFirstChildBrowse)
+#DECLARE(%MaximumSheetHeight)
+#DECLARE(%MaximumSheetWidth)
+#DECLARE(%MinimumSheetWidth)
+#DECLARE(%MinimumTextHeight)
+#DECLARE(%MinimumBrowseHeight)
+#DECLARE(%MaximumBrowseItemWidth)
+#DECLARE(%InitialSheetYOffset)
+#DECLARE(%DefaultXOffset)
+#DECLARE(%DefaultYOffset)
+#DECLARE(%DefaultReportXOffset)
+#DECLARE(%DefaultReportColumns)
+#DECLARE(%DefaultReportInitialYOffset)
+#DECLARE(%DefaultReportYOffset)
+#DECLARE(%DefaultReportTextYOffset)
+#DECLARE(%DefaultButtonWidth)
+#DECLARE(%DefaultButtonHeight)
+#DECLARE(%DefaultRadioHeight)
+#DECLARE(%DefaultRadioWidth)
+#DECLARE(%DefaultCheckHeight)
+#DECLARE(%DefaultCheckBoxXOffset)
+#DECLARE(%DefaultPromptWidth)
+#DECLARE(%DefaultPromptHeight)
+#DECLARE(%DefaultControlHeight)
+#DECLARE(%DefaultControlWidth)
+#DECLARE(%MinimumControlWidth)
+#DECLARE(%DefaultPromptYOffset)
+#DECLARE(%DefaultListItemHeight)
+#DECLARE(%MaximumRelationCols)
+#DECLARE(%MinimumTabLength)
+#DECLARE(%TabTextOffset)
+#DECLARE(%TabLineVerticalOffset)
+#DECLARE(%TabDefaultVerticalOffset)
+#DECLARE(%DefaultSpinWidthOffset)
+#DECLARE(%MaximumCheckColumns)
+#DECLARE(%CheckColumnWidth)
+#DECLARE(%MaximumBrowseFields)
+#DECLARE(%RadioInitialYOffset)
+#DECLARE(%DefaultRadioXOffset)
+#DECLARE(%DefaultRadioYOffset)
+#DECLARE(%TopControlOffset)
+#DECLARE(%MiddleControlOffset)
+#DECLARE(%BottomControlOffset)
+#DECLARE(%TextControlOffset)
+#DECLARE(%DefaultSelectControlText)
+#DECLARE(%DefaultInsertControlText)
+#DECLARE(%DefaultChangeControlText)
+#DECLARE(%DefaultDeleteControlText)
+#DECLARE(%DefaultCancelControlText)
+#DECLARE(%DefaultCloseControlText)
+#DECLARE(%DefaultHelpControlText)
+#DECLARE(%DefaultOKControlText)
+#!--------------------------------------------------------------------------
+#GROUP(%BeginGeneration)
+#SET(%TXAFile,%Application & '.txa')
+#CREATE(%TXAFile)
+#!--------------------------------------------------------------------------
+#GROUP(%GenerateProcedures)
+#SET(%ProcCount,0)
+#MESSAGE('Wizard Code Generation Progress',0)
+#MESSAGE('Beginning Generation',1)
+#INSERT(%BeginGeneration)
+#IF(%GenerateProgramSection)
+[APPLICATION]
+PROCEDURE Main
+DICTIONARY '%Application.DCT'
+[COMMON]
+FROM Clarion
+#ENDIF
+  #IF (%GenerateInternet)
+[ADDITION]
+NAME Internet Internet
+[INSTANCE]
+INSTANCE 1
+[PROJECT]
+-- Generator
+%#noedit
+%#system win32
+%#model clarion dll
+  #ENDIF
+#FOR(%ProcedureList)
+  #SET(%ProcCount,%ProcCount + 1)
+  #MESSAGE('Generating Procedure ' & %ProcCount & ':  ' & %ProcedureList,1)
+  #MESSAGE('Generating Symbols',2)
+  #INSERT(%ResetGlobalSymbols)
+  #IF(%QuickProcedurePrimary)
+    #FIX(%FileList,%QuickProcedurePrimary)
+    #IF(NOT %FileList)
+      #ADD(%FileList,%QuickProcedurePrimary)
+      #INSERT(%AccumulateFieldList,%FileList)
+    #ENDIF
+  #ENDIF
+  #SET(%CurrentProcedure,%ProcedureList)
+  #MESSAGE('Constructing Procedure',2)
+  #CASE(%QuickProcedureType)
+  #OF('Clarion Browse')
+    #INSERT(%ConstructQuickBrowse)
+  #OF('Clarion Form')
+    #INSERT(%ConstructQuickForm)
+  #OF('Clarion Frame')
+    #INSERT(%ConstructQuickApp)
+  #OF('Clarion Report')
+  #ELSE
+    #CYCLE
+  #ENDCASE
+  #FIX(%FileList,%QuickProcedurePrimary)
+#INSERT(%GenerateProcedure)
+#ENDFOR
+#PURGE(%RelationList)
+#PURGE(%BrowseFiles)
+#PURGE(%ChildBrowseFiles)
+#PURGE(%SelectFiles)
+#PURGE(%UpdateFiles)
+#PURGE(%ProcedureList)
+#MESSAGE('Importing...',1)
+#INSERT(%CloseAndImport)
+#!--------------------------------------------------------------------------
+#GROUP(%ResetGlobalSymbols)
+#INSERT(%SetGlobalDefaults)
+#SET(%HighestUserLevel,9999)
+#SET(%Menubar,10000)
+#SET(%LayerWindow,10001)
+#SET(%LayerPostSheet,10002)
+#SET(%LayerFirstChildBrowse,9950)
+#SET(%TopControlOffset,0)
+#SET(%MiddleControlOffset,10000)
+#SET(%BottomControlOffset,20000)
+#SET(%TextControlOffset,30000)
+#FREE(%QuickTemplateInstance)
+#FREE(%ProcedureDataItemID)
+#FREE(%WindowLayerID)
+#FREE(%RelationList)
+#!--------------------------------------------------------------------------
+#GROUP(%GenerateProcedure)
+#MESSAGE('',3)
+#MESSAGE('Generating Procedure Header',2)
+#INSERT(%GenerateProcedureHeader)
+#MESSAGE('Generating File List',2)
+#INSERT(%GenerateFileList)
+#MESSAGE('Generating Procedure Prompts',2)
+#INSERT(%GenerateProcedurePrompts)
+#MESSAGE('Generating Field Prompts',2)
+#INSERT(%GenerateFieldPrompts)
+#MESSAGE('Generating Extensions',2)
+#INSERT(%GenerateAdditionPrompts)
+#MESSAGE('Generating Embeds',2)
+#INSERT(%GenerateEmbeds)
+#IF(%QuickProcedureWindow)
+#MESSAGE('Generating Window',2)
+#INSERT(%GenerateWindow)
+#ENDIF
+#IF(%QuickProcedureReport)
+#MESSAGE('Generating Report',2)
+#INSERT(%GenerateReport)
+#ENDIF
+#MESSAGE('',2)
+#!--------------------------------------------------------------------------
+#GROUP(%CloseAndImport)
+#CLOSE(%TXAFile)
+#!CLOSE(%Comments)
+#IMPORT(%TXAFile),REPLACE
+#!--------------------------------------------------------------------------
+#GROUP(%GenerateFileList)
+[FILES]
+#IF(%QuickProcedureWindow)
+  #FOR(%QuickTemplateInstance),WHERE(%QuickTemplatePrimary)
+[PRIMARY]
+%QuickTemplatePrimary
+[INSTANCE]
+%QuickTemplateInstance
+    #IF(%QuickTemplatePrimaryKey)
+[KEY]
+%QuickTemplatePrimaryKey
+    #ENDIF
+    #IF(ITEMS(%QuickTemplateSecondaryFiles))
+[SECONDARY]
+      #FOR(%QuickTemplateSecondaryFiles)
+%QuickTemplateSecondaryFiles
+      #ENDFOR
+    #ENDIF
+  #ENDFOR
+#ELSIF(%QuickProcedureReport)
+[PRIMARY]
+%QuickProcedurePrimary
+[INSTANCE]
+0
+  #IF(%QuickProcedurePrimaryKey)
+[KEY]
+%QuickProcedurePrimaryKey
+  #ENDIF
+#ENDIF
+#IF(ITEMS(%QuickOtherFiles))
+[OTHERS]
+  #FOR(%QuickOtherFiles)
+%QuickOtherFiles
+  #ENDFOR
+#ENDIF
+#!--------------------------------------------------------------------------
+#GROUP(%GenerateEmbeds)
+#IF(ITEMS(%FilledEmbed))
+[EMBED]
+  #FOR(%FilledEmbed)
+EMBED %%%FilledEmbed
+[DEFINITION]
+[SOURCE]
+    #FOR(%FilledEmbedContents)
+%FilledEmbedContents
+    #ENDFOR
+[END]
+  #ENDFOR
+[END]
+#ENDIF
+#!--------------------------------------------------------------------------
+#GROUP(%GenerateWindow)
+#CASE(%QuickProcedureType)
+#OF('Clarion Frame')
+  #IF(%ControlModel='Button')
+[WINDOW]
+AppFrame APPLICATION('Application'),AT(,,400,240),STATUS(-1,80,120,45),SYSTEM,MAX,RESIZE,FONT('MS Sans Serif',8,,)
+  #ELSE
+[ADDITION]
+NAME Clarion FrameBrowseControl
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[WINDOW]
+AppFrame APPLICATION('Application'),AT(,,400,240),STATUS(-1,80,120,45),SYSTEM,MAX,RESIZE,FONT('MS Sans Serif',8,,)
+  TOOLBAR,AT(0,0,400,22)
+    BUTTON,AT(4,2,16,14),TIP('Go to the First Page'),USE(?TbarBrwTop,TBarBrwTop),DISABLE,ICON('VCRFIRST.ICO'),#SEQ(1),#ORIG(?TbarBrwTop,TBarBrwTop)
+    BUTTON,AT(20,2,16,14),TIP('Go to the Prior Page'),USE(?TbarBrwPageUp,TBarBrwPageUp),DISABLE,ICON('VCRPRIOR.ICO'),#SEQ(1),#ORIG(?TbarBrwPageUp,TBarBrwPageUp)
+    BUTTON,AT(36,2,16,14),TIP('Go to the Prior Record'),USE(?TbarBrwUp,TBarBrwUp),DISABLE,ICON('VCRUP.ICO'),#SEQ(1),#ORIG(?TbarBrwUp,TBarBrwUp)
+    BUTTON,AT(52,2,16,14),TIP('Locate record'),USE(?TbarBrwLocate,TBarBrwLocate),DISABLE,ICON('FIND.ICO'),#SEQ(1),#ORIG(?TbarBrwLocate,TBarBrwLocate)
+    BUTTON,AT(68,2,16,14),TIP('Go to the Next Record'),USE(?TbarBrwDown,TBarBrwDown),DISABLE,ICON('VCRDOWN.ICO'),#SEQ(1),#ORIG(?TbarBrwDown,TBarBrwDown)
+    BUTTON,AT(84,2,16,14),TIP('Go to the Next Page'),USE(?TbarBrwPageDown,TBarBrwPageDown),DISABLE,ICON('VCRNEXT.ICO'),#SEQ(1),#ORIG(?TbarBrwPageDown,TBarBrwPageDown)
+    BUTTON,AT(100,2,16,14),TIP('Go to the Last Page'),USE(?TbarBrwBottom,TBarBrwBottom),DISABLE,ICON('VCRLAST.ICO'),#SEQ(1),#ORIG(?TbarBrwBottom,TBarBrwBottom)
+    BUTTON,AT(120,2,16,14),TIP('Select This Record'),USE(?TbarBrwSelect,TBarBrwSelect),DISABLE,ICON('MARK.ICO'),#SEQ(1),#ORIG(?TbarBrwSelect,TBarBrwSelect)
+    BUTTON,AT(136,2,16,14),TIP('Insert a New Record'),USE(?TbarBrwInsert,TBarBrwInsert),DISABLE,ICON('INSERT.ICO'),#SEQ(1),#ORIG(?TbarBrwInsert,TBarBrwInsert)
+    BUTTON,AT(152,2,16,14),TIP('Edit This Record'),USE(?TbarBrwChange,TBarBrwChange),DISABLE,ICON('EDIT.ICO'),#SEQ(1),#ORIG(?TbarBrwChange,TBarBrwChange)
+    BUTTON,AT(168,2,16,14),TIP('Delete This Record'),USE(?TbarBrwDelete,TBarBrwDelete),DISABLE,ICON('DELETE.ICO'),#SEQ(1),#ORIG(?TbarBrwDelete,TBarBrwDelete)
+    BUTTON,AT(188,2,16,14),TIP('Previous value'),USE(?TbarBrwHistory,TBarBrwHistory),DISABLE,ICON('DITTO.ICO'),#SEQ(1),#ORIG(?TbarBrwHelp,TBarBrwHistory)
+    BUTTON,AT(204,2,16,14),TIP('Get Help'),USE(?TbarBrwHelp,TBarBrwHelp),DISABLE,ICON('HELP.ICO'),#SEQ(1),#ORIG(?TbarBrwHelp,TBarBrwHelp)
+  END
+  #ENDIF
+#OF('Clarion Form')
+  #IF(%ControlModel NOT='Button')
+[EMBED]
+  EMBED %%ControlPreEventHandling
+  [INSTANCES]
+    WHEN '?CurrentTab'
+    [INSTANCES]
+      WHEN 'NewSelection'
+      [DEFINITION]
+      [SOURCE]
+  !Code to assign button control based upon current tab selection
+
+  CASE CHOICE(?CurrentTab)
+    #FOR(%WindowLayerID),WHERE(%WindowLayerID<1000)
+  OF %WindowLayerID
+      #IF(%WindowLayerID=1)
+    DO FORM::AssignButtons
+      #ELSE
+        #FOR(%WindowControlID),WHERE(SUB(%WindowControl,1,8)='?Browse:')
+          #SET(%BrowseRoutine,'BRW'&SUB(%WindowControl,9,LEN(CLIP(%WindowControl))-8)&'::AssignButtons')
+    DO %BrowseRoutine
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+  END
+      [END]
+    [END]
+  [END]
+[END]
+[ADDITION]
+NAME Clarion FormVCRControls
+[INSTANCE]
+#SET(%ValueConstruct,ITEMS(%QuickTemplateInstance)+1)
+INSTANCE %ValueConstruct
+  #ENDIF
+[ADDITION]
+Name Clarion WindowResize
+[INSTANCE]
+#SET(%ValueConstruct,ITEMS(%QuickTemplateInstance)+1)
+INSTANCE %ValueConstruct
+[PROMPTS]
+%%UseAppStrategy    DEFAULT (1)
+%%AppStrategy       DEFAULT ('Spread')
+%%RestrictMinSize   DEFAULT (1)
+%%WindowMinWidth    DEFAULT (0)
+%%WindowMaxWidth    DEFAULT (0)
+[WINDOW]
+QuickWindow WINDOW('%'QuickProcedureDescription'),AT(,,%WindowWidth,%WindowHeight),FONT('MS Sans Serif',8,,),RESIZE,IMM,SYSTEM,GRAY,MDI,HLP('%ProcedureList')
+#OF('Clarion Browse')
+[ADDITION]
+NAME Clarion WindowResize
+[INSTANCE]
+#SET(%ValueConstruct,ITEMS(%QuickTemplateInstance)+1)
+INSTANCE %ValueConstruct
+[PROMPTS]
+%%UseAppStrategy    DEFAULT (1)
+%%AppStrategy       DEFAULT ('Spread')
+%%RestrictMinSize   DEFAULT (1)
+%%WindowMinWidth    DEFAULT (0)
+%%WindowMaxWidth    DEFAULT (0)
+[WINDOW]
+  #IF(%ControlModel='Toolbar' AND %ProgramType NOT='Full')
+    #SET(%WindowHeight,%WindowHeight-18)
+  #ENDIF
+QuickWindow WINDOW('%'QuickProcedureDescription'),AT(,,%WindowWidth,%WindowHeight),FONT('MS Sans Serif',8,,),IMM,SYSTEM,RESIZE,GRAY,MDI,HLP('%ProcedureList')
+#ELSE
+[WINDOW]
+QuickWindow WINDOW('%'QuickProcedureDescription'),AT(,,%WindowWidth,%WindowHeight),FONT('MS Sans Serif',8,,),IMM,SYSTEM,GRAY,MDI,HLP('%ProcedureList')
+#ENDCASE
+#FIX(%WindowLayerID,%MenuBar)
+#SUSPEND
+  #?MENUBAR
+    #FOR(%WindowControlID)
+       %WindowControlStatement
+    #ENDFOR
+  #?END
+#RESUME
+#FIX(%WindowLayerID,%LayerPreSheet)
+  #INSERT(%ConstructWindowLayer)
+#SUSPEND
+  #?SHEET,AT(%DefaultXOffset,%DefaultYOffset,%WorksheetWidth,%WorksheetHeight),USE(?CurrentTab),#ORIG(CurrentTab)
+#FOR(%WindowLayerID),WHERE(%WindowLayerID =< %HighestUserLevel AND %WindowLayerID > %LayerPreSheet)
+    TAB('%WindowLayerTabText'),USE(?Tab:%WindowLayerID)
+      #INSERT(%ConstructWindowLayer)
+    END
+#ENDFOR
+  #?END
+#RESUME
+#FIX(%WindowLayerID,%LayerPostSheet)
+#INSERT(%ConstructWindowLayer)
+#FIX(%WindowLayerID,%LayerWindow)
+#INSERT(%ConstructWindowLayer)
+ END
+#!--------------------------------------------------------------------------
+#GROUP(%ConstructWindowLayer)
+#FOR(%WindowControlID)
+  #FIND(%QuickTemplateControl,%WindowControl)
+  #IF(%QuickTemplateControl)
+ #INSERT(%PopulateControlTemplate)
+  #ELSE
+    #FIND(%FieldList,%WindowControl)
+    #IF(%FieldList)
+      #IF(%WindowLayerID = %LayerWindow)
+ #INSERT(%PopulateDictionaryControl,%WindowControlXOffset,%WindowControlYOffset,%WindowWidth,%WindowHeight)
+      #ELSE
+ #INSERT(%PopulateDictionaryControl,%WindowControlXOffset,%WindowControlYOffset,%WorksheetWidth,%WorksheetHeight)
+      #ENDIF
+    #ELSE
+ %WindowControlStatement,USE(%WindowControl),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight)
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!--------------------------------------------------------------------------
+#GROUP(%GetColorSuffix),AUTO
+#DECLARE(%ColorSuffix)
+#SERVICE('C55TPLS.DLL','GenGetColorSuffix')
+#RETURN %ColorSuffix
+#!--------------------------------------------------------------------------
+#GROUP(%GenerateReport),AUTO
+#DECLARE(%RowCount)
+#DECLARE(%ColumnCount)
+#DECLARE(%DetailHeight)
+#DECLARE(%ReportStartX)
+#DECLARE(%ReportHeight)
+#DECLARE(%HeaderHeight)
+#DECLARE(%ColumnWidth)
+#DECLARE(%ControlPositionX)
+#DECLARE(%ControlPositionY)
+#DECLARE(%HeaderStartX)
+#FIX(%FileList,%QuickProcedurePrimary)
+#FIX(%File,%QuickProcedurePrimary)
+#FIX(%Key,%QuickProcedurePrimaryKey)
+#SET(%RowCount,0)
+#SET(%ColumnCount,0)
+#FOR(%FieldListID),WHERE(%FieldListType <> 'MEMO')
+  #IF(%ColumnCount = 0)
+    #SET(%RowCount,%RowCount+1)
+  #ENDIF
+  #SET(%ColumnCount,%ColumnCount + 1)
+  #IF(%ColumnCount = %QuickProcedureReportColumns)
+    #SET(%ColumnCount,0)
+  #ENDIF
+#ENDFOR
+#IF(%RowCount = 1 AND %ColumnCount <> 0)
+  #SET(%QuickProcedureReportColumns,%ColumnCount)
+#ENDIF
+#SET(%DetailHeight,100 + (180 * %RowCount))
+#SET(%HeaderHeight,%DetailHeight + 260)
+#SET(%ColumnWidth,(6000 - (100 * %QuickProcedureReportColumns)) / %QuickProcedureReportColumns)
+#SET(%HeaderStartX,1000)
+#SET(%ReportStartX,%HeaderHeight + %HeaderStartX)
+#SET(%ReportHeight,9000 - %ReportStartX)
+[REPORT]
+report REPORT,AT(1000,%ReportStartX,6000,%ReportHeight),PRE(RPT),FONT('Arial',10,,),THOUS
+       HEADER,AT(1000,%HeaderStartX,6000,%HeaderHeight)
+         STRING('%'QuickProcedureDescription'),AT(0,20,6000,220),CENTER,FONT(,,,FONT:bold)
+         BOX,AT(0,260,6000,%DetailHeight),COLOR(00H),FILL(0C0C0C0H)
+#SET(%ValueConstruct,1)
+#LOOP
+  #IF(%ValueConstruct = %QuickProcedureReportColumns)
+    #BREAK
+  #ENDIF
+  #SET(%ControlPositionX,%ValueConstruct * (100 + %ColumnWidth))
+         LINE,AT(%ControlPositionX,260,0,%DetailHeight),COLOR(00H)
+  #SET(%ValueConstruct,%ValueConstruct+1)
+#ENDLOOP
+#SET(%ColumnCount,0)
+#SET(%RowCount,0)
+#FIX(%File,%QuickProcedurePrimary)
+#FOR(%FieldListID),WHERE(%FieldListType <> 'MEMO')
+  #FOR(%FieldListReportControl)
+    #SET(%ColumnCount,%ColumnCount+1)
+    #IF(%ColumnCount > %QuickProcedureReportColumns)
+      #SET(%ColumnCount,1)
+      #SET(%RowCount,%RowCount+1)
+    #ENDIF
+    #SET(%ControlPositionX,50 + ((%ColumnCount - 1) * (100 + %ColumnWidth)))
+    #SET(%ControlPositionY,50 + (%RowCount * 180) + 260)
+         STRING('%FieldListHeader'),AT(%ControlPositionX,%ControlPositionY,%ColumnWidth,170),TRN
+  #ENDFOR
+#ENDFOR
+       END
+#SET(%ColumnCount,0)
+#SET(%RowCount,0)
+detail DETAIL,AT(0,0,6000,%DetailHeight)
+#SET(%ValueConstruct,1)
+#LOOP
+  #IF(%ValueConstruct = %QuickProcedureReportColumns)
+    #BREAK
+  #ENDIF
+  #SET(%ControlPositionX,%ValueConstruct * (100 + %ColumnWidth))
+         LINE,AT(%ControlPositionX,0,0,%DetailHeight),COLOR(00H)
+  #SET(%ValueConstruct,%ValueConstruct+1)
+#ENDLOOP
+#FIX(%File,%QuickProcedurePrimary)
+#FOR(%FieldListID),WHERE(%FieldListType <> 'MEMO')
+  #FOR(%FieldListReportControl)
+    #SET(%ValueConstruct,%FieldListReportControl)
+    #SET(%ValueConstruct,REPLACE(%ValueConstruct,'MSG',''))
+    #SET(%ColumnCount,%ColumnCount+1)
+    #IF(%ColumnCount > %QuickProcedureReportColumns)
+      #SET(%ColumnCount,1)
+      #SET(%RowCount,%RowCount+1)
+    #ENDIF
+    #SET(%ControlPositionX,50 + ((%ColumnCount - 1) * (100 + %ColumnWidth)))
+    #SET(%ControlPositionY,50 + (%RowCount * 180))
+         %ValueConstruct,AT(%ControlPositionX,%ControlPositionY,%ColumnWidth,170)
+  #ENDFOR
+#ENDFOR
+         LINE,AT(50,%DetailHeight,5900,0),COLOR(00H)
+       END
+       FOOTER,AT(1000,9000,6000,219)
+         STRING(@pPage <<<#p),AT(5250,30,700,135),FONT('Arial',8,,FONT:regular),PAGENO,USE(?PageCount)
+       END
+     END
+#!-------------------------------------------------------
+#GROUP(%AddPrimaryBrowse,%NewProcedureFile)
+#DECLARE(%NewProcedureName)
+#FIND(%File,%NewProcedureFile)
+#SET(%NewProcedureName,'Browse' & %File)
+#IF(NOT %ReplaceExistingProcedures)
+  #FIX(%Procedure,%NewProcedureName)
+#ENDIF
+#IF(NOT %Procedure)
+  #FIX(%ProcedureList,%NewProcedureName)
+  #IF(NOT %ProcedureList)
+    #ADD(%ProcedureList,%NewProcedureName)
+    #SET(%QuickProcedureType,'Clarion Browse')
+    #SET(%QuickProcedurePrimary,%File)
+    #SET(%QuickProcedureDescription,'Browse the ' & %File & ' File')
+    #SET(%QuickProcedureDefault,'Primary Browse')
+    #SET(%QuickProcedureWindow,%True)
+  #ENDIF
+#ENDIF
+#!-------------------------------------------------------
+#GROUP(%AddSecondaryBrowse,%NewProcedureKey)
+#DECLARE(%NewProcedureName)
+#FIND(%Key,%NewProcedureKey)
+#SET(%NewProcedureName,'Browse' & %Key)
+#IF(NOT %ReplaceExistingProcedures)
+  #FIX(%Procedure,%NewProcedureName)
+#ENDIF
+#IF(NOT %Procedure)
+  #FIX(%ProcedureList,%NewProcedureName)
+  #IF(NOT %ProcedureList)
+    #ADD(%ProcedureList,%NewProcedureName)
+    #SET(%QuickProcedureType,'Clarion Browse')
+    #SET(%QuickProcedurePrimary,%File)
+    #SET(%QuickProcedurePrimaryKey,%Key)
+    #SET(%QuickProcedureDescription,'Browse the ' & %File & ' File by ' & %Key)
+    #SET(%QuickProcedureDefault,'Secondary Browse')
+    #SET(%QuickProcedureWindow,%True)
+  #ENDIF
+#ENDIF
+#!-------------------------------------------------------
+#GROUP(%AddSelectBrowse,%NewProcedureFile)
+#DECLARE(%NewProcedureName)
+#FIX(%File,%NewProcedureFile)
+#SET(%NewProcedureName,'Select' & %File)
+#IF(NOT %ReplaceExistingProcedures)
+  #FIX(%Procedure,%NewProcedureName)
+#ENDIF
+#IF(NOT %Procedure)
+  #FIX(%ProcedureList,%NewProcedureName)
+  #IF(NOT %ProcedureList)
+    #ADD(%ProcedureList,%NewProcedureName)
+    #SET(%QuickProcedureType,'Clarion Browse')
+    #SET(%QuickProcedurePrimary,%File)
+    #SET(%QuickProcedureDescription,'Select a ' & %File & ' Record')
+    #SET(%QuickProcedureDefault,'Select Browse')
+    #SET(%QuickProcedureWindow,%True)
+  #ENDIF
+#ENDIF
+#!-------------------------------------------------------
+#GROUP(%AddUpdateProcedure,%NewProcedureFile,%OverrideProcedureName)
+#DECLARE(%NewProcedureName)
+#IF(NOT %OverrideProcedureName)
+  #SET(%NewProcedureName,'Update' & %NewProcedureFile)
+#ELSE
+  #SET(%NewProcedureName,%OverrideProcedureName)
+#ENDIF
+#IF(NOT %ReplaceExistingProcedures)
+  #FIX(%Procedure,%NewProcedureName)
+#ENDIF
+#IF(NOT %Procedure)
+  #FIX(%ProcedureList,%NewProcedureName)
+  #IF(NOT %ProcedureList)
+    #ADD(%ProcedureList,%NewProcedureName)
+    #SET(%QuickProcedureType,'Clarion Form')
+    #SET(%QuickProcedurePrimary,%NewProcedureFile)
+    #SET(%QuickProcedureDescription,'Update the ' & %NewProcedureFile & ' File')
+    #SET(%QuickProcedureDefault,'Update Form')
+    #SET(%QuickProcedureWindow,%True)
+  #ENDIF
+#ENDIF
+#!-------------------------------------------------------
+#GROUP(%AddReportProcedure,%NewProcedurePrimary)
+#DECLARE(%NewProcedureName)
+#FIX(%File,%NewProcedurePrimary)
+#IF(%File)
+  #SET(%NewProcedureName,'Print' & %File)
+#ELSE
+  #FIND(%Key,%NewProcedurePrimary)
+  #SET(%NewProcedureName,'Print' & %Key)
+#ENDIF
+#IF(NOT %ReplaceExistingProcedures)
+  #FIX(%Procedure,%NewProcedureName)
+#ENDIF
+#IF(NOT %Procedure)
+  #FIX(%ProcedureList,%NewProcedureName)
+  #IF(NOT %ProcedureList)
+    #ADD(%ProcedureList,%NewProcedureName)
+    #SET(%QuickProcedureType,'Clarion Report')
+    #SET(%QuickProcedurePrimary,%File)
+    #SET(%QuickProcedurePrimaryKey,%Key)
+    #IF(%Key)
+      #SET(%QuickProcedureDescription,'Print the ' & %File & ' File by ' & %Key)
+    #ELSE
+      #SET(%QuickProcedureDescription,'Print the ' & %File & ' File')
+    #ENDIF
+    #SET(%QuickProcedureDefault,'Report')
+    #SET(%QuickProcedureReport,%True)
+    #SET(%QuickProcedureReportColumns,%DefaultReportColumns)
+  #ENDIF
+#ENDIF
+#!--------------------------------------------------------------------------
+#INCLUDE('WProc.TPW')
+#INCLUDE('WControl.TPW')
+#INCLUDE('WField.TPW')
+#INCLUDE('WBrowse.TPW')
+#INCLUDE('WForm.TPW')
+#INCLUDE('WReport.TPW')
+#INCLUDE('WStart.TPW')
+#INCLUDE('WApp.TPW')
+#INCLUDE('WDefault.TPW')
+#INCLUDE('WDctPrn.TPW')

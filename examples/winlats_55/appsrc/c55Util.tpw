@@ -1,0 +1,54 @@
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (GetOSVersion, 'Get the Version of Operating System'),DESCRIPTION( 'Get the Version of Operating System')
+#! -------------------------------------------------------------------------
+#PROMPT('Target Variable: ', FIELD ),%OSVar, REQ
+#! --------------------------------------------------------------------------
+#AT(%CustomGlobalDeclarations)
+#! --------------------------------------------------------------------------
+#IF(~%Target32)
+  #ERROR('The RTF control may only be used with 32 bit programs.')
+#ENDIF
+#ADD( %CustomGlobalDeclarationIncludes,'C55UtilEquates.INC')
+#ADD( %CustomGlobalMapIncludes,'C55Util.INC' )
+#PROJECT('C55Util.CLW')
+#! --------------------------------------------------------------------------
+#ENDAT
+#! --------------------------------------------------------------------------
+%OSVar = OSVersion()
+#! -------------------------------------------------------------------------
+#CODE (GetFullDragSetting, 'Get the setting of the full drag flag'),DESCRIPTION( 'Get the setting of the full drag flag')
+#! -------------------------------------------------------------------------
+#PROMPT('Target Variable: ', FIELD ),%FullDragSetting, REQ
+#! --------------------------------------------------------------------------
+#AT(%CustomGlobalDeclarations)
+#! --------------------------------------------------------------------------
+#IF(~%Target32)
+  #ERROR('The RTF control may only be used with 32 bit programs.')
+#ENDIF
+#ADD( %CustomGlobalDeclarationIncludes,'C55UtilEquates.INC')
+#ADD( %CustomGlobalMapIncludes,'C55Util.INC' )
+#PROJECT('C55Util.CLW')
+#! --------------------------------------------------------------------------
+#ENDAT
+#! --------------------------------------------------------------------------
+%FullDragSetting = FullDrag()
+#! -------------------------------------------------------------------------
+#CODE (SetFullDragSetting, 'Set the full drag flag'),DESCRIPTION( 'Set the full drag flag')
+#! -------------------------------------------------------------------------
+#PROMPT('Turn On', CHECK ),%FullDragSetting, DEFAULT(0)
+#! --------------------------------------------------------------------------
+#AT(%CustomGlobalDeclarations)
+#! --------------------------------------------------------------------------
+#IF(~%Target32)
+  #ERROR('The RTF control may only be used with 32 bit programs.')
+#ENDIF
+#ADD( %CustomGlobalDeclarationIncludes,'C55UtilEquates.INC')
+#ADD( %CustomGlobalMapIncludes,'C55Util.INC' )
+#PROJECT('C55Util.CLW')
+#! --------------------------------------------------------------------------
+#ENDAT
+#! --------------------------------------------------------------------------
+FullDrag(%FullDragSetting)

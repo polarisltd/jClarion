@@ -1,0 +1,48 @@
+! Declarations of Resize Equates
+
+!Resize strategies
+Resize:Resize                 EQUATE(00000000b)      !rescale height & width
+Resize:LockWidth              EQUATE(00000001b)      !locks width
+Resize:LockHeight             EQUATE(00000010b)      !locks height
+Resize:LockSize               EQUATE(00000011b)      !locks height & width
+Resize:ConstantRight          EQUATE(00000100b)      !locks right edge, moves left
+Resize:ConstantBottom         EQUATE(00001000b)      !locks bottom edge, moves top
+Resize:ConstantSize           EQUATE(00001100b)      !locks bottom & right edge
+Resize:ConstantRightCenter    EQUATE(00010000b)      !locks right edge, moves left
+Resize:ConstantBottomCenter   EQUATE(00100000b)      !locks right edge, moves left
+
+Resize:LockPosition           EQUATE(0101h)      !locks X and Y position
+
+Resize:SetMinSize             EQUATE(1)          !Passed to Init(), locks minimum size of window to design size
+Resize:SetMaxSize             EQUATE(1)          !Passes to Init(), locks maximum size of window to design size
+
+!Overall Strategies for the entire window
+  ITEMIZE(0),PRE(AppStrategy)
+Resize    EQUATE                                   !Rescale all proportionally
+Spread    EQUATE                                   !Resize surface controls, move others
+Surface   EQUATE                                   !Max surface controls, move others
+NoResize  EQUATE                                   !Does not resize any controls
+  END
+
+
+!Positional Strategies Clarion
+Resize:Reposition       EQUATE(0000000000000000b)           !rescale X & Y
+!Horizontal
+Resize:LockXPos         EQUATE(0000000000000001b)           !locks XPos of control
+Resize:FixRight         EQUATE(0000000000000010b)           !fixes XPos offset of control to right of window
+Resize:FixLeft          EQUATE(0000000000000100b)           !fixes XPos offset of control to left of window
+Resize:FixXCentre       EQUATE(0000000000001000b)           !fixes XPos offset of control relative to centre
+Resize:FixXCenter       EQUATE(0000000000001000b)           !fixes XPos offset of control relative to centre
+Resize:FixNearestX      EQUATE(0000000000010000b)           !fixes to nearest window side - derived strategy
+!Vertical
+Resize:LockYPos         EQUATE(0000000100000000b)           !locks YPos of control
+Resize:FixBottom        EQUATE(0000001000000000b)           !fixes YPos offset of control to bottom of window
+Resize:FixTop           EQUATE(0000010000000000b)           !fixes YPos offset of control to top of window
+Resize:FixYCentre       EQUATE(0000100000000000b)           !fixes YPos offset of control relative to centre
+Resize:FixYCenter       EQUATE(0000100000000000b)           !fixes YPos offset of control relative to centre
+Resize:FixNearestY      EQUATE(0001000000000000b)           !fixes to nearest, window top of bottom = derived strategy
+
+!Application Resize Strategies
+
+AppStrat:Resize         EQUATE(1)           !Resizes & moves all controls
+AppStrat:Spread         EQUATE(2)           !Resizes 'surface' controls moves others using Resize:FixNearestX+Resize:FixNearestY

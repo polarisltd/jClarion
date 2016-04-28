@@ -1,0 +1,230 @@
+! Graph equates
+GraphPop:Title                equate(01h)       ! 0000000000000000000000000000001b
+GraphPop:Wallpaper            equate(02h)       ! 0000000000000000000000000000010b
+GraphPop:3D                   equate(04h)       ! 0000000000000000000000000000100b
+GraphPop:Gradient             equate(08h)       ! 0000000000000000000000000001000b
+GraphPop:Zoom                 equate(10h)       ! 0000000000000000000000000010000b
+GraphPop:GraphType            equate(20h)       ! 0000000000000000000000000100000b
+GraphPop:Legend               equate(40h)       ! 0000000000000000000000001000000b
+GraphPop:LegendBox            equate(80h)       ! 0000000000000000000000010000000b
+GraphPop:Grid                 equate(100h)      ! 0000000000000000000000100000000b
+GraphPop:GridX                equate(200h)      ! 0000000000000000000001000000000b
+GraphPop:GridY                equate(400h)      ! 0000000000000000000010000000000b
+GraphPop:Axes                 equate(800h)      ! 0000000000000000000100000000000b
+GraphPop:AxesName             equate(1000h)     ! 0000000000000000001000000000000b
+GraphPop:AxesScaleMinMax      equate(2000h)     ! 0000000000000000010000000000000b
+GraphPop:AxesScale            equate(4000h)     ! 0000000000000000100000000000000b
+GraphPop:Node                 equate(8000h)     ! 0000000000000001000000000000000b
+GraphPop:NodeMinMax           equate(10000h)    ! 0000000000000010000000000000000b
+GraphPop:NodeLabel            equate(20000h)    ! 0000000000000100000000000000000b
+GraphPop:NodeValue            equate(40000h)    ! 0000000000001000000000000000000b
+GraphPop:NodeBgr              equate(80000h)    ! 0000000000010000000000000000000b
+GraphPop:Print                equate(100000h)   ! 0000000000100000000000000000000b
+GraphPop:PrintBestFit         equate(200000h)   ! 0000000001000000000000000000000b
+GraphPop:Save                 equate(400000h)   ! 0000000010000000000000000000000b
+GraphPop:SaveAs               equate(800000h)   ! 0000000100000000000000000000000b
+GraphPop:DrillDown            equate(1000000h)  ! 0000001000000000000000000000000b
+GraphPop:ReturnFromDrillDown  equate(2000000h)  ! 0000010000000000000000000000000b
+GraphPop:Interactivity        equate(4000000h)  ! 0000100000000000000000000000000b
+GraphPop:ToolTip              equate(8000000h)  ! 0001000000000000000000000000000b
+GraphPop:Figure               equate(10000000h) ! 0010000000000000000000000000000b
+!
+! SubMenu of GraphPop:GraphType
+GraphPop:ScatterGraph         equate(01h)           ! Point-by-point diagram
+GraphPop:Line                 equate(02h)           ! The Lines
+GraphPop:AreaGraph            equate(04h)           ! Graph based on Areas growing
+GraphPop:FloatingArea         equate(08h)           ! The floating area
+GraphPop:ColumnChart          equate(10h)           ! The Columns
+GraphPop:ColumnWithAccumulation equate(20h)         ! Column with accumulation
+GraphPop:FloatingColumn       equate(40h)           ! The floating columns
+GraphPop:BarChart             equate(80h)           ! The Bars
+GraphPop:BarWithAccumulation  equate(100h)          ! Bar with accumulation
+GraphPop:FloatingBar          equate(200h)          ! The floating bars
+GraphPop:PieChart             equate(400h)          ! The Pie
+! Submenu of GraphPop:Legend
+GraphPop:Legend:None          equate(01h)           ! Don't show
+GraphPop:Legend:Left          equate(02h)           ! At the left
+GraphPop:Legend:Right         equate(04h)           ! At the right
+GraphPop:Legend:Top           equate(08h)           ! At the top
+GraphPop:Legend:Bottom        equate(10h)           ! At the bottom
+! Submenu of GraphPop:Node
+GraphPop:Node:None            equate(01h)           ! Nothing (Don't display)
+GraphPop:Node:Square          equate(02h)           ! Square
+GraphPop:Node:Triangle        equate(04h)           ! Triangle
+GraphPop:Node:Circle          equate(08h)           ! Circle
+! Submenu of GraphPop:Axes
+GraphPop:Axes:None            equate(01h)           ! Don't display
+GraphPop:Axes:Standard        equate(02h)           ! Thick and normal strokes
+GraphPop:Axes:Long            equate(04h)           ! Thick strokes
+!
+                            itemize(1)              ! Diagram type
+GraphType:ScatterGraph        equate                ! Point-by-point diagram
+GraphType:Line                equate                ! The Lines
+GraphType:AreaGraph           equate                ! Graph based on Areas growing
+GraphType:FloatingArea        equate                ! The floating area
+GraphType:ColumnChart         equate                ! The Columns
+GraphType:ColumnWithAccumulation equate             ! Column with accumulation
+GraphType:PieChart            equate                ! The Pie
+GraphType:BarChart            equate                ! The Bars
+GraphType:BarWithAccumulation equate                ! Bar with accumulation
+GraphType:FloatingBar         equate                ! The floating bars
+GraphType:FloatingColumn      equate                ! The floating columns
+                            end
+                            itemize(0)              ! Subtype of the diagram
+GraphSubType:Simple           equate
+GraphSubType:Normalized       equate
+                            end
+                            itemize(1)              ! Node representation type
+NodeType:None                 equate                ! Nothing (Don't display)
+NodeType:Square               equate                ! Square
+NodeType:Triangle             equate                ! Triangle
+NodeType:Circle               equate                ! Circle
+                            end
+                            itemize(1)
+FigureType:Bar                equate
+FigureType:Cylinder           equate
+                            end
+                            itemize(0)              ! Legend placement
+LegendPosition:None           equate                ! Don't show
+LegendPosition:Left           equate                ! At the left
+LegendPosition:Right          equate                ! At the right
+LegendPosition:Top            equate                ! At the top
+LegendPosition:Bottom         equate                ! At the bottom
+                            end
+                            itemize(0)              ! Type of a scale
+Scale:Default                 equate
+Scale:Linear                  equate
+Scale:AsMSWord                equate
+Scale:Square_Law              equate
+Scale:Logarithmic             equate
+                            end
+! Axes styles
+AxesStyle:Default             equate(000000b)       ! By default
+AxesStyle:None                equate(000011b)       ! Don't display
+AxesStyle:Standard            equate(000100b)       ! Thick and normal strokes
+AxesStyle:Long                equate(001100b)       ! Thick strokes
+!
+AxesStyle:NoneX               equate(000001b)       ! Don't display X-axis
+AxesStyle:NoneY               equate(000010b)       ! Don't display Y-axis
+AxesStyle:NoStroke1           equate(000100b)       ! Don't display thin stroke
+AxesStyle:NoStroke2           equate(001000b)       ! Don't display normal stroke
+AxesStyle:NoStroke3           equate(010000b)       ! Don't display thick stroke
+AxesStyle:NoStroke            equate(011100b)       ! Don't display strokes
+AxesStyle:NoText              equate(100000b)       ! Don't display text
+!
+                            itemize
+equ:Auto                      equate
+equ:Portrait                  equate                ! Orientation of page
+equ:Landscape                 equate                ! Orientation of page
+equ:Sum                       equate
+equ:Average                   equate
+equ:Minimum                   equate
+equ:Maximum                   equate
+                            end
+!
+Alignment:Left                equate(00001b)
+Alignment:Right               equate(00010b)
+Alignment:CenterH             equate(00011b)
+Alignment:Top                 equate(00100b)
+Alignment:Bottom              equate(01000b)
+Alignment:CenterV             equate(01100b)
+Alignment:Paper               equate(10000b)
+!
+equ:RadToDeg                  equate(57.295779513082321)
+equ:DegToRad                  equate(0.017453292519943)
+!
+Color:Auto                    equate(-2)            ! Automatically selecting color
+!
+                            itemize(1)              ! Part of file name
+FileName:Directory            equate                ! full name of directory
+FileName:Drive                equate                ! disk
+FileName:DirectoryExcDrive    equate                ! directory without disk
+FileName:FileName             equate                ! file name with extension
+FileName:FileNameExcExt       equate                ! file name without extension
+FileName:FileExt              equate                ! extension
+                            .
+!
+err:ReferenceNull             equate(-31001)        ! The Reference is equal to NULL there where it should be NOT NULL
+err:OmittedParametr           equate(-31006)        ! the parameter(s) which should not be skipped is skipped
+err:BadParent                 equate(-31014)        ! The inadmissible parent
+err:NotOpen                   equate(-31015)        ! WINDOW or REPORT is not open
+!
+                            itemize(3000)           ! Events
+event:TitleON                 equate                ! To show title
+event:TitleOFF                equate                ! To not show title
+event:WallpaperON             equate                ! To show Wallpaper
+event:WallpaperOFF            equate                ! To not show Wallpaper
+event:3DON                    equate                ! To draw in 3D mode (if is accessible)
+event:3DOFF                   equate                ! To switch off 3D a mode (if is accessible)
+event:GridON                  equate                ! To draw a grid (if is accessible)
+event:GridOFF                 equate                ! To hide a grid (if is accessible)
+event:GridXON                 equate
+event:GridXOFF                equate
+event:GridYON                 equate
+event:GridYOFF                equate
+event:AxesScaleMinMaxON       equate
+event:AxesScaleMinMaxOFF      equate
+event:AxesNameON              equate                ! To show the names of axes
+event:AxesNameOFF             equate                ! To not show the names of axes
+event:GradientON              equate
+event:GradientOFF             equate
+event:NodeMinMaxON            equate                ! To show units of a minimum/maximum
+event:NodeMinMaxOFF           equate                ! To not show units of a minimum/maximum
+event:NodeLabelON             equate                ! To show the names of nodes
+event:NodeLabelOFF            equate                ! To not show the names of nodes
+event:NodeValueON             equate                ! To show the values of nodes
+event:NodeValueOFF            equate                ! To not show the values of nodes
+event:NodeBgrON               equate
+event:NodeBgrOFF              equate
+event:LegendBoxON             equate
+event:LegendBoxOFF            equate
+event:ToolTipON               equate
+event:ToolTipOFF              equate
+event:Zoom                    equate
+event:Zoom500                 equate
+event:Zoom300                 equate
+event:Zoom200                 equate
+event:Zoom100                 equate
+event:Zoom50                  equate
+event:Zoom25                  equate
+event:GraphTypeLine           equate
+event:GraphTypeScatterGraph   equate
+event:GraphTypeAreaGraph      equate
+event:GraphTypeFloatingArea   equate
+event:GraphTypeColumnChart    equate
+event:GraphTypeColumnWithAccumulation equate
+event:GraphTypeBarChart       equate
+event:GraphTypeBarWithAccumulation equate
+event:GraphTypeFloatingColumn equate
+event:GraphTypeFloatingBar    equate
+event:GraphTypePieChart       equate
+event:GraphSubTypeSimple      equate
+event:GraphSubTypeNormalized  equate
+event:FigureTypeBar           equate
+event:FigureTypeCylinder      equate
+event:LegendPosition:None     equate                ! To not show legend
+event:LegendPosition:Left     equate
+event:LegendPosition:Right    equate
+event:LegendPosition:Top      equate
+event:LegendPosition:Bottom   equate
+event:AxesStyle:None          equate                ! To not show axes
+event:AxesStyle:Standard      equate
+event:AxesStyle:Long          equate
+event:AxesScale               equate
+event:AxesScale:Linear        equate
+event:AxesScale:AsMSWord      equate
+event:NodeType:None           equate                ! To not show nodes
+event:NodeType:Square         equate                ! To set a type of node as a square
+event:NodeType:Triangle       equate                ! To set a type of node as a triangle
+event:NodeType:Circle         equate                ! To set a type of node as a circle
+event:Refresh                 equate                ! To refresh object
+event:Draw                    equate                ! To draw object
+event:Hide                    equate                ! To hide object
+event:UnHide                  equate                ! To unhide object
+event:Print                   equate                ! To print diagram
+event:PrintBestFit            equate
+event:Save                    equate                ! To save diagram
+event:SaveAs                  equate                ! To save the diagram under a new name
+event:DrillDown               equate
+event:ReturnFromDrillDown     equate
+                            end

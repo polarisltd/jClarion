@@ -1,0 +1,124 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HasFuzzyMatch),ACORN(1),ACORN.NAME(Fuzzy Match),ACORN.WIZARD(TopSpeed:ControlTemplate#FuzzyMatch),DESCRIPTION(Has Fuzzy Match?),DEVIMP(2),DTYPE(2),TYPE(7),VALIDATION('@EVAL(CHOOSE(~%_Value_% OR ''%Scope.FuzzyMatchEnabled%''=''1''))')
+  [DEFINITION]
+    HASFUZZYMATCH(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#FuzzyMatchSearch
+  DESCRIPTOR: 1
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#FuzzyMatchClear
+  DESCRIPTOR: 1
+  PROPERTY: NAME(PrimaryFile),STOP(1)
+  PROPERTY: NAME(PrimaryKey),STOP(1)
+  PROPERTY: NAME(SecondaryFiles),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ButtonControl)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(FuzzyMatchEnabled),DESCRIPTION(Fuzzy Matching enabled?),DEVIMP(1),DOCUMENTATION(IF set to TRUE, enables fuzzy matching for the application),DTYPE(2),OUTPUT.NAME(EnableFuzzyMatching),TYPE(7)
+  PROPERTY: NAME(FuzzyMatchIgnoreCase),DESCRIPTION(Case insensitive Fuzzy Matching?),DEVIMP(2),DOCUMENTATION(IF set to TRUE),DTYPE(2),OUTPUT.NAME(IgnoreCase),TYPE(7)
+  PROPERTY: NAME(FuzzyMatchWordOnly),DESCRIPTION(Match whole words only?),DEVIMP(2),DOCUMENTATION(IF set to TRUE),DTYPE(2),OUTPUT.NAME(WordOnly),TYPE(7)
+  [DEFINITION]
+    FUZZYMATCHENABLED(1)
+    FUZZYMATCHIGNORECASE(1)
+    FUZZYMATCHWORDONLY(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#FuzzyMatchSearch
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.ZONE(Zone:NorthWest)
+    ALLOCATION.YPOS(FFuzzy)
+    ALLOCATION.PRIORITY(2)
+    TEXT(&Search)
+    USE.LABEL(?FuzzyGo)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#FuzzyMatchClear
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.ZONE(Zone:NorthWest)
+    ALLOCATION.YPOS(FFuzzy)
+    ALLOCATION.PRIORITY(1)
+    TEXT(&Clear)
+    USE.LABEL(?FuzzyClear)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Entry#FuzzyMatchQuery
+  DESCRIPTOR: 1
+  PROPERTY: NAME(PostLookupField),STOP(1)
+  PROPERTY: NAME(PostLookupKey),STOP(1)
+  PROPERTY: NAME(PostLookupProcedure),STOP(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Entry)
+    ALLOCATION.ZONE(Zone:NorthWest)
+    ALLOCATION.YPOS(FFuzzy)
+    ALLOCATION.PRIORITY(3)
+    PICTURE(@s255)
+    USE.LABEL(?FuzzyQuery)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Group#FuzzyMatch
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Group)
+    ALLOCATION.TAB()
+    ALLOCATION.ZONE(Zone:SouthWest)
+    BOXED(1)
+    TEXT(Fu&zzy Search Options)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#FuzzyMatch
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Clear),ACORN(1),ACORN.CONTEXT('POPULATOR(%NAME%)'),ACORN.NAME(Fuzzy Match Clear Button),ACORN.WIZARD('^(FuzzyMatchGroup)Button#FuzzyMatchClear'),DESCRIPTION(Clear button in Fuzzy Match group),DEVIMP(2),DTYPE(2),TYPE(7)
+  PROPERTY: NAME(FuzzyMatchGroup),ACORN(1),ACORN.CONTEXT('Populator(%NAME%)'),ACORN.INITPRIORITY(100),ACORN.NAME(Fuzzy Match Group),ACORN.WIZARD(^Group#FuzzyMatch),DTYPE(2),TYPE(7)
+  PROPERTY: NAME(Query),ACORN(1),ACORN.CONTEXT('POPULATOR(%NAME%)'),ACORN.NAME(Fuzzy Match Query),ACORN.WIZARD('^(FuzzyMatchGroup)Entry#FuzzyMatchQuery'),DESCRIPTION(Query entry field in Fuzzy Match group),DEVIMP(2),DTYPE(2),TYPE(7)
+  PROPERTY: NAME(Search),ACORN(1),ACORN.CONTEXT('POPULATOR(%NAME%)'),ACORN.NAME(Fuzzy Match Search Button),ACORN.WIZARD('^(FuzzyMatchGroup)Button#FuzzyMatchSearch'),DESCRIPTION(Search button in Fuzzy Match group),DEVIMP(2),DTYPE(2),TYPE(7)
+  PROPERTY: NAME(DisplayResults),DESCRIPTION(Display results in display list box?),DEVIMP(3),DTYPE(2),OUTPUT.NAME(DisplayResults),TYPE(7)
+  PROPERTY: NAME(PlaceMatchResults),DESCRIPTION(Position in list box to display match results.),DTYPE(12),OUTPUT.NAME(DisplayWhere),STOP(~%DisplayResults%)
+  PROPERTY: NAME(PlaceMatchResults.List),DESCRIPTION(Available list box positions),DTYPE(5),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(ColumnFormat),DESCRIPTION(Format string of list box column.),OUTPUT.NAME(ColumnFormat),STOP(~%DisplayResults%)
+  PROPERTY: NAME(MinimumScoreFilterValue),DESCRIPTION(Cut-off value for listbox),OUTPUT.NAME(MinimumScoreFilterValue)
+  PROPERTY: NAME(TerminateOnControlEvent),DESCRIPTION(Reset fuzzy match result order on control event?),DEVIMP(3),DTYPE(2),OUTPUT.NAME(TerminateOnControlEvent),TYPE(7)
+  PROPERTY: NAME(TerminateControl),DESCRIPTION(Control to terminate on.),DEVIMP(4),DTYPE(12),OUTPUT.NAME(TerminateControl),STOP(~%TerminateOnControlEvent%)
+  PROPERTY: NAME(TerminateControl.List),DESCRIPTION(All controls),DEVIMP(2),DTYPE(10),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@EXTRACT(\%_Value_%,Use.Label)'),LISTFILL.FUNC('@EXTRACT(Scope.WindowManager,node.controls)'),LOCKED(1),MULTI(1),TYPE(8)
+  PROPERTY: NAME(TerminateEvent),DESCRIPTION(Control event to terminate on.),OUTPUT.NAME(TerminateEvent),STOP(~%TerminateOnControlEvent%)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CLEAR(1)
+    CONTROLTEMPLATE(BrowseFuzzyMatching)
+    FUZZYMATCHGROUP(1)
+    QUERY(1)
+    SEARCH(1)
+    DISPLAYRESULTS(0)
+    PLACEMATCHRESULTS(First Column)
+    PLACEMATCHRESULTS.LIST(First Column,Last Column)
+    COLUMNFORMAT(48C(2)|M~Match Result~L(1)@n_3@)
+    MINIMUMSCOREFILTERVALUE()
+    TERMINATEONCONTROLEVENT(0)
+    TERMINATECONTROL()
+    TERMINATECONTROL.LIST()
+    TERMINATEEVENT()
+  [END]
+[END]

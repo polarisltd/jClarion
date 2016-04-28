@@ -1,0 +1,446 @@
+[LIBRARY]
+VERSION(4001)
+DESCRIPTION('This report library contains all Order system reports')
+ENDUSER('off')
+OPTION(0)
+
+[REPORTS]
+ProductsPriceList REPORT,FONT('Arial',10),PRE(Report1),THOUS,AT(1000,958,6500,8646),MARGINS(1000,448,1000,896) !Prices for all Products in Stock
+          HEADER,FONT('Times New Roman',12,0,4796),AT(1000,448,6500,510)
+            STRING('Description'),AT(1167,104)
+            STRING('Product SKU'),AT(42,104)
+            STRING('Price'),AT(3656,104)
+            STRING('Quantity In Stock'),AT(4760,104)
+            LINE,LINEWIDTH(15),AT(0,395,6500,0)
+          END
+_REPORT_  BREAK
+_TOTALS_    BREAK
+Detail1       DETAIL,FONT('Times New Roman',10,0),AT(0,0,,313)
+                STRING(@s10),FONT(,,,100),USE(PRO:ProductSKU),AT(52,0,938)
+                STRING(@s35),USE(PRO:Description),AT(1156,0,1386)
+                STRING(@N$10.2B),USE(PRO:Price),AT(3073,0,958)
+                STRING(@N-8),USE(PRO:QuantityInStock),AT(4397,0,1125)
+                LINE,LINEWIDTH(10),AT(0,231,6500,0)
+              END
+            END
+          END
+          FOOTER,AT(1000,9604,6500,500)
+            STRING(@n5),CENTER,PAGENO,AT(5917,147,510)
+          END
+        END
+MailingLabels REPORT,FONT('Arial',10),PRE(MailingLabels),THOUS,AT(63,500,8374,10000),LINE(0),MARGINS(63,500,63,500) !Mailing Labels for all customers
+_REPORT_  BREAK
+_TOTALS_    BREAK
+Detail1       DETAIL,FIXED,FONT('Arial',8,0),AT(125,10,2625,990)
+                STRING(@s35),SKIP,USE(CUS:Address1),AT(250,334)
+                STRING(@s35),SKIP,USE(CUS:Address2),AT(250,511)
+                STRING(@s35),USE(FullName),AT(250,157)
+                STRING(@s35),USE(CustCSZ),AT(250,688)
+              END
+            END
+          END
+FullName FORMULA(@s35),VALUE('CLIP( CUS:FIRSTNAME ) &''  '' & CUS:MI &''.  '' & CLIP( CUS:LASTNAME )') !Full name of customer
+CustCSZ FORMULA(@s35),VALUE('CLIP( CUS:CITY ) &'',  '' & CUS:STATE &''   '' & CUS:ZIPCODE') !City, State, and Zipcode of customer
+        END
+CustomerList REPORT,FONT('Arial',10),PRE(Report3),THOUS,AT(1000,1000,6500,8990),LINE(0),MARGINS(1000,500,1000,500) !Customer Information (Name, Address,Phone)
+          HEADER,AT(1000,500,6500,500)
+            STRING('Customer''s List'),FONT(,12,,12988),CENTER,AT(0,115,6469)
+          END
+_REPORT_  BREAK
+_TOTALS_    BREAK
+Detail1       DETAIL,FONT('Arial',8,0),AT(0,0,,771)
+                STRING('Customer Name:'),AT(10,21,844)
+                STRING('Company:'),AT(10,396)
+                STRING(@s20),USE(CUS:Company),AT(1094,396)
+                STRING('Address:'),AT(3490,21)
+                STRING('Phone:'),AT(3490,396)
+                STRING(@P(###) ###-####PB),USE(CUS:PhoneNumber),AT(4063,396)
+                STRING('Ext.'),AT(4906,396)
+                STRING(@P<<<#PB),USE(CUS:Extension),AT(5135,396)
+                STRING(@s35),USE(FullName),AT(1094,21)
+                STRING(@s35),USE(CustCSZ),AT(4063,208)
+                LINE,LINEWIDTH(10),AT(0,687,6500,0)
+                STRING(@s40),USE(Address),AT(4063,21)
+              END
+            END
+          END
+          FOOTER,FONT('Times New Roman',9,0,4796),AT(1000,9990,6500,510)
+            STRING('Page '),AT(5760,290)
+            STRING(@n5),PAGENO,AT(6042,290)
+          END
+FullName FORMULA(@s35),VALUE('CLIP( CUS:FIRSTNAME ) &''  '' & CUS:MI &''.  '' & CLIP( CUS:LASTNAME )') !Customer's Full Name
+CustCSZ FORMULA(@s35),VALUE('CLIP( CUS:CITY ) &'',  '' & CUS:STATE &''   '' & CUS:ZIPCODE') !Customer's City, State, and Zip
+Address FORMULA(@s40),VALUE('CLIP( CUS:Address1 ) &''    '' & CLIP( CUS:Address2 )') !Address1 and Address2
+        END
+Invoice REPORT,FONT('Arial',10),PRE(Invoice),THOUS,AT(500,2125,7500,7207),LINE(0),MARGINS(500,542,500,1084) !Customer's Invoices (All Invoices - 1 record per page)
+          HEADER,AT(500,542,7500,1583)
+            IMAGE('C:\C55\Examples\INVOICE\LANTHUR.GIF'),AT(63,21,,1354)
+            IMAGE('C:\C55\Examples\INVOICE\RANTHUR.GIF'),AT(6250,0,,1354)
+            STRING(@s20),FONT(,12,128,700),CENTER,USE(COM:Name),AT(2458,146,2615)
+            STRING(@s35),FONT(,12,8388736,700),CENTER,USE(COM:Address),AT(2458,427,2615)
+            STRING(@P(###) ###-####P),FONT(,12,,700),CENTER,USE(COM:PHONE),AT(2458,990,2615)
+            STRING(@s35),FONT(,12,,700),CENTER,USE(CompanyCSZ),AT(2458,708,2615)
+            LINE,LINEWIDTH(25),AT(0,1499,7479,0)
+          END
+_REPORT_  BREAK
+_TOTALS_    BREAK
+_BREAK3       BREAK(ORD:InvoiceNumber)
+                HEADER,PAGEBEFORE(-1),AT(0,20,,323)
+                  STRING('Invoice Number:'),FONT(,,,700),AT(0,43,1115)
+                  STRING(@N07),FONT(,,,700),USE(ORD:InvoiceNumber),AT(1188,43)
+                  STRING('Order Date:'),FONT(,,,700),AT(5771,43)
+                  STRING(@d1),FONT(,,,700),USE(ORD:OrderDate),AT(6708,43)
+                END
+_BREAK1         BREAK(ORD:CustNumber)
+                  HEADER,FONT('Arial',10,0,700),PAGEBEFORE(0),AT(0,0,,1313)
+                    GROUP('Ship To:'),BOXED,FONT(,10,,700),AT(0,0,2896,990)
+                    END
+                    STRING(@s45),USE(ORD:ShipToName),AT(52,188,2697)
+                    STRING(@s45),USE(ShipAddr),AT(52,428,2697)
+                    STRING(@s40),USE(ShipCSZ),AT(52,667,2697)
+                    LINE,LINEWIDTH(15),AT(0,1156,7479,0)
+                  END
+_BREAK2           BREAK(ORD:OrderNumber)
+                    HEADER,FONT('Arial',10,0,700),PAGEBEFORE(0),AT(0,0,,626)
+                      STRING('Line #'),AT(50,313)
+                      STRING('Product Description'),AT(583,313)
+                      STRING('Quantity'),AT(2385,310)
+                      STRING('Price'),AT(3292,310)
+                      STRING('Tax Paid'),AT(3948,310)
+                      STRING('Discount'),AT(4823,310)
+                      STRING('Total'),AT(5865,310)
+                      LINE,LINEWIDTH(15),AT(0,481,7500,0)
+                    END
+Detail1             DETAIL,FONT('Arial',8,0),PAGEAFTER(0),PAGEBEFORE(0),AT(0,0,,282)
+                      STRING(@n4),USE(DTL:LineNumber),AT(8,0,323)
+                      STRING(@n9.2B),USE(DTL:QuantityOrdered),AT(2240,0)
+                      STRING(@n$10.2B),USE(DTL:Price),AT(3000,0)
+                      STRING(@n$10.2B),USE(DTL:TaxPaid),AT(3833,0)
+                      STRING(@n$10.2B),USE(DTL:Discount),AT(4656,0)
+                      STRING(@n$14.2B),USE(DTL:TotalCost),AT(5479,0)
+                      STRING(@s35),USE(PRO:Description),AT(573,0,1604)
+                    END
+                  END
+                END
+                FOOTER,AT(0,0,,1177)
+                  STRING(@n-10.2),USE(Sum_TaxPaid),AT(5438,177,980)
+                  STRING(@n-10.2),USE(Sum_Discount),AT(5406,406,1010)
+                  STRING(@n$14.2),USE(Sum_TotalCost),AT(5344,740)
+                  LINE,LINEWIDTH(10),AT(5302,83,1114,0)
+                  LINE,LINEWIDTH(10),AT(4010,1073,2406,0)
+                  LINE,LINEWIDTH(10),AT(4010,1010,2406,0)
+                  STRING('Total Tax:'),AT(4052,177)
+                  STRING('Total Discount:'),AT(4052,406)
+                  STRING('Total Cost:'),AT(4063,740)
+                  LINE,LINEWIDTH(10),AT(5302,667,1114,0)
+                END
+              END
+            END
+          END
+          FOOTER,FONT('Times New Roman',9,0,4796),AT(500,9332,,584)
+            STRING('Page '),AT(6833,292)
+            STRING(@n5),PAGENO,AT(7114,292)
+          END
+Sum_TaxPaid TOTAL(@n-10.2),RESET(_BREAK2),SUM,USE(DTL:TaxPaid) !Sum of DTL:TaxPaid
+Sum_Discount TOTAL(@n-10.2B),RESET(_BREAK2),SUM,USE(DTL:Discount) !Sum of DTL:Discount
+Sum_TotalCost TOTAL(@n$14.2B),RESET(_BREAK2),SUM,USE(DTL:TotalCost) !Sum of DTL:TotalCost
+ShipAddr FORMULA(@s45),VALUE('CLIP( ORD:ShipAddress1 ) &''   '' & CLIP( ORD:ShipAddress2  )') !Address1 & 2
+ShipCSZ FORMULA(@s40),VALUE('CLIP( ORD:ShipCity ) &'',  '' & ORD:ShipState &''   '' & ORD:ShipZip') !City, State, and Zip to ship to
+CompanyCSZ FORMULA(@s35),VALUE('CLIP( COM:CITY ) &'',  '' & COM:STATE &''    '' & COM:ZIPCODE') !Company's City, State, and Zip
+        END
+Invoice:2 REPORT,FONT('Arial',10),PRE(Invoice),THOUS,AT(500,2125,7500,7207),MARGINS(500,542,500,1084) !Single Invoice (Selected by Customer Name and Order#)
+          HEADER,AT(500,542,7500,1583)
+            IMAGE('C:\C55\Examples\INVOICE\LANTHUR.GIF'),AT(0,21,1479,1354)
+            IMAGE('C:\C55\Examples\INVOICE\RANTHUR.GIF'),AT(6010,21,1479,1354)
+            STRING(@s20),FONT(,12,,700),CENTER,USE(COM:Name),AT(2458,146,2615)
+            STRING(@s35),FONT(,12,,700),CENTER,USE(COM:Address),AT(2458,427,2615)
+            STRING(@P(###) ###-####P),FONT(,12,,700),CENTER,USE(COM:PHONE),AT(2458,990,2615)
+            STRING(@s35),FONT(,12,,700),CENTER,USE(CompanyCSZ),AT(2458,708,2615)
+            LINE,LINEWIDTH(15),AT(0,1499,7479,0)
+          END
+_REPORT_  BREAK
+_TOTALS_    BREAK
+_BREAK3       BREAK(ORD:InvoiceNumber)
+                HEADER,PAGEBEFORE(-1),AT(0,20,,323)
+                  STRING('Invoice Number:'),FONT(,,,700),AT(0,43,1115)
+                  STRING(@n07),FONT(,,,700),USE(ORD:InvoiceNumber),AT(1219,43)
+                  STRING('Order Date:'),FONT(,,,700),AT(5771,43)
+                  STRING(@d1),FONT(,,,700),USE(ORD:OrderDate),AT(6708,43)
+                END
+_BREAK1         BREAK(ORD:CustNumber)
+                  HEADER,FONT('Arial',10,0,700),PAGEBEFORE(0),AT(0,0,,1313)
+                    GROUP('Ship To:'),BOXED,AT(0,0,2896,990)
+                    END
+                    STRING(@s45),USE(ORD:ShipToName),AT(63,188,2697)
+                    STRING(@s45),USE(ShipAddr),AT(63,428,2697)
+                    STRING(@s40),USE(ShipCSZ),AT(63,667,2697)
+                    LINE,LINEWIDTH(15),AT(0,1156,7479,0)
+                  END
+_BREAK2           BREAK(ORD:OrderNumber)
+                    HEADER,FONT('Arial',10,0,700),PAGEBEFORE(0),AT(0,0,,626)
+                      STRING('Line #'),AT(50,313)
+                      STRING('Product Description'),AT(583,313)
+                      STRING('Quantity'),AT(2385,310)
+                      STRING('Price'),AT(3292,310)
+                      STRING('Tax Paid'),AT(3948,310)
+                      STRING('Discount'),AT(4823,310)
+                      STRING('Total'),AT(5865,310)
+                      LINE,LINEWIDTH(15),AT(0,481,7500,0)
+                    END
+Detail1             DETAIL,FONT('Arial',8,0),PAGEAFTER(0),PAGEBEFORE(0),AT(0,0,,253)
+                      STRING(@n4),USE(DTL:LineNumber),AT(8,0,323)
+                      STRING(@n9.2B),USE(DTL:QuantityOrdered),AT(2240,0)
+                      STRING(@n$10.2B),USE(DTL:Price),AT(3000,0)
+                      STRING(@n$10.2B),USE(DTL:TaxPaid),AT(3833,0)
+                      STRING(@n$10.2B),USE(DTL:Discount),AT(4656,0)
+                      STRING(@n$14.2B),USE(DTL:TotalCost),AT(5479,0)
+                      STRING(@s35),USE(PRO:Description),AT(573,0,1604)
+                    END
+                  END
+                END
+                FOOTER,AT(0,4,,1198)
+                  STRING(@n-10.2),USE(Sum_TaxPaid),AT(5438,177,980)
+                  STRING(@n-10.2),USE(Sum_Discount),AT(5406,406,1010)
+                  STRING(@n$14.2),USE(Sum_TotalCost),AT(5344,740)
+                  LINE,LINEWIDTH(10),AT(5302,83,1114,0)
+                  LINE,LINEWIDTH(10),AT(4010,1073,2406,0)
+                  LINE,LINEWIDTH(10),AT(4010,1010,2406,0)
+                  STRING('Total Tax:'),AT(4052,177)
+                  STRING('Total Discount:'),AT(4052,406)
+                  STRING('Total Cost:'),AT(4063,740)
+                  LINE,LINEWIDTH(10),AT(5302,667,1114,0)
+                END
+              END
+            END
+          END
+          FOOTER,FONT('Times New Roman',9,0,4796),AT(500,9332,,584)
+            STRING('Page '),AT(6833,292)
+            STRING(@n5),PAGENO,AT(7114,292)
+          END
+Sum_TaxPaid TOTAL(@n-10.2),RESET(_BREAK2),SUM,USE(DTL:TaxPaid) !Sum of DTL:TaxPaid
+Sum_Discount TOTAL(@n-10.2B),RESET(_BREAK2),SUM,USE(DTL:Discount) !Sum of DTL:Discount
+Sum_TotalCost TOTAL(@n$14.2B),RESET(_BREAK2),SUM,USE(DTL:TotalCost) !Sum of DTL:TotalCost
+ShipAddr FORMULA(@s45),VALUE('CLIP( ORD:ShipAddress1 ) &''   '' & CLIP( ORD:ShipAddress2 )') !Address1 & 2
+ShipCSZ FORMULA(@s40),VALUE('CLIP( ORD:ShipCity ) &'',  '' & ORD:ShipState &''   '' & ORD:ShipZip') !City, State, and Zip to ship to
+CompanyCSZ FORMULA(@s35),VALUE('CLIP( COM:CITY ) &'',  '' & COM:STATE &''    '' & COM:ZIPCODE') !Company's City, State, and Zip
+WhichName RUNTIME(@s35),PROMPT('Customer''s Name') !Name for Invoice
+WhichOrder RUNTIME(@N5),PROMPT('Customer''s Order #:') !Order Number 
+CustomerName FORMULA(@s35),VALUE('CLIP( CUS:FIRSTNAME ) &''  '' & CUS:MI &''.  '' & CLIP( CUS:LASTNAME )') !Customer Full Name
+        END
+
+[FILES]
+Company FILE,PRE(COM),DRIVER('TOPSPEED',,'C60tps','TPS'),CREATE !Default company information
+__Record  RECORD
+Name        STRING(20),PICTURE(@s20),PROMPT('Name:'),HEADER('Name') !Company name
+Address     STRING(35),PICTURE(@s35),PROMPT('Address:'),HEADER('Address') !First line of company's address
+City        STRING(25),PICTURE(@s25),PROMPT('City:'),HEADER('City') !Company's city
+State       STRING(2),PICTURE(@s2),PROMPT('State:'),HEADER('State') !Company's state
+Zipcode     STRING(10),PICTURE(@K#####|-####K),PROMPT('Zipcode:'),HEADER('Zipcode') !Company's zipcode
+Phone       STRING(10),PICTURE(@P(###) ###-####P),PROMPT('Phone:'),HEADER('Phone') !Company's phone number
+          END
+        END
+Products FILE,PRE(PRO),DRIVER('TOPSPEED',,'C60tps','TPS'),CREATE !Product's Information
+KeyProductNumber KEY(PRO:ProductNumber),NOCASE,OPT,PRIMARY
+KeyProductSKU KEY(PRO:ProductSKU),NOCASE,OPT
+KeyDescription KEY(PRO:Description),DUP,NOCASE,OPT
+__Record  RECORD
+ProductNumber LONG,HIDE,PICTURE(@n07),PROMPT('Product Number:'),HEADER('Product #') !Product's Identification Number
+ProductSKU  STRING(10),HIDE,PICTURE(@s10),PROMPT('Product SKU:'),HEADER('Product SKU') !User defined Product Number
+Description STRING(35),PICTURE(@s35),PROMPT('Description:'),HEADER('Description') !Product's Description
+Price       DECIMAL(7,2),PICTURE(@n$10.2B),PROMPT('Price:'),HEADER('Price') !Product's Price
+QuantityInStock DECIMAL(7,2),HIDE,PICTURE(@n-10.2),PROMPT('Quantity In Stock:'),HEADER('Quantity In Stock') !Quantity of product in stock
+ReorderQuantity DECIMAL(7,2),HIDE,PICTURE(@n9.2),PROMPT('Reorder Quantity:'),HEADER('Reorder Quantity') !Product's quantity for re-order
+Cost        DECIMAL(7,2),HIDE,PICTURE(@n$10.2B),PROMPT('Cost:'),HEADER('Cost') !Product's cost
+PictureFile STRING(64),HIDE,PICTURE(@s64),PROMPT('Picture File:'),HEADER('Picture') !Path of graphic file
+          END
+        END
+Detail  FILE,PRE(DTL),DRIVER('TOPSPEED',,'C60tps','TPS'),CREATE !Product-Order detail
+KeyDetails KEY(DTL:CustNumber,DTL:OrderNumber,DTL:LineNumber),NOCASE,OPT,PRIMARY
+__Record  RECORD
+CustNumber  LONG,PICTURE(@n07),PROMPT('Cust Number:'),HEADER('Cust #') !Customer's Identification Number
+OrderNumber LONG,PICTURE(@n07),PROMPT('Order Number:'),HEADER('Order #') !Order Identification Number
+LineNumber  SHORT,PICTURE(@n04),PROMPT('Line Number:'),HEADER('Line #') !Line number
+ProductNumber LONG,PICTURE(@n07),PROMPT('Product Number:'),HEADER('Product #') !Product Identification Number
+QuantityOrdered DECIMAL(7,2),PICTURE(@n9.2B),PROMPT('Quantity Ordered:'),HEADER('Quantity') !Quantity of product ordered
+BackOrdered BYTE,PROMPT('Back Ordered'),HEADER('Back Ordered') !Product is on back order
+Price       DECIMAL(7,2),PICTURE(@n$10.2B),PROMPT('Price:'),HEADER('Price') !Product's price
+TaxRate     DECIMAL(6,4),PICTURE(@n7.4B),PROMPT('Tax Rate:'),HEADER('Tax Rate') !Consumer's Tax rate
+TaxPaid     DECIMAL(7,2),PICTURE(@n$10.2B),PROMPT('Tax Paid:'),HEADER('Tax Paid') !Calculated tax on product
+DiscountRate DECIMAL(6,4),PICTURE(@n7.4B),PROMPT('Discount Rate:'),HEADER('Discount') !Special discount rate on product
+Discount    DECIMAL(7,2),PICTURE(@n$10.2B),PROMPT('Discount:'),HEADER('Discount') !Calculated discount on product
+Savings     DECIMAL(7,2),PICTURE(@n$10.2B),PROMPT('Savings:'),HEADER('Savings') !Amount saved due to discount
+TotalCost   DECIMAL(10,2),PICTURE(@n$14.2B),PROMPT('Total Cost:'),HEADER('Total') !Extended Total for product
+          END
+        END
+Orders  FILE,PRE(ORD),DRIVER('TOPSPEED',,'C60tps','TPS'),CREATE,NAME('Orders.tps') !Customer's Orders
+KeyCustOrderNumber KEY(ORD:CustNumber,ORD:OrderNumber),DUP,NOCASE,OPT
+InvoiceNumberKey KEY(ORD:InvoiceNumber),NOCASE,OPT
+__Record  RECORD
+CustNumber  LONG,PICTURE(@n07),PROMPT('Cust Number:'),HEADER('Cust Number') !Customer's Identification Number
+OrderNumber LONG,PICTURE(@n07),PROMPT('Order Number:'),HEADER('Order Number') !Order Identification Number
+InvoiceNumber LONG,PICTURE(@n07),PROMPT('Invoice Number:'),HEADER('Invoice #') !Invoice number for each order
+OrderDate   LONG,PICTURE(@d1),PROMPT('Order Date:'),HEADER('Order Date') !Date of Order
+SameName    BYTE,PROMPT('Same Name'),HEADER('Same Name') !ShipTo name same as Customer's
+ShipToName  STRING(45),PICTURE(@s45),PROMPT('Ship To Name:'),HEADER('Ship To') !Customer the order is shipped to
+SameAdd     BYTE,PROMPT('Same  Add'),HEADER('Same Address') !Ship to address same as customer's
+ShipAddress1 STRING(35),PICTURE(@s35),PROMPT('Ship Address 1:'),HEADER('Ship Address 1') !1st Line of ship address
+ShipAddress2 STRING(35),PICTURE(@s35),PROMPT('Ship Address 2:'),HEADER('Ship Address 2') !2nd line of ship address
+ShipCity    STRING(25),PICTURE(@s25),PROMPT('Ship City:'),HEADER('Ship City') !City of Ship address
+ShipState   STRING(2),PICTURE(@s2),PROMPT('Ship State:'),HEADER('Ship State') !State to ship to
+ShipZip     STRING(10),PICTURE(@K#####|-####KB),PROMPT('Ship Zip:'),HEADER('Ship Zip') !ZipCode of ship city
+OrderShipped BYTE,PROMPT('Order Shipped'),HEADER('Shipped') !Checked if order is shipped
+OrderNote   STRING(80),PICTURE(@s80),PROMPT('Order Note:'),HEADER('Note') !Additional Information about order
+          END
+        END
+Customers FILE,PRE(CUS),DRIVER('TOPSPEED',,'C60tps','TPS'),CREATE !Customer's Information
+KeyCustNumber KEY(CUS:CustNumber),NOCASE,OPT
+KeyFullName KEY(CUS:LastName,CUS:FirstName,CUS:MI),DUP,NOCASE,OPT
+KeyCompany KEY(CUS:Company),DUP,NOCASE
+KeyZipCode KEY(CUS:Zipcode),DUP,NOCASE
+StateKey  KEY(CUS:State),DUP,NOCASE,OPT
+__Record  RECORD
+CustNumber  LONG,PICTURE(@n_7),PROMPT('Cust Number:'),HEADER('Cust Number') !Customer's Identification Number
+Company     STRING(20),PICTURE(@s20),PROMPT('Company:'),HEADER('Company') !Customer's Company Name
+FirstName   STRING(20),PICTURE(@s20),PROMPT('First Name:'),HEADER('First Name') !Customer's First Name
+MI          STRING(1),PICTURE(@s1),PROMPT('MI:'),HEADER('MI') !Customer's Middle Initial
+LastName    STRING(25),PICTURE(@s25),PROMPT('Last Name:'),HEADER('Last Name') !Customer's Last Name
+Address1    STRING(35),PICTURE(@s35),PROMPT('Address1:'),HEADER('Address 1') !Customer's Street Address - 1st Line
+Address2    STRING(35),PICTURE(@s35),PROMPT('Address2:'),HEADER('Address 2') !Customer's Address - 2nd Line
+City        STRING(25),PICTURE(@s25),PROMPT('City:'),HEADER('City') !Customer's City
+State       STRING(2),PICTURE(@s2),PROMPT('State:'),HEADER('State') !Customer's State
+Zipcode     STRING(10),PICTURE(@K#####|-####KB),PROMPT('Zip Code:'),HEADER('Zip Code') !Customer's ZipCode
+PhoneNumber STRING(10),PICTURE(@P(###) ###-####PB),PROMPT('Phone Number:'),HEADER('Phone#') !Customer's phone number
+Extension   STRING(4),PICTURE(@P<<<#PB),PROMPT('Extension:'),HEADER('Extension') !Customer's phone extension
+PhoneType   STRING(8),PICTURE(@s8),PROMPT('Phone Type:'),HEADER('Phone Type') !Customer's phone type
+          END
+        END
+States  FILE,PRE(STA),DRIVER('TOPSPEED',,'C60tps','TPS'),CREATE !State's code and name
+StateCodeKey KEY(STA:StateCode),NOCASE,OPT
+__Record  RECORD
+StateCode   STRING(2),PICTURE(@s2),PROMPT('State Code:'),HEADER('State Code') !Code for  State
+Name        STRING(25),PICTURE(@s25),PROMPT('Name:'),HEADER('State Name') !Name of State
+          END
+        END
+InvHist FILE,PRE(INV),DRIVER('TOPSPEED',,'C60tps','TPS'),CREATE !Inventory History
+KeyProductNumberDate KEY(INV:ProductNumber,INV:VendorNumber,INV:Date),DUP,NOCASE,OPT
+KeyProdNumberDate KEY(INV:ProductNumber,INV:Date),DUP,NOCASE,OPT
+KeyVendorNumberDate KEY(INV:VendorNumber,INV:Date),DUP,NOCASE,OPT
+__Record  RECORD
+Date        LONG,PICTURE(@d1),PROMPT('Date:'),HEADER('Date') !Date of transaction
+TransType   STRING(7),PICTURE(@s7),PROMPT('Type'),HEADER('Type') !Type of transaction
+ProductNumber LONG,PICTURE(@n07),PROMPT('Product #:'),HEADER('Product #') !Product Identification Number
+Quantity    DECIMAL(7,2),PICTURE(@n-10.2B),PROMPT('Quantity:'),HEADER('Quantity') !Quantity for each transaction
+VendorNumber LONG,PICTURE(@n06),PROMPT('Vendor #:'),HEADER('Vendor #') !Vendor's Identification Number
+Cost        DECIMAL(7,2),PICTURE(@n$10.2),PROMPT('Cost:'),HEADER('Cost') !Cost of product
+Notes       STRING(50),PICTURE(@s50),PROMPT('Notes:'),HEADER('Notes') !Notes on current transaction
+          END
+        END
+
+[RELATIONS]
+        RELATION,ONE:MANY
+Products  FILE(PRO:KeyProductNumber)
+Detail    RELATED_FILE()
+          FILE_TO_RELATED_KEY
+          END
+          RELATED_FILE_TO_KEY
+            FIELD(DTL:ProductNumber,PRO:ProductNumber)
+          END
+        END
+        RELATION,ONE:MANY
+Customers FILE(CUS:KeyCustNumber)
+Orders    RELATED_FILE(ORD:KeyCustOrderNumber)
+          FILE_TO_RELATED_KEY
+            FIELD(CUS:CustNumber,ORD:CustNumber)
+            FIELD(NOLINK,ORD:OrderNumber)
+          END
+          RELATED_FILE_TO_KEY
+            FIELD(ORD:CustNumber,CUS:CustNumber)
+          END
+        END
+        RELATION,MANY:ONE
+Orders    FILE()
+States    RELATED_FILE(STA:StateCodeKey)
+          FILE_TO_RELATED_KEY
+            FIELD(ORD:ShipState,STA:StateCode)
+          END
+          RELATED_FILE_TO_KEY
+          END
+        END
+        RELATION,ONE:MANY
+Orders    FILE(ORD:KeyCustOrderNumber)
+Detail    RELATED_FILE(DTL:KeyDetails)
+          FILE_TO_RELATED_KEY
+            FIELD(ORD:CustNumber,DTL:CustNumber)
+            FIELD(ORD:OrderNumber,DTL:OrderNumber)
+            FIELD(NOLINK,DTL:LineNumber)
+          END
+          RELATED_FILE_TO_KEY
+            FIELD(DTL:CustNumber,ORD:CustNumber)
+            FIELD(DTL:OrderNumber,ORD:OrderNumber)
+          END
+        END
+        RELATION,ONE:MANY
+Products  FILE(PRO:KeyProductNumber)
+InvHist   RELATED_FILE()
+          FILE_TO_RELATED_KEY
+          END
+          RELATED_FILE_TO_KEY
+            FIELD(INV:ProductNumber,PRO:ProductNumber)
+          END
+        END
+        RELATION,MANY:ONE
+Customers FILE()
+States    RELATED_FILE(STA:StateCodeKey)
+          FILE_TO_RELATED_KEY
+            FIELD(CUS:State,STA:StateCode)
+          END
+          RELATED_FILE_TO_KEY
+          END
+        END
+
+[REPORTVIEWS]
+ProductsPriceList VIEW(Products),ORDER('UPPER(PRO:ProductSKU)'),KEY(PRO:KeyProductSKU)
+          JOIN(Company,'1'),CHILD
+          END
+        END
+MailingLabels VIEW(Customers),ORDER('UPPER(CUS:LASTNAME),UPPER(CUS:FIRSTNAME),UPPER(CUS:MI)'),KEY(CUS:KeyFullName)
+        END
+CustomerList VIEW(Customers),ORDER('CUS:CustNumber'),KEY(CUS:KeyCustNumber)
+        END
+Invoice VIEW(Orders),ORDER('ORD:InvoiceNumber,ORD:CustNumber,ORD:OrderNumber,DTL:LineNumber'),KEY(ORD:InvoiceNumberKey)
+          JOIN(DTL:KeyDetails,ORD:CustNumber,ORD:OrderNumber),CHILD
+            JOIN(PRO:KeyProductNumber,DTL:ProductNumber)
+            END
+          END
+          JOIN(CUS:KeyCustNumber,ORD:CustNumber)
+            JOIN(Company,'1'),CHILD
+            END
+          END
+        END
+Invoice:2 VIEW(Orders),FILTER('UPPER( ORD:ShipToName )  =  UPPER(WhichName) AND ORD:OrderNumber = WhichOrder'),ORDER('ORD:InvoiceNumber,ORD:CustNumber,ORD:OrderNumber,DTL:LineNumber'),KEY(ORD:InvoiceNumberKey)
+          JOIN(DTL:KeyDetails,ORD:CustNumber,ORD:OrderNumber),CHILD
+            JOIN(PRO:KeyProductNumber,DTL:ProductNumber)
+            END
+          END
+          JOIN(CUS:KeyCustNumber,ORD:CustNumber)
+            JOIN(Company,'1'),CHILD
+            END
+          END
+        END
+
+[SOURCES]
+        DICTIONARY,VERSION('1.0'),DATE(71906),TIME(6213900),NAME('C:\RWCLASS\ORDERS.TXD')
+        DICTIONARY,VERSION('1.0'),DATE(71793),TIME(6220500),NAME('C:\RWCLASS\ORDERS.DCT')
+        DICTIONARY,VERSION('1.0'),DATE(74048),TIME(6429400),NAME('D:\CLARION6\EXAMPLES\INVOICE\Invoice.dct')
+
+[SEARCHPATHS]
+        PATH('Company.TPS','D:\CLARION6\EXAMPLES\INVOICE\')
+        PATH('Products.TPS','D:\CLARION6\EXAMPLES\INVOICE\')
+        PATH('Detail.TPS','D:\CLARION6\EXAMPLES\INVOICE\')
+        PATH('Orders.tps','D:\CLARION6\EXAMPLES\INVOICE\')
+        PATH('Customer.TPS','D:\CLARION6\EXAMPLES\INVOICE\')
+        PATH('States.TPS','D:\CLARION6\EXAMPLES\INVOICE\')
+        PATH('InvHist.TPS','D:\CLARION6\EXAMPLES\INVOICE\')
+
+[EXTERNALS]
+

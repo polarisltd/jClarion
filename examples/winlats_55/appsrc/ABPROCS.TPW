@@ -1,0 +1,730 @@
+#PROCEDURE(ToDo,'Procedure not yet defined'),DEFAULT
+%Procedure PROCEDURE
+  CODE
+  GlobalErrors.ThrowMessage(Msg:ProcedureToDo,'%Procedure')
+  SETKEYCODE(0)
+  GlobalResponse = RequestCancelled
+#!
+#!
+#!
+#PROCEDURE(Source,'Source Procedure'),HLP('~TPLProcSource')#! Source procedure
+#PROMPT('Parameters',@s255),%Parameters          #! Retrieve parameters used
+#IF(%Parameters)                                  #! IF Parameters used
+%[20]Procedure PROCEDURE  %Parameters         #<! Declare Procedure
+#ELSE                                             #! ELSE (IF parameters not used)
+%[20]Procedure PROCEDURE                      #<! Declare Procedure
+#ENDIF                                            #! END (IF parameters used)
+#INSERT(%FileControlInitialize)
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%FileControlSetFlags)
+#ENDAT
+#FOR(%LocalData)
+%[20]LocalData %LocalDataStatement
+#ENDFOR
+#EMBED(%DataSection,'Data Section'),DATA,TREE('Local Data{{PRIORITY(1000)}')          #! Embedded Source Code
+  CODE
+#EMBED(%ProcessedCode,'Processed Code'),LABEL     #! Embedded Source Code
+#INSERT(%LocalMapCheck)
+#!
+#!
+#!
+#PROCEDURE(Splash,'Splash Window'),WINDOW,HLP('~TPLProcSplash'),PARENT(Window(ABC))
+#PREPARE
+  #CALL(%ReadABCFiles)
+#ENDPREPARE
+#DISPLAY('The Splash Window will automatically close when the user makes a selection on the frame. You can customize any other ways to close the window.'),AT(10,,150,32)
+#PROMPT('Display Time (in seconds):',SPIN(@N3,0,999,1)),%DisplayTime,PROMPTAT(10)
+#PROMPT('Close when the user clicks on the splash window.',CHECK),%CloseOnClick,AT(10),DEFAULT(1)
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8500)
+  #IF(%DisplayTime)
+  #SET(%ValueConstruct,%DisplayTime * 100)
+TARGET{Prop:Timer} = %ValueConstruct
+  #ENDIF
+  #IF(%CloseOnClick)
+TARGET{Prop:Alrt,255} = MouseLeft
+TARGET{Prop:Alrt,254} = MouseLeft2
+TARGET{Prop:Alrt,253} = MouseRight
+  #ENDIF
+#ENDAT
+#AT(%PostWindowEventHandling,'TIMER')
+  #IF(%DisplayTime)
+POST(Event:CloseWindow)
+  #ENDIF
+#ENDAT
+#AT(%PostWindowEventHandling,'ALERTKEY')
+  #IF(%CloseOnClick)
+CASE KEYCODE()
+OF MouseLeft
+OROF MouseLeft2
+OROF MouseRight
+  POST(Event:CloseWindow)
+END
+  #ENDIF
+#ENDAT
+#AT(%PostWindowEventHandling,'LOSEFOCUS')
+  POST(Event:CloseWindow)
+#ENDAT
+#AT(%WindowManagerMethodCodeSection,'TakeWindowEvent','(),BYTE'),PRIORITY(7525)
+  #IF(%DisplayTime)
+  OF Event:Timer
+    POST(Event:CloseWindow)
+  #ENDIF
+  #IF(%CloseOnClick)
+  OF Event:AlertKey
+    CASE KEYCODE()
+    OF MouseLeft
+    OROF MouseLeft2
+    OROF MouseRight
+      POST(Event:CloseWindow)
+    END
+  #ENDIF
+#ENDAT
+#!
+#!---------------------------------------------------------
+#DEFAULT
+NAME DefaultABCSplash
+[COMMON]
+DESCRIPTION 'Default Splash Window'
+FROM ABC Splash
+[PROMPTS]
+%DisplayTime LONG  (5)
+%WindowOperationMode DEFAULT  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+[WINDOW]
+window WINDOW,AT(,,204,94),FONT('MS Sans Serif',8,,FONT:regular),CENTER,GRAY,NOFRAME,MDI
+       PANEL,AT(0,0,204,95),BEVEL(6)
+       PANEL,AT(7,6,191,83),BEVEL(-2,1)
+       STRING('This is your application!'),AT(13,12,182,10),USE(?String2),CENTER,#ORIG(?String2)
+       IMAGE('TopSpeed.GIF'),AT(60,61),USE(?Image1),#ORIG(?Image1)
+       PANEL,AT(12,33,182,12),BEVEL(-1,1,09H)
+       STRING('Written using Clarion 5.5'),AT(13,48,182,10),USE(?String1),CENTER,#ORIG(?String1)
+     END
+
+#ENDDEFAULT
+#!
+#!
+#!
+#!
+#PROCEDURE(Process,'Sequential Record Processor'),PRIMARY('File(s) to Process',OPTKEY),HLP('~TPLProcProcess'),WINDOW,PARENT(Window(ABC))
+#!
+#! Note that range limits are considered to be loop invariant
+#! This reduces code and loop overhead and allows on-server filters
+#! To use fresh limits an explicit filter re-assignment is needed
+#!
+#LOCALDATA
+Progress:Thermometer BYTE
+#ENDLOCALDATA
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Process', 'ThisProcess', %ProcessType)
+  #CALL(%SetClassDefaults, 'ProgressMgr', 'ProgressMgr', %StepManagerType)
+#ENDPREPARE
+#BUTTON('&Process Properties'),AT(10,,180)
+  #BOXED('Process hidden prompts'),AT(0,0),WHERE(%False),HIDE
+    #INSERT(%OOPHiddenPrompts)
+  #ENDBOXED
+  #SHEET
+    #TAB('&General'),HLP('~TPLProcProcess_General')
+      #PROMPT('Window Message:',@S40),%WindowMessage
+      #PROMPT('Action for Process:',DROP('No record action|PUT record|DELETE record')),%ProcessAction,DEFAULT('No record action')
+      #ENABLE(%ProcessAction <> 'No record action')
+        #PROMPT('Use RI constraints on action',CHECK),%RIProcessAction,AT(10)
+        #DISPLAY('NOTE: Leaving this unchecked will cause the "Action for Process" to occur only to the primary file. No cascading action will occur on secondary files.'),AT(10,,180,30)
+      #ENDENABLE
+      #ENABLE(%ProcessAction = 'DELETE record')
+        #PROMPT('Query each deletion',CHECK),%QueryDelete,DEFAULT(0)
+      #ENDENABLE
+      #INSERT(%GeneralProcessPrompts)
+      #BUTTON('&Progress Manager')
+        #WITH(%ClassItem,'ProgressMgr')
+          #INSERT(%ClassPrompts)
+        #ENDWITH
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('Range Limits'),WHERE(%PrimaryKey),HLP('~TPLProcProcess_Range_Limits')
+      #INSERT(%RangeLimitOptions)
+    #ENDTAB
+    #TAB('&Range Limits'),WHERE(NOT %PrimaryKey),HLP('~TPLProcProcess_Range_Limits')
+      #DISPLAY('To use a range limit, your process must use a key. You will not be able to specify a range limit until you''ve specified the process'' key.'),AT(10,30,175,30)
+    #ENDTAB
+    #TAB('&Hot Fields'),HLP('~TPLProcProcess_Hot_Fields')
+      #BUTTON('Hot Fields'),MULTI(%HotFields,%HotField),INLINE,HLP('~TPLProcProcess_Hot_Fields')
+        #PROMPT('Hot Field:',FIELD),%HotField
+        #PROMPT('BIND Field',CHECK),%HotFieldBound
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('&Classes'),HLP('~TPLProcProcess_Classes')
+      #WITH(%ClassItem,'Process')
+        #INSERT(%ClassPrompts)
+      #ENDWITH
+    #ENDTAB
+  #ENDSHEET
+#ENDBUTTON
+#!
+#CALL(%ReadABCFiles)
+#CALL(%SetClassDefaults, 'Process', 'Process', %ProcessType)
+#EQUATE(%ProcessObjectName, %ThisObjectName)
+#CALL(%SetClassDefaults, 'ProgressMgr', 'ProgressMgr', %StepManagerType)
+#EQUATE(%ProgressObjectName, %ThisObjectName)
+#EQUATE(%ListView,'Process:View')
+#DECLARE(%QueueField),UNIQUE
+#DECLARE(%QueueFieldAssignment,%QueueField)
+#DECLARE(%ProcessFilter)
+#DECLARE(%InstancePrefix)
+#SET(%ProcessFilter,%RecordFilter)
+#DECLARE(%ListViewBoundField),UNIQUE
+#FOR (%QueueField)
+  #SET(%QueueFieldAssignment,%QueueField)
+  #ADD(%ListViewBoundField,%QueueFieldAssignment)
+#ENDFOR
+#FOR (%HotFields)
+  #SET(%ValueConstruct,%HotField)
+  #INSERT(%CleanDimensions)
+  #ADD(%QueueField,%ValueConstruct)
+  #SET(%QueueFieldAssignment,%HotField)
+  #IF (%HotFieldBound)
+    #ADD(%ListViewBoundField,%HotField)
+  #ENDIF
+#ENDFOR
+#FOR (%Formula),WHERE(ITEMS(%FormulaField))
+  #FOR (%FormulaField)
+    #SET(%ValueConstruct,%FormulaField)
+    #INSERT(%CleanDimensions)
+    #ADD(%QueueField,%ValueConstruct)
+    #SET(%QueueFieldAssignment,%FormulaField)
+  #ENDFOR
+#ENDFOR
+#CALL(%AddModuleIncludeFile,%ProcessType)
+#INSERT(%FindProcessControls)
+#!
+#!
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#!
+#CLASS('Before Range Check','In Validate Record ROUTINE, Before Range Limit Code')
+#CLASS('Before Filter Check','In Validate Record ROUTINE, Before Filter Code')
+#!
+#!
+#!
+#AT(%LocalDataClassData)
+#INSERT(%ConstructView)
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(6000)
+  #FOR(%ListViewBoundField)
+    #FIND(%Field,%ListViewBoundField)
+    #IF (NOT %FieldFile OR %FieldName)
+      #SET(%ValueConstruct,%ListViewBoundField)
+      #INSERT(%CleanDimensions)
+  BIND('%ValueConstruct',%ListViewBoundField)
+    #ENDIF
+  #ENDFOR
+#ENDAT
+#!
+#AT(%ProcessManagerMethodCodeSection,'TakeRecord','(),BYTE'),PRIORITY(2500)
+#INSERT(%StandardFormula,'Before Lookups')
+#INSERT(%StandardFormula,'After Lookups')
+#PRIORITY(6000)
+#EMBED(%ProcessActivity,'Activity for each record'),LEGACY
+#CASE(%ProcessAction)
+#OF('PUT record')
+  #IF(%RIProcessAction)
+IF Relate:%Primary.Update()
+  #ELSE
+PUT(%ListView)
+IF ERRORCODE()
+  GlobalErrors.ThrowFile(Msg:PutFailed,'%ListView')
+  #ENDIF
+  %(%GetObjectName('Default',0)).Response = RequestCompleted
+  ReturnValue = Level:Fatal
+END
+#OF('DELETE record')
+  #IF(%RIProcessAction)
+IF Relate:%Primary.Delete(%QueryDelete)
+  #ELSE
+DELETE(%ListView)
+IF ERRORCODE()
+  GlobalErrors.ThrowFile(Msg:DeleteFailed,'%ListView')
+  #ENDIF
+  %(%GetObjectName('Default',0)).Response = RequestCompleted
+  ReturnValue = Level:Fatal
+END
+#ENDCASE
+#EMBED(%ProcessError,'Error checking after record Action'),LEGACY
+#EMBED(%BeforeSubsequentRead,'Before subsequent record retrieval'),LEGACY
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8500)
+#INSERT(%ProcedureSetupCode)
+#INSERT(%ProcessViewManager)
+#CASE(%ProcessAction)
+#OF('Put Record')
+%Window{Prop:Text} = 'Updating Records'
+#OF('Delete Record')
+%Window{Prop:Text} = 'Deleting Records'
+#ELSE
+%Window{Prop:Text} = 'Processing Records'
+#ENDCASE
+#IF(%PctTextControl)
+%PctTextControl{Prop:Text} = '0% Completed'
+#ENDIF
+SELF.Init(%ProcessObjectName)
+#IF(%UserStringControl)
+%UserStringControl{Prop:Text}=%(%StripPling(%WindowMessage))
+#ENDIF
+#IF(%EnableRuntimeTranslator)
+Translator.TranslateWindow(ProgressWindow)
+#ENDIF
+#IF(%CancelControl)
+SELF.AddItem(%CancelControl, RequestCancelled)
+#ENDIF
+#PRIORITY(8600)
+#IF(%EnableQuickScan)
+#EMBED(%BeforeTurnQuickScanOn,'Before Turning QuickScan On'),WHERE(%EnableQuickScan),LEGACY
+SEND(%Primary,'QUICKSCAN=on')
+  #FOR(%Secondary),WHERE(%SecondaryType = '1:MANY')
+SEND(%Secondary,'QUICKSCAN=on')
+  #ENDFOR
+#EMBED(%AfterTurnQuickScanOn,'After Turning QuickScan On'),WHERE(%EnableQuickScan),LEGACY
+#ENDIF
+#ENDAT
+#!
+#AT(%ProcessManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%ProgressManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals, 'Process', 'Local Objects|Abc Objects|Process Manager', '%ProcessVirtuals(ABC)')
+  #CALL(%SetClassItem,'ProgressMgr')
+  #IF(%BaseClassToUse())
+    #INSERT(%ProcessDeclarations)
+    #FIX(%File, %Primary)
+    #IF(%PrimaryKey)
+      #CALL(%GenerateVirtuals, 'ProgressMgr', 'Local Objects|Abc Objects|Progress Manager', '%ProgressManagerVirtuals(ABC)')
+    #ENDIF
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'Process', 'Process Manager')
+#INSERT(%GenerateClass, 'ProgressMgr', 'Progress Manager')
+#ENDAT
+#!
+#!
+#DEFAULT
+NAME DefaultABCProcess
+[COMMON]
+DESCRIPTION 'A process procedure'
+FROM ABC Process
+[DATA]
+[PROMPTS]
+%RangeLimitType STRING  ('Current Value')
+[WINDOW]
+ProgressWindow WINDOW('Progress...'),AT(,,142,59),CENTER,TIMER(1),GRAY,DOUBLE
+       PROGRESS,USE(Progress:Thermometer),AT(15,15,111,12),RANGE(0,100),#ORIG(Progress:Thermometer)
+       STRING(''),AT(0,3,141,10),USE(?Progress:UserString),CENTER,#ORIG(?Progress:UserString)
+       STRING(''),AT(0,30,141,10),USE(?Progress:PctText),CENTER,#ORIG(?Progress:PctText)
+       BUTTON('Cancel'),AT(45,42,50,15),USE(?Progress:Cancel),#ORIG(?Progress:Cancel)
+     END
+#ENDDEFAULT
+#!
+#!
+#GROUP(%ProcessVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ProcessManagerMethodDataSection,'Process Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('Process'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%ProcessManagerMethodCodeSection,'Process Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('Process'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%ProgressManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ProgressManagerMethodDataSection,'Progress Manager Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('ProgressMgr'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%ProgressManagerMethodCodeSection,'Progress Manager Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('ProgressMgr'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%FindProcessControls)
+  #DECLARE(%ThermometerControl)
+  #DECLARE(%UserStringControl)
+  #DECLARE(%PctTextControl)
+  #DECLARE(%CancelControl)
+  #DECLARE(%ThermometerUseVariable)
+  #FOR(%Control)
+    #CASE(%ControlOriginal)
+    #OF('Progress:Thermometer')
+      #SET(%ThermometerControl, %Control)
+      #SET(%ThermometerUseVariable, %ControlUse)
+    #OF('?Progress:UserString')
+      #SET(%UserStringControl, %Control)
+    #OF('?Progress:PctText')
+      #SET(%PctTextControl, %Control)
+    #OF('?Progress:Cancel')
+      #SET(%CancelControl, %Control)
+    #ENDCASE
+  #ENDFOR
+  #ASSERT(%ThermometerUseVariable <> '', %Procedure & ': progress controls use variable not found!')
+#!
+#!
+#GROUP(%RangeLimitOptions)
+  #ENABLE(%PrimaryKey)
+    #PROMPT('Range Limit &Field:',COMPONENT(%PrimaryKey)),%RangeField
+  #ENDENABLE
+  #ENABLE(%RangeField)
+    #PROMPT('Range Limit &Type:',DROP('Current Value|Single Value|Range of Values|File Relationship')),%RangeLimitType,DEFAULT('Current Value')
+    #BOXED,SECTION
+      #BOXED('Range Limit Boundary:'),WHERE(%RangeLimitType='Single Value'),AT(,0)
+        #PROMPT('&Range Limit Value:',FIELD),%RangeLimit
+      #ENDBOXED
+      #BOXED('Range Limit Boundaries:'),WHERE(%RangeLimitType='Range of Values'),AT(,0)
+        #PROMPT('&Low Limit Value:',FIELD),%RangeLow
+        #PROMPT('&High Limit Value:',FIELD),%RangeHigh
+      #ENDBOXED
+      #BOXED('Range limiting file'),WHERE(%RangeLimitType='File Relationship'),AT(,0)
+        #PROMPT('&Related file:',FILE),%RangeFile
+      #ENDBOXED
+    #ENDBOXED
+  #ENDENABLE
+#!--------------------------------------------
+#GROUP(%GetFreeElement),PRESERVE
+#FIX(%Key,%PrimaryKey)
+#CASE(%RangeLimitType)
+#OF('Current Value')
+#OROF('Single Value')
+  #FIX(%KeyField,%RangeField)
+  #SELECT(%KeyField,Instance(%KeyField)+1)
+  #RETURN(%KeyField)
+#OF('Range of Values')
+  #FIX(%KeyField,%RangeField)
+  #RETURN(%KeyField)
+#OF('File Relationship')
+  #RETURN('')
+#ENDCASE
+#!--------------------------------------------
+#GROUP(%GetFreeElementNumber),PRESERVE
+#FIX(%Key,%PrimaryKey)
+#CASE(%RangeLimitType)
+#OF('Current Value')
+#OROF('Single Value')
+  #FIX(%KeyField,%RangeField)
+  #SELECT(%KeyField,Instance(%KeyField)+1)
+  #RETURN(Instance(%KeyField))
+#OF('Range of Values')
+  #FIX(%KeyField,%RangeField)
+  #RETURN(Instance(%KeyField))
+#OF('File Relationship')
+  #RETURN(0)
+#ENDCASE
+#!--------------------------------------------
+#GROUP(%PickFreeElementNumber),AUTO
+#EQUATE(%t, %GetFreeElementNumber())
+#RETURN(CHOOSE(%t=0,1,%t))
+#!--------------------------------------------
+#GROUP(%ProcessDeclarations)
+#EMBED(%DeclarationSection,'Declaration Section'),DATA,LEGACY
+  #!Sets up a StepManager to calibrate progress bar correctly
+  #FIX(%File,%Primary)
+  #FIX(%Key,%PrimaryKey)
+  #IF(%Key)
+    #SELECT(%KeyField,%PickFreeElementNumber())
+    #FIND(%Field,%KeyField)
+    #CASE (%FieldType)
+    #OF ('STRING')
+    #OROF ('CSTRING')
+    #OROF ('PSTRING')
+      #SET(%ActualDefaultBaseClassType,%StepManagerStringType)
+    #OF ('BYTE')
+    #OROF ('SHORT')
+    #OROF ('USHORT')
+    #OROF ('LONG')
+      #SET(%ActualDefaultBaseClassType,%StepManagerLongType)
+    #ELSE
+      #SET(%ActualDefaultBaseClassType,%StepManagerRealType)
+    #ENDCASE
+  #ENDIF
+#!--------------------------------------------
+#GROUP(%ProcedureSetupCode),AUTO
+  #DECLARE(%Param1)
+  #DECLARE(%Param2)
+  #IF(%PrimaryKey)
+    #FIX(%File,%Primary)
+    #FIX(%Key,%PrimaryKey)
+    #SELECT(%KeyField,%PickFreeElementNumber())
+    #FIND(%Field,%KeyField)
+    #CASE(%FieldType)
+    #OF('STRING')
+    #OROF('CSTRING')
+    #OROF('PSTRING')
+      #SET(%Param1,'ScrollSort:AllowAlpha+ScrollSort:AllowNumeric')
+      #SET(%Param2,'ScrollBy:RunTime')
+    #ELSE
+      #SET(%Param1,'ScrollSort:AllowNumeric')
+    #ENDCASE
+    #IF(%KeyFieldSequence<>'ASCENDING')
+      #SET(%Param1,%Param1&'+ScrollSort:Descending')
+    #ENDIF
+%ProgressObjectName.Init(%Param1,%Param2)
+  #ENDIF
+#!--------------------------------------------
+#GROUP(%GeneralProcessPrompts)
+  #PROMPT('Quick-Scan Records',CHECK),%EnableQuickScan,DEFAULT(1)
+  #PROMPT('&Record Filter:',@S255),%RecordFilter
+  #PROMPT('&Additional Sort Fields',EXPR),%AddSortFields
+  #PROMPT('Record Count Override:',@N6),%ApproxRecordCount
+  #ENABLE(%PrimaryKey)
+    #BOXED('Progress Bar Limits')
+      #PROMPT('Set progress bar limits &manually?',CHECK),%ManuallySetProgressLimits,DEFAULT(%False),AT(10)
+      #ENABLE(%ManuallySetProgressLimits)
+        #PROMPT('L&ow Progress Bar Limit:',@S255),%LowLimit,REQ
+        #PROMPT('&High Progress Bar Limit:',@S255),%HighLimit,REQ
+      #ENDENABLE
+    #ENDBOXED
+  #ENDENABLE
+#!
+#GROUP(%ProcessViewManager),AUTO
+  #IF(%ApproxRecordCount)
+%ProcessObjectName.Init(%ListView, Relate:%Primary, %PctTextControl, %ThermometerUseVariable, %ApproxRecordCount)
+  #ELSIF(%PrimaryKey)
+    #FIX(%File,%Primary)
+    #FIX(%Key,%PrimaryKey)
+    #IF (ITEMS(%KeyField))
+      #SELECT(%KeyField,%PickFreeElementNumber())
+      #ASSERT(%KeyField)
+%ProcessObjectName.Init(%ListView, Relate:%Primary, %PctTextControl, %ThermometerUseVariable, ProgressMgr, %KeyField)
+      #IF(%KeyNoCase)
+        #FIX(%Field,%KeyField)
+        #CASE(%FieldType)
+        #OF('STRING')
+        #OROF('CSTRING')
+        #OROF('PSTRING')
+        #OROF('GROUP')
+%ProcessObjectName.CaseSensitiveValue = FALSE
+        #ENDCASE
+      #ENDIF
+    #ELSE
+      #ERROR('Reports do not support dynamic indexes - Use Additional Sort Fields instead')
+    #ENDIF
+  #ELSE
+%ProcessObjectName.Init(%ListView, Relate:%Primary, %PctTextControl, %ThermometerUseVariable)
+  #ENDIF
+%ProcessObjectName.AddSortOrder(%PrimaryKey)
+  #IF (%RangeField)
+    #CASE (%RangeLimitType)
+    #OF ('Single Value')
+%ProcessObjectName.AddRange(%RangeField,%RangeLimit)
+    #OF ('Range of Values')
+%ProcessObjectName.AddRange(%RangeField,%RangeLow,%RangeHigh)
+    #OF ('File Relationship')
+%ProcessObjectName.AddRange(%RangeField,Relate:%Primary,Relate:%RangeFile)
+    #OF ('Current Value')
+%ProcessObjectName.AddRange(%RangeField)
+    #ENDCASE
+  #ENDIF
+  #IF (%AddSortFields)
+%ProcessObjectName.AppendOrder(%(%StripPling(%AddSortFields)))
+  #ENDIF
+  #IF (%RecordFilter)
+%ProcessObjectName.SetFilter(%(%StripPling(%RecordFilter)))
+  #ENDIF
+  #IF(%PrimaryKey)
+    #IF(%ManuallySetProgressLimits)
+%ProcessObjectName.SetProgressLimits(%LowLimit,%HighLimit)
+    #ENDIF
+  #ENDIF
+#!
+#!
+#!
+#!
+#!
+#PROCEDURE(Menu,'Single Document Menu'),WINDOW,HLP('~TPLProcMenu'),PARENT(Window(ABC))
+#DEFAULT
+NAME DefaultABCMenu
+CATEGORY 'Menu'
+[COMMON]
+DESCRIPTION 'Default SDI Menu'
+FROM ABC Window
+[PROMPTS]
+%INISaveWindow LONG  (1)
+[WINDOW]
+MenuWindow WINDOW('Caption'),AT(0,0,260,146)
+       MENUBAR
+         MENU('&File'),USE(?FileMenu)
+           ITEM(''),SEPARATOR
+           ITEM('E&xit'),USE(?Exit),STD(STD:Close)
+         END
+       END
+     END
+#ENDDEFAULT
+#!
+#!
+#!
+#!
+#!
+#PROCEDURE(Frame,'Multiple Document Main Menu'),WINDOW,HLP('~TPLProcFrame'),PARENT(Window(ABC))
+#PREPARE
+  #CALL(%ReadABCFiles)
+#ENDPREPARE
+#PROMPT('&Splash Procedure:',PROCEDURE),%SplashProcedure
+#!
+#AT(%DataSection),PRIORITY(3000)
+  #IF(%SplashProcedure)
+SplashProcedureThread LONG
+  #ENDIF
+#ENDAT
+#!
+#AT(%WindowEventHandling,'OpenWindow')
+  #IF(%SplashProcedure)
+SplashProcedureThread = START(%SplashProcedure)
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeWindowEvent','(),BYTE'),PRIORITY(7575)
+  #IF(%SplashProcedure)
+    IF SplashProcedureThread
+      IF EVENT() = Event:Accepted
+        POST(Event:CloseWindow,,SplashProcedureThread)
+        SplashPRocedureThread = 0
+      END
+   END
+  #ENDIF
+#ENDAT
+#!
+#AT(%ProcedureRoutines)
+  #FOR(%Control),WHERE(%ControlType='MENU' AND %Control)
+Menu::%(SUB(%Control,2,LEN(%Control)-1)) ROUTINE      #<!Code for menu items on %Control
+    #SUSPEND
+  #?CASE ACCEPTED()
+  #INSERT(%StandardAcceptedHandling,%Control)
+  #?END
+    #RESUME
+  #ENDFOR
+#ENDAT
+#!
+#!-----------------------------------------
+#DEFAULT
+NAME DefaultABCFrame
+[COMMON]
+DESCRIPTION 'Default MDI Frame'
+FROM ABC Frame
+[PROMPTS]
+%INISaveWindow LONG  (1)
+%ButtonAction DEPEND %Control STRING TIMES 1
+WHEN  ('?Exit') ('No Special Action')
+
+%MenuAction DEPEND %Control STRING TIMES 1
+WHEN  ('?Exit') ('No Special Action')
+
+[ADDITION]
+NAME ABC DateTimeDisplay
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%DisplayDate LONG  (0)
+%DatePicture STRING  ('October 31, 1959')
+%OtherDatePicture @S20  ('')
+%ShowDayOfWeek LONG  (1)
+%DateDisplayLocation STRING  ('Status Bar')
+%DateStatusSection @n1  (3)
+%DateControl STRING  ('')
+%DisplayTime LONG  (0)
+%TimePicture STRING  ('5:30PM')
+%OtherTimePicture @S20  ('')
+%TimeDisplayLocation STRING  ('Status Bar')
+%TimeStatusSection @n1  (4)
+%TimeControl STRING  ('')
+[WINDOW]
+AppFrame APPLICATION('Application'),AT(,,310,190),STATUS(-1,80,120,45),SYSTEM,MAX,RESIZE
+       MENUBAR
+         MENU('&File'),USE(?FileMenu)
+           ITEM('P&rint Setup...'),USE(?PrintSetup),MSG('Setup Printer'),STD(STD:PrintSetup)
+           ITEM,SEPARATOR
+           ITEM('E&xit'),USE(?Exit),MSG('Exit this application'),STD(STD:Close)
+         END
+         MENU('&Edit'),USE(?EditMenu)
+           ITEM('Cu&t'),USE(?Cut),MSG('Remove item to Windows Clipboard'),STD(STD:Cut)
+           ITEM('&Copy'),USE(?Copy),MSG('Copy item to Windows Clipboard'),STD(STD:Copy)
+           ITEM('&Paste'),USE(?Paste),MSG('Paste contents of Windows Clipboard'),STD(STD:Paste)
+         END
+         MENU('&Window'),MSG('Create and Arrange windows'),STD(STD:WindowList)
+           ITEM('T&ile'),USE(?Tile),MSG('Make all open windows visible'),STD(STD:TileWindow)
+           ITEM('&Cascade'),USE(?Cascade),MSG('Stack all open windows'),STD(STD:CascadeWindow)
+           ITEM('&Arrange Icons'),USE(?Arrange),MSG('Align all window icons'),STD(STD:ArrangeIcons)
+         END
+         MENU('&Help'),MSG('Windows Help')
+           ITEM('&Contents'),USE(?Helpindex),MSG('View the contents of the help file'),STD(STD:HelpIndex)
+           ITEM('&Search for Help On...'),USE(?HelpSearch),MSG('Search for help on a subject'),STD(STD:HelpSearch)
+           ITEM('&How to Use Help'),USE(?HelpOnHelp),MSG('How to use Windows Help'),STD(STD:HelpOnHelp)
+         END
+       END
+     END
+
+#ENDDEFAULT
+#!
+#!
+#!
+#!
+#EXTENSION(RunCommandLineProc, 'Check Command Line Procedure'),APPLICATION,HLP('~RunCommandLineProc')
+#!
+#PROMPT('Log All &Errors Silently',CHECK),%SilentErrors,DEFAULT(%True),AT(10)
+#BUTTON('Commnd Line Flags'),MULTI(%CmdFlags, %CommandLineOption & ' runs ' & CHOOSE(%CallGeneratedProcedure = %True, %GeneratedProcedureToRun, %NonGeneratedProcedureToRun)),INLINE
+  #PROMPT('&Procedure Name Flag:', @S80),%CommandLineOption,REQ
+  #PROMPT('Call generated procedure', CHECK),%CallGeneratedProcedure,DEFAULT(%True)
+  #BOXED,SECTION
+    #BOXED,AT(0,0),WHERE(%CallGeneratedProcedure = %True)
+      #PROMPT('Procedure To &Run:', PROCEDURE),%GeneratedProcedureToRun,REQ
+    #ENDBOXED
+    #BOXED,AT(0,0),WHERE(%CallGeneratedProcedure = %False)
+      #PROMPT('Procedure To &Run:', @S255),%NonGeneratedProcedureToRun,REQ
+    #ENDBOXED
+  #ENDBOXED
+#ENDBUTTON
+#!
+#!
+#AT(%BeforeCallingFirstProcedure),PRESERVE
+  #DECLARE(%CmdOption)
+  #FOR(%CmdFlags)
+    #IF(SUB(%CommandLineOption, 1, 1) = '!' OR  SUB(%CommandLineOption, 1, 1) = '=' OR SUB(%CommandLineOption, 1, 1) = '/')
+      #SET(%CmdOption, %CommandLineOption)
+    #ELSE
+      #SET(%CmdOption, '/' & %CommandLineOption)
+    #ENDIF
+    #IF(INSTANCE(%CmdFlags) = 1)
+IF COMMAND(%(%StripPling(%CmdOption)))
+    #ELSE
+ELSIF COMMAND(%(%StripPling(%CmdOption)))
+    #ENDIF
+  SilentRunning = True
+    #IF(%CallGeneratedProcedure)
+  %GeneratedProcedureToRun
+    #ELSE
+  %NonGeneratedProcedureToRun
+    #ENDIF
+    #IF(INSTANCE(%CmdFlags) = ITEMS(%CmdFlags))
+END
+    #ENDIF
+  #ENDFOR
+IF SilentRunning
+  GlobalErrors.Silent = %(CHOOSE(%SilentErrors = %True, 'True', 'False'))
+  GlobalErrors.LogErrors = %(CHOOSE(%SilentErrors = %True, 'True', 'False'))
+ELSE
+#ENDAT
+#!
+#!
+#AT(%AfterCallingFirstProcedure)
+END
+#ENDAT
+#!
+#!
+#AT(%BeforeGenerateApplication)
+  #FOR(%CmdFlags)
+    #CALL(%AddGlobalMapInclude, %GeneratedProcedureToRun)
+  #ENDFOR
+#ENDAT
+#!
+#!

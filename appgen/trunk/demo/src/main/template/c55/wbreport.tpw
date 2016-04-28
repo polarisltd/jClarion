@@ -1,0 +1,116 @@
+#EXTENSION(WebProcessReport, 'Web Application ProcessReport Extension'),SINGLE,HLP('~WebProcessReportExt')
+#!
+#RESTRICT,WHERE(UPPER(%ProcedureTemplate)='PROCESS')
+  #IF(%ProcedureHasWebWindow())
+    #ACCEPT
+  #END
+  #REJECT
+#ENDRESTRICT
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'WbDetailProperties', 'DetailProperties', %WbControlHtmlPropertiesClass)
+#ENDPREPARE
+#!
+#!
+#BOXED(''),AT(0,0),WHERE(%False),HIDE
+  #INSERT(%OOPHiddenPrompts(ABC))
+#ENDBOXED
+#SHEET,HSCROLL
+  #TAB('&Report Settings')
+    #PROMPT('Report Title:',@s64),%ReportTitle,DEFAULT(%Primary & 'Report')
+    #PROMPT('Report Skeleton:',@s20),%ReportSkeletonName,DEFAULT('detail.htm'),REQ
+    #PROMPT('Records per Page:',@n10),%ReportRecsPerPage,DEFAULT(30),REQ
+    #PROMPT('Break Checking:',OPTION),%BreakChecking,DEFAULT('by line count')
+    #PROMPT('by record count',RADIO)
+    #PROMPT('by line count',RADIO)
+    #PROMPT('Next Control:',CONTROL),%NextControl,REQ
+    #PROMPT('Previous Control:',CONTROL),%PreviousControl,REQ
+  #ENDTAB
+  #TAB('C&lasses'),HLP('~WbReportProcess_Classes'),AT(,,170)
+    #BOXED('')
+      #PROMPT('&Detail Class:',FROM(%pClassName)),%WbControlHtmlPropertiesClass,DEFAULT('WebDetailProperties'),REQ
+    #ENDBOXED
+  #ENDTAB
+  #BUTTON('&WbControlHtmlProperties Class'),AT(,,170),HLP('~WbControlHtmlProperties_Class')
+    #WITH(%ClassItem,'WbDetailProperties')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDBUTTON
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'WbDetailProperties', 'DetailProperties', %WbControlHtmlPropertiesClass)
+  #EQUATE(%WbControlHtmlPropertiesObjectName, %ThisObjectName)
+#ENDAT
+#!
+#AT(%GatherObjects)
+  #CALL(%AddObjectList(ABC), 'WbDetailProperties')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'WbDetailProperties')
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #ADD(%GlobalIncludeList, 'WBREPORT.INC')            #! Needed because code embeded into filemanager objects in _BC modules
+  #CALL(%GenerateVirtuals(ABC), 'WbDetailProperties', 'Local Objects|Web Objects|Web Report Detail Prpoerties', '%WbDetailPropertiesVirtuals(Web)')
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8300)
+%WbControlHtmlPropertiesObjectName.Init(WebFileAccess, ?Progress:UserString, ThisProcess, %NextControl, %PreviousControl, '%ReportSkeletonName')
+%WbControlHtmlPropertiesObjectName.MaxRecordCount = %ReportRecsPerPage
+  #IF(%BreakChecking = 'by line count')
+%WbControlHtmlPropertiesObjectName.UseLineCounting = true
+  #ELSE
+%WbControlHtmlPropertiesObjectName.UseLineCounting = false
+  #ENDIF
+webWindow.AddControl(%WbControlHtmlPropertiesObjectName.IControlToHtml)
+  #PRIORITY(9000)
+%Window{PROP:timer} = 0
+%Window{PROP:Text} = '%ReportTitle'
+%PctTextControl{Prop:Hide} = true
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Kill','(),BYTE'),PRIORITY(9000)
+%WbControlHtmlPropertiesObjectName.Kill
+#ENDAT
+#!
+#!
+#!
+#AT(%ControlEventHandling,%NextControl,'Accepted')
+%WbControlHtmlPropertiesObjectName.NextPage()
+RETURN Level:Benign
+#ENDAT
+#!
+#!
+#AT(%ControlEventHandling,%PreviousControl,'Accepted')
+%WbControlHtmlPropertiesObjectName.PreviousPage()
+RETURN Level:Benign
+#ENDAT
+#!
+#!
+#AT(%WebCodeSectionBeforeCreateHtmlPage),PRIORITY(4000)
+IF (%WbControlHtmlPropertiesObjectName.CurPage <= %WbControlHtmlPropertiesObjectName.LastPage)
+  RETURN
+END
+ASSERT(%WbControlHtmlPropertiesObjectName.CurPage = %WbControlHtmlPropertiesObjectName.LastPage+1)
+#PRIORITY(5500)
+%WbControlHtmlPropertiesObjectName.LastPage = %WbControlHtmlPropertiesObjectName.CurPage
+#ENDAT
+#!
+#!
+#!
+#!
+#GROUP(%WbDetailPropertiesVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebDetailPropertiesMethodDataSection,'WebDetailProperties Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('WbDetailProperties'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebDetailPropertiesMethodCodeSection,'WebDetailProperties Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('WbDetailProperties'))),TREE(%TreeText & %CodeText)
+#!
+#!

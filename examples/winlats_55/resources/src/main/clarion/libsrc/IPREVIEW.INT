@@ -1,0 +1,15 @@
+!ABCIncludeFile(ABC)
+
+OMIT('_EndOfInclude_',_IDEPreviewInterface_)
+_IDEPreviewInterface_ EQUATE(1)
+
+IPreviewControl         INTERFACE
+Init                      PROCEDURE(SIGNED Feq, WindowManager WM, CONST * CSTRING extra)
+Release                   PROCEDURE
+                        END
+
+IPreviewControlFactory INTERFACE
+CreateControl             PROCEDURE(CONST * CSTRING type),*IPreviewControl
+                        END
+
+_EndOfInclude_

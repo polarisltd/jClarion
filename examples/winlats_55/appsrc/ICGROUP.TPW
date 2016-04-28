@@ -1,0 +1,298 @@
+#! Generic groups used by 2.100 OOP extensions
+#!
+#!
+#GROUP(%ClassPrompts)
+  #BOXED('Class Definitions'),WHERE(%DeriveClass)
+    #PROMPT(' Use New &Base Class? ',CHECK),%UseNewBaseClass,DEFAULT(%False),AT(10)
+    #ENABLE(%UseNewBaseClass),CLEAR
+      #PROMPT('&Base Class:',@S64),%BaseClass,REQ
+      #PROMPT('&Class Include File:',OPENDIALOG('Pick Include File','Includes|*.Inc|All files|*.*')),%ClassIncludeFile,REQ
+      #PROMPT('Class &Implementation File:',OPENDIALOG('Pick Implementation File','CW Source|*.Clw|All files|*.*')),%ClassImplementationFile,REQ
+    #ENDENABLE
+    #BUTTON('&Methods'),MULTI(%ClassMethods,%ClassMethodName&' '&%ClassMethodPrototype),AT(,,85)
+      #PROMPT('Method &Name:',@S32),%ClassMethodName
+      #PROMPT('Method &Prototype:',@S64),%ClassMethodPrototype
+    #ENDBUTTON
+    #BUTTON('&Data Members'),MULTI(%ClassDataItems,%ClassDataName&' - '&%ClassDataType),AT(,,85)
+      #PROMPT('&Member Name:',@S64),%ClassDataName
+      #PROMPT('Member &Type:',DROP('BYTE|SHORT|USHORT|LONG|ULONG|REAL|SREAL|STRING|CSTRING|PSTRING|Other')),%ClassDataType
+      #ENABLE(%ClassDataType='Other')
+        #PROMPT('&Other Data Type:',@S64),%ClassOtherType
+      #ENDENABLE
+      #PROMPT('Is a &Reference?',CHECK),%ClassDataIsRef
+      #ENABLE(~%ClassDataIsRef AND(%ClassDataType='STRING' OR %ClassDataType='PSTRING' OR %ClassDataType='CSTRING'))
+        #PROMPT('&Size:',SPIN(@N5,1,65535)),%ClassDataSize,AT(,,30),REQ
+      #ENDENABLE
+      #PROMPT('&Dimensions:',SPIN(@N3,0,255)),%ClassDataDim1,AT(,,30)
+      #ENABLE(%ClassDataDim1)
+        #PROMPT('',SPIN(@N3,0,255)),%ClassDataDim2,AT(135,67,30)
+      #ENDENABLE
+      #ENABLE(%ClassDataDim1 AND %ClassDataDim2)
+        #PROMPT('',SPIN(@N3,0,255)),%ClassDataDim3,AT(170,67,30)
+      #ENDENABLE
+      #ENABLE(%ClassDataDim1 AND %ClassDataDim2 AND %ClassDataDim3)
+        #PROMPT('',SPIN(@N3,0,255)),%ClassDataDim4,AT(205,67,30)
+      #ENDENABLE
+    #ENDBUTTON
+  #ENDBOXED
+#!
+#GROUP(%ConfigOOPDefaults,%DefaultBaseClass,%DefaultIncFile,%DefaultCodeFile)
+  #IF(~%UseNewBaseClass)                           #!User is using global default types
+    #SET(%BaseClass,%DefaultBaseClass)
+    #SET(%ClassIncludeFile,%DefaultIncFile)
+    #SET(%ClassImplementationFile,%DefaultCodeFile)
+  #ENDIF
+#!
+#!
+#GROUP(%MakeObjectNames,*%Object,*%ObjectType,%ID)
+  #SET(%Object,%ID&%ActiveTemplateInstance)
+  #SET(%ObjectType,%ID&%ActiveTemplateInstance)
+#!
+#!
+#GROUP(%MakeObjectName,*%Object,%ID)
+  #SET(%Object,%ID&%ActiveTemplateInstance)
+#!
+#!
+#GROUP(%GenerateClassMethods)
+  #FOR(%ClassMethods)
+    #IF(~%ClassMethodPrototype)
+      #SET(%ClassMethodPrototype,'PROCEDURE')
+    #ENDIF
+    #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassMethodName,%ClassMethodPrototype)
+%OOPConstruct
+  #ENDFOR
+#!
+#!
+#GROUP(%GenerateClassData)
+#FOR(%ClassDataItems)
+  #IF(%ClassDataType='Other')
+    #IF(%ClassDataIsRef)
+      #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,'&'&%ClassOtherType)
+%OOPConstruct
+    #ELSE
+      #IF(%ClassDataSize)
+#INSERT(%ClassDataSizeDims,%ClassOtherType)
+      #ELSE
+#INSERT(%ClassDataDims,%ClassOtherType)
+      #ENDIF
+    #ENDIF
+  #ELSE
+    #IF(%ClassDataIsRef)
+      #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,'&'&%ClassDataType)
+%OOPConstruct
+    #ELSE
+      #IF(%ClassDataSize)
+#INSERT(%ClassDataSizeDims,%ClassDataType)
+      #ELSE
+#INSERT(%ClassDataDims,%ClassDataType)
+      #ENDIF
+    #ENDIF
+  #ENDIF
+#ENDFOR
+#!
+#!
+#GROUP(%ClassDataSizeDims,%ClassType)
+#IF(%ClassDataDim4)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&'),DIM('&%ClassDataDim1&','&%ClassDataDim2&','&%ClassDataDim3&','&%ClassDataDim4&')')
+#ELSIF(%ClassDataDim3)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&'),DIM('&%ClassDataDim1&','&%ClassDataDim2&','&%ClassDataDim3&')')
+#ELSIF(%ClassDataDim2)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&'),DIM('&%ClassDataDim1&','&%ClassDataDim2&')')
+#ELSIF(%ClassDataDim1)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&'),DIM('&%ClassDataDim1&')')
+#ELSE
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&'('&%ClassDataSize&')')
+#ENDIF
+%OOPConstruct
+#!
+#!
+#GROUP(%ClassDataDims,%ClassType)
+#IF(%ClassDataDim4)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&',DIM('&%ClassDataDim1&','&%ClassDataDim2&','&%ClassDataDim3&','&%ClassDataDim4&')')
+#ELSIF(%ClassDataDim3)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&',DIM('&%ClassDataDim1&','&%ClassDataDim2&','&%ClassDataDim3&')')
+#ELSIF(%ClassDataDim2)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&',DIM('&%ClassDataDim1&','&%ClassDataDim2&')')
+#ELSIF(%ClassDataDim1)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType&',DIM('&%ClassDataDim1&')')
+#ELSE
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%ClassDataName,%ClassType)
+#ENDIF
+%OOPConstruct
+#!
+#!
+#GROUP(%GenerateClassDefinition,%DefaultTypeName,%ObjectType,*%ClassLine,%ClassComment='')
+#IF(ITEMS(%ClassLine)+ITEMS(%ClassMethods)+ITEMS(%ClassDataItems) OR %DeriveClass)
+  #IF(%DeriveClass)
+    #INSERT(%MakeDeclr,22,%OOPConstruct,%ObjectType,'CLASS('&%BaseClass&')')
+  #ELSE
+    #INSERT(%MakeDeclr,22,%OOPConstruct,%ObjectType,'CLASS('&%DefaultTypeName&')')
+  #ENDIF
+  #IF(%ClassComment)
+%[53]OOPConstruct !%ClassComment
+  #ELSE
+%OOPConstruct
+  #ENDIF
+#INSERT(%GenerateClassData)
+  #FOR(%ClassLine)
+%ClassLine
+  #ENDFOR
+#INSERT(%GenerateClassMethods)
+  #INSERT(%MakeDeclr,22,%OOPConstruct,'','END')
+%OOPConstruct
+#ELSE
+%[20]ObjectType %DefaultTypeName
+#ENDIF
+#!
+#!
+#GROUP(%MakeDeclr,%Indent,*%Dest,%Label,%Declr)
+#IF(LEN(%Label)<%Indent-1)
+  #SET(%Dest,%Label&ALL(' ',%Indent-LEN(%Label)-1)&%Declr)
+#ELSE
+  #SET(%Dest,%Label&' '&%Declr)
+#ENDIF
+#!
+#!
+#GROUP(%SetupVirtualCheck)
+#SET(%IncludePrototype,%False)
+#SUSPEND
+#?%NULL
+#!
+#!
+#GROUP(%CheckByteCount)
+#IF(%IncludePrototype=%False AND %ByteCount NOT=%BytesOutput)
+  #SET(%IncludePrototype,%True)
+#ENDIF
+#!
+#!
+#GROUP(%PrototypeCheck,%FunctionName,%FunctionStatement,*%ClassLine)
+#IF(%IncludePrototype)
+  #INSERT(%MakeDeclr,24,%OOPConstruct,%FunctionName,%FunctionStatement)
+  #ADD(%ClassLine,%OOPConstruct)
+  #RELEASE
+#ENDIF
+#!
+#!
+#GROUP(%DeclareClassVariables)
+#DECLARE(%ClassName),UNIQUE
+#DECLARE(%ClassModule,%ClassName)
+#DECLARE(%ClassMethod,%ClassName),UNIQUE
+#DECLARE(%ClassMethodPrototype,%ClassMethod),UNIQUE            #! Prototype including brackets and return type, if applic
+#DECLARE(%ClassMethodPrivate,%ClassMethodPrototype,LONG)       #! Contains %True if method is private
+#DECLARE(%ClassMethodLinkName,%ClassMethodPrototype)           #! Functions mangled link name
+#!
+#!
+#GROUP(%ReadHeaderFiles)      #!Requireds %ClassName, %ClassMethod, %ClassMethodPrivate, %ClassPrototype and %ClassmethodLinkName to be defined
+#FREE(%ClassName)
+#INSERT(%ReadIncludeFile,'BROWSE.INC')
+#INSERT(%ReadIncludeFile,'ASCII.INC')
+#INSERT(%ReadIncludeFile,'ERROR.INC')
+#INSERT(%ReadIncludeFile,'TOOLBAR.INC')
+#INSERT(%ReadIncludeFile,'FILE.INC')
+#INSERT(%ReadIncludeFile,'RESIZE.INC')
+#INSERT(%ReadIncludeFile,'PRINT.INC')
+#INSERT(%ReadIncludeFile,'POPUP.INC')
+#INSERT(%ReadIncludeFile,'DROPS.INC')
+#INSERT(%ReadIncludeFile,'UTILITY.INC')
+#!
+#!
+#GROUP(%ReadIncludeFile,%InputFile)
+#DECLARE(%FileLine)
+#DECLARE(%IncludeLineCount,LONG)
+#DECLARE(%CurrentClass)
+#DECLARE(%Attrib)
+#DECLARE(%B1,LONG)
+#DECLARE(%B2,LONG)
+#DECLARE(%IsPrivate,LONG)
+#DECLARE(%InsideLocalMap,LONG)
+#!
+#MESSAGE('Reading Header File: '&%InputFile,2)
+#CLEAR(%CurrentClass)
+#CLEAR(%IncludeLineCount)
+#OPEN(%InputFile),READ
+#LOOP
+  #READ(%FileLine)
+  #IF(%FileLine=%EOF)
+    #BREAK
+  #ENDIF
+  #SET(%IncludeLineCount,%IncludeLineCount+1)
+  #IF(INSTRING('!',%FileLine,1,1))
+    #SET(%FileLine,SUB(%FileLine,1,INSTRING('!',%FileLine,1,1)-1))
+  #ENDIF
+  #IF(~%FileLine)
+    #CYCLE
+  #ENDIF
+  #SET(%FileLine,UPPER(CLIP(%FileLine))&' ')
+  #IF(INSTRING(' MAP ',%FileLine,1,1))
+    #SET(%InsideLocalMap,1)
+  #ELSIF(INSTRING(' END ',%FileLine,1,1))
+    #IF(%InsideLocalMap)
+      #SET(%InsideLocalMap,%InsideLocalMap-1)
+    #ENDIF
+  #ELSIF(INSTRING(' MODULE(',%FileLine,1,1))
+    #IF(%InsideLocalMap>0)
+      #SET(%InsideLocalMap,%InsideLocalMap+1)
+    #ENDIF
+  #END
+  #IF(%InsideLocalMap>0)          #! No need to process local maps
+    #CYCLE
+  #ENDIF
+  #IF(INSTRING(' CLASS ',%FileLine,1,1) OR INSTRING(' CLASS(',%FileLine,1,1) OR INSTRING(' CLASS,',%FileLine,1,1))
+    #SET(%CurrentClass,SUB(%FileLine,1,INSTRING(' ',%FileLine,1,1)))
+    #IF(INLIST(%CurrentClass,%ClassName))
+      #ERROR(%InputFile&' - Invalid Include File: Duplicate Class Name, '&%IncludeLineCount)
+      #ABORT
+    #ELSE
+      #ADD(%ClassName,%CurrentClass)
+    #END
+    #SET(%B1,INSTRING('MODULE',%FileLine,1,1))
+    #IF (%B1)
+      #SET(%B1,%B1+LEN('MODULE('''))
+      #SET(%B2,INSTRING('''',%FileLine,1,%B1))
+      #SET (%ClassModule, SUB(%FileLine,%B1,%B2-%B1))
+    #END
+  #ELSIF(INSTRING(' PROCEDURE',%FileLine,1,1) OR INSTRING(' FUNCTION',%FileLine,1,1))
+    #IF(~SUB(%FileLine,1,INSTRING(' ',%FileLine,1,1)))
+      #ERROR(%InputFile&' - Invalid Include File: Bad Method Declaration, '&%IncludeLineCount)
+      #ABORT
+    #END
+    #ADD(%ClassMethod,SUB(%FileLine,1,INSTRING(' ',%FileLine,1,1)))
+    #IF(EXTRACT(%FileLine,'PRIVATE'))
+      #SET(%IsPrivate,%True)
+    #ELSE
+      #SET(%IsPrivate,%False)
+    #ENDIF
+    #SET(%B1,INSTRING('(',%FileLine,1,1))
+    #SET(%B2,INSTRING(')',%FileLine,1,1))
+    #IF((%B1 AND ~%B2) OR (%B2 AND ~%B1))
+      #ERROR(%InputFile&' - Invalid Include File: Parenthasis Mismatch, '&%IncludeLineCount)
+      #ABORT
+    #ENDIF
+    #IF(%B1)
+      #ADD(%ClassMethodPrototype,SUB(%FileLine,%B1,LEN(%FileLine)-%B1))
+    #ELSE
+      #ADD(%ClassMethodPrototype,'()')
+    #ENDIF
+    #SET(%ClassMethodPrivate,%IsPrivate)
+    #SET(%Attrib,CLIP(%ClassMethod)&'('&%CurrentClass&','&SUB(%ClassMethodPrototype,2,LEN(%ClassMethodPrototype)))
+    #!ERROR(%Attrib)
+    #SET(%ClassMethodLinkName, EXTRACT(%FileLine, 'NAME', 1))
+    #IF (%ClassMethodLinkName)
+      #SET (%ClassMethodLinkName, SUB(%ClassMethodLinkName, 2, LEN(%ClassMethodLinkName)-2))
+    #ELSE
+      #SET(%ClassMethodLinkName,LINKNAME(%Attrib))
+    #ENDIF
+  #ENDIF
+#ENDLOOP
+#CLOSE(%InputFile),READ
+#!
+#!
+#GROUP(%AddExpItem,%ItemText)
+#!SET(%ExpLineNumber,%ExpLineNumber+1)
+%[55]ItemText @?
+#!
+#GROUP(%AddExpPrototype,%ItemPrototype)
+#!SET(%ExpLineNumber,%ExpLineNumber+1)
+%[55](LINKNAME(%ItemPrototype)) @?
+#!
+#GROUP(%EOFDummyGroup)        #! ROYMORE fixes EOF problem

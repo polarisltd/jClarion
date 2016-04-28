@@ -1,0 +1,306 @@
+#PROGRAM(CLARION,'Default Program'),HLP('~TPLProgram')
+#INSERT(%RIGather)
+   PROGRAM
+
+#EMBED(%BeforeGlobalIncludes,'Before Global INCLUDEs'),DATA
+   INCLUDE('Equates.CLW')
+   INCLUDE('TplEqu.CLW')
+   INCLUDE('Keycodes.CLW')
+   INCLUDE('Errors.CLW')
+#EMBED(%AfterGlobalIncludes,'After Global INCLUDEs'),DATA
+#!
+#! Generate MAP
+#!
+#MESSAGE('Generating RI Lists',3)
+#MESSAGE('Generating MAP',3)
+   MAP
+#FIX(%Module,%Program)
+#FOR(%ModuleProcedure)
+  #FIX(%Procedure,%ModuleProcedure)
+     %Procedure %Prototype
+#ENDFOR
+#IF(%ModuleInclude)
+     INCLUDE('%ModuleInclude')
+#ENDIF
+#MESSAGE('Declaring Generated Procedures',3)
+#FOR(%CustomGlobalMapModule)
+     MODULE('%CustomGlobalMapModule')
+  #FOR(%CustomGlobalMapProcedure)
+       %CustomGlobalMapProcedure%CustomGlobalMapProcedurePrototype
+  #ENDFOR
+     END
+#ENDFOR
+#FOR(%Module), WHERE (%Module <> %Program)
+     MODULE('%Module')
+  #IF(%ModuleExternal)
+    #IF(%ModuleInclude)
+       INCLUDE('%ModuleInclude')
+    #ELSE
+      #FOR(%ModuleProcedure)
+        #FIX(%Procedure,%ModuleProcedure)
+        #IF(%ModuleTemplate = 'ExternalDLL(Clarion)')
+       %Procedure%Prototype,DLL(dll_mode)
+        #ELSE
+       %Procedure%Prototype
+        #ENDIF
+      #ENDFOR
+    #ENDIF
+  #ELSE
+    #FOR(%ModuleProcedure)
+      #FIX(%Procedure,%ModuleProcedure)
+       %Procedure%Prototype
+    #ENDFOR
+  #ENDIF
+     END
+#ENDFOR
+#MESSAGE('Declaring Standard Functions',3)
+     MODULE('%SFFileName')
+       CheckOpen(FILE File,<BYTE OverrideCreate>,<BYTE OverrideOpenMode>)
+       ReportPreview(QUEUE PrintPreviewQueue)
+       Preview:JumpToPage(LONG Input:CurrentPage, LONG Input:TotalPages),LONG
+       Preview:SelectDisplay(*LONG Input:PagesAcross, *LONG Input:PagesDown)
+       StandardWarning(LONG WarningID),LONG,PROC
+       StandardWarning(LONG WarningID,STRING WarningText1),LONG,PROC
+       StandardWarning(LONG WarningID,STRING WarningText1,STRING WarningText2),LONG,PROC
+       SetupStringStops(STRING ProcessLowLimit,STRING ProcessHighLimit,LONG InputStringSize,<LONG ListType>)
+       NextStringStop,STRING
+       SetupRealStops(REAL InputLowLimit,REAL InputHighLimit)
+       NextRealStop,REAL
+       INIRestoreWindow(STRING ProcedureName,STRING INIFileName)
+       INISaveWindow(STRING ProcedureName,STRING INIFileName)
+       RISaveError
+     END
+#MESSAGE('Declaring RI Procedures',3)
+     MODULE('%RIUpdFileName')
+       #INSERT(%RIDeclare,'UPDATE')
+     END
+     MODULE('%RIDelFileName')
+       #INSERT(%RIDeclare,'DELETE')
+     END
+     #FOR(%CustomGlobalMapIncludes)
+     INCLUDE('%CustomGlobalMapIncludes')
+     #ENDFOR
+     #EMBED(%GlobalMap,'Inside the Global Map')
+   END
+   #FOR(%CustomGlobalDeclarationIncludes)
+   INCLUDE('%CustomGlobalDeclarationIncludes')
+   #ENDFOR
+
+
+#MESSAGE('Generating Global Data',3)
+#FOR(%GlobalData)
+%GlobalData   %GlobalDataStatement
+#ENDFOR
+#FOR(%CustomGlobalData),WHERE(%CustomGlobalDataBeforeFiles)
+%[20]CustomGlobalData %CustomGlobalDataDeclaration
+  #FOR(%CustomGlobalDataComponent)
+%[20 + (%CustomGlobalDataComponentIndent * 2)]CustomGlobalDataComponent %CustomGlobalDataComponentDeclaration
+  #ENDFOR
+#ENDFOR
+
+SaveErrorCode        LONG
+SaveError            CSTRING(255)
+SaveFileErrorCode    LONG
+SaveFileError        CSTRING(255)
+#IF(%GlobalExternal)
+GlobalRequest        LONG(0),EXTERNAL,DLL(dll_mode)
+GlobalResponse       LONG(0),EXTERNAL,DLL(dll_mode)
+VCRRequest           LONG(0),EXTERNAL,DLL(dll_mode)
+#ELSE
+GlobalRequest        LONG(0),THREAD
+GlobalResponse       LONG(0),THREAD
+VCRRequest           LONG(0),THREAD
+#ENDIF
+#!9.1.00
+#IF( %WindowFrameDragging = 1 )
+lCurrentFDSetting    LONG
+lAdjFDSetting        LONG
+#ENDIF
+#!9.1.00
+#EMBED(%BeforeFileDeclarations,'Before File Declarations'),DATA
+#FOR(%File)
+  #IF(%DefaultGenerate)
+  #ELSIF(%OverrideGenerate)
+  #ELSE
+    #FIX(%UsedFile,%File)
+    #IF(NOT %UsedFile)
+      #CYCLE
+    #ENDIF
+  #ENDIF
+  #SET(%ValueConstruct,SUB(%FileStruct,INSTRING(' ',%FileStruct,1,1),LEN(%FileStruct)))
+  #CASE(%OverrideCreate)
+  #OF('Create File')
+    #SET(%ValueConstruct,%ValueConstruct & ',CREATE')
+  #OF('Do Not Create File')
+  #OF('Use Default')
+  #CASE(%DefaultCreate)
+    #OF('Create All')
+      #SET(%ValueConstruct,%ValueConstruct & ',CREATE')
+    #OF('Create None')
+    #OF('Use File Setting')
+      #IF(%FileCreate)
+        #SET(%ValueConstruct,%ValueConstruct & ',CREATE')
+      #ENDIF
+    #ENDCASE
+  #OF('')
+    #CASE(%DefaultCreate)
+    #OF('Create All')
+        #SET(%ValueConstruct,%ValueConstruct & ',CREATE')
+    #OF('Create None')
+    #OF('Use File Setting')
+      #IF(%FileCreate)
+        #SET(%ValueConstruct,%ValueConstruct & ',CREATE')
+      #ENDIF
+    #ENDCASE
+  #OF('Use File Setting')
+    #IF(%FileCreate)
+      #SET(%ValueConstruct,%ValueConstruct & ',CREATE')
+    #ENDIF
+  #ENDCASE
+  #IF(NOT EXTRACT(%ValueConstruct,'BINDABLE'))
+    #SET(%ValueConstruct,%ValueConstruct & ',BINDABLE')
+  #ENDIF
+  #SET(%FileThreadedFlag,%False)
+  #CASE(%OverrideThreaded)
+  #OF('Threaded')
+    #SET(%ValueConstruct,%ValueConstruct & ',THREAD')
+    #SET(%FileThreadedFlag,%True)
+  #OF('Not Threaded')
+  #OF('Use Default')
+  #OROF('')
+    #CASE(%DefaultThreaded)
+    #OF('All Threaded')
+      #SET(%ValueConstruct,%ValueConstruct & ',THREAD')
+      #SET(%FileThreadedFlag,%True)
+    #OF('None Threaded')
+    #OF('Use File Setting')
+      #IF(%FileThreaded)
+        #SET(%ValueConstruct,%ValueConstruct & ',THREAD')
+        #SET(%FileThreadedFlag,%True)
+      #ENDIF
+    #ENDCASE
+  #OF('Use File Setting')
+    #IF(%FileThreaded)
+      #SET(%FileThreadedFlag,%True)
+      #SET(%ValueConstruct,%ValueConstruct & ',THREAD')
+    #ENDIF
+  #ENDCASE
+  #SET(%FileExternalFlag,%False)
+  #CASE(%OverrideExternal)
+  #OF('External')
+    #IF(%OverrideExternalAPP)
+      #SET(%FileExternalFlag,%True)
+    #ENDIF
+    #SET(%FileExternalFlag,%True)
+    #IF(%OverrideExternalSource)
+      #SET(%ValueConstruct,%ValueConstruct & ',EXTERNAL(''' & %OverrideExternalSource & '''),DLL(dll_mode)')
+    #ELSE
+      #SET(%ValueConstruct,%ValueConstruct & ',EXTERNAL(''''),DLL(dll_mode)')
+    #ENDIF
+  #OF('Use Default')
+    #IF(%DefaultExternal='All External')
+      #IF(%DefaultExternalAPP)
+        #SET(%FileExternalFlag,%True)
+      #ENDIF
+      #IF(%DefaultExternalSource)
+        #SET(%ValueConstruct,%ValueConstruct & ',EXTERNAL(''' & %DefaultExternalSource & '''),DLL(dll_mode)')
+      #ELSE
+        #SET(%ValueConstruct,%ValueConstruct & ',EXTERNAL(''''),DLL(dll_mode)')
+      #ENDIF
+    #ENDIF
+  #OF('Not External')
+  #ELSE
+    #IF(%DefaultExternal='All External')
+      #IF(%DefaultExternalAPP)
+        #SET(%FileExternalFlag,%True)
+      #ENDIF
+      #IF(%DefaultExternalSource)
+        #SET(%ValueConstruct,%ValueConstruct & ',EXTERNAL(''' & %DefaultExternalSource & '''),DLL(dll_mode)')
+      #ELSE
+        #SET(%ValueConstruct,%ValueConstruct & ',EXTERNAL(''''),DLL(dll_mode)')
+      #ENDIF
+    #ENDIF
+  #ENDCASE
+  #IF(EXTRACT(%ValueConstruct,'EXTERNAL'))
+    #SET(%ValueConstruct,REPLACE(%ValueConstruct,'NAME',''))
+    #SET(%ValueConstruct,REPLACE(%ValueConstruct,'OWNER',''))
+    #SET(%ValueConstruct,REPLACE(%ValueConstruct,'ENCRYPT',''))
+    #SET(%ValueConstruct,REPLACE(%ValueConstruct,'DRIVER','',2))
+  #ENDIF
+#EMBED(%BeforeFileDeclaration,'Before File Declaration'),HIDE
+#MESSAGE('File Structure: ' & %File,3)
+%File %ValueConstruct
+  #FOR(%Key)
+%KeyStruct
+  #ENDFOR
+  #FOR(%Field),WHERE(%FieldType = 'MEMO')
+%FieldStruct
+  #ENDFOR
+  #FOR(%Field),WHERE(%FieldType = 'BLOB')
+%FieldStruct
+  #ENDFOR
+%FileStructRec,PRE()
+  #FOR(%Field),WHERE((%FieldType <> 'MEMO') AND (%FieldType <> 'BLOB'))
+%FieldStruct
+  #ENDFOR
+%FileStructRecEnd
+%FileStructEnd
+  #SET(%ValueConstruct,%File & '::Used')
+  #IF(%FileExternalFlag)
+%[20]ValueConstruct LONG,EXTERNAL,DLL(dll_mode)
+  #ELSE
+    #IF(%FileThreadedFlag)
+%[20]ValueConstruct LONG,THREAD
+    #ELSE
+%[20]ValueConstruct LONG
+    #ENDIF
+  #ENDIF
+
+#ENDFOR
+#FOR(%CustomGlobalData),WHERE(NOT %CustomGlobalDataBeforeFiles)
+%[20]CustomGlobalData %CustomGlobalDataDeclaration
+  #FOR(%CustomGlobalDataComponent)
+%[20 + (%CustomGlobalDataComponentIndent * 2)]CustomGlobalDataComponent %CustomGlobalDataComponentDeclaration
+  #ENDFOR
+#ENDFOR
+#EMBED(%AfterFileDeclarations,'After File Declarations'),DATA
+Sort:Name STRING(ScrollSort:Name)
+Sort:Name:Array STRING(3),DIM(100),OVER(Sort:Name)
+Sort:Alpha STRING(ScrollSort:Alpha)
+Sort:Alpha:Array STRING(2),DIM(100),OVER(Sort:Alpha)
+#!
+#EMBED(%GlobalData,'Global Data'),DATA
+#!
+  CODE
+#IF(%HelpFile)
+  HELP('%HelpFile')
+#ENDIF
+  #EMBED(%ProgramSetup,'Program Setup')
+#!9.1.00
+#IF( %ProgramExtension = 'EXE' AND %Target32 )
+  #IF( %WindowFrameDragging = 1 )
+  SystemParametersInfo( 38, 0, lCurrentFDSetting, 0 )
+  IF lCurrentFDSetting = 1
+    SystemParametersInfo( 37, 0, lAdjFDSetting, 3 )
+  END
+  #ENDIF
+#ENDIF
+#!9.1.00
+  %FirstProcedure
+#!9.1.00
+#IF( %ProgramExtension = 'EXE' AND %Target32 )
+  #IF( %WindowFrameDragging = 1)
+IF lCurrentFDSetting = 1
+  SystemParametersInfo( 37, 1, lAdjFDSetting, 3 )
+END
+  #ENDIF
+#ENDIF
+#!9.1.00
+  #EMBED(%ProgramEnd,'Program End')
+!---------------------------------------------------------------------------
+#EMBED(%ProgramRoutines,'Program Routines'),DATA
+#EMBED(%ProgramProcedures,'Program Procedures'),DATA
+#FOR(%CustomGlobalProcedureIncludes)
+   INCLUDE('%CustomGlobalProcedureIncludes')
+#ENDFOR
+

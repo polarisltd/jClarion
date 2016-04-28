@@ -1,0 +1,351 @@
+#CONTROL(DOSFileLookup,'Lookup a DOS filename'),WINDOW,HLP('~TPLControlDOSFileLookup'),MULTI
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','FileLookup'&%ActiveTemplateInstance,%SelectFileClass)
+#ENDPREPARE
+  CONTROLS
+    BUTTON('...'),AT(,,12,12),USE(?LookupFile)
+  END
+#BOXED('Default DOS File Lookup prompts'),AT(0,0),WHERE(%False),HIDE
+  #INSERT(%OOPHiddenPrompts)
+#ENDBOXED
+#SHEET,HSCROLL
+  #TAB('&General'),HLP('~TPLControlDOSFileLookup_General')
+    #PROMPT('&File Dialog Header:',@S60),%DOSFileDialogHeader
+    #PROMPT('&DOS Filename Variable:',FIELD),%DOSFileField,REQ
+    #PROMPT('D&efault Directory:',@S255),%DOSInitialDirectory
+    #PROMPT('Default File&name:',@S255),%DOSInitialFilename
+    #PROMPT('&Return to original directory when done.',CHECK),%ReturnToOriginalDir,AT(10)
+    #PROMPT('&Long Filenames?',CHECK),%AllowLongFilenames,AT(10),DEFAULT(%False)
+    #PROMPT('Multi-Select?',CHECK),%AllowMultiSelect,AT(10)
+    #ENABLE(%AllowMultiSelect)
+      #PROMPT('Action For Each Selection:',@S255),%ActionsToTake
+    #ENDENABLE
+  #ENDTAB
+  #TAB('&File Masks'),HLP('~TPLControlDOSFileLookup_File_Masks')
+    #PROMPT('&Use a Variable File Mask.',CHECK),%DOSVariableMask,AT(10)
+    #ENABLE(%DOSVariableMask)
+      #PROMPT('Mask Vari&able:',@S32),%DOSMaskVariable
+    #ENDENABLE
+    #ENABLE(NOT %DOSVariableMask)
+      #PROMPT('F&ile Mask Description:',@S40),%DOSMaskDesc,REQ,DEFAULT('All Files')
+      #PROMPT('Fi&le Mask',@S100),%DOSMask,REQ,DEFAULT('*.*')
+      #BUTTON('More Fil&e Masks'),AT(98),MULTI(%DOSMoreMasks,%DOSMoreMaskDesc & ' - ' & %DOSMoreMask)
+        #PROMPT('File Mask Description:',@S40),%DOSMoreMaskDesc,REQ
+        #PROMPT('File Mask',@S100),%DOSMoreMask,REQ
+      #ENDBUTTON
+    #ENDENABLE
+  #ENDTAB
+  #TAB('&Window Update Options'),HLP('~TPLControlDOSFileLookup_Window')
+    #BOXED('Window Updates after File Selection')
+      #PROMPT('&Update entire window?',CHECK),%RedisplayWindow,DEFAULT(%True),AT(10)
+      #ENABLE(~%RedisplayWindow)
+        #BUTTON('Update &Selected Fields'),MULTI(%UpdateFields,%UpdateFeq),AT(,,174)
+          #PROMPT('&Field to Update:',CONTROL),%UpdateFeq,REQ
+        #ENDBUTTON
+      #ENDENABLE
+    #ENDBOXED
+  #ENDTAB
+  #TAB('&Classes'),HLP('~TPLControlDOSFileLookup_Classes')
+    #WITH(%ClassItem,'Default')
+      #INSERT(%ClassPrompts)
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#ATSTART
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','FileLookup'&%ActiveTemplateInstance,%SelectFileClass)
+  #EQUATE(%FileLookupObjectName,%ThisObjectName)                                  #!Name of object
+  #DECLARE(%FileLookupClassLine),MULTI
+  #DECLARE(%LookupControl)
+  #SET(%LookupControl,%GetControlName())
+  #DECLARE(%LookupQueue)
+  #SET(%LookupQueue,'FileQueue'&%ActiveTemplateInstance)
+  #DECLARE(%LookupQueueCount)
+  #SET(%LookupQueueCount,'FileQueueCount'&%ActiveTemplateInstance)
+#ENDAT
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'Default')
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8500),DESCRIPTION('Set up DOS File Lookup')
+%FileLookupObjectName.Init
+  #IF(%AllowLongFilenames)
+%FileLookupObjectName.Flags=BOR(%FileLookupObjectName.Flags,FILE:LongName)
+  #ENDIF
+  #IF(%DOSVariableMask)
+%FileLookupObjectName.SetMask(%DOSVariableMask)
+  #ELSE
+    #IF(%DOSMask AND %DOSMaskDesc)
+%FileLookupObjectName.SetMask('%DOSMaskDesc','%DOSMask')
+    #ENDIF
+    #FOR(%DOSMoreMasks)
+%FileLookupObjectName.AddMask('%DOSMoreMaskDesc','%DOSMoreMask')
+    #ENDFOR
+  #ENDIF
+  #IF(%DOSInitialDirectory)
+%FileLookupObjectName.DefaultDirectory=%(%StripPling(%DOSInitialDirectory))
+  #ENDIF
+  #IF(%DOSInitialFilename)
+%FileLookupObjectName.DefaultFile=%(%StripPling(%DOSInitialFilename))
+  #ENDIF
+  #IF(%DOSFileDialogHeader)
+%FileLookupObjectName.WindowTitle=%(%StripPling(%DOSFileDialogHeader))
+  #ENDIF
+#ENDAT
+#!
+#AT(%ControlEventHandling,%LookupControl,'Accepted'),PRIORITY(7500),DESCRIPTION('Call DOS FileLookup Ask method')
+  #FIX(%Control,%LookupControl)
+#EMBED(%BeforeCallingDOSFileLookupAsk,'Before calling DOSFileLookup.Ask method'),%Control,MAP(%Control,'Lookup triggered by '&%Control),WHERE(%ControlInstance=%ActiveTemplateInstance),LEGACY
+  #IF(%AllowMultiSelect)
+%FileLookupObjectName.Ask(%LookupQueue,%ReturnToOriginalDir)
+    #IF(%ActionsToTake)
+LOOP %LookupQueueCount=1 TO RECORDS(%LookupQueue)
+  GET(%LookupQueue,%LookupQueueCount)
+  ASSERT(~ERRORCODE())
+  %DOSFileField=%LookupQueue.Name
+  #FIX(%Control,%LookupControl)
+  #INSERT(%DOSLookupDisplayOptions)
+  %ActionsToTake
+END
+    #ENDIF
+  #ELSE
+%DOSFileField = %FileLookupObjectName.Ask(%ReturnToOriginalDir)
+#INSERT(%DOSLookupDisplayOptions)
+  #END
+  #FIX(%Control,%LookupControl)
+#EMBED(%AfterCallingDOSFileLookupAsk,'After calling DOSFileLookup.Ask method'),%Control,MAP(%Control,'Lookup triggered by '&%Control),WHERE(%ControlInstance=%ActiveTemplateInstance),LEGACY
+#ENDAT
+#!
+#AT(%FileLookupMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|DOS File Lookup ' & %LookupControl, '%DOSFileLookupVirtuals(ABC)')
+#ENDAT
+#!
+#AT(%LocalDataClassData)
+  #IF(%AllowMultiSelect)
+    #INSERT(%MakeDeclr,22,%OOPConstruct,%LookupQueue,'SelectFileQueue')
+%OOPConstruct
+    #INSERT(%MakeDeclr,22,%OOPConstruct,%LookupQueueCount,'USHORT,AUTO')
+%OOPConstruct
+  #ENDIF
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'Default')
+#ENDAT
+#!
+#!
+#GROUP(%DOSFileLookupVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%FileLookupMethodDataSection,'File Lookup Method Data Section'),%ActiveTemplateInstance,%pClassName,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+#?%NULL
+  #?CODE
+  #EMBED(%FileLookupMethodCodeSection,'File Lookup Method Executable Code Section'),%ActiveTemplateInstance,%pClassName,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%DOSLookupDisplayOptions)
+#IF(%RedisplayWindow)
+DISPLAY
+#ELSE
+  #FOR(%UpdateFields)
+DISPLAY(%UpdateFeq)
+  #ENDFOR
+#ENDIF
+#!----------------------------------------------------------------
+#CONTROL(FieldLookupButton,'Trigger an Entry Control Lookup'),DESCRIPTION('Trigger an Entry Control Lookup'),WINDOW,MULTI,HLP('~TPLControlFieldLookupButton')
+   CONTROLS
+     BUTTON('...'),AT(,,12,12),USE(?CallLookup)
+   END
+#BOXED('Field Lookup Button Prompts')
+  #PROMPT('Control with lookup:',CONTROL),%ControlToLookup
+#ENDBOXED
+#ATSTART
+  #EQUATE(%WindowManagerObject,%GetObjectName('Default',0))
+  #DECLARE(%LookupControl)
+  #SET(%LookupControl,%GetControlName())
+  #FIX(%Control,%ControlToLookup)
+  #IF(%ControlType<>'ENTRY')
+    #ERROR(%Procedure & %LookupControl & ' Error: File Lookup needs to refer to Entry Control')
+  #ENDIF
+  #IF(NOT %PreLookupKey AND NOT %PostLookupKey)
+    #ERROR(%Procedure & %LookupControl &  ' Error: File Lookup needs a key to perform a Pre or Post-Edit lookup')
+  #ENDIF
+#ENDAT
+#AT(%ControlEventHandling,%LookupControl,'Accepted')
+  #FIX(%Control,%ControlToLookup)
+  #IF(NOT %PostLookupKey)
+    #FIND(%Field,%ControlUse)
+    #FOR(%Relation),WHERE(%RelationKey = %PreLookupKey)
+      #IF(%FileRelationType = 'MANY:1')
+        #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+          #IF(%FileKeyFieldLink = %PreLookupField)
+            #BREAK
+          #ENDIF
+%FileKeyFieldLink = %FileKeyField
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+%PreLookupField = %ControlUse
+IF SELF.Run(%(INLIST(%PreLookupProcedure,%ProcsCalled)),SelectRecord) = RequestCompleted
+    #FIND(%Field,%ControlUse)
+    #FOR(%Relation),WHERE(%RelationKey = %PreLookupKey)
+      #IF(%FileRelationType = 'MANY:1')
+        #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+          #IF(%FileKeyFieldLink = %PreLookupField)
+            #BREAK
+          #ENDIF
+  %FileKeyField = %FileKeyFieldLink
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+  %ControlUse = %PreLookupField
+  #INSERT(%MoreAssign)
+END
+  #ELSE
+    #FOR(%Relation),WHERE(%RelationKey = %PostLookupKey)
+      #IF(%FileRelationType = 'MANY:1')
+        #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+          #IF(%FileKeyFieldLink = %PostLookupField)
+            #BREAK
+          #ENDIF
+%FileKeyFieldLink = %FileKeyField
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+%PostLookupField = %ControlUse
+IF SELF.Run(%(INLIST(%PostLookupProcedure,%ProcsCalled)),SelectRecord) = RequestCompleted
+    #FOR(%Relation),WHERE(%RelationKey = %PostLookupKey)
+      #IF(%FileRelationType = 'MANY:1')
+        #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+          #IF(%FileKeyFieldLink = %PostLookupField)
+            #BREAK
+          #ENDIF
+  %FileKeyField = %FileKeyFieldLink
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+  %ControlUse = %PostLookupField
+  #INSERT(%MoreAssign)
+END
+  #ENDIF
+%WindowManagerObject.Reset(1)
+#FIX(%Control,%LookupControl)
+#ENDAT
+#!
+#!
+#!
+#CONTROL(FrameBrowseControl,'Toolbar Control Buttons on MDI Frame'),WINDOW,HLP('~TPLControlFrameBrowseControl')
+  #RESTRICT,WHERE(UPPER(%ProcedureTemplate)='FRAME')
+  #ENDRESTRICT
+  CONTROLS
+    BUTTON,AT(,,16,14),USE(?Toolbar:Top,Toolbar:Top),DISABLE,TIP('Go to the First Page'),ICON('VCRFIRST.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:PageUp,Toolbar:PageUp),DISABLE,TIP('Go to the Prior Page'),ICON('VCRPRIOR.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:Up,Toolbar:Up),DISABLE,TIP('Go to the Prior Record'),ICON('VCRUP.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:Locate,Toolbar:Locate),ICON('FIND.ICO'),DISABLE,TIP('Locate record'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:Down,Toolbar:Down),DISABLE,TIP('Go to the Next Record'),ICON('VCRDOWN.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:PageDown,Toolbar:PageDown),DISABLE,TIP('Go to the Next Page'),ICON('VCRNEXT.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:Bottom,Toolbar:Bottom),DISABLE,TIP('Go to the Last Page'),ICON('VCRLAST.ICO'),FLAT
+    BUTTON,AT(20,0,16,14),USE(?Toolbar:Select,Toolbar:Select),DISABLE,TIP('Select This Record'),ICON('MARK.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:Insert,Toolbar:Insert),DISABLE,TIP('Insert a New Record'),ICON('INSERT.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:Change,Toolbar:Change),DISABLE,TIP('Edit This Record'),ICON('EDIT.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:Delete,Toolbar:Delete),DISABLE,TIP('Delete This Record'),ICON('DELETE.ICO'),FLAT
+    BUTTON,AT(20,0,16,14),USE(?Toolbar:History,Toolbar:History),DISABLE,TIP('Previous value'),ICON('DITTO.ICO'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Toolbar:Help,Toolbar:Help),DISABLE,TIP('Get Help'),ICON('HELP.ICO'),FLAT
+  END
+#ATSTART
+  #CALL(%AddModuleIncludeFile,%ToolbarClass)
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeAccepted','(),BYTE'),PRIORITY(3025)
+ #SUSPEND
+ #DECLARE(%DoneFirst)
+ #FOR (%Control),WHERE(%ControlType='BUTTON' AND INSTRING('?Toolbar:',%Control,1,1)=1)
+  #IF (NOT %DoneFirst)
+  OF %Control
+   #SET (%DoneFirst, 1)
+  #ELSE
+  OROF %Control
+  #ENDIF
+ #ENDFOR
+    #?IF SYSTEM{PROP:Active} <> THREAD()
+      #?POST(EVENT:Accepted,ACCEPTED(),SYSTEM{Prop:Active} )
+      #?CYCLE
+    #?END
+ #RESUME
+#ENDAT
+#!
+#CONTROL(BrowseToolbarControl,'Toolbar Control Buttons for a browse'),WINDOW,DESCRIPTION('Toolbar for browse on ' & %Primary),HLP('~TPLControlFrameBrowseControl'),REQ(BrowseBox(ABC)),SINGLE
+  CONTROLS
+    BUTTON,AT(,,16,14),USE(?Browse:Top),TIP('Go to the First Page'),ICON('VCRFIRST.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:PageUp),TIP('Go to the Prior Page'),ICON('VCRPRIOR.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:Up),TIP('Go to the Prior Record'),ICON('VCRUP.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:Locate),ICON('FIND.GIF'),DISABLE,TIP('Locate record'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:Down),TIP('Go to the Next Record'),ICON('VCRDOWN.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:PageDown),TIP('Go to the Next Page'),ICON('VCRNEXT.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:Bottom),TIP('Go to the Last Page'),ICON('VCRLAST.GIF'),FLAT
+    BUTTON,AT(20,0,16,14),USE(?Browse:Select),DISABLE,TIP('Select This Record'),ICON('MARK.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:Insert),DISABLE,TIP('Insert a New Record'),ICON('INSERT.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:Change),DISABLE,TIP('Edit This Record'),ICON('EDIT.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:Delete),DISABLE,TIP('Delete This Record'),ICON('DELETE.GIF'),FLAT
+    BUTTON,AT(20,0,16,14),USE(?Browse:History),DISABLE,TIP('Previous value'),ICON('DITTO.GIF'),FLAT
+    BUTTON,AT(16,0,16,14),USE(?Browse:Help),TIP('Get Help'),ICON('HELP.GIF'),FLAT
+  END
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','BRW' & %ActiveTemplateParentInstance & '::Toolbar','BrowseToolbarClass')
+#ENDPREPARE
+#BUTTON('Browse Toolbar Behavior'),AT(,,180)
+  #BOXED('Default WindowManager prompts'),AT(0,0),WHERE(%False),HIDE
+    #INSERT(%OOPHiddenPrompts)
+  #ENDBOXED
+  #SHEET,HSCROLL
+    #TAB('&Classes'),HLP('~TPLProcWindow_Classes')
+      #WITH(%ClassItem,'Default')
+        #INSERT(%ClassPrompts)
+      #ENDWITH
+    #ENDTAB
+  #ENDSHEET
+#ENDBUTTON
+#!
+#!
+#ATSTART
+  #CALL(%SetClassDefaults, 'Default','BRW' & %ActiveTemplateParentInstance & '::Toolbar','BrowseToolbarClass')
+  #FIX (%ClassItem, 'Default')
+  #EQUATE (%ThisToolbarName, %ThisObjectName)
+  #CALL(%AddModuleIncludeFile,%ToolbarClass)
+#ENDAT
+#!
+#AT(%DataSection)
+  #CALL(%GenerateClass(ABC), 'Default')
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(6500),AUTO
+  #! Get the names of all the controls in a format we can process
+  #DECLARE (%ButtonOriginalFeq),MULTI
+  #DECLARE (%ButtonFeq, %ButtonOriginalFeq)
+  #FOR (%Control),WHERE(%ControlInstance=%ActiveTemplateInstance)
+    #ADD(%ButtonOriginalFeq,%ControlOriginal)
+    #SET(%ButtonFeq,%Control)
+  #END
+%ThisToolbarName.Init(SELF,%ManagerName)
+%ThisToolbarName.InitBrowse(%(%BTCMap('?Browse:Insert')), %(%BTCMap('?Browse:Change')), %(%BTCMap('?Browse:Delete')), %(%BTCMap('?Browse:Select')))
+%ThisToolbarName.InitVCR(%(%BTCMap('?Browse:Top')), %(%BTCMap('?Browse:Bottom')), %(%BTCMap('?Browse:PageUp')), %(%BTCMap('?Browse:PageDown')), %(%BTCMap('?Browse:Up')), %(%BTCMap('?Browse:Down')), %(%BTCMap('?Browse:Locate')))
+%ThisToolbarName.InitMisc(%(%BTCMap('?Browse:History')), %(%BTCMap('?Browse:Help')))
+SELF.AddItem(%ThisToolbarName.WindowComponent)
+#ENDAT
+#!
+#!
+#GROUP (%BTCMap, %Id)
+#FIX (%ButtonOriginalFeq, %Id)
+#IF (%ButtonFeq)
+  #RETURN (%ButtonFeq)
+#ENDIF
+#RETURN ('0')
+#!
+#!

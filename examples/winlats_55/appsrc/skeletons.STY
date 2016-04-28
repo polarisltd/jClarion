@@ -1,0 +1,54 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#GenericSkeletons
+  DESCRIPTOR: 1
+  PROPERTY: NAME(WebTemplatesInUse),DESCRIPTION(Are the Web Templates in use),DEVIMP(BAROQUE),DOCUMENTATION('Turn this on if the Web Templates will be in use in the resulting application, this will prevent duplicate code from being generated.'),DTYPE(CHECK),OUTPUT.NAME(WebTemplatesInUse),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CONTROLTEMPLATE(GenericSkeletonClasses)
+    NAME(TOPSPEED:ControlTemplate#GlobalTemplate#GenericSkeletons)
+    TEMPLATECHAIN(Skeletons)
+    WEBTEMPLATESINUSE()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(SkeletonSupport),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(SkeletonSupport),ACORN.WIZARD(ControlTemplate#GlobalTemplate#GenericSkeletons),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    SKELETONSUPPORT(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ProcessProcedure
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ProcToCall),DESCRIPTION(Procedure to call),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(ProcToCall),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(ProcessProcedure)
+    NAME(TOPSPEED:ControlTemplate#ProcessProcedure)
+    PROCTOCALL()
+    TEMPLATECHAIN(Skeletons)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Process
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ProcedureToCall),DESCRIPTION(Procedure to call),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(ProcToCall),TYPE(STRING)
+  PROPERTY: NAME(ProcessProcedure),ACORN(1),ACORN.CONTEXT('ProcToCall(%ProcedureToCall%)'),ACORN.NAME(ProcessProcedure),ACORN.WIZARD(ControlTemplate#ProcessProcedure),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProcessReportFunctionality),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(ProcessReport Functionality),ACORN.WIZARD(ControlTemplate#ProcessReport),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PROCESSPROCEDURE(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ProcessReport
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ReportSkeletonName),DESCRIPTION(The Skeleton html document to be used for this report.),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(ReportSkeletonName),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(ProcessReport)
+    NAME(TOPSPEED:ControlTemplate#ProcessReport)
+    REPORTSKELETONNAME('@CONTAINER(Output.Procname).htm')
+    TEMPLATECHAIN(Skeletons)
+  [END]
+[END]

@@ -1,0 +1,90 @@
+! Translation file for toolbar tooltips
+
+ListBoxTips GROUP
+Number BYTE(8)
+  USHORT(Toolbar:Down)
+  PSTRING('Go to the Next Record')
+  USHORT(Toolbar:Bottom)
+  PSTRING('Go to the Last Page')
+  USHORT(Toolbar:Top)
+  PSTRING('Go to the First Page')
+  USHORT(Toolbar:PageDown)
+  PSTRING('Go to the Next Page')
+  USHORT(Toolbar:PageUp)
+  PSTRING('Go to the Prior Page')
+  USHORT(Toolbar:Down)
+  PSTRING('Go to the Next Record')
+  USHORT(Toolbar:UP)
+  PSTRING('Go to the Prior Record')
+  USHORT(Toolbar:Insert)
+  PSTRING('Insert a new Record')
+  END
+
+ReltreeBoxTips GROUP
+  BYTE(6)
+  USHORT(Toolbar:Bottom)
+  PSTRING('Go to next parent record')
+  USHORT(Toolbar:Top)
+  PSTRING('Go to parent record')
+  USHORT(Toolbar:PageDown)
+  PSTRING('Go to next similar record')
+  USHORT(Toolbar:PageUp)
+  PSTRING('Go to previous similar record')
+  USHORT(Toolbar:Down)
+  PSTRING('Go to next record')
+  USHORT(Toolbar:UP)
+  PSTRING('Go to previous record')
+  END
+
+UpdateInsertTips GROUP
+  BYTE(2)
+  USHORT(Toolbar:Insert)
+  PSTRING('Save record and add another')
+  USHORT(Toolbar:Down)
+  PSTRING('Save record and add another')
+  END
+
+UpdateChangeTips GROUP
+  BYTE(7)
+  USHORT(Toolbar:Bottom)
+  PSTRING('Save changes and go to last record')
+  USHORT(Toolbar:Top)
+  PSTRING('Save changes and go to first record')
+  USHORT(Toolbar:PageDown)
+  PSTRING('Save changes and page down to record')
+  USHORT(Toolbar:PageUp)
+  PSTRING('Save changes and page up to record')
+  USHORT(Toolbar:Down)
+  PSTRING('Save changes and go to next record')
+  USHORT(Toolbar:UP)
+  PSTRING('Save changes and go to previous record')
+  USHORT(Toolbar:Insert)
+  PSTRING('Save this record and add a new one')
+  END
+
+UpdateVCRTips GROUP
+Number BYTE(11)
+  USHORT(Toolbar:Down)
+  PSTRING('Go to the Next Record')
+  USHORT(Toolbar:Bottom)
+  PSTRING('Go to the Last Page')
+  USHORT(Toolbar:Top)
+  PSTRING('Go to the First Page')
+  USHORT(Toolbar:PageDown)
+  PSTRING('Go to the Next Page')
+  USHORT(Toolbar:PageUp)
+  PSTRING('Go to the Prior Page')
+  USHORT(Toolbar:Down)
+  PSTRING('Go to the Next Record')
+  USHORT(Toolbar:UP)
+  PSTRING('Go to the Prior Record')
+  USHORT(Toolbar:Insert)
+  PSTRING('Select Insert Record Mode')
+  USHORT(Toolbar:Change)
+  PSTRING('Select Change Record Mode')
+  USHORT(Toolbar:Delete)
+  PSTRING('Select Delete Record Mode')
+  USHORT(Toolbar:Select)
+  PSTRING('Select View Record Mode')
+  END
+

@@ -1,0 +1,116 @@
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (SetHelpFileName,'Set the name of the HTML Help File'),DESCRIPTION('Set the name of the HTML Help File'),REQ(cwHHProc),HLP('~TPLSetHelpFileName')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#PROMPT( 'New HTML Help File Name: ', @s40 ), %hhNewFileName
+oHH.SetHelpFile( %hhNewFileName )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (GetHelpFileName,'Get the name of the HTML Help File'),DESCRIPTION('Get the name of the HTML Help File'),REQ(cwHHProc),HLP('~TPLGetHelpFileName')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#PROMPT( 'Variable to receive the Help File Name: ', FIELD ), %hhTargetVar
+%hhTargetVar = oHH.GetHelpFile( )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (SetTopicName,'Set the name of the HTML Help Topic'),DESCRIPTION('Set the name of the HTML Help Topic'),REQ(cwHHProc),HLP('~TPLSetTopicName')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#PROMPT( 'New Topic: ', @s255 ), %hhNewTopic
+oHH.SetTopic( %hhNewTopic )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (GetTopicName,'Get the name of the HTML Help Topic'),DESCRIPTION('Get the name of the HTML Help Topic'),REQ(cwHHProc),HLP('~TPLGetTopicName')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#PROMPT( 'Variable to receive the Help Topic: ', FIELD ), %hhTargetVar
+%hhTargetVar = oHH.GetTopic( )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (ShowIndex,'Show the HTML Help Index'),DESCRIPTION('Show the HTML Help Index'),REQ(cwHHProc),HLP('~TPLShowIndex')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#PROMPT( 'Key word to search for (opt): ', @s80 ), %hhSearchText
+oHH.ShowIndex( %hhSearchText )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (ShowTopic,'Show the current HTML Help Topic'),DESCRIPTION('Show the current HTML Help Topic'),REQ(cwHHProc),HLP('~TPLShowTopic')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#DISPLAY( 'No Parameters' )
+oHH.ShowTopic( )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (ShowSearch,'Show the current HTML Help Search Window'),DESCRIPTION('Show the current HTML Help Search Window'),REQ(cwHHProc),HLP('~TPLShowSearch')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#DISPLAY( 'No Parameters' )
+oHH.ShowSearch( )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (ShowTOC,'Show the current HTML Help Table of Contents'),DESCRIPTION('Show the current HTML Help Table of Contents'),REQ(cwHHProc),HLP('~TPLShowTOC')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#DISPLAY( 'No Parameters' )
+oHH.ShowTOC( )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (CloseHelp,'Close any Help windows opened by this application'),DESCRIPTION('Close any Help windows opened by this application'),REQ(cwHHProc),HLP('~TPLCloseHelp')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#DISPLAY( 'No Parameters' )
+oHH.CloseHelp( )
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (KeyWordLookUp,'Perform a Key Word Lookup on the current HTML Help File'),DESCRIPTION('Perform a Key Word Lookup on the current HTML Help File'),REQ(cwHHProc),HLP('~TPLKeyWordLookUp')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#PROMPT( 'Key word to search for: ', @s80 ), %hhSearchText
+#DISPLAY( 'Message to display if' )
+#PROMPT ( '  not found (opt): ', @s128 ), %hhSearchMsg
+#DISPLAY( 'Title for Message box' )
+#PROMPT ( '  (opt): ', @s80 ), %hhSearchMsgTitle
+#IF(%hhSearchMsg = '' AND %hhSearchMsgTitle = '' )
+oHH.KeyWordLookUp( %hhSearchText )
+#ELSE
+oHH.KeyWordLookUp( %hhSearchText, %hhSearchMsg, %hhSearchMsgTitle )
+#ENDIF
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#CODE (ALinkLookUp,'Perform an ALink Lookup on the current HTML Help File'),DESCRIPTION('Perform an ALink Lookup on the current HTML Help File'),REQ(cwHHProc),HLP('~TPLALinkLookUp')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#PROMPT( 'ALink to search for: ', @s80 ), %hhSearchText
+#DISPLAY( 'Message to display if' )
+#PROMPT ( ' not found (opt): ', @s128 ), %hhSearchMsg
+#DISPLAY( 'Title for Message box' )
+#PROMPT ( ' (opt): ', @s80 ), %hhSearchMsgTitle
+#IF(%hhSearchMsg = '' AND %hhSearchMsgTitle = '' )
+oHH.ALinkLookUp( %hhSearchText )
+#ELSE
+oHH.ALinkLookUp( %hhSearchText, %hhSearchMsg, %hhSearchMsgTitle )
+#ENDIF
+

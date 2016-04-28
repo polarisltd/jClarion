@@ -1,0 +1,53 @@
+ABReservErrors GROUP
+Number           USHORT(4)
+
+                 USHORT(Msg:LockError)
+                 BYTE(Level:Notify)
+                 PSTRING('Lock Error')
+                 PSTRING('Attempt to lock the files failed with error code %message.')
+
+                 USHORT(Msg:FileAccessError)
+                 BYTE(Level:Notify)
+                 PSTRING('File Access Error')
+                 PSTRING('File operation %message failed.')
+
+                 USHORT(Msg:ReservationNotFound)
+                 BYTE(Level:Notify)
+                 PSTRING('Reservation Not Found')
+                 PSTRING('%message reservation records could not be found.')
+
+                 USHORT(Msg:CapacityTooLow)
+                 BYTE(Level:Notify)
+                 PSTRING('Capacity Too Low')
+                 PSTRING('Capacity is %message lower than number of reservations.')
+
+               END
+
+ABReservXErrors GROUP
+Number           USHORT(4)
+
+                 USHORT(XMsg:LockError)
+                 BYTE(Level:Notify)
+                 PSTRING('Lock Error')
+                 PSTRING('Attempt to lock the files failed with error code %message.')
+
+                 USHORT(XMsg:FileAccessError)
+                 BYTE(Level:Notify)
+                 PSTRING('File Access Error')
+                 PSTRING('File operation %message failed.')
+
+                 USHORT(XMsg:ReservationNotFound)
+                 BYTE(Level:Notify)
+                 PSTRING('Reservation Not Found')
+                 PSTRING('%message reservation records could not be found.')
+
+                 USHORT(XMsg:InvalidReservation)
+                 BYTE(Level:Notify)
+                 PSTRING('Invalid Reservation Found')
+                 PSTRING('Invalid reservation with status %message found.')
+
+
+               END
+
+
+

@@ -1,0 +1,5 @@
+db.good=localhost\:invoice\:invoice\:5432
+db.good=
+db.good=localhost\:invoice\:invoice\:5432
+source.=localhost\:invoice\:invoice\:5432
+altsource.=127.0.0.1\:invoice\:invoice\:5432

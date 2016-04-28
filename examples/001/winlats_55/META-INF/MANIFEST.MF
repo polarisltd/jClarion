@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Winlats_55
+Bundle-SymbolicName: Winlats_55
+Bundle-Version: 1.0.0.qualifier

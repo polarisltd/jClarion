@@ -29,18 +29,26 @@ public class Convert {
 	public static void main(String args[]) throws IOException
 	{
 		// load Template Chain. Needed for decrufting
-		
+		String text = "This converts c55 .txa and .txd into .app\n"+
+		"locations:\n"+
+		"src/main/template/c55/ abchain.tpl + c55 template directory contents *.tpw \n"+
+		"src/main/clarion/common/winlats_160305.txd\n"+
+		"src/main/clarion/common/winlats_160305.txa\n"+
+		"-> target/app/\n"+
+		"resources/src/main/clarion/libsrc\n";
+		System.out.println(text);
 		TemplateChain chain = new TemplateChain();
 		TemplateLoader loader = new TemplateLoader(chain);		
-		loader.load("/home/barney/personal/c8/java/clarion/c9/src/main/template/c55/","abchain.tpl");
-		loader.load("/home/barney/personal/c8/java/clarion/c9/src/main/template/c55/","LOCUSABC.tpl");
+		loader.load("src/main/template/c55/","abchain.tpl");
+		loader.load("src/main/template/c55/","abwizard.tpl");
+		//loader.load("/home/barney/personal/c8/java/clarion/c9/src/main/template/c55/","LOCUSABC.tpl");  // we having no such available
 		chain.finalise();
 
 		DictLoader dl = new DictLoader();
-		Dict d = dl.loadDictionary("/home/barney/personal/c8/java/clarion/c9/src/main/clarion/common/c8odbc.txd");
+		Dict d = dl.loadDictionary("src/main/clarion/common/winlats_160305.txd");
 
 		AppLoader al = new AppLoader();	
-		App a = al.loadApplication("/home/barney/personal/c8/java/clarion/c9/src/main/clarion/main/c8.txa");
+		App a = al.loadApplication("src/main/clarion/common/winlats_160305.txa");
 		
 		TextAppStore tas; 
 		tas = new TextAppStore(chain);

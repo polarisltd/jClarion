@@ -1,0 +1,51 @@
+! All the posible ReportProcessorType are defined in the
+! same file that the IReportGenerator  Interface
+!
+!
+! ReportProcessorType = RepGen:UNKNOWN (0) mean to be used by any ReportProcessorType
+
+TargetAttr:HIDE            EQUATE('HIDE')    !The control will not show on the Preview and will not generate any direct text output
+TargetAttr:HideWidth       EQUATE('HW')      !When the Control is HIDE it store the original Width in 1/10000 inch
+TargetAttr:HideHeight      EQUATE('HH')      !When the Control is HIDE it store the original Height in 1/10000 inch
+TargetAttr:SKIP            EQUATE('SKIP')    !Skip this control when parsed by the specific procesor type
+TargetAttr:Control         EQUATE('Control')
+TargetAttr:ControlName     EQUATE('ControlName')    !?ControlName
+TargetAttr:ParentControl   EQUATE('ParentControl')    !If the control has a parent it store the ?ParentControlName
+TargetAttr:TPLInstance     EQUATE('TPLInstance')    !TPL Instance that populate the control
+TargetAttr:FontName        EQUATE('FONTNAME')
+!
+!XML
+!
+TargetAttr:TagName           EQUATE('TagName') !If this is present it will create a Tag using the value like the TagName
+TargetAttr:TagValue          EQUATE('TagValue') !If this is present it will use the value like the Tag Value
+TargetAttr:TagParentName     EQUATE('TagParentName') !If this is present the value is the parent TagName, for a Tag or an Attr.
+TargetAttr:HtmlComment       EQUATE('HtmlComment') ! <!-- >
+TargetAttr:TagType           EQUATE('TagType') ! declared on the XML code
+TargetAttr:TagProcessOnce    EQUATE('TagProcessOnce') !If present the content is the control FEQ number
+TargetAttr:TagNameFromText   EQUATE('NameFromText') !Take the value from the report text
+TargetAttr:TagValueFromText  EQUATE('ValueFromText') !Take the value from the report text
+TargetAttr:TagIsCData        EQUATE('IsCDATA') !The content will be treated like binary
+
+!!!!!!!!!!
+! Will create a hot region over the control
+! Some of the attr. are excluyent
+!!!!!!!!!!
+!
+! PDF
+!
+TargetAttr:PDFActionType    EQUATE('PDFActionType')   ! declared on the PDF code
+TargetAttr:Bookmark         EQUATE('Bookmark')   !The value is the text that will be showed on the bookmark
+TargetAttr:BookmarkParent   EQUATE('BookmarkParent')   !The value is the text that will be showed on the bookmark
+TargetAttr:HyperlinkType    EQUATE('HyperType')   !The value passed is http:// ftp:// mailto: etc.etc.
+TargetAttr:Hyperlink        EQUATE('Hyperlink')   !The value passed is the "link to" value can be a http/ftp/email
+TargetAttr:HyperlinkTarget  EQUATE('HyperTarget')   !
+TargetAttr:CommandLine      EQUATE('CommandLine')   !The value is the command line to execute when clicked on the control
+TargetAttr:CommandLineParam EQUATE('CommandLineParam')   !The value is the command line to execute when clicked on the control
+TargetAttr:PageAction       EQUATE('PageAction')   !The value pased is the Page Action
+TargetAttr:Annotation       EQUATE('Annotation')   !The control content will be an annotation True/False
+TargetAttr:FontAngle        EQUATE('FontAngle')   !The value is the font angle
+TargetAttr:HyperBoxColor    EQUATE('HyperBoxColor')   !The value is the box color
+
+!
+TargetAttr:DrillDown       EQUATE('DrillDown')   !The value pased is the procedure name and all the parameters
+!

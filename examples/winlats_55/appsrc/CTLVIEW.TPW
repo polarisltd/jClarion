@@ -1,0 +1,187 @@
+#!----------------------------------------------------------------
+#CONTROL(ASCIIBox,'View an ASCII text file in a List Box'),WINDOW,MULTI,HLP('~TPLControlASCIIBox'),WRAP(List)
+       CONTROLS
+         LIST,AT(,,150,100),FONT('FixedSys',9,,FONT:regular),USE(?AsciiBox),HVSCROLL,FROM(Queue:ASCII)
+       END
+#GLOBALDATA
+ASCIIFileName        CSTRING(80)
+#ENDGLOBALDATA
+#LOCALDATA
+ASCIIFileSize        LONG
+ASCIIBytesThisRead   LONG
+ASCIIBytesRead       LONG
+ASCIIBytesThisCycle  LONG
+ASCIIPercentProgress BYTE
+#ENDLOCALDATA
+#BOXED('ASCII Box')
+  #PROMPT('Description:',@S60),%ASCIIFileDescription
+  #PROMPT('File Name to View:',@S80),%ASCIIFile,REQ
+  #PROMPT('Display the number of bytes read',CHECK),%DisplayBytesRead,AT(10,,180)
+  #PROMPT('Warn the user if the file cannot be found?',CHECK),%ASCIIWarning,DEFAULT(1),AT(10,,180)
+#ENDBOXED
+#AT(%CustomGlobalDeclarations)
+  #FIX(%Driver,'ASCII')
+  #ADD(%UsedDriverDLLs,%DriverDLL)
+  #PROJECT(%DriverLIB)
+#ENDAT
+#ATSTART
+  #DECLARE(%InstancePrefix)
+  #SET(%InstancePrefix,'ASC' & %ActiveTemplateInstance)
+  #DECLARE(%ASCIIControl)
+  #DECLARE(%ASCIIQueue)
+  #FOR(%Control),WHERE(%ControlInstance = %ActiveTemplateInstance)
+    #SET(%ASCIIControl,%Control)
+    #SET(%ASCIIQueue,EXTRACT(%ControlStatement,'FROM'))
+    #SET(%ASCIIQueue,SUB(%ASCIIQueue,6,LEN(%ASCIIQueue)-6))
+  #ENDFOR
+#ENDAT
+#AT(%GatherSymbols)
+  #SET(%ProgressWindowRequired,%True)
+#ENDAT
+#AT(%DataSectionBeforeWindow)
+%[20]ASCIIQueue QUEUE
+                     STRING(255)
+                   END
+#SET(%ValueConstruct,%InstancePrefix & ':FileName')
+%[20]ValueConstruct STRING(80)
+#SET(%ValueConstruct,%InstancePrefix & ':CurrentFileName')
+%[20]ValueConstruct STRING(80)
+%InstancePrefix:ASCIIFile        FILE,PRE(%InstancePrefix),DRIVER('ASCII'),NAME(ASCIIFileName)
+RECORD                 RECORD,PRE()
+STRING                   STRING(255)
+                       END
+                     END
+#ENDAT
+#AT(%RefreshWindowAfterLookup)
+#EMBED(%BeforeControlRefresh,'Before Refresh Window for ASCII Box'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+#INSERT(%StandardValueAssignment,%InstancePrefix & ':FileName',%ASCIIFile)
+IF %InstancePrefix:FileName <> %InstancePrefix:CurrentFileName
+  ASCIIFileName = %InstancePrefix:FileName
+  DO %InstancePrefix:FillQueue
+  %InstancePrefix:CurrentFileName = %InstancePrefix:Filename
+END
+#EMBED(%AfterControlRefresh,'After Refresh Window for ASCII Box'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+#ENDAT
+#AT(%ProcedureRoutines)
+!-------------------------------------------------------
+%InstancePrefix:FillQueue ROUTINE
+!|
+!| This routine is used to fill the queue %ASCIIQueue with the contents of the
+!| requested file.
+!|
+!| First, the file is opened, and its size noted.
+!|
+!| Next, The progress window is opened. This window will remain open while the
+!| file is being loaded into the queue. This window has a timer on it.
+!|
+!| Next, the file is loaded. For each tick of the timer, 20000 bytes of the file
+!| are read. The contents of each line of the file are moved directly into the
+!| queue.
+!|
+!| After the 20000 bytes are read, the progress window is updated to show the
+!| percentage of the file read so far.
+!|
+!| The progress window also has a Cancel button. If the cancel button is pressed,
+!| the file read terminates after the current block of 20000 bytes is read.
+!|
+!| Finally, the progress window is closed.
+!|
+  FREE(%ASCIIQueue)
+  IF NOT ASCIIFileName
+    %ASCIIControl{Prop:Disable} = True
+    EXIT
+  ELSE
+    %ASCIIControl{Prop:Disable} = False
+  END
+  OPEN(%InstancePrefix:ASCIIFile,10h)
+  IF ERRORCODE()
+    DISABLE(%ASCIIControl)
+    #EMBED(%ASCIIBoxFileError,'ASCII Box, File not found'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+    #IF(%ASCIIWarning)
+    IF StandardWarning(Warn:FileLoadError,%InstancePrefix:FileName)
+      EXIT
+    END
+    #ELSE
+    EXIT
+    #ENDIF
+  ELSE
+    ENABLE(%ASCIIControl)
+    #EMBED(%ASCIIBoxFileFound,'ASCII Box, File found'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateinstanceDescription)
+  END
+  ASCIIFileSize = BYTES(%InstancePrefix:ASCIIFile)
+  IF ASCIIFileSize = 0
+    CLOSE(%InstancePrefix:ASCIIFile)
+    DISABLE(%ASCIIControl)
+    #IF(%ASCIIWarning)
+    IF StandardWarning(Warn:FileZeroLength,%InstancePrefix:FileName)
+      EXIT
+    END
+    #ENDIF
+    EXIT
+  END
+  OPEN(ProgressWindow)
+  ASCIIPercentProgress = 0
+  ASCIIBytesRead = 0
+  ProgressWindow{Prop:Text} = 'Reading File'
+  Progress:Thermometer = 0
+  ?Progress:PctText{Prop:Text} = '0% Completed'
+  #IF(SUB(%ASCIIFileDescription,1,1)='!')
+    #SET(%ValueConstruct,SUB(%ASCIIFileDescription,2,LEN(%ASCIIFileDescription)-1))
+  ?Progress:UserString{Prop:Text} = %ValueConstruct
+  #ELSE
+  ?Progress:UserString{Prop:Text} = '%ASCIIFileDescription'
+  #ENDIF
+  ACCEPT
+    CASE EVENT()
+    OF Event:OpenWindow
+      SET(%InstancePrefix:ASCIIFile)
+    OF Event:Timer
+      ASCIIBytesThisCycle = 0
+      LOOP WHILE ASCIIBytesThisCycle < 20000
+        NEXT(%InstancePrefix:ASCIIFile)
+        IF ERRORCODE()
+          LocalResponse = RequestCompleted
+          BREAK
+        END
+        ASCIIBytesThisRead = BYTES(%InstancePrefix:ASCIIFile)
+        ASCIIBytesThisCycle += ASCIIBytesThisRead
+        ASCIIBytesRead += ASCIIBytesThisRead
+        %ASCIIQueue = %InstancePrefix:String
+        ADD(%ASCIIQueue)
+      END
+      IF ASCIIPercentProgress < 100
+        ASCIIPercentProgress = (ASCIIBytesRead/ASCIIFileSize)*100
+        IF ASCIIPercentProgress > 100
+          ASCIIPercentProgress = 100
+        END
+        IF Progress:Thermometer <> ASCIIPercentProgress THEN
+          Progress:Thermometer = ASCIIPercentProgress
+  #IF(%DisplayBytesRead)
+          ?Progress:PctText{Prop:Text} = FORMAT(ASCIIPercentProgress,@N3) & '% Completed (' & ASCIIBytesRead & ') bytes'
+  #ELSE
+          ?Progress:PctText{Prop:Text} = FORMAT(ASCIIPercentProgress,@N3) & '% Completed'
+  #ENDIF
+          DISPLAY(?Progress:Thermometer)
+          DISPLAY(?Progress:PctText)
+        END
+      END
+      IF LocalResponse = RequestCompleted
+        LocalResponse = RequestCancelled
+        POST(Event:CloseWindow)
+      END
+    END
+    CASE FIELD()
+    OF ?Progress:Cancel
+      CASE EVENT()
+      OF Event:Accepted
+        IF StandardWarning(Warn:ConfirmCancelLoad,%InstancePrefix:FileName)=Button:OK
+          POST(Event:CloseWindow)
+        END
+      END
+    END
+  END
+  CLOSE(ProgressWindow)
+  CLOSE(%InstancePrefix:ASCIIFile)
+#ENDAT
+#!----------------------------------------------------------------
+#INCLUDE('CtlViewA.TPW')

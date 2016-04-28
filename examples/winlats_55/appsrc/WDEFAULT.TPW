@@ -1,0 +1,105 @@
+#!------------------------------------------------------------
+#GROUP(%SetGlobalDefaults)
+#SET(%MaximumSheetHeight,150)
+#SET(%MaximumSheetWidth,350)
+#SET(%MinimumSheetWidth,150)
+#!
+#SET(%MinimumTextHeight,40)
+#!
+#SET(%MinimumBrowseHeight,100)
+#SET(%MaximumBrowseItemWidth,80)
+#SET(%MaximumBrowseFields,10)
+#!
+#SET(%DefaultXOffset,4)
+#SET(%DefaultYOffset,4)
+#SET(%DefaultReportXOffset,125)
+#SET(%DefaultReportInitialYOffset,80)
+#SET(%DefaultReportYOffset,160)
+#SET(%DefaultReportTextYOffset,15)
+#SET(%DefaultReportColumns,4)
+#!
+#SET(%DefaultButtonWidth,45)
+#SET(%DefaultButtonHeight,14)
+#!
+#SET(%DefaultRadioHeight,8)
+#SET(%DefaultRadioWidth,46)
+#SET(%RadioInitialYOffset,10)
+#SET(%DefaultRadioYOffset,4)
+#SET(%DefaultRadioXOffset,4)
+#!
+#SET(%DefaultPromptWidth,49)
+#SET(%DefaultPromptHeight,8)
+#SET(%DefaultPromptYOffset,(%DefaultControlHeight-%DefaultControlHeight)/2)
+#!
+#SET(%DefaultControlHeight,10)
+#SET(%DefaultControlWidth,100)
+#SET(%MinimumControlWidth,40)
+#!
+#SET(%DefaultCheckHeight,8)
+#SET(%CheckColumnWidth,70)
+#SET(%DefaultCheckBoxXOffset,12)
+#!
+#SET(%DefaultSpinWidthOffset,15)
+#!
+#SET(%DefaultListItemHeight,8)
+#!
+#SET(%MaximumRelationCols,4)
+#!
+#SET(%MinimumTabLength,24)
+#SET(%TabTextOffset,6)
+#SET(%TabLineVerticalOffset,10)
+#SET(%TabDefaultVerticalOffset,2)
+#!
+#SET(%InitialSheetYOffset,%TabLineVerticalOffset + %TabDefaultVerticalOffset)
+#!
+#SET(%DefaultSelectControlText,'&Select')
+#SET(%DefaultInsertControlText,'&Insert')
+#SET(%DefaultChangeControlText,'&Change')
+#SET(%DefaultDeleteControlText,'&Delete')
+#SET(%DefaultCancelControlText,'Cancel')
+#SET(%DefaultCloseControlText,'Close')
+#SET(%DefaultOKControlText,'OK')
+#SET(%DefaultHelpControlText,'Help')
+#!------------------------------------------------------------
+#GROUP(%PrimaryBrowseDefaults)
+#FIX(%File,%QuickProcedurePrimary)
+#SET(%QuickBrowseUpdateProcedure,'Update' & %File)
+#SET(%QuickBrowseUpdatePopupMenu,%True)
+#SET(%QuickBrowseCreateUpdate,%True)
+#SET(%QuickBrowseChildHandling,%True)
+#SET(%QuickBrowseParentHandling,'Select parent record via button')
+#SET(%QuickBrowseSelectButton,%False)
+#!------------------------------------------------------------
+#GROUP(%SecondaryBrowseDefaults)
+#FIX(%File,%QuickProcedurePrimary)
+#SET(%QuickBrowseUpdateProcedure,'Update' & %File)
+#SET(%QuickBrowseUpdatePopupMenu,%True)
+#SET(%QuickBrowseCreateUpdate,%True)
+#SET(%QuickBrowseChildHandling,%True)
+#SET(%QuickBrowseParentHandling,'Assume that the parent record is active')
+#SET(%QuickBrowseSelectButton,%False)
+#!------------------------------------------------------------
+#GROUP(%SelectBrowseDefaults)
+#FIX(%File,%QuickProcedurePrimary)
+#SET(%QuickBrowseUpdateProcedure,'')
+#SET(%QuickBrowseUpdatePopupMenu,%False)
+#SET(%QuickBrowseCreateUpdate,%False)
+#SET(%QuickBrowseChildHandling,%False)
+#SET(%QuickBrowseParentHandling,'Do not select by parent record')
+#SET(%QuickBrowseSelectButton,%True)
+#!------------------------------------------------------------
+#GROUP(%UpdateFormDefaults)
+#FIX(%File,%QuickProcedurePrimary)
+#SET(%QuickFormAllowInsert,%True)
+#SET(%QuickFormAllowChange,%True)
+#SET(%QuickFormAllowDelete,%True)
+#SET(%QuickFormInsertMessage,'Adding a ' & %File & ' Record')
+#SET(%QuickFormChangeMessage,'Changing a ' & %File & ' Record')
+#SET(%QuickFormDeleteMessage,'Deleting a ' & %File & ' Record')
+#SET(%QuickFormMessageLocation,'Title Bar')
+#SET(%QuickFormAppendToTitleID,'')
+#SET(%QuickFormValidateOnAccept,%True)
+#SET(%QuickFormValidateOnNonStopSelect,%True)
+#SET(%QuickFormChildHandling,'Tabbed Browses')
+#!------------------------------------------------------------
+#GROUP(%ReportDefaults)

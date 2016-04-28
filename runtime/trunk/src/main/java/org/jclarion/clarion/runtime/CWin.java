@@ -1466,7 +1466,7 @@ public class CWin
      */
     public static int getFirstField()
     {
-        throw new RuntimeException("not yet implemented");
+    	return getTarget().getFirstID(); // robertsp160221 attempt to implement resize.
     }
 
     /** 

@@ -1,0 +1,95 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AdminBrowses),ACORN(1),ACORN.CONTEXT('PrimaryFile(%_VALUE_%)'),ACORN.NAME(Browse %_VALUE_%),ACORN.WIZARD(*Browse),DESCRIPTION(Generate browses for these files),DEVIMP(ASK),DTYPE(MULTIDROP),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AdminBrowses.List),DESCRIPTION(Available files),DTYPE(HIDDEN),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(~%Scope.PROCEDUREWIZATRON% AND %MAU% AND @USER(%_VALUE_%,MAU)=1))'),LISTFILL.FUNC('@FILES()'),MULTI(1)
+  PROPERTY: NAME(Guard),ACORN.WIZARD(TOPSPEED:ControlTemplate#WebProcedureGuard)
+  PROPERTY: NAME(MAU),DESCRIPTION(Marketing Administration Utility),DEVIMP(INTERNAL),DTYPE(CHECK),HIDDEN(1),LOCKED(1),TYPE(BOOLEAN)
+  [DEFINITION]
+    ADMINBROWSES()
+    ADMINBROWSES.LIST()
+    GUARD(1)
+    MAU(0)
+    SPLASHWINDOW(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(QuickStart.MAU),DESCRIPTION(If set to true then a series of procedures will be created to allow the merchant to maintain certain key datafiles over the internet.),DEVIMP(ASK),DOCUMENTATION(Causes the marketing administration utility to be produced),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.PROMPT(Marketing Administration Utility),QUICKSTART.WHENAPPLY('AutoProcedureDepth(@EVAL(CHOOSE(%_Value_% = 1, 2, %AutoProcedureDepth%))),TOPSPEED:Frame.MAU(%_VALUE_%)'),TYPE(BOOLEAN)
+  [DEFINITION]
+    AUTOPROCEDUREDEPTH(2)
+    GUARDENABLED(1)
+    -QUICKSTART.BROWSEALLFILES
+    QUICKSTART.MAU(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuManager
+  DESCRIPTOR: 1
+  [DEFINITION]
+    STANDARDMENUITEMS(Quit)
+    STANDARDMENUITEMS.LIST(Quit)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:MenuItem#Browse#MAU
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:MenuItem#Browse)
+    MENU(Marketing)
+    SECURE(Marketing)
+    TEXT(Maintain %^PrimaryFile%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Menu#Marketing
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Menu)
+    ALLOCATION.PRIORITY(6)
+    SECURE(Marketing)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Browse
+  DESCRIPTOR: 1
+  PROPERTY: NAME(MenuItem),ACORN.NAME(Maintain %PrimaryFile%),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Browse#MAU')
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#Browse
+  DESCRIPTOR: 1
+  PROPERTY: NAME(MailTheseButton),ACORN(1),ACORN.NAME(Mail Button),ACORN.WIZARD(Button#EMailThese),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(MailTheseProcedure),ACORN(1),ACORN.CONTEXT('PrimaryFile(%Scope.PrimaryFile%),DeferOpen(1)'),ACORN.NAME(Mail %Scope.PrimaryFile%),ACORN.WIZARD(*Process#Mail),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    MAILTHESEBUTTON(%MailTheseProcedure%)
+    MAILTHESEPROCEDURE('@EVAL(CHOOSE(''@ANY(''@EXTRACT(Scope.BrowseBox^BrowseListControl,DisplayColumns)'',`@EVAL(CHOOSE(''@USER(%_VALUE_%,EMAIL)''<>''''))`)''<>'''' AND ''%Scope.Messaging%''<>''''))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#EMailThese
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.TAB(%^TabName%)
+    AT.EASTOFFSET(3)
+    INTERNAL.ORIG(?Mail)
+    ITEM.PROCEDURE(Mail%Scope.PrimaryFile%)
+    TEXT(&Mail)
+    USE.LABEL(?Mail:%^INSTANCE%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#GenericSkeletons
+  DESCRIPTOR: 1
+  [DEFINITION]
+    WEBTEMPLATESINUSE(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#GlobalDocumentHandling
+  DESCRIPTOR: 1
+  [DEFINITION]
+    WEBGUARDSUPPORT(%^GuardEnabled%)
+  [END]
+[END]

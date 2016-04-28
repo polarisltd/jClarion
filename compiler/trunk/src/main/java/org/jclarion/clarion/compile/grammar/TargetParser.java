@@ -15,7 +15,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import org.jclarion.clarion.ClarionSQLFile;
 import org.jclarion.clarion.compile.ClarionCompiler;
 import org.jclarion.clarion.compile.expr.Expr;
 import org.jclarion.clarion.compile.expr.ExprBuffer;
@@ -47,19 +49,23 @@ import org.jclarion.clarion.compile.var.UseVariable;
 import org.jclarion.clarion.compile.var.TargetConstruct;
 import org.jclarion.clarion.lang.LexType;
 
+import abbot.Log;
+
 public class TargetParser extends AbstractParser
 {
-    public TargetParser(ClarionCompiler compiler,Parser parser) 
+	private static Logger log = Logger.getLogger(TargetParser.class.getName());	
+	public TargetParser(ClarionCompiler compiler,Parser parser) 
     {
         super(compiler,parser);
+        log.fine("Updated 001");  // make sure modified version is used.
     }
     
     private static SettingParser<?> controlSetting = new JoinedSettingParser(
             new UseVarSettingParser()
-            ,new ExprSettingParser("right","left","decimal","center")
+            ,new ExprSettingParser("right","left","decimal","center")  
             ,new SimpleSettingParser("right","left","decimal","full","hscroll","vscroll","hvscroll","sum",
             "skip","req","center","trn","boxed","disable","hide","imm","pageno","separator")
-            ,new ExprSettingParser("msg","tip","fill","key","hlp","reset","tally","std")
+            ,new ExprSettingParser("msg","tip","fill","key","hlp","reset","tally","std","angle") // robertsp added angle for string entry.
             ,new ExprListSettingParser("color",1,3)
             ,new ExprListSettingParser("font",1,5)
             ,new ExprListSettingParser("at",2,4)
@@ -67,6 +73,10 @@ public class TargetParser extends AbstractParser
             ,new ExprListSettingParser("bevel",1,3)
             ,new ExprListSettingParser("dragid",0,100)
             ,new ExprListSettingParser("dropid",0,100)
+            ,new ExprSettingParser("cursor") // added "cursor" robertsp160208
+            ,new ExprSettingParser("check") // added "cursor" robertsp160208
+
+
     );
 
     private static RewriteFactory stringFactory = new RewriteFactory(
@@ -74,6 +84,7 @@ public class TargetParser extends AbstractParser
             ,PatternRewriter.create("sum","setSum()") 
             ,PatternRewriter.create("reset","setReset($)",ExprType.control) 
             ,PatternRewriter.create("tally","setTally($)",ExprType.control) 
+            ,new NullRewriter("angle")  // added "angle", nullRewriter means ignoring it for now  robertsp160208
     );
 
     
@@ -103,7 +114,12 @@ public class TargetParser extends AbstractParser
             ,PatternRewriter.create("skip","setSkip()")
             ,PatternRewriter.create("dragid","setDragID(@)",ExprType.rawstring)
             ,PatternRewriter.create("dropid","setDropID(@)",ExprType.rawstring)
-    );
+            ,new NullRewriter("key")  // added "key", nullRewriter means ignoring it for now  robertsp160208
+            ,new NullRewriter("cursor")  // added "cursor" neede for screen and button , nullRewriter means ignoring it for now  robertsp160208
+            ,new NullRewriter("check")  // added "check" neede for screen and button , nullRewriter means ignoring it for now  robertsp160208
+
+
+     );
 
     private SettingParser<?> listSetting = new JoinedSettingParser(
             new ExprSettingParser("vcr")
@@ -200,7 +216,7 @@ public class TargetParser extends AbstractParser
     );
     
     private SettingParser<?> entrySetting = new JoinedSettingParser(
-            new SimpleSettingParser("readonly","upr","cap","password","req")
+            new SimpleSettingParser("readonly","upr","cap","password","req","scroll","ins") // robertsp added "scroll","ins"
             ,controlSetting);
     
     private static RewriteFactory entryFactory = new RewriteFactory(
@@ -209,10 +225,12 @@ public class TargetParser extends AbstractParser
             ,PatternRewriter.create("cap","setCapitalise()") 
             ,PatternRewriter.create("req","setRequired()") 
             ,PatternRewriter.create("password","setPassword()") 
-    );
+            ,new NullRewriter("scroll")  // added "scroll", nullRewriter means ignoring it for now  robertsp160208
+            ,new NullRewriter("ins")  // added "ins", nullRewriter means ignoring it for now  robertsp160208
+    		);
 
     private SettingParser<?> sheetSetting = new JoinedSettingParser(
-            new SimpleSettingParser("wizard","nosheet","spread")
+            new SimpleSettingParser("wizard","nosheet","spread","up") // robertsp added up
             ,controlSetting);
     
     private static RewriteFactory sheetFactory = new RewriteFactory(
@@ -220,11 +238,13 @@ public class TargetParser extends AbstractParser
             ,PatternRewriter.create("nosheet","setNoSheet()") 
             ,PatternRewriter.create("spread","setSpread()") 
             ,PatternRewriter.create("password","setPassword()") 
+            ,new NullRewriter("up")  // added "up", nullRewriter means ignoring it for now  robertsp160208
+
     );
     
     private SettingParser<?> buttonSetting = new JoinedSettingParser(
             new SimpleSettingParser("default","flat","req")
-            ,new ExprSettingParser("icon","repeat","delay")
+            ,new ExprSettingParser("icon","repeat","delay") 
             ,controlSetting
     );
     private static RewriteFactory buttonFactory = new RewriteFactory(
@@ -265,7 +285,7 @@ public class TargetParser extends AbstractParser
             new SimpleSettingParser("toolbox","auto","hvscroll","vscroll",
             "noframe","modal","centered","maximize","max","resize","center","gray",
             "double","mdi","system","imm","tiled","mask")
-            ,new ExprSettingParser("icon","color","timer","hlp","alrt","ratio")
+            ,new ExprSettingParser("icon","color","timer","hlp","alrt","ratio","palette","wallpaper","cursor") // added "cursor","palette","wallpaper" nullRewriter means ignoring it for now  robertsp160208
             ,new ExprListSettingParser("font",1,5)
             ,new ExprListSettingParser("at",4,4)
             ,new ExprListSettingParser("status",0,100)
@@ -300,6 +320,10 @@ public class TargetParser extends AbstractParser
             ,PatternRewriter.create("color","setColor($,$,$)",ExprType.rawint).range(1,3) 
             ,PatternRewriter.create("status","setStatus(@)",ExprType.rawint) 
             ,PatternRewriter.create("status","setStatus()") 
+            ,new NullRewriter("palette")  // added "palette", nullRewriter means ignoring it for now  robertsp160208
+            ,new NullRewriter("wallpaper")  // added "wallpaper", nullRewriter means ignoring it for now  robertsp160208
+            ,new NullRewriter("cursor")  // added "cursor" - redundant with controlFactory, nullRewriter means ignoring it for now  robertsp160208
+
     );
     
     private static SettingParser<?> reportSetting = new JoinedSettingParser(

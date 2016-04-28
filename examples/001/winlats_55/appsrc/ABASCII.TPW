@@ -1,0 +1,462 @@
+#PROCEDURE(Viewer,'View a ASCII (text) file'),WINDOW,HLP('~TPLProcViewer'),PARENT(Window(ABC))
+#!-----------------------------------------
+#DEFAULT
+NAME DefaultABCViewer
+CATEGORY 'Viewer'
+[COMMON]
+DESCRIPTION 'View an ASCII file'
+FROM ABC Window
+[PROMPTS]
+%WindowOperationMode STRING  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+[ADDITION]
+NAME ABC AsciiViewControl
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%ListBoxField  DEFAULT ('?AsciiBox')
+%BrowseFile    DEFAULT ('')
+%AllowSearch   LONG (1)
+%AllowPrint    LONG (1)
+%ReAssignCheck LONG (0)
+%AssignQueue   DEFAULT ('')
+[ADDITION]
+NAME ABC CloseButton
+[INSTANCE]
+INSTANCE 2
+[WINDOW]
+ViewWindow WINDOW('View an ASCII File'),AT(3,7,296,136),SYSTEM,GRAY,FONT('MS Sans Serif',8,,)
+       LIST,AT(5,5,285,110),USE(?AsciiBox),FROM(''),IMM,#SEQ(1),#ORIG(?AsciiBox)
+       BUTTON('&Close'),AT(255,120,35,10),USE(?Close),#SEQ(2),#ORIG(?Close)
+     END
+
+#ENDDEFAULT
+#!
+#!
+#EXTENSION(AsciiViewInListBox,'Displays an Ascii File in a list box'),MULTI,PROCEDURE,HLP('~TPLExtensionAsciiViewer'),FIRST,DESCRIPTION('Display ASCII file in list box '&%ListBoxFieldToUse)
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','Viewer'&%ActiveTemplateInstance,%AsciiViewerClass)
+#ENDPREPARE
+  #BUTTON('ASCII &Viewer Options'),AT(,,180)
+    #BOXED(''),AT(0,0),WHERE(%False),HIDE
+      #INSERT(%OOPHiddenPrompts)
+    #ENDBOXED
+    #SHEET
+      #TAB('&General'),HLP('~TPLExtensionAsciiViewer_General')
+        #PROMPT('List box field to use',CONTROL),%ListBoxFieldToUse,REQ
+        #INSERT(%AsciiViewGeneral)
+      #ENDTAB
+      #TAB('Classes'),HLP('~TPLExtensionAsciiViewer_Classes')
+        #INSERT(%ViewerReassignOptions)
+        #WITH(%ClassItem,'Default')
+          #INSERT(%ClassPrompts)
+        #ENDWITH
+      #ENDTAB
+    #ENDSHEET
+  #ENDBUTTON
+#!
+#ATSTART
+#CALL(%ReadABCFiles)
+#CALL(%SetClassDefaults, 'Default','Viewer'&%ActiveTemplateInstance,%AsciiViewerClass)
+#INSERT(%ViewerDeclarations)
+#ENDAT
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'Default')
+#ENDAT
+#!
+#AT(%CustomGlobalDeclarations)
+#INSERT(%ViewerCustomGlobalDeclarations)
+#ENDAT
+#!
+#AT(%CustomModuleDeclarations)
+#INSERT(%ViewerCustomModuleDeclarations)
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8500),DESCRIPTION('Initialize Ascii Viewer')
+#INSERT(%ViewerAfterOpeningWindow)
+#ENDAT
+#!
+#AT(%WindowEventHandling,'CloseWindow')
+#INSERT(%ViewerWindowEventHandlingCloseDown)
+#ENDAT
+#!
+#AT(%ControlEventHandling,%ListBoxFieldToUse,'Selected')
+#INSERT(%ViewerSelected)
+#ENDAT
+#!
+#AT(%ControlPreEventCaseHandling,%ListBoxFieldToUse)
+#INSERT(%ViewerControlPreEventCaseHandling)
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Reset','(BYTE Force=0)'),PRIORITY(4000)
+#INSERT(%ViewerRefreshWindowBeforeDisplay)
+#ENDAT
+#!
+#AT(%ProcedureRoutines)
+#INSERT(%ViewerProcedureRoutines)
+#ENDAT
+#!
+#!
+#AT(%LocalDataClassData)
+#INSERT(%ViewerDataSectionAfterWindow)
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass,'Default')
+#ENDAT
+#!
+#AT(%ViewerMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocalProcedures)
+#INSERT(%ViewerLocalProcedures)
+#ENDAT
+#!
+#!
+#!
+#!------------------------------------------------------------------------------------
+#!
+#!
+#CONTROL(AsciiViewControl,'Display an Ascii File in a list box'),MULTI,HLP('~TPLControlAsciiViewer'),PROCEDURE,DESCRIPTION('Display ASCII file in list box '&%GetControlName()),FIRST,WINDOW
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','Viewer'&%ActiveTemplateInstance,%AsciiViewerClass)
+#ENDPREPARE
+  #BUTTON('ASCII &Viewer Options'),AT(,,180)
+    #BOXED(''),AT(0,0),WHERE(%False),HIDE
+      #INSERT(%OOPHiddenPrompts)
+    #ENDBOXED
+    #SHEET
+      #TAB('&General'),HLP('~TPLControlAsciiViewer_General')
+        #INSERT(%AsciiViewGeneral)
+      #ENDTAB
+      #TAB('Classes'),HLP('~TPLControlAsciiViewer_Classes')
+        #INSERT(%ViewerReassignOptions)
+        #WITH(%ClassItem,'Default')
+          #INSERT(%ClassPrompts)
+        #ENDWITH
+      #ENDTAB
+    #ENDSHEET
+  #ENDBUTTON
+  CONTROLS
+    LIST,AT(,,150,100),USE(?List),IMM,FROM(''),#REQ
+  END
+#ATSTART
+#CALL(%ReadABCFiles)
+#CALL(%SetClassDefaults, 'Default','Viewer'&%ActiveTemplateInstance,%AsciiViewerClass)
+#INSERT(%ViewerDeclarations)
+#DECLARE(%ListBoxFieldToUse)
+#SET(%ListBoxFieldToUse,%GetControlName())
+#ENDAT
+#!
+#AT(%CustomGlobalDeclarations)
+#INSERT(%ViewerCustomGlobalDeclarations)
+#ENDAT
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'Default')
+#ENDAT
+#!
+#AT(%CustomModuleDeclarations)
+#INSERT(%ViewerCustomModuleDeclarations)
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8500),DESCRIPTION('Initialize Ascii Viewer')
+#INSERT(%ViewerAfterOpeningWindow)
+#ENDAT
+#!
+#AT(%WindowEventHandling,'CloseWindow')
+#INSERT(%ViewerWindowEventHandlingCloseDown)
+#ENDAT
+#!
+#AT(%ControlEventHandling,%listBoxFieldToUse,'Selected')
+#INSERT(%ViewerSelected)
+#ENDAT
+#!
+#AT(%ControlPreEventCaseHandling,%ListBoxFieldToUse)
+#INSERT(%ViewerControlPreEventCaseHandling)
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Reset','(BYTE Force=0)'),PRIORITY(4000)
+#INSERT(%ViewerRefreshWindowBeforeDisplay)
+#ENDAT
+#!
+#AT(%ProcedureRoutines)
+#INSERT(%ViewerProcedureRoutines)
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+#INSERT(%ViewerLocalProcedures)
+#ENDAT
+#!
+#AT(%LocalDataClassData)
+#INSERT(%ViewerDataSectionAfterWindow)
+#ENDAT
+#!
+#AT(%ViewerMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'Default')
+#ENDAT
+#!
+#!
+#!------------------------------------------------------------------------------------
+#!
+#!
+#CONTROL(AsciiViewSearchButton,'Ascii Viewer Search Button'),DESCRIPTION('Search button for Ascii Viewer '&%GetListControl()),REQ(AsciiViewControl),WINDOW
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','Searcher'&%ActiveTemplateInstance,%AsciiSearchClass)
+#ENDPREPARE
+  #BUTTON('Ascii &Searcher Options')
+    #BOXED(''),AT(0,0),WHERE(%False),HIDE
+      #INSERT(%OOPHiddenPrompts)
+    #ENDBOXED
+    #SHEET
+      #TAB('&Classes')
+        #WITH(%ClassItem,'Default')
+          #INSERT(%ClassPrompts)
+        #ENDWITH
+      #ENDTAB
+    #ENDSHEET
+  #ENDBUTTON
+  CONTROLS
+    BUTTON('&Search...'),USE(?Search),#REQ
+  END
+#!
+#ATSTART
+#CALL(%ReadABCFiles)
+#CALL(%SetClassDefaults, 'Default','Searcher'&%ActiveTemplateInstance,%AsciiSearchClass)
+#EQUATE(%ThisControl,%GetControlName())
+#EQUATE(%ViewerActiveVar,'ViewerActive'&%ActiveTemplateParentInstance)
+#ENDAT
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'Default')
+#ENDAT
+#!
+#AT(%AfterViewerInitialization,%ActiveTemplateParentInstance)
+%ViewerObjectName.AddItem(%ThisObjectName) #<!Activates ASCII search facilities
+#ENDAT
+#!
+#AT(%ControlEventHandling,%ThisControl,'Accepted')
+IF %ViewerActiveVar THEN %ViewerObjectName.Searcher.Ask(CHOOSE(CHOICE(%(%GetListControl()))>0,%ViewerObjectName.TopLine+CHOICE(%(%GetListControl()))-1,1)).
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeEvent','(),BYTE'),PRIORITY(3750)
+%ThisControl{PROP:Disable}=CHOOSE(%ViewerActiveVar=False,True,False)
+#ENDAT
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|Ascii Search Button ' & %ThisControl, '%AsciiSearchVirtuals(ABC)')
+#ENDAT
+#!
+#AT(%SearcherMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'Default', 'Ascii Searcher for '&%GetListControl())
+#ENDAT
+#!
+#!
+#GROUP(%AsciiSearchVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%SearcherMethodDataSection,'ASCII Searcher Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+#?%NULL
+  #?CODE
+  #EMBED(%SearcherMethodCodeSection,'ASCII Searcher Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!------------------------------------------------------------------------------------
+#!
+#!
+#CONTROL(AcsiiViewPrintButton,'Ascii Viewer Print Button'),DESCRIPTION('Print button for Ascii Viewer '&%GetListControl()),REQ(AsciiViewControl),WINDOW
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','Printer'&%ActiveTemplateInstance,%AsciiPrintClass)
+#ENDPREPARE
+  #BUTTON('Ascii &Printer Options')
+    #BOXED(''),AT(0,0),WHERE(%False),HIDE
+      #INSERT(%OOPHiddenPrompts)
+    #ENDBOXED
+    #SHEET
+      #TAB('&Classes')
+        #WITH(%ClassItem,'Default')
+          #INSERT(%ClassPrompts)
+        #ENDWITH
+      #ENDTAB
+    #ENDSHEET
+  #ENDBUTTON
+  CONTROLS
+    BUTTON('&Print...'),USE(?Print),#REQ
+  END
+#!
+#ATSTART
+#CALL(%ReadABCFiles)
+#CALL(%SetClassDefaults, 'Default','Printer'&%ActiveTemplateInstance,%AsciiPrintClass)
+#EQUATE(%ThisControl,%GetControlName())
+#EQUATE(%ViewerActiveVar,'ViewerActive'&%ActiveTemplateParentInstance)
+#ENDAT
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'Default')
+#ENDAT
+#!
+#AT(%AfterViewerInitialization,%ActiveTemplateParentInstance)
+%ViewerObjectName.AddItem(%ThisObjectName) #<!Activates ASCII print facilities
+#ENDAT
+#!
+#AT(%ControlEventHandling,%ThisControl,'Accepted')
+IF %ViewerActiveVar THEN %ViewerObjectName.Printer.Ask.
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeEvent','(),BYTE'),PRIORITY(3750)
+%ThisControl{PROP:Disable}=CHOOSE(%ViewerActiveVar=False,True,False)
+#ENDAT
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|Ascii Print Button ' & %ThisControl, '%AsciiPrintButtonVirtuals(ABC)')
+#ENDAT
+#!
+#AT(%PrinterMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'Default', 'Ascii Printer for '&%GetListControl())
+#ENDAT
+#!
+#!
+#GROUP(%AsciiPrintButtonVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%SearcherMethodDataSection,'ASCII Searcher Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+#?%NULL
+  #?CODE
+  #EMBED(%SearcherMethodCodeSection,'ASCII Searcher Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+#!
+#!
+#!
+#! Groups used by both Ascii Viewer Control and Extension templates
+#! ----------------------------------------------------------------
+#!
+#GROUP(%ViewerDeclarations)
+  #CALL(%SetClassItem,'Default')
+  #EQUATE(%ViewerObjectName,%ThisObjectName)
+  #DECLARE(%FileLabel)
+  #INSERT(%MakeObjectName,%FileLabel,'AsciiFile')
+  #DECLARE(%FilenameVariable)
+  #INSERT(%MakeObjectName,%FilenameVariable,'AsciiFilename')
+  #DECLARE(%AsciiFilePrefix)
+  #INSERT(%MakeObjectName,%AsciiFilePrefix,'A')
+  #DECLARE(%ViewerActiveVariable)
+  #INSERT(%MakeObjectName,%ViewerActiveVariable,'ViewerActive')
+#!
+#GROUP(%ViewerCustomGlobalDeclarations)
+  #FIX(%Driver,'ASCII')
+  #PROJECT(%DriverLib)
+#!
+#GROUP(%ViewerCustomModuleDeclarations)
+  #CALL(%AddModuleIncludeFile,%SelectFileClass)
+#!
+#GROUP(%ViewerDataSectionAfterWindow)
+%[20]ViewerActiveVariable BYTE(False)
+%[20]FilenameVariable STRING(FILE:MaxFilePath),AUTO,STATIC,THREAD
+%[20]FileLabel FILE,DRIVER('ASCII'),NAME(%FilenameVariable),PRE(%AsciiFilePrefix),THREAD
+RECORD                RECORD,PRE()
+TextLine                STRING(255)
+                      END
+%[20]NULL END
+#!
+#GROUP(%ViewerSelected)
+  #IF(%InitializeViewer='On Field Selection')
+#INSERT(%ViewerInitCode)
+  #ENDIF
+#!
+#GROUP(%ViewerAfterOpeningWindow)
+  #IF(%InitializeViewer='On Open Window')
+#INSERT(%ViewerInitCode)
+  #ENDIF
+#!
+#GROUP(%ViewerWindowEventHandlingCloseDown)
+IF %ViewerActiveVariable
+  %ViewerObjectName.Kill
+  %ViewerActiveVariable=False
+END
+  #IF(%ReAssignCheck)
+%ListBoxFieldToUse{PROP:From}=%AssignQueue
+  #ENDIF
+#!
+#GROUP(%ViewerControlPreEventCaseHandling)
+IF %ViewerActiveVariable
+  IF %ViewerObjectName.TakeEvent(EVENT())=Level:Notify THEN CYCLE.
+END
+#!
+#GROUP(%ViewerRefreshWindowBeforeDisplay)
+IF %ViewerActiveVariable THEN %ViewerObjectName.TakeEvent(EVENT()).
+#!
+#GROUP(%AsciiViewGeneral)
+  #PROMPT('Initialize Viewer:',DROP('On Open Window|On Field Selection|Manually')),%InitializeViewer,DEFAULT('On Open Window')
+  #PROMPT('File to Browse',@s64),%BrowseFile
+  #PROMPT('Allow popup menu search',CHECK),%AllowSearch
+  #PROMPT('Allow popup menu print',CHECK),%AllowPrint
+#!
+#GROUP(%ViewerReassignOptions)
+  #BOXED('List Box Reassignment Options')
+    #PROMPT(' &Reassign FROM attribute after Kill ',CHECK),%ReAssignCheck,AT(10)
+    #ENABLE(%ReAssignCheck)
+      #PROMPT('&Value or queue to assign:',@s32),%AssignQueue,REQ
+    #ENDENABLE
+  #ENDBOXED
+#!
+#GROUP(%ViewerInitCode)
+  #IF(%BrowseFile)
+%FilenameVariable=%(%StripPling(%BrowseFile))
+  #ELSE
+CLEAR(%FilenameVariable)
+  #ENDIF
+  #IF(%AllowSearch AND %AllowPrint)
+%ViewerActiveVariable=%ViewerObjectName.Init(%FileLabel,%AsciiFilePrefix:Textline,%FilenameVariable,%ListBoxFieldToUse,GlobalErrors,EnableSearch+EnablePrint)
+  #ELSIF(%AllowSearch)
+%ViewerActiveVariable=%ViewerObjectName.Init(%FileLabel,%AsciiFilePrefix:Textline,%FilenameVariable,%ListBoxFieldToUse,GlobalErrors,EnableSearch)
+  #ELSIF(%AllowPrint)
+%ViewerActiveVariable=%ViewerObjectName.Init(%FileLabel,%AsciiFilePrefix:Textline,%FilenameVariable,%ListBoxFieldToUse,GlobalErrors,EnablePrint)
+  #ELSE
+%ViewerActiveVariable=%ViewerObjectName.Init(%FileLabel,%AsciiFilePrefix:Textline,%FilenameVariable,%ListBoxFieldToUse,GlobalErrors)
+  #ENDIF
+  #IF(%InitializeViewer='On Open Window')
+IF ~%ViewerActiveVariable THEN RETURN Level:Fatal.
+  #ENDIF
+  #IF(%EnableRunTimeTranslator)
+%ViewerObjectName.SetTranslator(Translator)
+  #ENDIF
+#EMBED(%AfterViewerInitialization,'After Ascii Viewer Initialization'),%ActiveTemplateInstance,MAP(%ActiveTemplateInstance,%ActiveTemplateInstanceDescription),LEGACY
+#!
+#GROUP(%ViewerProcedureRoutines)
+  #IF(%InitializeViewer='Manually')
+Viewer%ActiveTemplateInstance:Initialize ROUTINE
+  #INSERT(%ViewerInitCode)
+  #ENDIF
+#!
+#GROUP(%ViewerLocalProcedures)
+  #CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|Ascii Viewer Using ' & %ListBoxFieldToUse, '%AsciiViewerVirtuals(ABC)')
+#!
+#!
+#GROUP(%AsciiViewerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ViewerMethodDataSection,'ASCII Viewer Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+#?%NULL
+  #?CODE
+  #EMBED(%ViewerMethodCodeSection,'ASCII Viewer Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %CodeText)
+#!
+#GROUP(%GetListControl),PRESERVE
+#FOR(%Control),WHERE(%ControlInstance=%ActiveTemplateParentInstance)
+  #RETURN(%Control)
+#ENDFOR
+#!
+
+

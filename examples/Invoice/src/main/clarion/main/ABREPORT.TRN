@@ -1,0 +1,41 @@
+CompletedText EQUATE('% Complete')
+PageStr       EQUATE('Page')
+OfStr         EQUATE('of')
+EnterStr      EQUATE('Enter a page number from 1 to')
+PCZoom        EQUATE('% Zoom')
+SBZoom        EQUATE('Zoom:')
+
+ZoomPresets   GROUP
+Number          BYTE(7)                             !Maximum 32 items
+                PSTRING('Tile pages')               !Menu text
+                PSTRING('Zoom: Tile Pages')         !Status bar btext
+                SHORT(NoZoom)                       !Zoom factor or special zoom value
+                PSTRING('Page Width')
+                PSTRING('Zoom: Page Width')
+                SHORT(PageWidth)
+                PSTRING('50% Zoom')
+                PSTRING('Zoom: 50%')
+                SHORT(50)
+                PSTRING('75% Zoom')
+                PSTRING('Zoom: 75%')
+                SHORT(75)
+                PSTRING('100% Zoom')
+                PSTRING('Zoom: 100%')
+                SHORT(100)
+                PSTRING('200% Zoom')
+                PSTRING('Zoom: 200%')
+                SHORT(200)
+                PSTRING('300% Zoom')
+                PSTRING('Zoom: 300%')
+                SHORT(300)
+              END
+
+DefaultZoom   EQUATE(NoZoom)                        !point to default item in ZoomPresets
+
+
+
+
+
+
+
+

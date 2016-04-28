@@ -1,0 +1,37 @@
+OMIT('_EndOfInclude_',_ICStdEquPresent_)
+_ICStdEquPresent_ EQUATE(1)
+
+__InternetEnabled__  EQUATE(1)
+
+                     ITEMIZE,PRE(IC:RESET)
+None                   EQUATE(-1)
+Text                   EQUATE(00H)
+Value                  EQUATE(01H)
+HotText                EQUATE(02H)
+HotValue               EQUATE(03H)
+                     END
+
+                     ITEMIZE(200),PRE(CREATE)
+Caption                EQUATE
+ClientArea             EQUATE
+Close                  EQUATE
+TextButton             EQUATE
+ToolButton             EQUATE
+                     END
+
+
+EVENT:NewPage        EQUATE(280H)               ! Build a new page now
+EVENT:Initialize     EQUATE(281H)               ! List box wants contents
+EVENT:RefreshPage    EQUATE(282H)               ! Refresh a browse box
+EVENT:Request        EQUATE(283H)
+EVENT:Terminate      EQUATE(284H)
+
+Update:OnBrowser     EQUATE(0)
+Update:Partial       EQUATE(1)
+Update:Full          EQUATE(2)
+Update:Refresh       EQUATE(3)
+
+PAGEBASE             EQUATE(040000H)
+MAXPAGENUMBER        EQUATE(01FFFH)
+
+_EndOfInclude_

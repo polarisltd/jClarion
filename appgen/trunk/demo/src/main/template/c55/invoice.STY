@@ -1,0 +1,728 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#ShoppingTrolley
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CategoryDiscountModifierClass),DESCRIPTION(Class to use for Category discount calculation),DEVIMP(USEFUL),OUTPUT.NAME(CategoryDiscountModifierClass)
+  PROPERTY: NAME(InvoiceGeneratorClass),DESCRIPTION(Class to use for invoice generation),DEVIMP(COMMON),OUTPUT.NAME(InvoiceCopierClass),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(QuantityDiscountModifierClass),DESCRIPTION(Class to use for quantity disount calculation),DEVIMP(USEFUL),OUTPUT.NAME(QuantityDiscountModifierClass)
+  PROPERTY: NAME(ReservationClass),DESCRIPTION(Class to use for reservations),DEVIMP(USEFUL),OUTPUT.NAME(ReservationClass)
+  PROPERTY: NAME(SalesTaxModifierClass),DESCRIPTION(Class to use for sales tax calculation),DEVIMP(USEFUL),OUTPUT.NAME(SalesTaxModifierClass)
+  PROPERTY: NAME(ShippingOnInvoiceLineModifierClass),DESCRIPTION(Class to use for shipping cost calculation on invoice line),DEVIMP(USEFUL),OUTPUT.NAME(ShippingOnInvoiceLineModifierClass)
+  PROPERTY: NAME(ShippingOnInvoiceModifierClass),DESCRIPTION(Class to use for shipping cost calculation on invoice),DEVIMP(USEFUL),OUTPUT.NAME(ShippingOnInvoiceModifierClass)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CATEGORYDISCOUNTMODIFIERCLASS(CategoryDiscountClass)
+    CONTROLTEMPLATE(ShoppingTrolley)
+    INVOICEGENERATORCLASS(InvoiceGeneratorClass)
+    NAME(TOPSPEED:ControlTemplate#GlobalTemplate#ShoppingTrolley)
+    QUANTITYDISCOUNTMODIFIERCLASS(QuantityDiscountClass)
+    RESERVATIONCLASS(ReservationClass)
+    SALESTAXMODIFIERCLASS(SalesTaxClass)
+    SHIPPINGONINVOICELINEMODIFIERCLASS(ShippingOnInvoiceLine)
+    SHIPPINGONINVOICEMODIFIERCLASS(ShippingOnInvoice)
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(EnableShoppingTrolley),ACORN(1),ACORN.NAME(Shopping Trolley),ACORN.WIZARD(ControlTemplate#GlobalTemplate#ShoppingTrolley),DESCRIPTION(Shopping trolley enabled?),DEVIMP(ASK),DOCUMENTATION(IF set to Yes),DTYPE(CHECK),STOP(%PROCEDUREWIZATRON%),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProductFile),DESCRIPTION(Product file),DEVIMP(DETAILED),DTYPE(ENTRY),HIDDEN(1),LOCKED(1)
+  PROPERTY: NAME(QuickStart.AddCategoryDiscountModifier),DESCRIPTION('The Category Discount Modifier facilitates percentage discounts on the product cost based on the products categories.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,CATEGORY)`))'',`@USER(%_Value_%,DISCOUNT)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(360),QUICKSTART.PROMPT(Add Category Discount Modifier),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceGenerator.HasCategoryDiscountModifier(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Category Discount Modifier)
+  PROPERTY: NAME(QuickStart.CategoryDiscount_Description),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddCategoryDiscountModifier% AND %Quickstart.CategoryDiscount_NewLine%))'),QUICKSTART.PRIORITY(356),QUICKSTART.PROMPT(Description),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#CategoryDiscountModifier.Description(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Category Discount Modifier)
+  PROPERTY: NAME(QuickStart.CategoryDiscount_InvokeAt),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddCategoryDiscountModifier%))'),QUICKSTART.PRIORITY(359),QUICKSTART.PROMPT(Modifier Invoke Priority),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#CategoryDiscountModifier.InvokeAt(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Category Discount Modifier)
+  PROPERTY: NAME(QuickStart.CategoryDiscount_NewLine),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddCategoryDiscountModifier%))'),QUICKSTART.PRIORITY(357),QUICKSTART.PROMPT(Discount On New Line),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#CategoryDiscountModifier.DiscountOnNewLine(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Category Discount Modifier)
+  PROPERTY: NAME(QuickStart.AddGiftWrapModifier),DESCRIPTION('The Gift Wrap Modifier allows the adding of charges for gift wrapping to the invoice.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND(''@FIND(''@FILES()'',`@USER(%_Value_%,GIFTWRAP)`)''<>'''' OR ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,CARTLINE)`))'',`@USER(%_Value_%,GIFTWRAPID)`)''<>''''),1,0))'),QUICKSTART.PRIORITY(340),QUICKSTART.PROMPT(Add Gift Wrap Modifier),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceGenerator.HasGiftWrapModifier(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Gift Wrap Modifier)
+  PROPERTY: NAME(QuickStart.GiftWrap_GenericProdID),DTYPE(SINGLEDROP),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddGiftWrapModifier%))'),QUICKSTART.PRIORITY(336),QUICKSTART.PROMPT(If Product Not Found In File),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#GiftWrapModifier.ProductNotFound(%_Value_%)'),QUICKSTART.TABLABEL(Gift Wrap Modifier)
+  PROPERTY: NAME(QuickStart.GiftWrap_GenericProdID.List),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1),QUICKSTART.TABLABEL(Gift Wrap Modifier)
+  PROPERTY: NAME(QuickStart.GiftWrap_InvokeAt),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddGiftWrapModifier%))'),QUICKSTART.PRIORITY(339),QUICKSTART.PROMPT(Modifier Invoke Priority),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#GiftWrapModifier.InvokeAt(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Gift Wrap Modifier)
+  PROPERTY: NAME(QuickStart.GiftWrap_NewLine),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddGiftWrapModifier%))'),QUICKSTART.PRIORITY(337),QUICKSTART.PROMPT(Charge On New Line),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#GiftWrapModifier.NewLine(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Gift Wrap Modifier)
+  PROPERTY: NAME(QuickStart.AddInvoiceGeneratorProcess),DESCRIPTION('The wizatrons have detected a cart file, cart line file, and a product file in the dictionary. Would you like to add the Invoice Generator?'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,CART)`)''<>'''' AND ''@FIND(''@FILES()'',`@USER(%_Value_%,CARTLINE)`)''<>'''' AND ''@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(410),QUICKSTART.PROMPT(Add Invoice Generator),QUICKSTART.WHENAPPLY('AutoProcedureDepth(@EVAL(CHOOSE(%_Value_% = 1, 2, %AutoProcedureDepth%))),TOPSPEED:Frame.HasCartUpdate(%_Value_%)'),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.AddQuantityDiscountModifier),DESCRIPTION('The Quantity Discount Modifier facilitates both percentage and absolute discounts on the product cost based on the quantity of products purchased. It also facilitates discounts that depend on the invoice total.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,DISCOUNT)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(380),QUICKSTART.PROMPT(Add Quantity Discount Modifier),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceGenerator.HasQuantityDiscountModifier(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Quantity Discount Modifier)
+  PROPERTY: NAME(QuickStart.QuantityDiscount_DefaultType),DTYPE(SINGLEDROP),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddQuantityDiscountModifier%))'),QUICKSTART.PRIORITY(378),QUICKSTART.PROMPT(Default discount type),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#QuantityDiscountModifier.DefaultDiscountType(%_Value_%)'),QUICKSTART.TABLABEL(Quantity Discount Modifier)
+  PROPERTY: NAME(QuickStart.QuantityDiscount_DefaultType.List),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1),QUICKSTART.TABLABEL(Quantity Discount Modifier)
+  PROPERTY: NAME(QuickStart.QuantityDiscount_Description),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddQuantityDiscountModifier% AND %QuickStart.QuantityDiscount_NewLine%))'),QUICKSTART.PRIORITY(376),QUICKSTART.PROMPT(Description),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#QuantityDiscountModifier.Description(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Quantity Discount Modifier)
+  PROPERTY: NAME(QuickStart.QuantityDiscount_InvokeAt),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddQuantityDiscountModifier%))'),QUICKSTART.PRIORITY(379),QUICKSTART.PROMPT(Modifier Invoke Priority),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#QuantityDiscountModifier.InvokeAt(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Quantity Discount Modifier)
+  PROPERTY: NAME(QuickStart.QuantityDiscount_NewLine),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddQuantityDiscountModifier%))'),QUICKSTART.PRIORITY(377),QUICKSTART.PROMPT(Discount On New Line),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#QuantityDiscountModifier.DiscountOnNewLine(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Quantity Discount Modifier)
+  PROPERTY: NAME(QuickStart.AddReservation),DESCRIPTION('The Reservation systems manages the reserving of products when the invoice is generated.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,RESERVATION)`)''<>'''' AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,INVOICELINE)`))'',`@USER(%_Value_%,RESERVATION)`)''<>'''' AND ''@FIND(''@FIELDS(%ProductFile%)'',`@USER(%_Value_%,RESERVATIONSTATUS)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(250),QUICKSTART.PROMPT(Add Reservation Capabilities),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceGenerator.HasReservation(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Reservations)
+  PROPERTY: NAME(QuickStart.Reservation_FailedText),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddReservation%,1,0))'),QUICKSTART.PRIORITY(249),QUICKSTART.PROMPT(Failed Reservation Text),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ReservationDetails.FailedText(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Reservations)
+  PROPERTY: NAME(QuickStart.AddSalesTaxModifier),DESCRIPTION('The Sales Tax Modifier calculates sales tax for all taxable products. It either uses a constant tax rate or looks tax rates up in a tax code file. It determines area dependent tax codes by using a special tax code and an expression.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND (%TaxFileExists% OR ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,INVOICELINE)`))'',`@USER(%_Value_%,TAX)`)''<>'''' OR ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,CARTLINE)`))'',`@USER(%_Value_%,TAXABLE)`)''<>''''),1,0))'),QUICKSTART.PRIORITY(400),QUICKSTART.PROMPT(Add Sales Tax Modifier),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceGenerator.HasSalesTaxModifier(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Sales Tax Modifier)
+  PROPERTY: NAME(QuickStart.SalesTax_HasFile),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddSalesTaxModifier% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,TAXCODE)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(398),QUICKSTART.PROMPT(Use Tax Code File),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#SalesTaxModifier.HasTaxCodeFile(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Sales Tax Modifier)
+  PROPERTY: NAME(QuickStart.SalesTax_InvokeAt),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddSalesTaxModifier%))'),QUICKSTART.PRIORITY(399),QUICKSTART.PROMPT(Modifier Invoke Priority),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#SalesTaxModifier.InvokeAt(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Sales Tax Modifier)
+  PROPERTY: NAME(QuickStart.SalesTax_SpecialTaxCode),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.SalesTax_HasFile%))'),QUICKSTART.PRIORITY(396),QUICKSTART.PROMPT(Special Tax Code),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#TaxCodeFile.SpecialTaxCode(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Sales Tax Modifier)
+  PROPERTY: NAME(QuickStart.SalesTax_TaxCodeExpression),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND ''%QuickStart.SalesTax_SpecialTaxCode%''<>'''',1,0))'),QUICKSTART.PRIORITY(395),QUICKSTART.PROMPT(Tax Code Expression),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#TaxCodeFile.TaxCodeExpression(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Sales Tax Modifier)
+  PROPERTY: NAME(QuickStart.SalesTax_TaxRate),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddSalesTaxModifier% AND ~%QuickStart.SalesTax_HasFile%))'),QUICKSTART.PRIORITY(397),QUICKSTART.PROMPT(Constant Tax Rate),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#SalesTaxModifier.TaxRate(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Sales Tax Modifier)
+  PROPERTY: NAME(QuickStart.AddShippingILModifier),DESCRIPTION('The Shipping On Invoice Line Modifier calculates shipping charges for products purchased. These charges may be dependent on the product cost, the product weight, the purchased quantity, and the destination.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND (''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''' OR ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''' OR ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`))'',`@USER(%_Value_%,WEIGHTSHIPPING)`)''<>''''),1,0))'),QUICKSTART.PRIORITY(320),QUICKSTART.PROMPT(Add Shipping On Invoice Line Modifier),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceGenerator.HasShippingOnInvoiceLineModifier(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_Calculate),DTYPE(SINGLEDROP),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingILModifier%))'),QUICKSTART.PRIORITY(304),QUICKSTART.PROMPT(Calculate Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.CalculateResult(%_Value_%)'),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_Calculate.List),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_Description),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingILModifier% AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,INVOICELINE)`))'',`@USER(%_Value_%,SHIPPINGCOST)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(303),QUICKSTART.PROMPT(Description),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.Description(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_Expression),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.ShippingIL_HasCostFile% OR %QuickStart.ShippingIL_HasWeightFile%,1,0))'),QUICKSTART.PRIORITY(305),QUICKSTART.PROMPT(Destination Expression),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.DestinationExpression(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_FixedCharge),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingILModifier% AND %Quickstart.ShippingIL_HasFixedCharge%,1,0))'),QUICKSTART.PRIORITY(316),QUICKSTART.PROMPT(Fixed Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.PerItemFixedShipping(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_GenericProdID),DTYPE(SINGLEDROP),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingILModifier% AND (%QuickStart.ShippingIL_HasCostFile% OR %QuickStart.ShippingIL_HasWeightFile%)))'),QUICKSTART.PROMPT(If Product Not Found In File),QUICKSTART.PRIORITY(309),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.ProductNotFound(%_Value_%)'),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_GenericProdID.List),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_HasCostFile),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingILModifier% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(318),QUICKSTART.PROMPT(Has Shipping Cost File),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.HasShippingCostFile(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_HasFixedCharge),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingILModifier%))'),QUICKSTART.PRIORITY(317),QUICKSTART.PROMPT(Has Fixed Shipping),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.HasPerItemFixedShipping(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_HasPercentageCharge),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingILModifier%))'),QUICKSTART.PRIORITY(315),QUICKSTART.PROMPT(Has Percentage Shipping),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.HasPerItemPercentageShipping(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_HasWeightCharge),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingILModifier%))'),QUICKSTART.PRIORITY(311),QUICKSTART.PROMPT(Has Weight Shipping),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails#InvoiceLineShippingWeightDetails.HasWeightShipping(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_HasWeightFile),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingILModifier% AND %QuickStart.ShippingIL_UseWeight% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(312),QUICKSTART.PROMPT(Has Shipping Weight File),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails#InvoiceLineShippingWeightDetails.HasShippingWeightFile(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_InvokeAt),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingILModifier%))'),QUICKSTART.PRIORITY(319),QUICKSTART.PROMPT(Modifier Invoke Priority),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.InvokeAt(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_PercentageCharge),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingILModifier% AND %Quickstart.ShippingIL_HasPercentageCharge%,1,0))'),QUICKSTART.PRIORITY(314),QUICKSTART.PROMPT(Percentage Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.PerItemPercentageShipping(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_UseWeight),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingILModifier% AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`))'',`@USER(%_Value_%,WEIGHT)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(313),QUICKSTART.PROMPT(Use Product Weight),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier.UseProductWeight(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.ShippingIL_WeightCharge),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingILModifier% AND %QuickStart.ShippingIL_UseWeight% AND %Quickstart.ShippingIL_HasWeightCharge%,1,0))'),QUICKSTART.PRIORITY(310),QUICKSTART.PROMPT(Weight Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails#InvoiceLineShippingWeightDetails.WeightShipping(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping Invoice Line Modifier)
+  PROPERTY: NAME(QuickStart.AddShippingIModifier),DESCRIPTION('The Shipping On Invoice Modifier calculates shipping charges on the entire invoice. These charges may be dependent on the product cost, the product weight, the purchased quantity, and the destination.'),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND (''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''' OR ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>''''),1,0))'),QUICKSTART.PRIORITY(300),QUICKSTART.PROMPT(Add Shipping On Invoice Modifier),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceGenerator.HasShippingOnInvoiceModifier(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_Calculate),DTYPE(SINGLEDROP),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier%))'),QUICKSTART.PRIORITY(286),QUICKSTART.PROMPT(Calculate Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.CalculateResult(%_Value_%)'),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_Calculate.List),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_Description),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier%))'),QUICKSTART.PRIORITY(283),QUICKSTART.PROMPT(Description),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.Description(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_Expression),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier% AND %QuickStart.ShippingI_HasCostFile% OR %QuickStart.ShippingI_HasWeightFile%,1,0))'),QUICKSTART.PRIORITY(287),QUICKSTART.PROMPT(Destination Expression),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.DestinationExpression(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_FixedCharge),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingIModifier% AND %Quickstart.ShippingI_HasFixedCharge%,1,0))'),QUICKSTART.PRIORITY(294),QUICKSTART.PROMPT(Fixed Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.PerItemFixedShipping(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_HasCostFile),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(296),QUICKSTART.PROMPT(Has Shipping Cost File),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.HasShippingCostFile(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_HasFixedCharge),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingIModifier%))'),QUICKSTART.PRIORITY(295),QUICKSTART.PROMPT(Has Fixed Shipping),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.HasPerItemFixedShipping(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_HasOneOffCharge),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingIModifier%))'),QUICKSTART.PRIORITY(298),QUICKSTART.PROMPT(Has One-Off Fixed Shipping),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.HasOneOffFixedShipping(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_HasPercentageCharge),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingIModifier%))'),QUICKSTART.PRIORITY(293),QUICKSTART.PROMPT(Has Percentage Shipping),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.HasPerItemPercentageShipping(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_HasWeightCharge),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingIModifier% AND %QuickStart.ShippingI_UseWeight%,1,0))'),QUICKSTART.PRIORITY(289),QUICKSTART.PROMPT(Has Weight Shipping),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails.HasWeightShipping(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_HasWeightFile),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier% AND %QuickStart.ShippingI_UseWeight%))'),QUICKSTART.PRIORITY(290),QUICKSTART.PROMPT(Has Shipping Weight File),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails.HasShippingWeightFile(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_InvokeAt),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier%))'),QUICKSTART.PRIORITY(299),QUICKSTART.PROMPT(Modifier Invoke Priority),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.InvokeAt(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_OneOffCharge),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier% AND %Quickstart.ShippingI_HasOneOffCharge%,1,0))'),QUICKSTART.PRIORITY(297),QUICKSTART.PROMPT(One-Off Fixed Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.OneOffFixedShipping(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_OverRideDescription),DTYPE(ENTRY),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier% AND %QuickStart.ShippingI_OverRideIL%))'),QUICKSTART.PRIORITY(284),QUICKSTART.PROMPT(Credit Description),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.OverRideDescription(%_Value_%)'),TYPE(STRING),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_OverRideIL),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier%,1,0))'),QUICKSTART.PRIORITY(285),QUICKSTART.PROMPT(Override Invoice Line Shipping Charges),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.OverRideInvoiceLineShipping(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_PercentageCharge),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingIModifier% AND %Quickstart.ShippingI_HasPercentageCharge%,1,0))'),QUICKSTART.PRIORITY(292),QUICKSTART.PROMPT(Percentage Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.PerItemPercentageShipping(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_UseWeight),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %QuickStart.AddShippingIModifier% AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`))'',`@USER(%_Value_%,WEIGHT)`)''<>'''',1,0))'),QUICKSTART.PRIORITY(291),QUICKSTART.PROMPT(Use Product Weight),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier.UseProductWeight(%_Value_%)'),TYPE(BOOLEAN),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(QuickStart.ShippingI_WeightCharge),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND %Quickstart.AddShippingIModifier% AND %QuickStart.ShippingI_UseWeight% AND %Quickstart.ShippingI_HasWeightCharge%,1,0))'),QUICKSTART.PRIORITY(288),QUICKSTART.PROMPT(Weight Shipping Charge),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails.WeightShipping(%_Value_%)'),TYPE(NUMERIC),QUICKSTART.TABLABEL(Shipping on Invoice Modifier)
+  PROPERTY: NAME(TaxFileExists),DESCRIPTION(Internal property to avoid limits on number of macros used),DTYPE(CHECK),HIDDEN(1),LOCKED(1),TYPE(BOOLEAN)
+  [DEFINITION]
+    AUTOPROCEDUREDEPTH(6)
+    ENABLESHOPPINGTROLLEY(1)
+    GUARDENABLED(1)
+    PRODUCTFILE('@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`)')
+    QUICKSTART.ADDCATEGORYDISCOUNTMODIFIER('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,CATEGORY)`))'',`@USER(%_Value_%,DISCOUNT)`)''<>'''',1,0))')
+    QUICKSTART.ADDGIFTWRAPMODIFIER('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND (''@FIND(''@FILES()'',`@USER(%_Value_%,GIFTWRAP)`)''<>'''' OR ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,CARTLINE)`))'',`@USER(%_Value_%,GIFTWRAPID)`)''<>''''),1,0))')
+    QUICKSTART.ADDINVOICEGENERATORPROCESS('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,CART)`)''<>'''' AND ''@FIND(''@FILES()'',`@USER(%_Value_%,CARTLINE)`)''<>'''' AND ''@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`)''<>'''',1,0))')
+    QUICKSTART.ADDQUANTITYDISCOUNTMODIFIER('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,DISCOUNT)`)''<>'''',1,0))')
+    QUICKSTART.ADDRESERVATION('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,RESERVATION)`)''<>'''' AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,INVOICELINE)`))'',`@USER(%_Value_%,RESERVATION)`)''<>'''' AND ''@FIND(''@FIELDS(%ProductFile%)'',`@USER(%_Value_%,RESERVATIONSTATUS)`)''<>'''',1,0))')
+    QUICKSTART.ADDSALESTAXMODIFIER('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND (%TaxFileExists% OR ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,INVOICELINE)`))'',`@USER(%_Value_%,TAX)`)''<>'''' OR ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,CARTLINE)`))'',`@USER(%_Value_%,TAXABLE)`)''<>''''),1,0))')
+    QUICKSTART.ADDSHIPPINGILMODIFIER('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND (''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''' OR ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''' OR ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`))'',`@USER(%_Value_%,WEIGHTSHIPPING)`)''<>''''),1,0))')
+    QUICKSTART.ADDSHIPPINGIMODIFIER('@EVAL(CHOOSE(%QuickStart.AddInvoiceGeneratorProcess% AND (''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''' OR ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>''''),1,0))')
+    -QUICKSTART.BROWSEALLFILES
+    QUICKSTART.CATEGORYDISCOUNT_INVOKEAT(40)
+    QUICKSTART.CATEGORYDISCOUNT_NEWLINE('@EVAL(CHOOSE(%Quickstart.AddCategoryDiscountModifier%,1,0))')
+    QUICKSTART.GIFTWRAP_GENERICPRODID(Do Nothing)
+    QUICKSTART.GIFTWRAP_GENERICPRODID.LIST(Do Nothing,Search for empty Product ID)
+    QUICKSTART.GIFTWRAP_INVOKEAT(30)
+    QUICKSTART.GIFTWRAP_NEWLINE('@EVAL(CHOOSE(%Quickstart.AddGiftWrapModifier%,1,0))')
+    QUICKSTART.QUANTITYDISCOUNT_DEFAULTTYPE(Simple Discount)
+    QUICKSTART.QUANTITYDISCOUNT_DEFAULTTYPE.LIST(Simple Discount,Stepped Discount,Unitisation)
+    QUICKSTART.QUANTITYDISCOUNT_INVOKEAT(50)
+    QUICKSTART.QUANTITYDISCOUNT_NEWLINE('@EVAL(CHOOSE(%QuickStart.AddQuantityDiscountModifier%,1,0))')
+    QUICKSTART.SALESTAX_HASFILE('@EVAL(CHOOSE(%QuickStart.AddSalesTaxModifier% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,TAXCODE)`)''<>'''',1,0))')
+    QUICKSTART.SALESTAX_INVOKEAT(100)
+    QUICKSTART.SALESTAX_TAXRATE(0)
+    QUICKSTART.SHIPPINGIL_CALCULATE(Total)
+    QUICKSTART.SHIPPINGIL_CALCULATE.LIST(Total,Minimum,Maximum)
+    QUICKSTART.SHIPPINGIL_FIXEDCHARGE(0)
+    QUICKSTART.SHIPPINGIL_GENERICPRODID(Use Constant Values)
+    QUICKSTART.SHIPPINGIL_GENERICPRODID.LIST(Use Constant Values,Search for empty Product ID)
+    QUICKSTART.SHIPPINGIL_HASCOSTFILE('@EVAL(CHOOSE(%QuickStart.AddShippingILModifier% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''',1,0))')
+    QUICKSTART.SHIPPINGIL_HASWEIGHTFILE('@EVAL(CHOOSE(%QuickStart.ShippingIL_UseWeight% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''',1,0))')
+    QUICKSTART.SHIPPINGIL_INVOKEAT(200)
+    QUICKSTART.SHIPPINGIL_PERCENTAGECHARGE(0)
+    QUICKSTART.SHIPPINGIL_USEWEIGHT('@EVAL(CHOOSE(%QuickStart.AddShippingILModifier% AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`))'',`@USER(%_Value_%,WEIGHT)`)''<>'''',1,0))')
+    QUICKSTART.SHIPPINGIL_WEIGHTCHARGE(0)
+    QUICKSTART.SHIPPINGI_CALCULATE(Total)
+    QUICKSTART.SHIPPINGI_CALCULATE.LIST(Total,Minimum,Maximum)
+    QUICKSTART.SHIPPINGI_FIXEDCHARGE(0)
+    QUICKSTART.SHIPPINGI_HASCOSTFILE('@EVAL(CHOOSE(%QuickStart.AddShippingIModifier% AND ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''',1,0))')
+    QUICKSTART.SHIPPINGI_HASWEIGHTFILE('@EVAL(CHOOSE(%QuickStart.ShippingI_UseWeight%,1,0))')
+    QUICKSTART.SHIPPINGI_INVOKEAT(220)
+    QUICKSTART.SHIPPINGI_ONEOFFCHARGE(0)
+    QUICKSTART.SHIPPINGI_OVERRIDEIL(0)
+    QUICKSTART.SHIPPINGI_PERCENTAGECHARGE(0)
+    QUICKSTART.SHIPPINGI_USEWEIGHT('@EVAL(CHOOSE(%QuickStart.AddShippingIModifier% AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`))'',`@USER(%_Value_%,WEIGHT)`)''<>'''',1,0))')
+    QUICKSTART.SHIPPINGI_WEIGHTCHARGE(0)
+    TAXFILEEXISTS('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,TAXCODE)`)''<>'''' AND ''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`))'',`@USER(%_Value_%,TAXCODE)`)''<>'''',1,0))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CartFile),DESCRIPTION(Data file containing the shopping cart information),DEVIMP(DETAILED),DTYPE(ENTRY),HIDDEN(1),LOCKED(1),TYPE(STRING)
+  PROPERTY: NAME(ShowCart),ACORN(1),ACORN.CONTEXT('PrimaryFile(%CartFile%)'),ACORN.NAME(Show Carts),ACORN.WIZARD(*Browse#Cart),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    CARTFILE('@FIND(''@FILES()'',`@USER(%_Value_%,CART)`)')
+    SHOWCART('@EVAL(CHOOSE(''%CartFile%''<>'''',1,0))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Form
+  DESCRIPTOR: 1
+  PROPERTY: NAME(MakeInvoice),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(Invoice Button),ACORN.WIZARD(^Button#Invoice),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProcessShoppingCart),ACORN(1),ACORN.NAME(Process Shopping Cart),ACORN.WIZARD(*TopSpeed:Process#ProcessCart),DESCRIPTION(Process shopping cart?),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN),VALIDATION('@EVAL(CHOOSE(~%ProcessShoppingCart% OR ''%Scope.EnableShoppingTrolley%''=''1''))')
+  [DEFINITION]
+    MAKEINVOICE(%PROCESSSHOPPINGCART%)
+    PROCESSSHOPPINGCART('@EVAL(CHOOSE(''@USER(%PrimaryFile%,CART)''<>'''',1,0))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#Invoice
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.TAB()
+    ALLOCATION.ZONE(Zone:SouthWest)
+    ITEM.PROCEDURE(Process%^PrimaryFile%)
+    NAME(TOPSPEED:Button#Invoice)
+    TEXT(&Purchase)
+    USE.LABEL(?Purchase)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Process#ProcessCart
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CartFile),DESCRIPTION(Data file containing the shopping cart information),DEVIMP(DETAILED),DOCUMENTATION('Names CART file in dictionary. File must be tagged in dictionary using boolean property CART in file''s user options. CART must be set to TRUE.'),DTYPE(ENTRY),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CartIDField),DESCRIPTION(ID field in Cart file.),DEVIMP(DETAILED),DOCUMENTATION('ID field in cart file. Field must be tagged in dictionary using boolean property ID in field''s user options.'),DTYPE(ENTRY),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CartIDKey),DESCRIPTION(Cart File Key on Cart ID),DEVIMP(DETAILED),DOCUMENTATION(Cart File Key on Cart ID. In the dictionary, the key should be tagged using IDKEY),DTYPE(ENTRY),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CartLineFile),DESCRIPTION(Shopping cart line file.),DEVIMP(DETAILED),DOCUMENTATION('Names CartLine file in dictionary. File must be tagged in dictionary using boolean property CARTLINE in file''s user options. CARTLINE must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.SECONDARYFILE(%CartLineFile% %CartFile% INNER),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CustomerFile),DESCRIPTION(Customer file),DEVIMP(DETAILED),DOCUMENTATION('Names Customer file in dictionary. File must be tagged in dictionary using boolean property USERS in file''s user options. USERS must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.SECONDARYFILE(%CustomerFile%),TYPE(STRING)
+  PROPERTY: NAME(HasInvoiceGenerator),ACORN(1),ACORN.NAME(InvoiceGenerator),ACORN.WIZARD(TopSpeed:ControlTemplate#InvoiceGenerator),DESCRIPTION(Has Invoice Generator?),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN),VALIDATION('@EVAL(CHOOSE(~%_Value_% OR ''%Scope.EnableShoppingTrolley%''=''1''))')
+  PROPERTY: NAME(InvoiceFile),DESCRIPTION(Invoice file),DEVIMP(DETAILED),DOCUMENTATION('Names Invoice file in dictionary. File must be tagged in dictionary using boolean property INVOICE in file''s user options. INVOICE must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.OTHERFILE(%InvoiceFile%),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineFile),DESCRIPTION(Invoice line file),DEVIMP(DETAILED),DOCUMENTATION('Names Invoice line file in dictionary. File must be tagged in dictionary using boolean property INVOICELINE in file''s user options. INVOICELINE must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.OTHERFILE(%InvoiceLineFile%),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ProductFile),DESCRIPTION(Product file),DEVIMP(DETAILED),DOCUMENTATION('Names Product file in dictionary. File must be tagged in dictionary using boolean property PRODUCT in file''s user options. PRODUCT must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.SECONDARYFILE(%ProductFile% %CartLineFile%),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Process)
+    CARTFILE('@FIND(''@FILES()'',`@USER(%_Value_%,CART)`)')
+    CARTIDFIELD('@FIND(''@FIELDS(%CartFile%)'',`@USER(%_Value_%,ID)`)')
+    CARTIDKEY('@FIND(''@KEYS(%CartFile%)'',`@USER(%_Value_%,IDKEY)`)')
+    CARTLINEFILE('@FIND(''@FILES()'',`@USER(%_Value_%,CARTLINE)`)')
+    CUSTOMERFILE('@FIND(''@FILES()'',`@USER(%_Value_%,USERS)`)')
+    HASINVOICEGENERATOR(1)
+    INVOICEFILE('@FIND(''@FILES()'',`@USER(%_Value_%,INVOICE)`)')
+    INVOICELINEFILE('@FIND(''@FILES()'',`@USER(%_Value_%,INVOICELINE)`)')
+    NAME(TOPSPEED:Process#ProcessCart)
+    PRIMARYFILE(%CartFile%)
+    PRIMARYKEY('@EVAL(CHOOSE(''%CARTIDKEY%''<>'''',''@NAME(%CARTIDKEY%)'',''''))')
+    PRODUCTFILE('@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`)')
+    RANGELIMIT('@EVAL(CHOOSE(''%CartIDField%''<>'''',@NAME(%CartIDField%),''''))')
+    RANGELIMITTYPE(Current Value)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#InvoiceGenerator
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CartCustomerField),DESCRIPTION(Customer field in Cart file.),DEVIMP(DETAILED),DOCUMENTATION('Customer field in cart file. Field must be tagged in dictionary using boolean property USERID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CartCustomerIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(CartDateField),DESCRIPTION(Date field in Cart file.),DEVIMP(DETAILED),DOCUMENTATION('Date field in cart file. Field must be tagged in dictionary using boolean property DATE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CartDateField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(CartF),HIDDEN(1),LOCKED(1),OUTPUT.NAME(CartFile),OUTPUT.TYPE(FILE)
+  PROPERTY: NAME(CartIDField),DESCRIPTION(ID field in Cart file.),DEVIMP(DETAILED),DOCUMENTATION('ID field in cart file. Field must be tagged in dictionary using boolean property ID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CartIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CartLineF),HIDDEN(1),LOCKED(1),OUTPUT.NAME(CartLineFile),OUTPUT.TYPE(FILE)
+  PROPERTY: NAME(CartLineIDField),DESCRIPTION(ID field in Cart Line file.),DEVIMP(DETAILED),DOCUMENTATION('ID field in cart line file. Field must be tagged in dictionary using boolean property ID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CartLineIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CartLineOptionsField),DESCRIPTION(Options field in Cart Line file.),DEVIMP(DETAILED),DOCUMENTATION('Options field in cart line file. Field must be tagged in dictionary using boolean property OPTIONS in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CartLineOptionsField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(CartLineProductIDField),DESCRIPTION(ProductID field in Cart Line file.),DEVIMP(DETAILED),DOCUMENTATION('ProductID field in cart line file. Field must be tagged in dictionary using boolean property PRODUCTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CartLineProductIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CartLineQuantityField),DESCRIPTION(Quantity field in cart line file.),DEVIMP(DETAILED),DOCUMENTATION('Quantity field in cart line file. Field must be tagged in dictionary using boolean property Quantity in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CartLineQuantityField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CustomerF),HIDDEN(1),LOCKED(1),OUTPUT.NAME(CustomerFile),OUTPUT.TYPE(FILE)
+  PROPERTY: NAME(HasCategoryDiscountModifier),ACORN(1),ACORN.NAME(CategoryDiscountModifier),ACORN.WIZARD(TopSpeed:ControlTemplate#CategoryDiscountModifier),DESCRIPTION(Has Category Discount Modifier?),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasGiftWrapModifier),ACORN(1),ACORN.NAME(GiftWrapModifier),ACORN.WIZARD(TopSpeed:ControlTemplate#GiftWrapModifier),DESCRIPTION(Has Gift Wrap Modifier?),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasQuantityDiscountModifier),ACORN(1),ACORN.NAME(QuantityDiscountModifier),ACORN.WIZARD(TopSpeed:ControlTemplate#QuantityDiscountModifier),DESCRIPTION(Has Quantity Discount Modifier?),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasReservation),ACORN(1),ACORN.NAME(Reservation Details),ACORN.WIZARD(TopSpeed:ControlTemplate#ReservationDetails),DESCRIPTION(Reservation Detais),DEVIMP(USEFUL),DTYPE(CHECK),OUTPUT.NAME(UseReservation),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasSalesTaxModifier),ACORN(1),ACORN.NAME(SalesTaxModifier),ACORN.WIZARD(TopSpeed:ControlTemplate#SalesTaxModifier),DESCRIPTION(Has Sales Tax Modifier?),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasShippingOnInvoiceLineModifier),ACORN(1),ACORN.NAME(ShippingOnInvoiceLineModifier),ACORN.WIZARD(TopSpeed:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier),DESCRIPTION(Has Shipping On Invoice Line Modifier?),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasShippingOnInvoiceModifier),ACORN(1),ACORN.NAME(ShippingOnInvoiceModifier),ACORN.WIZARD(TopSpeed:ControlTemplate#ShippingOnInvoiceModifier),DESCRIPTION(Has Shipping On Invoice Modifier?),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(InvoiceAcceptedField),DESCRIPTION(Accepted field in Invoice file.),DEVIMP(DETAILED),DOCUMENTATION('Accepted field in Invoice file. Field must be tagged in dictionary using boolean property ACCEPTED in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(InvoiceAcceptedField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(InvoiceCartIDField),DESCRIPTION(Cart ID field in Invoice file.),DEVIMP(DETAILED),DOCUMENTATION('Cart ID field in Invoice file. Field must be tagged in dictionary using boolean property CARTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(InvoiceCartIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceCartKey),DESCRIPTION(Invoice File Key on Cart ID),DEVIMP(DETAILED),DOCUMENTATION(Invoice File Key on Cart ID. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(InvoiceCartKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceCustomerIDField),DESCRIPTION(Customer ID field in Invoice file.),DEVIMP(DETAILED),DOCUMENTATION('Customer ID field in Invoice file. Field must be tagged in dictionary using boolean property USERID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(InvoiceCustomerIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(InvoiceDateField),DESCRIPTION(Date field in Invoice file.),DEVIMP(DETAILED),DOCUMENTATION('Date field in Invoice file. Field must be tagged in dictionary using boolean property DATE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(InvoiceDateField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(InvoiceF),HIDDEN(1),LOCKED(1),OUTPUT.NAME(InvoiceFile),OUTPUT.TYPE(FILE)
+  PROPERTY: NAME(InvoiceIDField),DESCRIPTION(ID field in Invoice file.),DEVIMP(DETAILED),DOCUMENTATION('ID field in Invoice file. Field must be tagged in dictionary using boolean property ID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(InvoiceIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineDescriptionField),DESCRIPTION(Description field in invoice line file.),DEVIMP(DETAILED),DOCUMENTATION('Description field in invoice line file. Field must be tagged in dictionary using boolean property DESCRIPTION in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILDescriptionField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@NAME(%_Value_%)'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineF),HIDDEN(1),LOCKED(1),OUTPUT.NAME(ILFile),OUTPUT.TYPE(FILE)
+  PROPERTY: NAME(InvoiceLineIDField),DESCRIPTION(ID field in InvoiceLine file.),DEVIMP(DETAILED),DOCUMENTATION('ID field in InvoiceLine file. Field must be tagged in dictionary using boolean property ID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineInvoiceIDField),DESCRIPTION(Invoice ID field in InvoiceLine file.),DEVIMP(DETAILED),DOCUMENTATION('Invoice ID field in InvoiceLine file. Field must be tagged in dictionary using boolean property INVOICEID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILInvoiceIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineKey),DESCRIPTION(Invoice Line File Key on Invoice ID and Invoice Line ID),DEVIMP(DETAILED),DOCUMENTATION(Invoice Line File Key on Invoice ID and Invoice Line ID. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(ILKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineOptionsField),DESCRIPTION(Options field in Cart Line file.),DEVIMP(DETAILED),DOCUMENTATION('Options field in invoice line file. Field must be tagged in dictionary using boolean property OPTIONS in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILOptionsField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(InvoiceLineProductCostField),DESCRIPTION(Product Cost field in the Invoice Line file.),DEVIMP(DETAILED),DOCUMENTATION('Total product cost field in Invoice Line file. Field must be tagged in dictionary using boolean property PRODUCTCOST in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILProductCostField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineProductIDField),DESCRIPTION(ProductID field in Invoice Line file.),DEVIMP(DETAILED),DOCUMENTATION('ProductID field in invoice line file. Field must be tagged in dictionary using boolean property PRODUCTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILProductIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineProductNameField),DESCRIPTION(Product Name field in Invoice Line file.),DEVIMP(DETAILED),DOCUMENTATION('Product Name field in invoice line file. Field must be tagged in dictionary using boolean property PRODUCTNAME in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILProductNameField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineQuantityField),DESCRIPTION(Quantity field in invoice line file.),DEVIMP(DETAILED),DOCUMENTATION('Quantity field in invoice line file. Field must be tagged in dictionary using boolean property QUANTITY in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILQuantityField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceLineShippingCostField),DESCRIPTION(Shipping Cost field in invoice line file.),DEVIMP(DETAILED),DOCUMENTATION('Optional Shipping Cost field in invoice line file. Field must be tagged in dictionary using boolean property SHIPPINGCOST in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILShippingCostField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(InvoiceLineUnitPriceField),DESCRIPTION(UnitPrice field in the InvoiceLine file.),DEVIMP(DETAILED),DOCUMENTATION('Unit price field in Invoice Line file. Field must be tagged in dictionary using boolean property UNITPRICE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILUnitPriceField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvoiceTotalField),DESCRIPTION(Total field in Invoice file.),DEVIMP(DETAILED),DOCUMENTATION('Total field in Invoice file. Field must be tagged in dictionary using boolean property TOTAL in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(InvoiceTotalField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(InvoiceUpdate),ACORN(1),ACORN.CONTEXT('PRIMARYFILE(%InvoiceF%)'),ACORN.NAME(UpdateInvoice),ACORN.WIZARD(*Form),DESCRIPTION(Update Invoice),DEVIMP(COMMON),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProductDescriptionField),DESCRIPTION(Description field in the product file.),DEVIMP(DETAILED),DOCUMENTATION('Description field in product file. Field must be tagged in dictionary using boolean property DESCRIPTION in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductDescriptionField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(ProductF),HIDDEN(1),LOCKED(1),OUTPUT.NAME(ProductFile),OUTPUT.TYPE(FILE)
+  PROPERTY: NAME(ProductNameField),DESCRIPTION(Name field in the product file.),DEVIMP(DETAILED),DOCUMENTATION('Name field in product file. Field must be tagged in dictionary using boolean property NAME in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductNameField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ProductUnitPriceField),DESCRIPTION(UnitPrice field in the product file.),DEVIMP(DETAILED),DOCUMENTATION('Unit price field in product file. Field must be tagged in dictionary using boolean property UNITPRICE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductUnitPriceField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(UponCompletion),DEVIMP(INTERNAL),DTYPE(COLOR),HIDDEN(1),LOCKED(1),OUTPUT.NAME(CallUponCompletion),OUTPUT.TYPE(PROCEDURE),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CARTCUSTOMERFIELD('@FIND(''@FIELDS(%CartF%)'',`@USER(%_Value_%,USERID)`)')
+    CARTDATEFIELD('@FIND(''@FIELDS(%CartF%)'',`@USER(%_Value_%,DATE)`)')
+    CARTF(%Scope.CartFile%)
+    CARTIDFIELD('@FIND(''@FIELDS(%CartF%)'',`@USER(%_Value_%,ID)`)')
+    CARTLINEF(%Scope.CartLineFile%)
+    CARTLINEIDFIELD('@FIND(''@FIELDS(%CartLineF%)'',`@USER(%_Value_%,ID)`)')
+    CARTLINEOPTIONSFIELD('@FIND(''@FIELDS(%CartLineF%)'',`@USER(%_Value_%,OPTIONS)`)')
+    CARTLINEPRODUCTIDFIELD('@FIND(''@FIELDS(%CartLineF%)'',`@USER(%_Value_%,PRODUCTID)`)')
+    CARTLINEQUANTITYFIELD('@FIND(''@FIELDS(%CartLineF%)'',`@USER(%_Value_%,QUANTITY)`)')
+    CONTROLTEMPLATE(InvoiceGenerator)
+    CUSTOMERF(%Scope.CustomerFile%)
+    HASCATEGORYDISCOUNTMODIFIER('@EVAL(CHOOSE(''@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,CATEGORY)`))'',`@USER(%_Value_%,DISCOUNT)`)''<>'''',1,0))')
+    HASGIFTWRAPMODIFIER('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,GIFTWRAP)`)''<>'''' OR ''@FIND(''@FIELDS(%CartLineF%)'',`@USER(%_Value_%,GIFTWRAPID)`)''<>'''',1,0))')
+    HASQUANTITYDISCOUNTMODIFIER('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,DISCOUNT)`)''<>'''',1,0))')
+    HASRESERVATION('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,RESERVATION)`)''<>'''' AND ''@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,RESERVATION)`)''<>'''' AND ''@FIND(''@FIELDS(%ProductF%)'',`@USER(%_Value_%,RESERVATIONSTATUS)`)''<>'''' ,1,0))')
+    HASSALESTAXMODIFIER('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,TAX)`)''<>'''' AND ''@FIND(''@FIELDS(%ProductF%)'',`@USER(%_Value_%,TAXCODE)`)''<>'''' OR ''@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,TAX)`)''<>'''' OR ''@FIND(''@FIELDS(%CartLineF%)'',`@USER(%_Value_%,TAXAMOUNT)`)''<>'''',1,0))')
+    HASSHIPPINGONINVOICELINEMODIFIER('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''' OR ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''' OR ''@FIND(''@FIELDS(%ProductF%)'',`@USER(%_Value_%,WEIGHTSHIPPING)`)''<>'''',1,0))')
+    HASSHIPPINGONINVOICEMODIFIER('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''' OR ''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''',1,0))')
+    INVOICEACCEPTEDFIELD('@FIND(''@FIELDS(%InvoiceF%)'',`@USER(%_Value_%,ACCEPTED)`)')
+    INVOICECARTIDFIELD('@FIND(''@FIELDS(%InvoiceF%)'',`@USER(%_Value_%,CARTID)`)')
+    INVOICECARTKEY('@FIND(''@KEYS(%InvoiceF%)'',`@USER(%_Value_%,CARTKEY)`)')
+    INVOICECUSTOMERIDFIELD('@FIND(''@FIELDS(%InvoiceF%)'',`@USER(%_Value_%,USERID)`)')
+    INVOICEDATEFIELD('@FIND(''@FIELDS(%InvoiceF%)'',`@USER(%_Value_%,DATE)`)')
+    INVOICEF(%Scope.InvoiceFile%)
+    INVOICEIDFIELD('@FIND(''@FIELDS(%InvoiceF%)'',`@USER(%_Value_%,ID)`)')
+    INVOICELINEDESCRIPTIONFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,DESCRIPTION)`)')
+    INVOICELINEF(%Scope.InvoiceLineFile%)
+    INVOICELINEIDFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,ID)`)')
+    INVOICELINEINVOICEIDFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,INVOICEID)`)')
+    INVOICELINEKEY('@FIND(''@KEYS(%InvoiceLineF%)'',`@USER(%_Value_%,INVOICELINEKEY)`)')
+    INVOICELINEOPTIONSFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,OPTIONS)`)')
+    INVOICELINEPRODUCTCOSTFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,PRODUCTCOST)`)')
+    INVOICELINEPRODUCTIDFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,PRODUCTID)`)')
+    INVOICELINEPRODUCTNAMEFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,PRODUCTNAME)`)')
+    INVOICELINEQUANTITYFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,QUANTITY)`)')
+    INVOICELINESHIPPINGCOSTFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,SHIPPINGCOST)`)')
+    INVOICELINEUNITPRICEFIELD('@FIND(''@FIELDS(%InvoiceLineF%)'',`@USER(%_Value_%,UNITPRICE)`)')
+    INVOICETOTALFIELD('@FIND(''@FIELDS(%InvoiceF%)'',`@USER(%_Value_%,TOTAL)`)')
+    INVOICEUPDATE('@EVAL(CHOOSE(''%InvoiceF%''='''',0,1))')
+    NAME(TOPSPEED:ControlTemplate#InvoiceGenerator)
+    PRODUCTDESCRIPTIONFIELD('@FIND(''@FIELDS(%ProductF%)'',`@USER(%_Value_%,DESCRIPTION)`)')
+    PRODUCTF(%Scope.ProductFile%)
+    PRODUCTNAMEFIELD('@FIND(''@FIELDS(%ProductF%)'',`@USER(%_Value_%,NAME)`)')
+    PRODUCTUNITPRICEFIELD('@FIND(''@FIELDS(%ProductF%)'',`@USER(%_Value_%,UNITPRICE)`)')
+    TEMPLATECHAIN(ShoppingTrolley)
+    UPONCOMPLETION('@EVAL(CHOOSE(%InvoiceUpdate%=1,''@EXTRACT(InvoiceUpdate,Output.ProcName)'',''''))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#SalesTaxModifier
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CartLineTaxableField),DESCRIPTION(Optional taxable field in Cart Line file.),DEVIMP(DETAILED),DOCUMENTATION('Field in cart line file to indicate whether line is taxable. Field must be tagged in dictionary using boolean property TAXABLE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(TaxableField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(HasTaxCodeFile),ACORN(1),ACORN.NAME(Tax Code File Details),ACORN.WIZARD(TopSpeed:ControlTemplate#TaxCodeFile),DESCRIPTION(Tax Code File Detais),DEVIMP(USEFUL),DTYPE(CHECK),OUTPUT.NAME(TaxCodeSource),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>''0'',''File'',''Constant Value''))'),TYPE(BOOLEAN)
+  PROPERTY: NAME(InvoiceLineTaxAmountField),DESCRIPTION(Optional Tax Amount field in the Invoice Line file.),DEVIMP(DETAILED),DOCUMENTATION('Optional tax amount field in Invoice Line file. Field must be tagged in dictionary using boolean property TAX in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(TaxAmountField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(InvokeAt),DESCRIPTION(Priority in which to call modifier),DEVIMP(DETAILED),DOCUMENTATION(Lower number means high priority - modifier gets called before a modifier with a higher number.),OUTPUT.NAME(InvokeAt),TYPE(NUMERIC)
+  PROPERTY: NAME(TaxRate),DESCRIPTION(Tax Rate as constant value),DEVIMP(DETAILED),OUTPUT.NAME(TaxRate),TYPE(NUMERIC),VALIDATION('@EVAL(CHOOSE((''%_Value_%''='''' OR ''%_Value_%''=''0'') AND %HasTaxCodeFile%  OR ~%HasTaxCodeFile%))')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CARTLINETAXABLEFIELD('@FIND(''@FIELDS(%Scope.CartLineF%)'',`@USER(%_Value_%,TAXABLE)`)')
+    CONTROLTEMPLATE(SalesTaxModifier)
+    HASTAXCODEFILE('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,TAXCODE)`)''<>'''',1,0))')
+    INVOICELINETAXAMOUNTFIELD('@FIND(''@FIELDS(%Scope.InvoiceLineF%)'',`@USER(%_Value_%,TAX)`)')
+    INVOKEAT(100)
+    NAME(TOPSPEED:ControlTemplate#SalesTaxModifier)
+    TAXRATE(0)
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#TaxCodeFile
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ProductTaxCodeField),DESCRIPTION(Tax code field in Product file.),DEVIMP(DETAILED),DOCUMENTATION('Tax code field in Product file. Field must be tagged in dictionary using boolean property TAXCODE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductTaxCodeField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(SpecialTaxCode),DESCRIPTION(Special tax code to be used in conjuction with tax code expression.),DEVIMP(DETAILED),OUTPUT.NAME(ProductSpecialTaxCode)
+  PROPERTY: NAME(TaxCodeExpression),DESCRIPTION(Expression to be used when special tax code applies.),DEVIMP(DETAILED),OUTPUT.NAME(ProductTaxCodeExpression),VALIDATION('@EVAL(CHOOSE(''%SpecialTaxCode%''<>''''  AND ''%_Value_%''<>'''' OR ''%SpecialTaxCode%''='''' AND ''%_Value_%''=''''))')
+  PROPERTY: NAME(TaxCodeField),DESCRIPTION(Tax code field in Tax code file.),DEVIMP(DETAILED),DOCUMENTATION('Tax code field in Tax code file. Field must be tagged in dictionary using boolean property TAXCODE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(TaxCodeField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(TaxCodeFile),DESCRIPTION(File containing tax codes and tax rates for sales tax calculation),DEVIMP(DETAILED),DOCUMENTATION('Names TaxCode file in dictionary. File must be tagged in dictionary using boolean property TAXCODE in file''s user options. TAXCODE must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.NAME(TaxCodeFile),OUTPUT.OTHERFILE(%TaxCodeFile%),OUTPUT.TYPE(FILE),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(TaxCodeKey),DESCRIPTION(Key on tax code field of Tax Code file),DEVIMP(DETAILED),DOCUMENTATION(Key on Tax code in Tax code file. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(TaxCodeFileKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(TaxRateField),DESCRIPTION(Tax rate field in Tax code file.),DEVIMP(DETAILED),DOCUMENTATION('Tax rate field in Tax code file. Field must be tagged in dictionary using boolean property TAX in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(TaxRateField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(SalesTaxModifier)
+    CONTROLTEMPLATEINSTANCE('@CONTAINER(Name)')
+    GENERATEPRIORITY(20)
+    NAME(TOPSPEED:ControlTemplate#TaxCodeFile)
+    PRODUCTTAXCODEFIELD('@FIND(''@FIELDS(%Scope.ProductF%)'',`@USER(%_Value_%,TAXCODE)`)')
+    TAXCODEFIELD('@FIND(''@FIELDS(%TaxCodeFile%)'',`@USER(%_Value_%,TAXCODE)`)')
+    TAXCODEFILE('@FIND(''@FILES()'',`@USER(%_Value_%,TAXCODE)`)')
+    TAXCODEKEY('@FIND(''@KEYS(%TaxCodeFIle%)'',`@USER(%_Value_%,TAXCODEKEY)`)')
+    TAXRATEFIELD('@FIND(''@FIELDS(%TaxCodeFile%)'',`@USER(%_Value_%,TAX)`)')
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#QuantityDiscountModifier
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DateHighField),DESCRIPTION(Date High field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Date High field in Discount file. Field must be tagged in dictionary using boolean property DATEHIGH in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(DateHighField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(DateLowField),DESCRIPTION(Date Low field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Date Low field in Discount file. Field must be tagged in dictionary using boolean property DATELOW in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(DateLowField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(DefaultType),DESCRIPTION(Default discount type to be used),DTYPE(SINGLEDROP),OUTPUT.NAME(DefaultType)
+  PROPERTY: NAME(DefaultType.List),DESCRIPTION(Available default types),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(Description),DESCRIPTION(Description for invoice line.  You may use following place holders: #DiscountType#),DEVIMP(DETAILED),OUTPUT.NAME(Description)
+  PROPERTY: NAME(DiscountedAmountField),DESCRIPTION(Discounted Amount field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Discounted Amount field in Discount file. Field must be tagged in dictionary using boolean property DISCOUNTEDAMOUNT in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(DiscountedAmountField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(DiscountFile),DESCRIPTION(File containing discounts),DEVIMP(DETAILED),DOCUMENTATION('Names Discount file in dictionary. File must be tagged in dictionary using boolean property DISCOUNT in file''s user options. Discount must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.NAME(DiscountFile),OUTPUT.OTHERFILE(%DiscountFile%),OUTPUT.TYPE(FILE),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(DiscountKey),DESCRIPTION(Key on Product ID field of Discount file),DEVIMP(DETAILED),DOCUMENTATION(Key on Product ID in Discount file. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(DiscountFileKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(DiscountOnNewLine),DESCRIPTION(Output of discount on new invoice line?),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(ExtraLine),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(DiscountTypeField),DESCRIPTION(Discount Type field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Discount Type field in Discount file. Field must be tagged in dictionary using boolean property DISCOUNTTYPE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(DiscountTypeField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(InvokeAt),DESCRIPTION(Priority in which to call modifier),DEVIMP(DETAILED),DOCUMENTATION(Lower number means high priority - modifier gets called before a modifier with a higher number.),OUTPUT.NAME(InvokeAt),TYPE(NUMERIC)
+  PROPERTY: NAME(MinimumSpentField),DESCRIPTION(Minimum Spent field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Minimum Spent field in Discount file used for discount on invoice total before shipping. Field must be tagged in dictionary using boolean property MINSPENT in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(MinSpentField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(PercentDiscountField),DESCRIPTION(Percent Discount field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Percent Discount field in Discount file. Field must be tagged in dictionary using boolean property PercentDiscount in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(PercentDiscountField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(ProductIDField),DESCRIPTION(ProductID field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Product ID field in Discount file. Field must be tagged in dictionary using boolean property PRODUCTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(QuantityHighField),DESCRIPTION(Quantity High field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Quantity High field in Discount file. Field must be tagged in dictionary using boolean property QUANTITYHIGH in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(QuantityHighField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(QuantityLowField),DESCRIPTION(Quantity Low field in Discount file.),DEVIMP(DETAILED),DOCUMENTATION('Quantity Low field in Discount file. Field must be tagged in dictionary using boolean property QUANTITYLOW in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(QuantityLowField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(QuantityDiscountModifier)
+    DATEHIGHFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,DATEHIGH)`)')
+    DATELOWFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,DATELOW)`)')
+    DEFAULTTYPE(Simple Discount)
+    DEFAULTTYPE.LIST(Simple Discount,Stepped Discount,Unitisation)
+    DISCOUNTEDAMOUNTFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,DISCOUNTEDAMOUNT)`)')
+    DISCOUNTFILE('@FIND(''@FILES()'',`@USER(%_Value_%,DISCOUNT)`)')
+    DISCOUNTKEY('@FIND(''@KEYS(%DiscountFile%)'',`@USER(%_Value_%,DISCOUNTKEY)`)')
+    DISCOUNTONNEWLINE(1)
+    DISCOUNTTYPEFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,DISCOUNTTYPE)`)')
+    INVOKEAT(50)
+    MINIMUMSPENTFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,MINSPENT)`)')
+    NAME(TOPSPEED:ControlTemplate#QuantityDiscountModifier)
+    PERCENTDISCOUNTFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,PERCENTDISCOUNT)`)')
+    PRODUCTIDFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,PRODUCTID)`)')
+    QUANTITYHIGHFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,QUANTITYHIGH)`)')
+    QUANTITYLOWFIELD('@FIND(''@FIELDS(%DiscountFile%)'',`@USER(%_Value_%,QUANTITYLOW)`)')
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CalculateResult),DESCRIPTION(Way of calculating the shipping total.),DTYPE(SINGLEDROP),OUTPUT.NAME(CalculateResult)
+  PROPERTY: NAME(CalculateResult.List),DESCRIPTION(Avalable Options),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(Description),DESCRIPTION(Description for invoice line.  You may use following place holders: #WeightShipping#),DEVIMP(DETAILED),OUTPUT.NAME(Description)
+  PROPERTY: NAME(DestinationExpression),DESCRIPTION(Expression to be used when for caculating destination dependant shipping.),OUTPUT.NAME(DestinationExpression)
+  PROPERTY: NAME(HasOneOffFixedShipping),DESCRIPTION(One-Off Fixed Shipping Cost?),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(EntryOneOffShipping),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasPerItemFixedShipping),DESCRIPTION(Has fixed shipping cost per item bought?),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(FixedShippingPerItem),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasPerItemPercentageShipping),DESCRIPTION(Has percentage shipping cost per item bought?),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(PercentageShippingPerItem),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasShippingCostFile),ACORN(1),ACORN.NAME(Shipping Cost File Details on Invoice),ACORN.WIZARD(TopSpeed:ControlTemplate#InvoiceShippingCostFile),DESCRIPTION(Shipping Cost File Detais),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(InvokeAt),DESCRIPTION(Priority in which to call modifier),DEVIMP(DETAILED),DOCUMENTATION(Lower number means high priority - modifier gets called before a modifier with a higher number.),OUTPUT.NAME(InvokeAt),TYPE(NUMERIC)
+  PROPERTY: NAME(OneOffFixedShipping),DESCRIPTION(One-off fixed shipping cost),OUTPUT.NAME(OneOffShipping),TYPE(NUMERIC)
+  PROPERTY: NAME(OverRideDescription),DESCRIPTION(Description for invoice line which contains shipping charge to be credited),DEVIMP(DETAILED),OUTPUT.NAME(CreditDescription),VALIDATION('@EVAL(CHOOSE(%OverRideInvoiceLineShipping%  OR ''%_Value_%''='''' AND ~%OverRideInvoiceLineShipping%))')
+  PROPERTY: NAME(OverRideInvoiceLineShipping),DTYPE(CHECK),OUTPUT.NAME(OverRide),TYPE(BOOLEAN)
+  PROPERTY: NAME(PerItemFixedShipping),DESCRIPTION(Fixed shipping cost per item bought),OUTPUT.NAME(FixedShipping),TYPE(NUMERIC)
+  PROPERTY: NAME(PerItemPercentageShipping),DESCRIPTION(Per item shipping cost as percentage of net goods),OUTPUT.NAME(PercentageShipping),TYPE(NUMERIC)
+  PROPERTY: NAME(UseProductWeight),ACORN(1),ACORN.NAME(Shipping Weight Details on Invoice),ACORN.WIZARD(TopSpeed:ControlTemplate#InvoiceShippingWeightDetails),DESCRIPTION(Details on Shipping using product weight),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CALCULATERESULT(Total)
+    CALCULATERESULT.LIST(Total,Minimum,Maximum)
+    CONTROLTEMPLATE(ShippingOnInvoiceModifier)
+    HASSHIPPINGCOSTFILE('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''',1,0))')
+    INVOKEAT(220)
+    NAME(TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier)
+    ONEOFFFIXEDSHIPPING(0)
+    OVERRIDEINVOICELINESHIPPING(0)
+    PERITEMFIXEDSHIPPING(0)
+    PERITEMPERCENTAGESHIPPING(0)
+    TEMPLATECHAIN(ShoppingTrolley)
+    USEPRODUCTWEIGHT('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''',1,0))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#InvoiceShippingCostFile
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DestinationField),DESCRIPTION(Destination  field in Shipping Cost file.),DEVIMP(DETAILED),DOCUMENTATION('Destination  field in Shipping Cost file. Field must be tagged in dictionary using boolean property DESTINATION in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(DestinationField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(IsPercentageField),DESCRIPTION(Is Percentage field in Shipping Cost file.),DEVIMP(DETAILED),DOCUMENTATION('Is Percentage field in Shipping Cost file. Field must be tagged in dictionary using boolean property ISPERCENTAGE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(IsPercentageField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(MinimumQuantityField),DESCRIPTION(Minimum Quantity field in Shipping Cost file.),DEVIMP(DETAILED),DOCUMENTATION('Minimum Quantity field in Shipping Cost file. Field must be tagged in dictionary using boolean property MINQUANTITY in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(MinQuantityField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(MinimumSpentField),DESCRIPTION(Minimum Spent field in Shipping Cost file.),DEVIMP(DETAILED),DOCUMENTATION('Minimum Spent field in Shipping Cost file. Field must be tagged in dictionary using boolean property MINSPENT in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(MinSpentField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(ShippingCostField),DESCRIPTION(Shipping Cost field in Shipping Cost file.),DEVIMP(DETAILED),DOCUMENTATION('Shipping Cost field in Shipping Cost file. Field must be tagged in dictionary using boolean property SHIPPING in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ShippingField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ShippingCostFile),DESCRIPTION(File containing Shipping Costs),DEVIMP(DETAILED),DOCUMENTATION('Names ShippingCost file in dictionary. File must be tagged in dictionary using boolean property SHIPCOST in file''s user options. SHIPCOST must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.NAME(ShippingCostFile),OUTPUT.OTHERFILE(%ShippingCostFile%),OUTPUT.TYPE(FILE),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ShippingCostKey),DESCRIPTION(Key on Product ID and/or Destination in Shipping Cost file),DEVIMP(DETAILED),DOCUMENTATION(In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(ShippingCostFileKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(ShippingOnInvoiceModifier)
+    CONTROLTEMPLATEINSTANCE('@CONTAINER(Name)')
+    DESTINATIONFIELD('@FIND(''@FIELDS(%ShippingCostFile%)'',`@USER(%_Value_%,DESTINATION)`)')
+    GENERATEPRIORITY(20)
+    ISPERCENTAGEFIELD('@FIND(''@FIELDS(%ShippingCostFile%)'',`@USER(%_Value_%,ISPERCENTAGE)`)')
+    MINIMUMQUANTITYFIELD('@FIND(''@FIELDS(%ShippingCostFile%)'',`@USER(%_Value_%,MINQUANTITY)`)')
+    MINIMUMSPENTFIELD('@FIND(''@FIELDS(%ShippingCostFile%)'',`@USER(%_Value_%,MINSPENT)`)')
+    NAME(TOPSPEED:ControlTemplate#InvoiceShippingCostFile)
+    SHIPPINGCOSTFIELD('@FIND(''@FIELDS(%ShippingCostFile%)'',`@USER(%_Value_%,SHIPPING)`)')
+    SHIPPINGCOSTFILE('@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)')
+    SHIPPINGCOSTKEY('@FIND(''@KEYS(%ShippingCostFile%)'',`@USER(%_Value_%,SHIPCOSTALTKEY)`)')
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HasShippingWeightFile),ACORN(1),ACORN.NAME(Shipping Weight File Details on Invoice),ACORN.WIZARD(TopSpeed:ControlTemplate#InvoiceShippingWeightFile),DESCRIPTION(Shipping Weight File Detais),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(HasWeightShipping),DESCRIPTION(Has weight shipping cost per item bought?),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(EntryWeightShipping),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProductWeightField),DESCRIPTION(Weight field in Product file.),DEVIMP(DETAILED),DOCUMENTATION('Weight field in Product file. Field must be tagged in dictionary using boolean property WEIGHT in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductWeightField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(WeightShipping),DESCRIPTION(Fixed shipping cost per weight unit bought),OUTPUT.NAME(ShippingByWeight),TYPE(NUMERIC)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(ShippingOnInvoiceModifier)
+    CONTROLTEMPLATEINSTANCE('@CONTAINER(Name)')
+    GENERATEPRIORITY(19)
+    HASSHIPPINGWEIGHTFILE('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''',1,0))')
+    NAME(TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails)
+    PRODUCTWEIGHTFIELD('@FIND(''@FIELDS(%Scope.ProductFile%)'',`@USER(%_Value_%,WEIGHT)`)')
+    TEMPLATECHAIN(ShoppingTrolley)
+    WEIGHTSHIPPING(0)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#InvoiceShippingWeightFile
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DestinationField),DESCRIPTION(Destination  field in Shipping Weight file.),DEVIMP(DETAILED),DOCUMENTATION('Destination  field in Shipping Weight file. Field must be tagged in dictionary using boolean property DESTINATION in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(WeightDestinationField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(MinimumWeightField),DESCRIPTION(Minimum Weight field in Shipping Weight file.),DEVIMP(DETAILED),DOCUMENTATION('Minimum Weight field in Shipping Weight file. Field must be tagged in dictionary using boolean property MINWEIGHT in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(MinWeightField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ShippingField),DESCRIPTION(Shipping  field in Shipping Weight file.),DEVIMP(DETAILED),DOCUMENTATION('Shipping  field in Shipping Weight file. Field must be tagged in dictionary using boolean property SHIPPING in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(WeightShippingField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ShippingWeightFile),DESCRIPTION(File containing shipping costs by product weights),DEVIMP(DETAILED),DOCUMENTATION('Names Shipping Weight file in dictionary. File must be tagged in dictionary using boolean property SHIPWEIGHT in file''s user options. SHIPWEIGHT must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.NAME(ShippingWeightFile),OUTPUT.OTHERFILE(%ShippingWeightFile%),OUTPUT.TYPE(FILE),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ShippingWeightKey),DESCRIPTION(Key on Product ID and/or Destination in Shipping Weight file),DEVIMP(DETAILED),DOCUMENTATION(In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(ShippingWeightFileKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CONTROLTEMPLATE(ShippingOnInvoiceModifier)
+    CONTROLTEMPLATEINSTANCE('@CONTAINER(ControlTemplateInstance)')
+    DESTINATIONFIELD('@FIND(''@FIELDS(%ShippingWeightFile%)'',`@USER(%_Value_%,DESTINATION)`)')
+    GENERATEPRIORITY(10)
+    MINIMUMWEIGHTFIELD('@FIND(''@FIELDS(%ShippingWeightFile%)'',`@USER(%_Value_%,MINWEIGHT)`)')
+    NAME(TOPSPEED:ControlTemplate#InvoiceShippingWeightFile)
+    SHIPPINGFIELD('@FIND(''@FIELDS(%ShippingWeightFile%)'',`@USER(%_Value_%,SHIPPING)`)')
+    SHIPPINGWEIGHTFILE('@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)')
+    SHIPPINGWEIGHTKEY('@FIND(''@KEYS(%ShippingWeightFile%)'',`@USER(%_Value_%,SHIPWEIGHTALTKEY)`)')
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HasOneOffFixedShipping),STOP(1)
+  PROPERTY: NAME(HasShippingCostFile),ACORN(1),ACORN.NAME(Shipping Cost File Details on Invoice Line),ACORN.WIZARD(TopSpeed:ControlTemplate#InvoiceShippingCostFile#InvoiceLineShippingCostFile),DESCRIPTION(Shipping Cost File Detais),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(OneOffFixedShipping),STOP(1)
+  PROPERTY: NAME(OverRideDescription),STOP(1)
+  PROPERTY: NAME(OverRideInvoiceLineShipping),STOP(1)
+  PROPERTY: NAME(ProductNotFound),DESCRIPTION(Action to take if Product ID not found in shipping files.),DTYPE(SINGLEDROP),OUTPUT.NAME(ProductNotFound)
+  PROPERTY: NAME(ProductNotFound.List),DESCRIPTION(Available options),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  PROPERTY: NAME(UseProductWeight),ACORN(1),ACORN.NAME(Shipping Weight Details on Invoice Line),ACORN.WIZARD(TopSpeed:ControlTemplate#InvoiceShippingWeightDetails#InvoiceLineShippingWeightDetails),DESCRIPTION(Details on Shipping using product weight),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier)
+    CONTROLTEMPLATE(ShippingOnInvoiceLineModifier)
+    HASSHIPPINGCOSTFILE('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPCOST)`)''<>'''',1,0))')
+    INVOKEAT(200)
+    NAME(TOPSPEED:ControlTemplate#ShippingOnInvoiceModifier#ShippingOnInvoiceLineModifier)
+    PRODUCTNOTFOUND(Use Constant Values)
+    PRODUCTNOTFOUND.LIST(Use Constant Values,Search for empty Product ID)
+    USEPRODUCTWEIGHT('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''',1,0))')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#InvoiceShippingCostFile#InvoiceLineShippingCostFile
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ProductIDField),DESCRIPTION(Product ID field in Shipping Cost file.),DEVIMP(DETAILED),DOCUMENTATION('Product ID field in Shipping Cost file. Field must be tagged in dictionary using boolean property PRODUCTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#InvoiceShippingCostFile)
+    CONTROLTEMPLATE(ShippingOnInvoiceLineModifier)
+    NAME(TOPSPEED:ControlTemplate#InvoiceShippingCostFile#InvoiceLineShippingCostFile)
+    PRODUCTIDFIELD('@FIND(''@FIELDS(%ShippingCostFile%)'',`@USER(%_Value_%,PRODUCTID)`)')
+    SHIPPINGCOSTKEY('@FIND(''@KEYS(%ShippingCostFile%)'',`@USER(%_Value_%,SHIPCOSTKEY)`)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails#InvoiceLineShippingWeightDetails
+  DESCRIPTOR: 1
+  PROPERTY: NAME(HasShippingWeightFile),ACORN(1),ACORN.NAME(Shipping Weight File Details on Invoice Line),ACORN.WIZARD(TopSpeed:ControlTemplate#InvoiceShippingWeightFile#InvoiceLineShippingWeightFile),DESCRIPTION(Shipping Weight File Detais),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(ProductWeightShippingField),DESCRIPTION(Shipping cost by weight field in Product file.),DEVIMP(DETAILED),DOCUMENTATION('Shipping cost by weight field in Product file. Field must be tagged in dictionary using boolean property WEIGHTSHIP in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductShippingField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails)
+    CONTROLTEMPLATE(ShippingOnInvoiceLineModifier)
+    HASSHIPPINGWEIGHTFILE('@EVAL(CHOOSE(''@FIND(''@FILES()'',`@USER(%_Value_%,SHIPWEIGHT)`)''<>'''',1,0))')
+    NAME(TOPSPEED:ControlTemplate#InvoiceShippingWeightDetails#InvoiceLineShippingWeightDetails)
+    PRODUCTWEIGHTSHIPPINGFIELD('@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCT)`))'',`@USER(%_Value_%,WEIGHTSHIP)`)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#InvoiceShippingWeightFile#InvoiceLineShippingWeightFile
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ProductIDField),')(),DESCRIPTION(Product ID field in Shipping Weight file.),DEVIMP(DETAILED),DOCUMENTATION('Product ID field in Shipping Weight file. Field must be tagged in dictionary using boolean property PRODUCTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(WeightProductIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#InvoiceShippingWeightFile)
+    CONTROLTEMPLATE(ShippingOnInvoiceLineModifier)
+    NAME(TOPSPEED:ControlTemplate#InvoiceShippingWeightFile#InvoiceLineShippingWeightFile)
+    PRODUCTIDFIELD('@FIND(''@FIELDS(%ShippingWeightFile%)'',`@USER(%_Value_%,PRODUCTID)`)')
+    SHIPPINGWEIGHTKEY('@FIND(''@KEYS(%ShippingWeightFile%)'',`@USER(%_Value_%,SHIPWEIGHTKEY)`)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#CategoryDiscountModifier
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CategoryFile),DESCRIPTION(File containing category discounts),DEVIMP(DETAILED),DOCUMENTATION('Names Category file in dictionary. File must be tagged in dictionary using boolean property CATEGORY in file''s user options. CATEGORY must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.NAME(CategoryFile),OUTPUT.OTHERFILE(%CategoryFile%),OUTPUT.TYPE(FILE),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CategoryIDField),DESCRIPTION(Category ID field in Category file.),DEVIMP(DETAILED),DOCUMENTATION('Category ID field in Category file. Field must be tagged in dictionary using boolean property ID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CategoryIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CategoryKey),DESCRIPTION(Key on Category ID field of Category file),DEVIMP(DETAILED),DOCUMENTATION(Key on Category ID in Category file. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(CategoryFileKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CategoryNameField),DESCRIPTION(Category Name field in Category file.),DEVIMP(DETAILED),DOCUMENTATION('Category Name field in Category file. Field must be tagged in dictionary using boolean property NAME in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CategoryNameField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(DateHighField),DESCRIPTION(Date High field in Category file.),DEVIMP(DETAILED),DOCUMENTATION('Date High field in Category file. Field must be tagged in dictionary using boolean property DATEHIGH in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(DateHighField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(DateLowField),DESCRIPTION(Date Low field in Category file.),DEVIMP(DETAILED),DOCUMENTATION('Date Low field in Category file. Field must be tagged in dictionary using boolean property DATELOW in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(DateLowField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(Description),DESCRIPTION(Description for invoice line.  You may use following place holders: #Discount#),DEVIMP(DETAILED),OUTPUT.NAME(Description)
+  PROPERTY: NAME(DiscountField),DESCRIPTION(Discount field in Category file.),DEVIMP(DETAILED),DOCUMENTATION('Discount field in Category file. Field must be tagged in dictionary using boolean property DISCOUNT in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(DiscountField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(DiscountOnNewLine),DESCRIPTION(Output of discount on new invoice line?),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(ExtraLine),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(InvokeAt),DESCRIPTION(Priority in which to call modifier),DEVIMP(DETAILED),DOCUMENTATION(Lower number means high priority - modifier gets called before a modifier with a higher number.),OUTPUT.NAME(InvokeAt),TYPE(NUMERIC)
+  PROPERTY: NAME(ProdCatCategoryIDField),DESCRIPTION(Category ID  field in Product Category file.),DEVIMP(DETAILED),DOCUMENTATION('Category ID field in Product Category file. Field must be tagged in dictionary using boolean property CATEGORYID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProdCatCatField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(ProdCatFile),DESCRIPTION(File containing links between products and categories),DEVIMP(DETAILED),DOCUMENTATION('Names Product Category file in dictionary. File must be tagged in dictionary using boolean property PRODUCTCATEGORY in file''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProdCatFile),OUTPUT.OTHERFILE(%ProdCatFile%),OUTPUT.TYPE(FILE),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ProdCatKey),DESCRIPTION(Key on Product ID field of Product Category file),DEVIMP(DETAILED),DOCUMENTATION(Key on Prodcut ID in Product Category file. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(ProdCatKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ProdCatProductIDField),DESCRIPTION(ProductID field in Product Category file.),DEVIMP(DETAILED),DOCUMENTATION('Product ID field in roduct Category file. Field must be tagged in dictionary using boolean property PRODUCTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProdCatProdField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(SupersedesField),DESCRIPTION(Supersedes field in Category file.),DEVIMP(DETAILED),DOCUMENTATION('Supersedes field in Category file. Field must be tagged in dictionary using boolean property SUPERSEDES in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(SupersedesField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CATEGORYFILE('@FIND(''@FILES()'',`@USER(%_Value_%,CATEGORY)`)')
+    CATEGORYIDFIELD('@FIND(''@FIELDS(%CategoryFile%)'',`@USER(%_Value_%,ID)`)')
+    CATEGORYKEY('@FIND(''@KEYS(%CategoryFile%)'',`@USER(%_Value_%,CATEGORYKEY)`)')
+    CATEGORYNAMEFIELD('@FIND(''@FIELDS(%CategoryFile%)'',`@USER(%_Value_%,NAME)`)')
+    CONTROLTEMPLATE(CategoryDiscountModifier)
+    DATEHIGHFIELD('@FIND(''@FIELDS(%CategoryFile%)'',`@USER(%_Value_%,DATEHIGH)`)')
+    DATELOWFIELD('@FIND(''@FIELDS(%CategoryFile%)'',`@USER(%_Value_%,DATELOW)`)')
+    DISCOUNTFIELD('@FIND(''@FIELDS(%CategoryFile%)'',`@USER(%_Value_%,DISCOUNT)`)')
+    DISCOUNTONNEWLINE(1)
+    INVOKEAT(40)
+    NAME(TOPSPEED:ControlTemplate#CategoryDiscountModifier)
+    PRODCATCATEGORYIDFIELD('@FIND(''@FIELDS(%ProdCatFile%)'',`@USER(%_Value_%,CATEGORYID)`)')
+    PRODCATFILE('@FIND(''@FILES()'',`@USER(%_Value_%,PRODUCTCATEGORY)`)')
+    PRODCATKEY('@FIND(''@KEYS(%ProdCatFile%)'',`@USER(%_Value_%,PRODUCTKEY)`)')
+    PRODCATPRODUCTIDFIELD('@FIND(''@FIELDS(%ProdCatFile%)'',`@USER(%_Value_%,PRODUCTID)`)')
+    SUPERSEDESFIELD('@FIND(''@FIELDS(%CategoryFile%)'',`@USER(%_Value_%,SUPERSEDES)`)')
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GiftWrapModifier
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CartLineOptionIDField),DESCRIPTION(Option ID field in cart line file.),DEVIMP(DETAILED),DOCUMENTATION('Option ID field in cart line file. Field must be tagged in dictionary using boolean property OPTIONID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CartLineOptionIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CostField),DESCRIPTION(Cost field in GiftWrap file.),DEVIMP(DETAILED),DOCUMENTATION('Cost field in GiftWrap file. Field must be tagged in dictionary using boolean property COST in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(CostField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(DescriptionField),DESCRIPTION(Description field in GiftWrap file.),DEVIMP(DETAILED),DOCUMENTATION('Description field in GiftWrap file. Field must be tagged in dictionary using boolean property DESCRIPTION in field''s user options. You may use following place holders: #Cost#.'),DTYPE(ENTRY),OUTPUT.NAME(DescriptionField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(GiftWrapFile),DESCRIPTION(File containing gift wrap options),DEVIMP(DETAILED),DOCUMENTATION('Names GiftWrap file in dictionary. File must be tagged in dictionary using boolean property GIFTWRAP in file''s user options. GIFTWRAP must be set to TRUE.'),DTYPE(ENTRY),OUTPUT.NAME(OptionsFile),OUTPUT.OTHERFILE(%GiftWrapFile%),OUTPUT.TYPE(FILE),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(GiftWrapKey),DESCRIPTION(Key on Option ID and possibly Product ID of GiftWrap file),DEVIMP(DETAILED),DOCUMENTATION(Key on Option ID and Product ID in GiftWrap file. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(OptionsFileKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(InvokeAt),DESCRIPTION(Priority in which to call modifier),DEVIMP(DETAILED),DOCUMENTATION(Lower number means high priority - modifier gets called before a modifier with a higher number.),OUTPUT.NAME(InvokeAt),TYPE(NUMERIC)
+  PROPERTY: NAME(IsPercentageField),DESCRIPTION(IsPercentage field in GiftWrap file.),DEVIMP(DETAILED),DOCUMENTATION('Field in GiftWrap file to indicate whether cost is percentage od net goods. Field must be tagged in dictionary using boolean property ISPERCENTAGE in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(IsPercentageField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(NewLine),DESCRIPTION(Output of gift wrap option on new invoice line?),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(ExtraLine),OUTPUT.TYPE(LONG),TYPE(BOOLEAN)
+  PROPERTY: NAME(OptionIDField),DESCRIPTION(Option ID field in GiftWrap file.),DEVIMP(DETAILED),DOCUMENTATION('Option ID field in GiftWrap file. Field must be tagged in dictionary using boolean property OPTIONID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(OptionIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ProductIDField),DESCRIPTION(ProductID field in GiftWrap file.),DEVIMP(DETAILED),DOCUMENTATION('Product ID field in GiftWrap file. Field must be tagged in dictionary using boolean property PRODUCTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ProductIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(ProductNotFound),DESCRIPTION(Action to take if Product ID not found in GiftWrap file.),DTYPE(SINGLEDROP),OUTPUT.NAME(ProductNotFound)
+  PROPERTY: NAME(ProductNotFound.List),DESCRIPTION(Available options),DTYPE(ENTRY),HIDDEN(1),LIST(1),LOCKED(1),MULTI(1)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CARTLINEOPTIONIDFIELD('@FIND(''@FIELDS(%Scope.CartLineFile%)'',`@USER(%_Value_%,GIFTWRAPID)`)')
+    CONTROLTEMPLATE(GiftWrapModifier)
+    COSTFIELD('@FIND(''@FIELDS(%GiftWrapFile%)'',`@USER(%_Value_%,COST)`)')
+    DESCRIPTIONFIELD('@FIND(''@FIELDS(%GiftWrapFile%)'',`@USER(%_Value_%,DESCRIPTION)`)')
+    GIFTWRAPFILE('@FIND(''@FILES()'',`@USER(%_Value_%,GIFTWRAP)`)')
+    GIFTWRAPKEY('@FIND(''@KEYS(%GiftWrapFile%)'',`@USER(%_Value_%,GIFTWRAPKEY)`)')
+    INVOKEAT(30)
+    ISPERCENTAGEFIELD('@FIND(''@FIELDS(%GiftWrapFile%)'',`@USER(%_Value_%,ISPERCENTAGE)`)')
+    NAME(TOPSPEED:ControlTemplate#GiftWrapModifier)
+    NEWLINE(1)
+    OPTIONIDFIELD('@FIND(''@FIELDS(%GiftWrapFile%)'',`@USER(%_Value_%,GIFTWRAPID)`)')
+    PRODUCTIDFIELD('@FIND(''@FIELDS(%GiftWrapFile%)'',`@USER(%_Value_%,PRODUCTID)`)')
+    PRODUCTNOTFOUND(Do Nothing)
+    PRODUCTNOTFOUND.LIST(Do Nothing,Search for empty Product ID)
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#ReservationDetails
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AvailabilityField),DESCRIPTION(Availability field in Product file.),DEVIMP(DETAILED),DOCUMENTATION('Field containing number of items available for reservation in Product file. Field must be tagged in dictionary using boolean property AVAILABILITY in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(PAvailabilityField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CapacityField),DESCRIPTION(Capacity field in Product file.),DEVIMP(DETAILED),DOCUMENTATION('Capacity field in Product file. Field must be tagged in dictionary using boolean property CAPACITY in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(PCapacityField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(CustomerIDField),DESCRIPTION(Customer ID field in Reservation file.),DEVIMP(DETAILED),DOCUMENTATION('Customer ID field in Reservation file. Field must be tagged in dictionary using boolean property USERID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(RCustomerIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(EnumField),DESCRIPTION(Enum field in Reservation file.),DEVIMP(DETAILED),DOCUMENTATION('Enum field in Reservation file. Field must be tagged in dictionary using boolean property ENUM in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(REnumField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  PROPERTY: NAME(FailedText),DESCRIPTION(Description to append to product description on invoice line when a requested reservation has failed.),DEVIMP(DETAILED),OUTPUT.NAME(FailedText)
+  PROPERTY: NAME(ILReservationNumberField),DESCRIPTION(Reservation number field in invoice line file.),DEVIMP(DETAILED),DOCUMENTATION('Reservation number field in invoice line file. Field must be tagged in dictionary using boolean property RESERVATION in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ILReservationField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ProductIDField),DESCRIPTION(Product ID field in Product file.),DEVIMP(DETAILED),DOCUMENTATION('Product ID field in Product file. Field must be tagged in dictionary using boolean property ID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(PIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ProductKey),DESCRIPTION(Product file key on product ID field.),DEVIMP(DETAILED),DOCUMENTATION(Product file key on product ID field. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(ProductKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ReservationFile),DESCRIPTION(File containing reservations),DEVIMP(DETAILED),DOCUMENTATION('Names reservation file in dictionary. File must be tagged in dictionary using boolean property RESERVATION in file''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(ReservationFile),OUTPUT.OTHERFILE(%ReservationFile%),OUTPUT.TYPE(FILE),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ReservationKey),DESCRIPTION(Reservation file key on fields product ID and reservation.),DEVIMP(DETAILED),DOCUMENTATION(Reservation file key on fields product ID and reservation. In the dictionary),DTYPE(ENTRY),OUTPUT.NAME(ReservationKey),OUTPUT.TYPE(KEY),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ReservationNumberField),DESCRIPTION(Reservation number field in Reservation file.),DEVIMP(DETAILED),DOCUMENTATION('Reservation number field in Reservation file. Field must be tagged in dictionary using boolean property RESERVATION in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(RReservationField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(ReservationStatusField),DESCRIPTION(Reservation Status field in Product file.),DEVIMP(DETAILED),DOCUMENTATION('Reservation Status field in Product file. Field must be tagged in dictionary using boolean property RESERVATIONSTATUS in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(PStatusField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  PROPERTY: NAME(RProductIDField),DESCRIPTION(ProductID field in Reservation file.),DEVIMP(DETAILED),DOCUMENTATION('Product ID field in Reservation file. Field must be tagged in dictionary using boolean property PRODUCTID in field''s user options.'),DTYPE(ENTRY),OUTPUT.NAME(RProductIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING),VALIDATION('@EVAL(CHOOSE(''%_Value_%''<>''''))')
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    AVAILABILITYFIELD('@FIND(''@FIELDS(%Scope.ProductF%)'',`@USER(%_Value_%,AVAILABILITY)`)')
+    CAPACITYFIELD('@FIND(''@FIELDS(%Scope.ProductF%)'',`@USER(%_Value_%,CAPACITY)`)')
+    CONTROLTEMPLATE(InvoiceGenerator)
+    CONTROLTEMPLATEINSTANCE('@CONTAINER(Name)')
+    CUSTOMERIDFIELD('@FIND(''@FIELDS(%ReservationFile%)'',`@USER(%_Value_%,USERID)`)')
+    ENUMFIELD('@FIND(''@FIELDS(%ReservationFile%)'',`@USER(%_Value_%,ENUM)`)')
+    GENERATEPRIORITY(20)
+    ILRESERVATIONNUMBERFIELD('@FIND(''@FIELDS(%Scope.InvoiceLineF%)'',`@USER(%_Value_%,RESERVATION)`)')
+    NAME(TOPSPEED:ControlTemplate#ReservationDetails)
+    PRODUCTIDFIELD('@FIND(''@FIELDS(%Scope.ProductF%)'',`@USER(%_Value_%,ID)`)')
+    PRODUCTKEY('@FIND(''@KEYS(%Scope.ProductF%)'',`@USER(%_Value_%,PRODUCTKEY)`)')
+    RESERVATIONFILE('@FIND(''@FILES()'',`@USER(%_Value_%,RESERVATION)`)')
+    RESERVATIONKEY('@FIND(''@KEYS(%ReservationFile%)'',`@USER(%_Value_%,PRODUCTRESERVATIONKEY)`)')
+    RESERVATIONNUMBERFIELD('@FIND(''@FIELDS(%ReservationFile%)'',`@USER(%_Value_%,RESERVATION)`)')
+    RESERVATIONSTATUSFIELD('@FIND(''@FIELDS(%Scope.ProductF%)'',`@USER(%_Value_%,RESERVATIONSTATUS)`)')
+    RPRODUCTIDFIELD('@FIND(''@FIELDS(%ReservationFile%)'',`@USER(%_Value_%,PRODUCTID)`)')
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#AddRecord
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AddControl),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(AddControl),OUTPUT.TYPE(Default),TYPE(STRING)
+  PROPERTY: NAME(AddFieldExpression),DESCRIPTION(Expression to assign from),DEVIMP(BAROQUE),DTYPE(EDITLIST),LISTFILL.FUNC('%Field%,@KEYFIELD(@RELATIONKEY(%AddParent%,%PrimaryFile%))'),MULTI(1),OUTPUT.DEPENDS(AddFields),OUTPUT.NAME(AddFieldExpression),OUTPUT.VALUE('@NAME(%_VALUE_%)'),TYPE(STRING)
+  PROPERTY: NAME(AddFields),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LISTFILL.FUNC('1,2'),MULTI(1),OUTPUT.NAME(AddFields),OUTPUT.TYPE(LONG),TYPE(NUMERIC)
+  PROPERTY: NAME(AddFieldTarget),DESCRIPTION(Field to assign to),DEVIMP(BAROQUE),DTYPE(ENTRY),LISTFILL.FUNC('@USER(%Field%,INITIALISES,1).@USER(%Field%,INITIALISES,2),@RELATIONFIELD(%AddParent%,%PrimaryFile%)'),MULTI(1),OUTPUT.DEPENDS(AddFields),OUTPUT.NAME(AddFieldTarget),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@NAME(%_VALUE_%)'),TYPE(STRING)
+  PROPERTY: NAME(AddParent),DESCRIPTION(Parent of file being added),DEVIMP(BAROQUE),DOCUMENTATION('The record being added may be logically owned by a parent file (such as an invoiceline being owned by and invoice). This field allows that parent to be named'),DTYPE(ENTRY),OUTPUT.NAME(AddParent),OUTPUT.OTHERFILE(%AddParent%),OUTPUT.TYPE(FILE),TYPE(STRING)
+  PROPERTY: NAME(AddWhen),DESCRIPTION(When to add the record),DEVIMP(DETAILED),DOCUMENTATION(This determines whether the record is added upon procedure entry or upon acceptance of a control),DTYPE(SINGLEDROP),HIDDEN(0),OUTPUT.NAME(WhenAdd),TYPE(STRING)
+  PROPERTY: NAME(AddWhen.List),DESCRIPTION(When Add Choices),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1)
+  PROPERTY: NAME(Button),ACORN(1),ACORN.CONTEXT('Populator(%Name%)'),ACORN.NAME(Add %PrimaryFile% Button),ACORN.WIZARD(^Button#AddRecord),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(Field),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    ADDCONTROL(?Add:%Instance%)
+    ADDFIELDEXPRESSION()
+    ADDFIELDS()
+    ADDFIELDTARGET()
+    ADDPARENT('@FIND(''@RELATED(,%PrimaryFile%)'',`@USER(@RELATION(%_VALUE_%,%PrimaryFile%),OWNED)`)')
+    ADDWHEN(Control Accepted)
+    ADDWHEN.LIST(Control Accepted,Procedure Start)
+    BUTTON(1)
+    CONTROLTEMPLATE(AddRecord)
+    FIELD()
+    NAME(TOPSPEED:ControlTemplate#AddRecord)
+    PRIMARYFILE('@USER(%Field%,INITIALISES,1)')
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Button#AddRecord
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Button)
+    ALLOCATION.PRIORITY(3)
+    ALLOCATION.TAB(ALL)
+    NAME(TOPSPEED:Button#AddRecord)
+    TEXT(&Add %^PrimaryFile%)
+    USE.LABEL(?Add:%^Instance%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Browse#Cart
+  DESCRIPTOR: 1
+  PROPERTY: NAME(BrowseBox),ACORN.CONTEXT('HasView(1)'),ACORN.WIZARD(Topspeed:BrowseControl#CustomerCart)
+  PROPERTY: NAME(MenuItem),ACORN.CONTEXT('USE.LABEL(?ShowCart),Populator(%Name%),Text(Show Cart)'),ACORN.NAME(Browse %PrimaryFile%),ACORN.WIZARD('^(Scope.MenuManager)MenuItem#Browse')
+  [DEFINITION]
+    OUTPUT.PROCNAME(ShowCart)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:BrowseControl#CustomerCart
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Filtering),ACORN(1),ACORN.NAME(Browse Filter),ACORN.WIZARD(TopSpeed:ControlTemplate#CustomerCartFilter),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    FILTERING(1)
+    HASVIEW(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#CustomerCartFilter
+  DESCRIPTOR: 1
+  PROPERTY: NAME(CartCustomerField),DESCRIPTION(Customer field in Cart file.),DEVIMP(4),DOCUMENTATION(Customer field in cart file. Field must be tagged in dictionary using boolean property USERID in field's user options.),DTYPE(ENTRY),OUTPUT.NAME(CartCustomerIDField),OUTPUT.TYPE(FIELD),OUTPUT.VALUE('@EVAL(CHOOSE(''%_Value_%''<>'''',''@NAME(%_Value_%)'',''''))'),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    CARTCUSTOMERFIELD('@FIND(''@FIELDS(%Scope.CartFile%)'',`@USER(%_Value_%,USERID)`)')
+    CONTROLTEMPLATE(NamedCartBrowse)
+    GENERATEPRIORITY(20)
+    NAME(TOPSPEED:CONTROLTEMPLATE#CustomerCartFilter)
+    TEMPLATECHAIN(ShoppingTrolley)
+  [END]
+[END]

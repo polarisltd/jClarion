@@ -1,0 +1,270 @@
+#EXTENSION(WebHitManager, 'Web Hit Manager Extension'),SINGLE,HLP('~WebHitManagerExt'),APPLICATION,REQ(Web(Web))
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'HitFileManager', 'HitFileManager', %HitsFileClass)
+  #CALL(%setClassDefaults(ABC), 'HitManager', 'HitManager', %HitsManagerClass)
+#ENDPREPARE
+#!
+#INSERT(%OOPPrompts(ABC))
+#SHEET, HSCROLL
+  #TAB('&Hit Manager Options')
+    #PROMPT('Hits &Data File:', @S255),%HitsDataFile,DEFAULT('Hits.Log'),REQ
+    #PROMPT('File Update Threshold:', SPIN(@n3,1,100)),%HitsUpdateTheshold,DEFAULT(10),REQ
+  #ENDTAB
+  #TAB('Global &Ojects')
+    #BUTTON('Hit &File Manager'),AT(,,170)
+      #WITH(%ClassItem, 'HitFileManager')
+        #INSERT(%GlobalClassPrompts(ABC))
+      #ENDWITH
+    #ENDBUTTON
+    #BUTTON('Hit &Manager'),AT(,,170)
+      #WITH(%ClassItem, 'HitManager')
+        #INSERT(%GlobalClassPrompts(ABC))
+      #ENDWITH
+    #ENDBUTTON
+  #ENDTAB
+  #TAB('C&lasses')
+    #BUTTON('&Hit Manager'),At(,,170)
+      #PROMPT('Global Hit &File Class:', FROM(%pClassName)),%HitsFileClass,DEFAULT('WbHitFileINIClass'),REQ
+      #PROMPT('Global &Hit Manager Class:', FROM(%pClassName)),%HitsManagerClass,DEFAULT('WbHitManagerClass'),REQ
+      #PROMPT('Procedure Hit &Counter Class:', FROM(%pClassName)),%HitsCounterClass,DEFAULT('WbHitCounterClass'),REQ
+    #ENDBUTTON
+    #BUTTON('Hits Library Files'),AT(,,170)
+      #BOXED('Hits Library Files')
+        #INSERT(%AbcLibraryPrompts(ABC))
+      #ENDBOXED
+    #ENDBUTTON
+  #ENDTAB
+#ENDSHEET
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'HitFileManager', 'HitFileManager', %HitsFileClass)
+  #CALL(%setClassDefaults(ABC), 'HitManager', 'HitManager', %HitsManagerClass)
+#ENDAT
+#!
+#!
+#AT(%GatherObjects)
+  #CALL(%AddObjectist(ABC), 'HitFileManager')
+  #CALL(%AddObjectList(ABC), 'HitManager')
+#ENDAT
+#!
+#!
+#AT (%BeforeGenerateApplication)
+  #CALL(%AddCategory(ABC), 'HITS')
+  #CALL(%SetCategoryLocationFromPrompts(ABC), 'HITS','Hits','HIT')
+#ENDAT
+#!
+#!
+#AT(%ProgramSetup)
+HitManager.Init(HitFileManager.HitFile, %HitsUpdateTheshold, %(%StripPling(%HitsDataFile)))
+#ENDAT
+#!
+#!
+#AT(%ProgramEnd)
+HitManager.Kill
+#ENDAT
+#!
+#!
+#AT(%HitFileManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%HitManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%GlobalData)
+#INSERT(%GenerateClass(ABC), 'HitFileManager', 'Application Hit File Manager')
+#INSERT(%GenerateClass(ABC), 'HitManager', 'Application Hit Manager')
+#ENDAT
+#!
+#!
+#AT(%ProgramProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'HitFileManager', 'Global Objects|Web Objects|Hit File Manager', '%HitFileManagerVirtuals(Web)', %True)
+  #CALL(%GenerateVirtuals(ABC), 'HitManager','Global Objects|Web Objects|Hit Manager', '%HitManagerVirtuals(Web)', %True)
+#ENDAT
+#!
+#!
+#GROUP(%HitFileManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%HitFileManagerMethodDataSection,'Hit File Manager Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('HitFileManager'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%HitFileManagerMethodCodeSection,'Hit File Manager Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('HitFileManager'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%HitManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%HitManagerMethodDataSection,'Hit Manager Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('HitManager'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%HitManagerMethodCodeSection,'Hit Manager Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('HitManager'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!
+#!
+#EXTENSION(WebHitProc, 'Web Procedure Hit Counter Extension'),PROCEDURE,SINGLE,REQ(WebHitManager(Web)),HLP('~WebHitProcExt')
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'HitCounter', 'HitCounter', %HitsCounterClass)
+  #DECLARE(%Events),UNIQUE
+  #DECLARE(%Controls),MULTI
+  #CALL(%FillControls)
+  #CALL(%FillEvents)
+#ENDPREPARE
+#!
+#INSERT(%OOPPrompts(ABC))
+#SHEET, HSCROLL
+  #TAB('Procedure Hit Count Options')
+    #PROMPT('Procedure &Instance ID:', @S80),%ProcedureID,DEFAULT(%Procedure),REQ
+    #PROMPT('Procedure &Entry Tag:', @S80),%ProcedureEntryTag,DEFAULT('Entered')
+    #BOXED('Control Tags')
+      #BUTTON('Control Tags'),INLINE,MULTI(%LinkTagInstance, %GetLinkText())
+        #PROMPT('Link &Tag:', @S80),%LinkTag,REQ
+        #PROMPT('Trigger &Control', FROM(%Controls)),%LinkControl,WHENACCEPTED(%FillEvents())
+        #PROMPT('Trigger &Event:', FROM(%Events)),%LinkEvent,REQ
+        #VALIDATE(%ValidEvent() = %True, 'The link trigger event is not valid')
+      #ENDBUTTON
+    #ENDBOXED
+  #ENDTAB
+  #TAB('Classes')
+    #WITH(%ClassItem, 'HitCounter')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'HitCounter', 'HitCounter', %HitsCounterClass)
+  #EQUATE(%HitCounterObject, %GetObjName('HitCounter'))
+#ENDAT
+#!
+#!
+#AT(%GatherObjects)
+  #CALL(%AddObjectList(ABC), 'HitCounter')
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),PRIORITY(8055),DESCRIPTION('Configure Procedure Hit Counter')
+  #IF(%ProcedureID)
+%HitCounterObject.Init(HitManager, %(%StripPling(%ProcedureID)))
+  #ELSE
+%HitCounterObject.Init(HitManager)
+  #ENDIF
+  #IF(%ProcedureEntryTag <> '')
+%HitCounterObject.Take(%(%StripPling(%ProcedureEntryTag)))
+  #ENDIF
+  #FOR(%LinkTagInstance),WHERE(SUB(%LinkTag, 1, 1) <> '=')
+    #IF(%LinkControl = '')
+%HitCounterObject.AddLink(%(%StripPling(%LinkTag)), EVENT:%LinkEvent)
+    #ELSE
+%HitCounterObject.AddLink(%(%StripPling(%LinkTag)), EVENT:%LinkEvent, %LinkControl)
+    #ENDIF
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),PRIORITY(8070)
+SELF.AddItem(%HitCounterObject.WindowComponent)
+#ENDAT
+#!
+#!
+#AT(%WindowEventHandling),PRIORITY(5500)
+  #FOR(%LinkTagInstance),WHERE(SUB(%LinkTag, 1, 1) = '=' AND %LinkControl = '' AND %WindowEvent = %LinkEvent)
+%HitCounterObject.Take(%HitCounterObject.GetFullTagName(%(%StripPling(%LinkTag))))
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%ControlEventHandling),PRIORITY(100)
+  #FOR(%LinkTagInstance),WHERE(SUB(%LinkTag, 1, 1) = '=' AND %LinkControl <> '' AND %LinkControl = %Control AND %LinkEvent = %ControlEvent)
+%HitCounterObject.Take(%HitCounterObject.GetFullTagName(%(%StripPling(%LinkTag))))
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%HitCounterMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'HitCounter', 'Hit Counter')
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'HitCounter', 'Local Objects|Web Objects|Hit Counter', '%HitCounterVirtuals(Web)')
+#ENDAT
+#!
+#!
+#GROUP(%HitCounterVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%HitCounterMethodDataSection,'Hit Counter Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('HitCounter'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%HitCounterMethodCodeSection,'Hit Counter Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('HitCounter'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#GROUP(%FillControls),PRESERVE
+  #PURGE(%Controls)
+  #ADD(%Controls, '')
+  #FOR(%Control)
+    #ADD(%Controls, %Control)
+  #ENDFOR
+#!
+#!
+#GROUP(%ValidEvent),PRESERVE
+  #CALL(%FillEvents)
+  #RETURN(CHOOSE(INLIST(%LinkEvent, %Events) > 0, %True, %False))
+#!
+#!
+#GROUP(%FillEvents),PRESERVE
+  #PURGE(%Events)
+  #IF(%LinkControl = '')
+    #CALL(%FillTheseEvents, %WindowEvent)
+  #ELSE
+    #FIX(%Control, %LinkControl)
+    #CALL(%FillTheseEvents, %ControlEvent)
+  #ENDIF
+#!
+#!
+#GROUP(%FillTheseEvents, *%Src)
+  #FOR(%Src)
+    #ADD(%Events, %Src)
+  #ENDFOR
+#!
+#!
+#GROUP(%GetLinkText),AUTO
+  #EQUATE(%RVal, %LinkTag & ' triggers on EVENT:' & %LinkEvent)
+  #IF(%LinkControl <> '')
+    #SET(%RVal, %Rval & ' for ' & %LinkControl)
+  #ENDIF
+  #RETURN(%RVal)
+#!
+#!
+#!
+#!
+#EXTENSION(WebShowHits, 'Display Hit Count'),PROCEDURE,MULTI,REQ(WebHitProc(Web)),HLP('~WebShowHits'),DESCRIPTION('Display or assign link count for ' & %CountTag)
+#!
+#PROMPT('Count &Tag:', @S80),%CountTag,REQ
+#PROMPT('&Assignment Type:', DROP('Text Property|Variable')),%AssignmentType,DEFAULT('Text Property'),REQ
+#ENABLE(%AssignmentType = 'Text Property')
+  #PROMPT('&Control to Receive Link Count:', FROM(%Control, %ControlType = 'STRING' OR %ControlType = 'PROMPT')),%TargetControl,REQ
+#ENDENABLE
+#ENABLE(%AssignmentType = 'Variable')
+  #PROMPT('&Variable to Receieve Link Count:', FIELD),%TargetVariable
+#ENDENABLE
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'TakeEvent', '(),BYTE'),PRIORITY(5500)
+  #CASE(%AssignmentType)
+  #OF('Text Property')
+%TargetControl{PROP:Text} = %HitCounterObject.GetCount(%(%StripPling(%CountTag)))
+  #OF('Variable')
+%TargetVariable = %HitCounterObject.GetCount(%(%StripPling(%CountTag)))
+  #ENDCASE
+#ENDAT
+#!
+#!

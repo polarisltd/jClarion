@@ -1,0 +1,321 @@
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardButtonMenuPrompt)
+#FIELD WHERE(%ControlType = 'BUTTON' OR (%ControlType = 'ITEM' AND NOT EXTRACT(%ControlStatement,'SEPARATOR')))
+  #BOXED('Menu/Button Control Prompts')
+    #PROMPT('When Pressed',DROP('No Special Action|Call a Procedure|Run a Program')),%ButtonAction,DEFAULT('No Special Action')
+    #DISPLAY('')
+    #BOXED('Program Definition'),WHERE(%ButtonAction = 'Run a Program'),AT(,20),CLEAR
+      #PROMPT('Program Name:',@S40),%ButtonRunName,REQ
+      #PROMPT('Parameters:',@s255),%ButtonRunParameters
+    #ENDBOXED
+    #BOXED('Procedure Definition'),WHERE(%ButtonAction = 'Call a Procedure'),AT(,20)
+      #ENABLE(%ButtonAction = 'Call a Procedure'),CLEAR
+        #PROMPT('Procedure Name:',PROCEDURE),%ButtonProcedure,REQ
+        #PROMPT('Initiate Thread',CHECK),%ButtonThread
+      #ENDENABLE
+      #ENABLE(%ButtonThread = %True)
+        #PROMPT('Thread Stack:',SPIN(@n7,5000,64000,500)),%ButtonThreadStack,DEFAULT(25000)
+      #ENDENABLE
+      #ENABLE(%ButtonThread = %False),CLEAR
+        #PROMPT('Parameters:',@s255),%ButtonParameters
+        #PROMPT('Requested File Action:',DROP('None|Insert|Change|Delete|Select')),%ButtonRequest,DEFAULT('None')
+      #ENDENABLE
+    #ENDBOXED
+  #ENDBOXED
+#ENDFIELD
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardButtonMenuHandling)
+#IF(%ControlEvent = 'Accepted')
+#IF (UPPER(%ProcedureTemplate)<>'FRAME')
+DO SyncWindow
+#ENDIF
+  #IF(%ButtonAction = 'Call a Procedure')
+    #IF(%ButtonProcedure)
+      #IF(%ButtonThread)
+START(%ButtonProcedure,%ButtonThreadStack)
+      #ELSE
+        #IF(%ButtonRequest AND %ButtonRequest <> 'None')
+          #SET(%ValueConstruct,%ButtonRequest & 'Record')
+GlobalRequest = %ValueConstruct
+        #ENDIF
+%ButtonProcedure %ButtonParameters
+      #ENDIF
+    #ENDIF
+#IF (UPPER(%ProcedureTemplate)<>'FRAME')
+LocalRequest = OriginalRequest
+DO RefreshWindow
+#ENDIF
+  #ELSIF(%ButtonAction = 'Run a Program')
+RUN('%ButtonRunName %ButtonRunParameters')
+ForceRefresh = True
+LocalRequest = OriginalRequest
+DO RefreshWindow
+  #ENDIF
+#ENDIF
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardEntryPrompt)
+#FIELD WHERE(%ControlType = 'ENTRY')
+  #BOXED('Entry Control Prompts')
+    #BOXED('When the Control Is Selected')
+      #PROMPT('Lookup Key',KEY),%PreLookupKey
+      #ENABLE(%PreLookupKey),CLEAR
+        #PROMPT('Lookup Field',COMPONENT(%PreLookupKey)),%PreLookupField,REQ
+        #PROMPT('Lookup Procedure',PROCEDURE),%PreLookupProcedure,REQ
+      #ENDENABLE
+      #PROMPT('Advanced...',EMBEDBUTTON(%ControlPostEventHandling,%Control,'Selected')),AT(100)
+    #ENDBOXED
+    #BOXED('When the Control Is Accepted')
+      #PROMPT('Lookup Key',KEY),%PostLookupKey
+      #ENABLE(%PostLookupKey),CLEAR
+        #PROMPT('Lookup Field',COMPONENT(%PostLookupKey)),%PostLookupField,REQ
+        #PROMPT('Lookup Procedure',PROCEDURE),%PostLookupProcedure,REQ
+        #PROMPT('Perform Lookup during Non-Stop Select',CHECK),%PostLookupDuringValidate,DEFAULT(1),AT(10,,180)
+      #ENDENABLE
+      #PROMPT('Advanced...',EMBEDBUTTON(%ControlPostEventHandling,%Control,'Accepted')),AT(100)
+    #ENDBOXED
+    #PROMPT('Force Window Refresh when Accepted',CHECK),%ForceWindowRefresh,AT(20,,160)
+  #ENDBOXED
+#ENDFIELD
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardEntryHandling),AUTO
+#CASE(%ControlEvent)
+#OF('Selected')
+  #IF(%PreLookupKey)
+    #FIND(%Field,%ControlUse)
+    #FOR(%Relation),WHERE(%RelationKey = %PreLookupKey)
+      #IF(%FileRelationType = 'MANY:1')
+        #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+          #IF(%FileKeyFieldLink = %PreLookupField)
+            #BREAK
+          #ENDIF
+%FileKeyFieldLink = %FileKeyField
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+    #FIND(%Key,%PreLookupKey)
+    #IF(%Key)
+%PreLookupField = %ControlUse
+GET(%File,%Key)
+IF ERRORCODE()
+  GlobalRequest = SelectRecord
+  %PreLookupProcedure
+  LocalResponse = GlobalResponse
+  IF LocalResponse = RequestCompleted
+    #FIND(%Field,%ControlUse)
+    #FOR(%Relation),WHERE(%RelationKey = %PreLookupKey)
+      #IF(%FileRelationType = 'MANY:1')
+        #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+          #IF(%FileKeyFieldLink = %PreLookupField)
+            #BREAK
+          #ENDIF
+    %FileKeyField = %FileKeyFieldLink
+        #ENDFOR
+      #ENDIF
+    #ENDFOR
+    %ControlUse = %PreLookupField
+  END
+END
+LocalRequest = OriginalRequest
+DO RefreshWindow
+    #ENDIF
+  #ENDIF
+#OF('Accepted')
+  #IF(%PostLookupKey)
+    #FIND(%Key,%PostLookupKey)
+    #IF(%Key)
+      #FIND(%Field,%ControlUse)
+      #IF(%PostLookupDuringValidate)
+        #IF(%FieldLookup)
+#INSERT(%GeneratePostLookupFieldCode)
+        #ELSE
+IF %ControlUse OR %Control{Prop:Req}
+  #INSERT(%GeneratePostLookupFieldCode)
+END
+        #ENDIF
+      #ELSE
+IF %Window{Prop:AcceptAll} = False
+        #IF(%FieldLookup)
+  #INSERT(%GeneratePostLookupFieldCode)
+        #ELSE
+  IF %ControlUse OR %Control{Prop:Req}
+    #INSERT(%GeneratePostLookupFieldCode)
+  END
+        #ENDIF
+END
+      #ENDIF
+      #IF(%ForceWindowRefresh)
+ForceRefresh = True
+      #ENDIF
+LocalRequest = OriginalRequest
+DO RefreshWindow
+    #ELSIF(%ForceWindowRefresh)
+ForceRefresh = True
+LocalRequest = OriginalRequest
+DO RefreshWindow
+    #ENDIF
+  #ELSIF(%ForceWindowRefresh)
+ForceRefresh = True
+LocalRequest = OriginalRequest
+DO RefreshWindow
+  #ENDIF
+#ENDCASE
+#!------------------------------------------------------------------------------
+#GROUP(%GeneratePostLookupFieldCode)
+  #FOR(%Relation),WHERE(%RelationKey = %PostLookupKey)
+    #IF(%FileRelationType = 'MANY:1')
+      #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+        #IF(%FileKeyFieldLink = %PostLookupField)
+          #BREAK
+        #ENDIF
+%FileKeyFieldLink = %FileKeyField
+      #ENDFOR
+    #ENDIF
+  #ENDFOR
+%PostLookupField = %ControlUse
+#FIND(%Key,%PostLookupKey)
+GET(%File,%Key)
+IF ERRORCODE()
+  GlobalRequest = SelectRecord
+  %PostLookupProcedure
+  LocalResponse = GlobalResponse
+  IF LocalResponse = RequestCompleted
+  #FIND(%Field,%ControlUse)
+  #FOR(%Relation),WHERE(%RelationKey = %PostLookupKey)
+    #IF(%FileRelationType = 'MANY:1')
+      #FOR(%FileKeyField),WHERE(%FileKeyFieldLink)
+        #IF(%FileKeyFieldLink = %PostLookupField)
+          #BREAK
+        #ENDIF
+    %FileKeyField = %FileKeyFieldLink
+      #ENDFOR
+    #ENDIF
+  #ENDFOR
+    %ControlUse = %PostLookupField
+  ELSE
+    SELECT(%Control)
+    CYCLE
+  END
+END
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardCheckBoxPrompt)
+#FIELD WHERE(%ControlType = 'CHECK')
+  #BOXED('Checkbox Control Prompts')
+    #BOXED('When the Checkbox is Checked')
+      #BUTTON('Assign Values'),MULTI(%CheckedAssigns,%CheckedAssignVariable & ' = ' & %CheckedAssignValue),AT(20,,160),HLP('~TPLFieldCheckBox_CheckedAssignValues')
+        #DISPLAY('Values to assign when the check box is checked')
+        #DISPLAY('')
+        #PROMPT('Variable to Assign',FIELD),%CheckedAssignVariable,REQ
+        #PROMPT('Value to Assign',@S40),%CheckedAssignValue,REQ
+      #ENDBUTTON
+      #BUTTON('Hide/Unhide Controls'),MULTI(%CheckedHides,%CheckedControl & ' - ' & %CheckedControlAction),AT(20,,160),HLP('~TPLFieldCheckBox_CheckedHideUnhide')
+        #DISPLAY('Controls to hide/unhide when the check box is checked')
+        #DISPLAY('')
+        #PROMPT('Control to hide/unhide:',CONTROL),%CheckedControl,REQ
+        #PROMPT('Hide or unhide control',DROP('Hide|Unhide')),%CheckedControlAction,REQ
+      #ENDBUTTON
+    #ENDBOXED
+    #BOXED('When the Checkbox is Unchecked')
+      #BUTTON('Assign Values'),MULTI(%UncheckedAssigns,%UncheckedAssignVariable & ' = ' & %UncheckedAssignValue),AT(20,,160),HLP('~TPLFieldCheckBox_UncheckedAssignValues')
+        #DISPLAY('Values to assign when the check box is unchecked')
+        #DISPLAY('')
+        #PROMPT('Variable to Assign',FIELD),%UncheckedAssignVariable,REQ
+        #PROMPT('Value to Assign',@S40),%UncheckedAssignValue,REQ
+      #ENDBUTTON
+      #BUTTON('Hide/Unhide Controls'),MULTI(%UnCheckedHides,%UnCheckedControl & ' - ' & %UnCheckedControlAction),AT(20,,160),HLP('~TPLFieldCheckBox_UncheckedHideUnhide')
+        #DISPLAY('Controls to hide/unhide when the check box is unchecked')
+        #DISPLAY('')
+        #PROMPT('Control to hide/unhide:',CONTROL),%UnCheckedControl,REQ
+        #PROMPT('Hide or unhide control',DROP('Hide|Unhide')),%UnCheckedControlAction,REQ
+      #ENDBUTTON
+    #ENDBOXED
+  #ENDBOXED
+#ENDFIELD
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardCheckBoxHandling)
+#IF(%ControlEvent='Accepted')
+  #SUSPEND
+    #IF(ITEMS(%CheckedAssigns) OR ITEMS(%CheckedHides))
+IF %Control{Prop:Checked} = True
+      #FOR(%CheckedAssigns),WHERE(%CheckedAssignVariable)
+  %CheckedAssignVariable = %CheckedAssignValue
+      #ENDFOR
+      #FOR(%CheckedHides)
+        #IF(%CheckedControlAction='Hide')
+  %CheckedControl{Prop:Hide} = TRUE
+        #ELSE
+  %CheckedControl{Prop:Hide} = FALSE
+        #ENDIF
+      #ENDFOR
+END
+    #ENDIF
+    #IF(ITEMS(%UncheckedAssigns) OR ITEMS(%UncheckedHides))
+IF %Control{Prop:Checked} = False
+      #FOR(%UncheckedAssigns),WHERE(%UncheckedAssignVariable)
+  %UncheckedAssignVariable = %UncheckedAssignValue
+      #ENDFOR
+      #FOR(%UncheckedHides)
+        #IF(%UncheckedControlAction='Hide')
+  %UncheckedControl{Prop:Hide} = TRUE
+        #ELSE
+  %UncheckedControl{Prop:Hide} = FALSE
+        #ENDIF
+      #ENDFOR
+END
+    #ENDIF
+#?DO RefreshWindow
+  #RESUME
+#ENDIF
+#!------------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardCheckBoxSetup)
+#IF(ITEMS(%CheckedAssigns) OR ITEMS(%CheckedHides))
+IF %Control{Prop:Checked} = True
+  #FOR(%CheckedAssigns),WHERE(%CheckedAssignVariable)
+  %CheckedAssignVariable = %CheckedAssignValue
+  #ENDFOR
+  #FOR(%CheckedHides)
+    #IF(%CheckedControlAction='Hide')
+  %CheckedControl{Prop:Hide} = TRUE
+    #ELSE
+  %CheckedControl{Prop:Hide} = FALSE
+    #ENDIF
+  #ENDFOR
+END
+#ENDIF
+#IF(ITEMS(%UncheckedAssigns) OR ITEMS(%UncheckedHides))
+IF %Control{Prop:Checked} = False
+  #FOR(%UncheckedAssigns),WHERE(%UncheckedAssignVariable)
+  %UncheckedAssignVariable = %UncheckedAssignValue
+  #ENDFOR
+  #FOR(%UncheckedHides)
+    #IF(%UncheckedControlAction='Hide')
+  %UncheckedControl{Prop:Hide} = TRUE
+    #ELSE
+  %UncheckedControl{Prop:Hide} = FALSE
+    #ENDIF
+  #ENDFOR
+END
+#ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%FieldTemplateStandardHandling)
+#CASE(%ControlType)
+#OF('ITEM')
+  #IF(NOT EXTRACT(%ControlStatement,'SEPARATOR'))
+#INSERT(%FieldTemplateStandardButtonMenuHandling)
+  #ENDIF
+#OF('ENTRY')
+#INSERT(%FieldTemplateStandardEntryHandling)
+#OF('CHECK')
+#INSERT(%FieldTemplateStandardCheckboxHandling)
+#OF('BUTTON')
+  #IF(INSTRING('?TBarBrw',%Control,1,1)<>1)
+#INSERT(%FieldTemplateStandardButtonMenuHandling)
+  #ENDIF
+#OF('SHEET')
+DO RefreshWindow
+#ENDCASE
+#!-------------------------------------------------------------------------
+#GROUP(%FieldTemplateWindowSetup)
+#CASE(%ControlType)
+#OF('CHECK')
+#INSERT(%FieldTemplateStandardCheckboxSetup)
+#ENDCASE

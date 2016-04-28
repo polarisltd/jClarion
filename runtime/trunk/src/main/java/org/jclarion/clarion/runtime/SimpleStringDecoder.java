@@ -31,7 +31,11 @@ public class SimpleStringDecoder {
     }
     
     public boolean pop(char c) {
-        
+    /**
+     * this returns true if current position in buffer is provided character
+     * taking in account lowercase/uppercase
+     * if found buffer pos+1 and return true    
+     */
         if (pos>=value.length()) return false;
         char t = value.charAt(pos);
         if (t==c) {

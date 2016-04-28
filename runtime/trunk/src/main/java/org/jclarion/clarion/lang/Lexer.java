@@ -17,7 +17,7 @@ import java.util.Stack;
 
 public class Lexer 
 {
-    private static final boolean DEBUG=false;
+    private static final boolean DEBUG=true;
     
     private AbstractLexStream     reader;
     private Stack<String>         markers;
@@ -301,7 +301,7 @@ public class Lexer
     }
     
     Lex __next() {
-        
+    	System.out.println("Lexer.__next ENTRY");
         if (reader.eof()) return new Lex(LexType.eof,"");
         
         while (cmarker!=null) {

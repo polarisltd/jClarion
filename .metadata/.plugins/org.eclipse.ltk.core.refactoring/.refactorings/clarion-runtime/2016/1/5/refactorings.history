@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;StringFormat.java&apos; to &apos;clarion-runtime/src/main/java/org.jclarion.clarion.runtime.format&apos;&#x0A;- Original project: &apos;clarion-runtime&apos;&#x0A;- Destination element: &apos;clarion-runtime/src/main/java/org.jclarion.clarion.runtime.format&apos;&#x0A;- Original element: &apos;org.jclarion.clarion.runtime.format.StringFormat.java&apos;" description="Copy compilation unit" destination="/src\/main\/java&lt;org.jclarion.clarion.runtime.format" element1="/src\/main\/java&lt;org.jclarion.clarion.runtime.format{StringFormat.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1454151785230" units="1" version="1.0"/>
+</session>

@@ -1,0 +1,630 @@
+#PROCEDURE(Form,'Edit a Record from a File'),WINDOW,HLP('~TPLProcForm'),PARENT(Window(ABC))
+#DEFAULT
+NAME DefaultABCForm
+CATEGORY 'Form'
+[COMMON]
+DESCRIPTION 'Default record update'
+FROM ABC Window
+[PROMPTS]
+%WindowOperationMode STRING  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+[ADDITION]
+NAME ABC SaveButton
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%InsertAllowed LONG  (1)
+%InsertMessage @S30  ('Record will be Added')
+%ChangeAllowed LONG  (1)
+%ChangeMessage @S30  ('Record will be Changed')
+%DeleteAllowed LONG  (1)
+%DeleteMessage @S30  ('Record will be Deleted')
+%MessageHeader LONG  (0)
+%HistoryKey    LONG  (734)
+[ADDITION]
+NAME ABC CancelButton
+[INSTANCE]
+INSTANCE 2
+[ADDITION]
+NAME ABC RecordValidation
+[INSTANCE]
+INSTANCE 3
+PROCPROP
+[PROMPTS]
+%ValidateOnAccept LONG  (1)
+%ValidateOnNonStopSelect LONG  (1)
+%ControlsExcluded MULTI LONG  ()
+%ControlToExclude DEPEND %ControlsExcluded STRING TIMES 0
+[ADDITION]
+NAME ABC FormVCRControls
+[INSTANCE]
+INSTANCE 4
+[PROMPTS]
+%AllowVCRAccess LONG (0)
+[WINDOW]
+FormWindow WINDOW('Update Records...'),AT(18,5,289,159),CENTER,SYSTEM,GRAY,MDI
+       BUTTON('OK'),AT(5,140,40,12),USE(?OK),DEFAULT,REQ,#SEQ(1),#ORIG(?OK),#LINK(?Cancel)
+       BUTTON('Cancel'),AT(50,140,40,12),USE(?Cancel),#SEQ(2),#ORIG(?Cancel)
+       STRING(@S40),AT(95,140,,),USE(ActionMessage)
+     END
+
+#ENDDEFAULT
+#!----------------------------------------------------------------
+#PROCEDURE(ViewOnlyForm,'View a Record from a File'),WINDOW,HLP('~TPLProcViewForm'),PARENT(Window(ABC))
+#DEFAULT
+NAME DefaultABCViewOnlyForm
+CATEGORY 'Form'
+[COMMON]
+DESCRIPTION 'Default view only form'
+FROM ABC Window
+[PROMPTS]
+%WindowOperationMode STRING  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+[ADDITION]
+NAME ABC CancelButton
+[INSTANCE]
+INSTANCE 1
+[ADDITION]
+NAME ABC FormVCRControls
+[INSTANCE]
+INSTANCE 2
+[PROMPTS]
+%AllowVCRAccess LONG (0)
+[ADDITION]
+NAME ABC ViewFormActions
+[INSTANCE]
+INSTANCE 3
+[PROMPTS]
+%ForceViewOnly LONG (1)
+[WINDOW]
+FormWindow WINDOW('View Record'),AT(18,5,289,159),CENTER,SYSTEM,GRAY,MDI
+       BUTTON('Cancel'),AT(244,144,40,12),USE(?Cancel),#SEQ(1),#ORIG(?Cancel)
+     END
+
+#ENDDEFAULT
+#!----------------------------------------------------------------
+#EXTENSION(RecordValidation,'Validate a record against the dictionary'),HLP('~TPLExtensionRecordValidation'),PROCEDURE
+#BOXED('Record Validation')
+  #DISPLAY('Control Value Validation Conditions..')
+  #PROMPT('Validate when the control is Accepted',CHECK),%ValidateOnAccept,AT(10,,150),DEFAULT(1)
+  #PROMPT('Validate during Non-Stop Select',CHECK),%ValidateOnNonStopSelect,DEFAULT(1),AT(10,,150)
+  #PROMPT('Color Fields rather than Selection',CHECK),%ValidateUsingColoration,DEFAULT(0),AT(10,,150)
+  #ENABLE(%ValidateUsingColoration)
+    #PROMPT('Field Color when Invalid',COLOR),%InvalidFieldColor,DEFAULT(00000FFH)
+    #PROMPT('Prompt Color when Invalid',COLOR),%InvalidPromptColor,DEFAULT(00000FFH)
+    #PROMPT('Show Message when fields are Invalid',CHECK),%UseValidateMessage,DEFAULT(0),AT(10,,150)
+    #ENABLE(%UseValidateMessage)
+      #PROMPT('Message to Display',@s80),%ValidationMessage,DEFAULT('The values of Colored Fields are invalid, Please correct this information.')
+      #PROMPT('Control to place Message in',FIELD),%MessageControl,REQ
+    #ENDENABLE
+  #ENDENABLE
+  #BUTTON('Do Not Validate...'),MULTI(%ControlsExcluded,%ControlToExclude),AT(10,,180),HLP('~TPLExtensionRecordValidation')
+    #PROMPT('Control to Exclude',CONTROL),%ControlToExclude
+  #ENDBUTTON
+#ENDBOXED
+#AT(%GatherSymbols)
+  #FOR(%Control),WHERE(%ControlUse)            #! FOR each screen field
+    #FIND(%Field,%ControlUse)                  #! FIX to process field
+    #IF(%Field)
+      #IF(%FieldLookup)                        #! IF Must Be In File
+        #ADD(%ProcFilesUsed,%FieldLookup)      #! FIX for file processing
+      #ENDIF                                   #! END (IF Must Be In File)
+    #ENDIF
+  #ENDFOR                                      #! END (FOR each screen field)
+#ENDAT
+#AT(%LocalDataAfterClasses),DESCRIPTION('Field Validation, field coloring support variables')
+CurCtrlFeq          LONG
+FieldColorQueue     QUEUE
+Feq                   LONG
+OldColor              LONG
+                    END
+#ENDAT
+#AT(%ControlEventHandling),PRIORITY(7500),DESCRIPTION('Perform field level validation')
+  #SUSPEND
+    #IF(%ControlEvent = 'Accepted')
+      #IF(%ValidateOnAccept OR %ValidateOnNonStopSelect)
+        #IF(%ValidateOnAccept AND %validateOnNonStopSelect)
+#INSERT(%RecordValidationCode)
+        #ELSIF(%ValidateOnAccept)
+#?IF %Window{Prop:AcceptAll} = False
+  #INSERT(%RecordValidationCode)
+#?END
+        #ELSE
+#?IF %Window{Prop:AcceptAll} = True
+  #INSERT(%RecordValidationCode)
+#?END
+        #ENDIF
+      #ENDIF
+    #ENDIF
+  #RESUME
+#ENDAT
+#!----------------------------------------------------------------
+#GROUP(%RecordValidationCode)
+  #FIND(%ControlToExclude,%Control)
+  #IF(NOT %ControlToExclude)
+    #CASE(%ControlType)
+    #OF('ENTRY')
+    #OROF('SPIN')
+    #OROF('DROP')
+    #OROF('COMBO')
+      #FIND(%Field,%ControlUse)
+      #IF (%Field AND (%FieldLookup OR %FieldRangeLow OR %FieldRangeHigh))
+IF Access:%File.TryValidateField(%(%FieldNumber(%Field,%File)))
+        #IF(%ValidateUsingColoration)
+  FieldColorQueue.Feq = %Control
+  GET(FieldColorQueue, FieldColorQueue.Feq)
+  IF ERRORCODE()
+    FieldColorQueue.OldColor = %Control{Prop:Color}
+    ADD(FieldColorQueue)
+  END
+  %Control{Prop:FontColor} = %InvalidFieldColor
+        #ELSE
+  SELECT(%Control)
+        #ENDIF
+        #IF(%ValidateOnNonStopSelect)
+  %Window{Prop:AcceptAll} = False
+        #ENDIF
+        #IF(%UseValidateMessage)
+  %MessageControl = '%ValidationMessage'
+        #ENDIF
+  CYCLE
+ELSE
+  FieldColorQueue.Feq = %Control
+  GET(FieldColorQueue, FieldColorQueue.Feq)
+  IF ~ERRORCODE()
+    %Control{Prop:FontColor} = FieldColorQueue.OldColor
+    DELETE(FieldColorQueue)
+  END
+        #IF(%UseValidateMessage)
+  %MessageControl = ''
+        #ENDIF
+END
+      #ENDIF
+    #ENDCASE
+  #ENDIF
+#!----------------------------------------------------------------
+#EXTENSION (FormVCRControls,'Allow Form to be driven by Toolbar VCR Controls'),PROCEDURE,REQ(SaveButton),HLP('~TPLExtensionFormVCRControls')#!
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default', 'ToolbarForm', %ToolbarUpdateClassType)
+#ENDPREPARE
+#BUTTON('&Form VCR Class')
+  #BOXED('Form VCR Class'),AT(0,0),WHERE(%False),HIDE
+    #INSERT(%OOPHiddenPrompts)
+  #ENDBOXED
+  #WITH(%ClassItem,'Default')
+    #INSERT(%ClassPrompts)
+  #ENDWITH
+#ENDBUTTON
+#!
+#ATSTART
+#CALL(%ReadABCFiles)
+#CALL(%SetClassDefaults, 'Default', 'ToolbarForm', %ToolbarUpdateClassType)
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8500)
+  #FOR(%Control)
+    #IF(UPPER(EXTRACT(%ControlStatement,'STD',1))='STD:HELP')
+ToolBarForm.HelpButton=%Control
+      #BREAK
+    #ENDIF
+  #ENDFOR
+SELF.AddItem(ToolbarForm)
+#ENDAT
+#!
+#!
+#AT(%ToolbarFormManagerMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|Form Toolbar Manager', '%FormToolbarManagerVirtuals(ABC)')
+#ENDAT
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'Default', 'Form Toolbar Manager')
+#ENDAT
+#!
+#!
+#GROUP(%FormToolbarManagerVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%ToolbarFormManagerMethodDataSection,'Toolbar Form Manager Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%ToolbarFormManagerMethodCodeSection,'Toolbar Form Manager Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(%FixClassName(%FixBaseClassToUse('Default'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#! ------------------------------------------------------------------------------------
+#CONTROL(CloseButton,'Close the Window'),WINDOW,HLP('~TPLControlCloseButton')
+  CONTROLS
+    BUTTON('Close'),USE(?Close)
+  END
+#ATSTART
+  #DECLARE(%CloseControl)
+  #SET(%CloseControl,%GetControlName())
+#ENDAT
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(7000)
+  #IF(%CloseControl)
+SELF.AddItem(%CloseControl,RequestCancelled)
+  #ENDIF
+#ENDAT
+#!----------------------------------------------------------------
+#CONTROL(CancelButton,'Cancel the Current Operation'),WINDOW,HLP('~TPLControlCancelButton')
+  CONTROLS
+    BUTTON('Cancel'),USE(?Cancel)
+  END
+#ATSTART
+  #DECLARE(%CancelControl)
+  #SET(%CancelControl,%GetControlName())
+#ENDAT
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(7000)
+  #IF(%CancelControl)
+SELF.AddItem(%CancelControl,RequestCancelled)
+  #ENDIF
+#ENDAT
+#!
+#!
+#!
+#!
+#EXTENSION(ViewFormActions, 'Configure View Only form mode'),PROCEDURE,HLP('~ViewFormActions')
+#!
+#PROMPT('&Force View Only Mode:', CHECK),%ForceViewOnly,AT(10),DEFAULT(%False)
+#BUTTON('View &Action for ' & %Control),FROM(%Control, %Control & ' - ' & %ViewAction),INLINE
+  #PROMPT('&View Action:', DROP('None|Hide|Disable|ReadOnly|Set Properties')),%ViewAction,DEFAULT(%GetDefaultViewAction(%Control))
+  #BOXED('View Action Property Settings'),WHERE(%ViewAction = 'Set Properties')
+    #BUTTON('Property Assignments'),MULTI(%PropertyAssignments, '{ ' & %CtrlProperty & ' } = ' & %CtrlValue),INLINE,AT(,,,50)
+      #PROMPT('&Property:', @s80),%CtrlProperty,REQ
+      #PROMPT('New &Value:', @S255),%CtrlValue,REQ
+    #ENDBUTTON
+  #ENDBOXED
+#ENDBUTTON
+#!
+#AT(%WindowManagerMethodCodeSection, 'Run', '(),BYTE'),PRIORITY(100),WHERE(%ForceViewOnly = %True)
+GlobalRequest = ViewRecord
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),PRIORITY(8100),DESCRIPTION('Configure Controls for View Only Mode')
+  #SUSPEND
+#?IF SELF.Request = ViewRecord
+  #FOR(%Control)
+    #CASE(%ViewAction)
+    #OF('Disable')
+  DISABLE(%Control)
+    #OF('Hide')
+  HIDE(%Control)
+    #OF('ReadOnly')
+  %Control{PROP:ReadOnly} = True
+    #OF('Set Properties')
+      #FOR(%PropertyAssignments)
+  %Control{%CtrlProperty} = %CtrlValue
+      #ENDFOR
+    #ENDCASE
+  #ENDFOR
+#?END
+  #RESUME
+#ENDAT
+#!
+#!
+#GROUP(%GetDefaultViewAction, %Ctrl),PRESERVE
+  #FIX(%Control, %Ctrl)
+  #CASE(%ControlType)
+  #OF('BUTTON')
+    #CASE(%ControlTemplate)
+    #OF('SaveButton(ABC)')
+    #OROF('CloseButton(ABC)')
+    #OROF('CancelButton(ABC)')
+      #RETURN('None')
+    #ELSE
+      #IF(UPPER(EXTRACT(%ControlUnsplitStatement, 'STD', 1)) = 'STD:CLOSE' OR UPPER(EXTRACT(%ControlUnsplitStatement, 'STD', 1)) = 'STD:HELP')
+        #RETURN('None')
+      #ENDIF
+    #ENDCASE
+    #RETURN('Disable')
+  #OF('COMBO')
+    #RETURN('Disable')
+  #OF('LIST')
+    #RETURN(CHOOSE(EXTRACT(%ControlUnsplitStatement, 'DROP', 1) = '', 'None', 'Disable'))
+  #OF('ENTRY')
+    #RETURN('ReadOnly')
+  #ENDCASE
+  #RETURN('None')
+#!
+#!
+#!
+#!
+#CONTROL(SaveButton,'Write Records to a data file'),PRIMARY('Update Record on Disk',NOKEY),DESCRIPTION('Update ' & %Primary & ' record on disk'),WINDOW,HLP('~TPLControlSaveButton')
+  CONTROLS
+    BUTTON('OK'),USE(?OK),DEFAULT,REQ
+  END
+#LOCALDATA
+ActionMessage        CSTRING(40)
+#ENDLOCALDATA
+#CLASS('Prime Fields','Prime Fields of ' & %Primary & ' record at beginning of Insert')
+#BOXED('Save Button Properties'),SECTION
+  #DISPLAY('Allow:'),AT(,2)
+  #PROMPT('Inserts',CHECK),%InsertAllowed,DEFAULT(%True),AT(50,2,40)
+  #PROMPT('Changes',CHECK),%ChangeAllowed,DEFAULT(%True),AT(100,2,40)
+  #PROMPT('Deletes',CHECK),%DeleteAllowed,DEFAULT(%True),AT(150,2,40)
+  #ENABLE(%InsertAllowed = %True)
+    #BUTTON('Field Priming on Insert'),MULTI(%PrimingFields,%PrimedField & ' = ' & %PrimedValue),AT(10),HLP('~TPLControlSaveButton')
+      #PROMPT('Field to Prime:',FIELD),%PrimedField,REQ
+      #PROMPT('Initial Value:',@S255),%PrimedValue,REQ
+    #ENDBUTTON
+  #ENDENABLE
+  #BUTTON('Messages and Titles'),HLP('~TPLControlSaveButton_Messages_and_Titles'),AT(100,12)
+    #PROMPT('&View Message:',@S40),%ViewMessage,DEFAULT('View Record')
+    #ENABLE(%InsertAllowed = %True)
+      #PROMPT('&Insert Message:',@S40),%InsertMessage,DEFAULT('Record will be Added')
+    #ENDENABLE
+    #ENABLE(%ChangeAllowed = %True)
+      #PROMPT('Chan&ge Message:',@S40),%ChangeMessage,DEFAULT('Record will be Changed')
+    #ENDENABLE
+    #ENABLE(%DeleteAllowed = %True)
+      #PROMPT('De&lete Message:',@S40),%DeleteMessage,DEFAULT('Record will be Deleted')
+    #ENDENABLE
+    #ENABLE(%InsertAllowed OR %ChangeAllowed)
+      #PROMPT('On Aborted Add/Change:',DROP('Offer to save changes|Confirm cancel|Cancel without confirming')),%ActionOnCancel,DEFAULT('Offer to save changes')
+    #ENDENABLE
+    #PROMPT('Field History Key',KEYCODE),%HistoryKey
+    #ENABLE(%DeleteAllowed = %True)
+      #PROMPT('When called for delete:',DROP('Standard Warning|Display Form|Automatic Delete')),%ActionOnDelete,DEFAULT('Standard Warning')
+    #ENDENABLE
+    #ENABLE(%InsertAllowed = %True)
+      #PROMPT('After successful insert:',DROP('Return to caller|Insert another record')),%AfterGoodInsert,DEFAULT('Return to caller')
+      #ENABLE(%AfterGoodInsert = 'Insert another record')
+        #PROMPT('Ask the user before adding another record?',CHECK),%AskAfterAdd,DEFAULT(0),AT(10)
+      #ENDENABLE
+    #ENDENABLE
+    #PROMPT('&Location of Message:',DROP('None/Window Control|Title Bar|Status Bar')),%MessageLocation
+    #ENABLE(%MessageLocation='Status Bar')
+      #PROMPT('Status Bar Section:',@n1),%MessageStatusSection,REQ
+    #ENDENABLE
+    #PROMPT('Display Record Identifier on the Title Bar',CHECK),%AppendToTitle,AT(10,,180)
+    #ENABLE(%AppendToTitle = %True)
+      #PROMPT('Record Identifier:',@S255),%AppendToTitleID,REQ
+    #ENDENABLE
+  #ENDBUTTON
+#ENDBOXED
+#!
+#!
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles)
+  #INSERT(%FileControlInitialize)
+  #DECLARE(%SaveControl)
+  #DECLARE(%HandledFile),UNIQUE
+  #DECLARE(%InsertAction,%HandledFile)
+  #INSERT(%SaveButtonRecordHandlingGather,%Primary)
+  #DECLARE(%AutoIncrementOnAdd)
+  #DECLARE(%ClearValue)
+  #DECLARE(%ElementCount)
+  #DECLARE(%SavedField),UNIQUE
+  #FIX(%File,%Primary)
+  #IF(%InsertAllowed)
+    #FOR(%Key),WHERE(%KeyAuto)
+      #SET(%AutoIncrementOnAdd,%True)
+      #BREAK
+    #ENDFOR
+  #ENDIF
+  #SET(%SaveControl,%GetControlName())
+#ENDAT
+#!
+#!
+#AT(%CustomModuleDeclarations)
+  #CALL(%AddModuleIncludeFile,%ToolbarUpdateClassType)
+#ENDAT
+#!
+#!
+#AT(%DataSection),PRIORITY(4500)
+  #FOR(%HandledFile)
+#IF(%HistoryKey)
+  #FIX(%File,%HandledFile)
+  #INSERT(%MakeDeclr,22,%OOPConstruct,'History::'&%FilePrefix&':Record','LIKE('&%FilePrefix&':RECORD),STATIC')
+%OOPConstruct
+#ENDIF
+  #ENDFOR
+  #FIX(%File,%Primary)
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(7500)
+SELF.Primary &= Relate:%Primary
+IF SELF.Request = ViewRecord
+  SELF.InsertAction = Insert:None
+  SELF.DeleteAction = Delete:None
+  SELF.ChangeAction = 0
+  SELF.CancelAction = Cancel:Cancel
+  SELF.OkControl = 0
+ELSE
+  #IF(~%InsertAllowed)
+  SELF.InsertAction = Insert:None
+  #ELSIF(%AfterGoodInsert='Insert another record')
+  SELF.InsertAction = Insert:%(CHOOSE(%AskAfterAdd=0,'Batch','Query'))
+  #ENDIF
+  #IF(~%DeleteAllowed)
+  SELF.DeleteAction = Delete:None
+  #ELSE
+    #IF (%ActionOnDelete='Display Form')
+  SELF.DeleteAction = Delete:Form
+    #ELSIF ( %ActionOnDelete='Automatic Delete' )
+  SELF.DeleteAction = Delete:Auto
+    #ENDIF
+  #ENDIF
+  #IF(~%ChangeAllowed)
+  SELF.ChangeAction = 0
+  #ENDIF
+#CASE (%ActionOnCancel)
+#OF('Confirm cancel')
+  SELF.CancelAction = Cancel:Cancel+Cancel:Query
+#OF('Cancel without confirming')
+  SELF.CancelAction = Cancel:Cancel
+#ENDCASE
+  SELF.OkControl = %SaveControl
+  IF SELF.PrimeUpdate() THEN RETURN Level:Notify.
+END
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(7000),WHERE(%HistoryKey)
+SELF.HistoryKey = %HistoryKey
+  #FOR(%HandledFile)
+  #FIX(%File,%HandledFile)
+SELF.AddHistoryFile(%FilePrefix:Record,History::%FilePrefix:Record)
+    #FOR (%Control),WHERE(%ControlUse)
+      #FIX(%Field,%ControlUse)
+      #IF (%Field)
+SELF.AddHistoryField(%Control,%(%FieldRecordNumber(%Field,%File)))
+      #ENDIF
+    #ENDFOR
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(7000)
+  #FOR(%HandledFile)
+  #FIX(%File,%HandledFile)
+SELF.AddUpdateFile(Access:%File)
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Ask','()'),PRIORITY(2500)
+CASE SELF.Request
+OF ViewRecord
+  #INSERT(%StandardValueAssignment, 'ActionMessage', %ViewMessage)
+OF InsertRecord
+  #IF(%InsertAllowed)
+    #IF(%InsertMessage)
+  #INSERT(%StandardValueAssignment,'ActionMessage',%InsertMessage)
+    #ELSE
+  CLEAR(ActionMessage)
+    #ENDIF
+  #ELSE
+  GlobalErrors.Throw(Msg:InsertIllegal)
+  RETURN
+  #ENDIF
+OF ChangeRecord
+  #IF(%ChangeAllowed)
+    #IF(%ChangeMessage)
+  #INSERT(%StandardValueAssignment,'ActionMessage',%ChangeMessage)
+    #ELSE
+  CLEAR(ActionMessage)
+    #ENDIF
+  #ELSE
+  GlobalErrors.Throw(Msg:UpdateIllegal)
+  RETURN
+  #ENDIF
+  #SUSPEND
+#?OF DeleteRecord
+  #IF(%DeleteAllowed)
+    #IF(%ActionOnDelete = 'Display Form')
+      #IF(%DeleteMessage)
+  #INSERT(%StandardValueAssignment,'ActionMessage',%DeleteMessage)
+      #ELSE
+  CLEAR(ActionMessage)
+      #ENDIF
+    #ENDIF
+  #ELSE
+  GlobalErrors.Throw(Msg:DeleteIllegal)
+  RETURN
+  #ENDIF
+  #RESUME
+END
+  #IF(%MessageLocation = 'Title Bar')
+%Window{Prop:Text} = ActionMessage
+  #ELSIF(%MessageLocation = 'Status Bar')
+%Window{Prop:StatusText,%MessageStatusSection} = ActionMessage
+  #ENDIF
+  #IF(%AppendToTitle)
+    #IF(%DeleteAllowed OR %ChangeAllowed OR %InsertAllowed)
+CASE SELF.Request
+      #IF(%DeleteAllowed OR %ChangeAllowed)
+        #IF(%DeleteAllowed AND %ChangeAllowed)
+OF ChangeRecord OROF DeleteRecord
+        #ELSIF(%ChangeAllowed)
+OF ChangeRecord
+        #ELSE
+OF DeleteRecord
+        #ENDIF
+      #SET(%ValueConstruct,%StripPling(%AppendToTitleID))
+  %Window{Prop:Text} = %Window{Prop:Text} & '  (' & %ValueConstruct & ')'
+      #ENDIF
+      #IF(%InsertAllowed)
+OF InsertRecord
+  %Window{Prop:Text} = %Window{Prop:Text} & '  (New)'
+      #ENDIF
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Run', '(),BYTE'),PRIORITY(8000)
+IF SELF.Request = ViewRecord
+  ReturnValue = RequestCancelled
+END
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodDataSection,'TakeCompleted','(),BYTE')
+#?Looped BYTE
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'TakeCompleted','(),BYTE'),PRIORITY(2500)
+#?LOOP
+  #?IF Looped
+    #?RETURN Level:Notify
+  #?ELSE
+    #?Looped = 1
+  #?END
+  #PRIORITY(3000)
+  #EMBED(%BeforeFileAction,'When completed, before writing to disk'),LEGACY
+  #PRIORITY(7500)
+  #?RETURN ReturnValue
+#?END
+#?ReturnValue = Level:Fatal
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'PrimeFields','()'),WHERE(%InsertAllowed),PRIORITY(2500)
+  #$ Field priming (usually for insert) goes in here - Warning : The window may not be open
+  #FIX(%File,%Primary)
+  #FOR(%PrimingFields)
+  %PrimedField = %PrimedValue
+  #ENDFOR
+  #EMBED(%PrimeFields,'Prime record fields on Insert'),WHERE(%InsertAllowed),LEGACY
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Reset','(BYTE Force=0)'),PRIORITY(2500)
+#INSERT(%StandardSecondaryLookups)
+#ENDAT
+#!
+#!
+#AT(%ControlEventHandling, %SaveControl, 'Accepted'),PRIORITY(8000),DESCRIPTION('Process ''OK'' button in View Only mode')
+IF SELF.Request = ViewRecord
+  POST(EVENT:CloseWindow)
+END
+#ENDAT
+#!
+#!
+#GROUP(%SaveButtonRecordHandlingGather,%CurrentFile)
+#FIX(%HandledFile,%CurrentFile)
+#IF(%HandledFile=%Null)
+  #FIX(%File,%CurrentFile)
+  #ADD(%HandledFile,%CurrentFile)
+  #ADD(%ProcFilesUsed,%CurrentFile)
+  #SET(%InsertAction,'NORMAL')
+  #FOR(%Key),WHERE(%KeyAuto)
+    #SET(%InsertAction,'AUTO')
+    #BREAK
+  #ENDFOR
+#ENDIF
+#!
+#!

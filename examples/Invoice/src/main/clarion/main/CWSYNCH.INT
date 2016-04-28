@@ -1,0 +1,57 @@
+  OMIT('__EndOfInclude__',__CWSYNCH_INT)
+
+__CWSYNCH_INT  EQUATE(1)
+
+WAIT:OK        EQUATE(0)
+WAIT:TIMEOUT   EQUATE(1)
+WAIT:NOHANDLE  EQUATE(2)
+WAIT:FAILED    EQUATE(3)
+WAIT:ABANDONED EQUATE(-1)
+
+
+ISyncObject         INTERFACE
+Wait                  PROCEDURE()
+Release               PROCEDURE()
+Kill                  PROCEDURE()
+                    END
+
+IWaitableSyncObject INTERFACE(ISyncObject)
+Wait                  PROCEDURE(),DERIVED
+TryWait               PROCEDURE(LONG milliseconds),SIGNED,PROC
+Release               PROCEDURE(),DERIVED
+Release               PROCEDURE(SIGNED Count)
+Kill                  PROCEDURE(),DERIVED
+HandleOf              PROCEDURE(),UNSIGNED
+                    END
+
+ICriticalSection    INTERFACE(ISyncObject)
+Wait                  PROCEDURE(),DERIVED
+Release               PROCEDURE(),DERIVED
+Kill                  PROCEDURE(),DERIVED
+                    END
+                   
+ISemaphore          INTERFACE(IWaitableSyncObject)
+Wait                  PROCEDURE(),DERIVED
+TryWait               PROCEDURE(LONG milliseconds),SIGNED,PROC,DERIVED
+Release               PROCEDURE(),DERIVED
+Release               PROCEDURE(SIGNED Count),DERIVED
+Kill                  PROCEDURE(),DERIVED
+HandleOf              PROCEDURE(),UNSIGNED,DERIVED
+                    END
+
+IMutex              INTERFACE(IWaitableSyncObject)
+Wait                  PROCEDURE(),DERIVED
+TryWait               PROCEDURE(LONG milliseconds),SIGNED,PROC,DERIVED
+Release               PROCEDURE(),DERIVED
+Release               PROCEDURE(SIGNED Count),DERIVED
+Kill                  PROCEDURE(),DERIVED
+HandleOf              PROCEDURE(),UNSIGNED,DERIVED
+                    END
+
+IReaderWriterLock   INTERFACE
+Reader                PROCEDURE(),*ISyncObject
+Writer                PROCEDURE(),*ISyncObject
+Kill                  PROCEDURE()
+                    END
+                    
+! __EndOfInclude__

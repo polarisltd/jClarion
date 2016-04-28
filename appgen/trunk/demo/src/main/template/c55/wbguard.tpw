@@ -1,0 +1,585 @@
+#EXTENSION(WebGuard, 'Web Application Guard Extension'),APPLICATION,FIRST,SINGLE,HLP('~WebGuardExt'),REQ(Web(Web))
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'Guard', 'Guard', %GuardClass)
+#ENDPREPARE
+#!
+#INSERT(%OOPPrompts(ABC))
+#SHEET, HSCROLL
+  #TAB('&Guard Data File')
+    #ENABLE(%GuardEnabled)
+      #PROMPT('&User Information Data File:', FILE),%GuardDataFile,REQ
+      #PROMPT('File Access &Key:', KEY(%GuardDataFile)),%GuardDataFileKey,REQ
+      #PROMPT('&Name Field:', FIELD(%GuardDataFile)),%GuardUserField,REQ
+        #VALIDATE(%FieldIsPrimaryKey(%GuardDataFile, %GuardDataFileKey, %GuardUserField) = %True, 'User name field MUST be the primary component of the File Access Key.')
+      #PROMPT('&Password Field:', FIELD(%GuardDataFile)),%GuardPasswordField,REQ
+        #VALIDATE(%ValidStringField(%GuardDataFile, %GuardPasswordField) = %True, 'Password field must be STRING, CSTRING or PSTRING field.')
+      #PROMPT('Capa&bility Field:', FIELD(%GuardDataFile)),%GuardCapabilityField,REQ
+        #VALIDATE(%ValidStringField(%GuardDataFile, %GuardCapabilityField) = %True, 'Capability field must be STRING, CSTRING or PSTRING field.')
+      #PROMPT('Customer Number Fiel&d:', FIELD(%GuardDataFile)),%GuardIDField,REQ
+      #PROMPT('Count Failu&re Field:', FIELD(%GuardDataFile)),%GuardCountFailureField
+      #PROMPT('Account &Locking Field:', FIELD(%GuardDataFile)),%GuardLockedField
+      #ENABLE(%GuardLockedField <> ''),CLEAR
+        #PROMPT('L&ocked Until Field:', FIELD(%GuardDataFile)),%GuardLockedUntilField
+      #ENDENABLE
+    #ENDENABLE
+  #ENDTAB
+  #TAB('&Guard Options'),HLP('~WebGuardOptions')
+    #PROMPT('&Enable Application Security', CHECK),%GuardEnabled,DEFAULT(%True),AT(10)
+    #PROMPT('&Web Enable', CHECK),%GuardWebEnabled,DEFAULT(%True),AT(10)
+    #ENABLE(%GuardEnabled)
+      #PROMPT('&Force Logon When Program Starts', CHECK),%ForceLogonAtStart,DEFAULT(%False),AT(10)
+      #PROMPT('Da&ys To Lock:', @N3),%GuardDaysToLock
+      #ENABLE(%GuardCountFailureField <> '')
+        #PROMPT('&Maximum Logon Attempts:', SPIN(@N3, 0, 999)),%GuardMaxLogonAttempts
+      #ENDENABLE
+      #ENABLE(%GuardLockedField <> ''),CLEAR
+        #PROMPT('Email Pa&ssword', CHECK),%PasswordReminder,DEFAULT(%False),AT(10)
+      #ENDENABLE
+      #PROMPT('&Default Capabilities:', @S255),%GuardDefaultCapabilities
+      #PROMPT('Default Admin Logon:', @S255),%AdminLogon
+      #PROMPT('Default Admin Password:', @S255),%AdminPassword
+      #PROMPT('Default Admin Capabilities:', @S255),%AdminCapabilities
+      #PROMPT('&Ignore Capabilities Case', CHECK),%GuardIgnoreCase,DEFAULT(%TRUE),AT(10)
+      #PROMPT('Position File &to Customer', CHECK),%PositionFile,DEFAULT(%TRUE),AT(10)
+      #PROMPT('&Allow New User Button:', DROP('No|Yes|Use External Procedure')),%AllowNewUser,DEFAULT('Yes'),REQ
+      #BOXED('Default Guard Failure Actions')
+        #PROMPT('W&hen Guard Fails:', DROP('Show Message|Run Procedure')),%DefaultGuardFailureAction,DEFAULT('Show Message')
+        #ENABLE(%DefaultGuardFailureAction = 'Run Procedure')
+          #PROMPT('Pro&cedure Name:', PROCEDURE),%DefaultGuardProcedureToRun,REQ
+        #ENDENABLE
+      #ENDBOXED
+      #PROMPT('&Override Logon Procedure', CHECK),%OverRideLogon,DEFAULT(%False),AT(10)
+      #ENABLE(%OverRideLogon)
+        #PROMPT('Procedure Name:', PROCEDURE),%OverrideLogonProcedure,REQ
+      #ENDENABLE
+    #ENDENABLE
+  #ENDTAB
+  #TAB('Global &Ojects'),HLP('~WebGuardGlobalObjects')
+    #ENABLE(%GuardEnabled)
+      #BUTTON('Application &Guard'),AT(,,170)
+        #WITH(%ClassItem ,'Guard')
+          #INSERT(%GlobalClassPrompts(ABC))
+        #ENDWITH
+      #ENDBUTTON
+    #ENDENABLE
+  #ENDTAB
+  #TAB('C&lasses'),HLP('~WebGuardClasses')
+    #ENABLE(%GuardEnabled)
+      #BUTTON('Application &Guard'),AT(,,170)
+        #PROMPT('Application &Guard:', FROM(%pClassName)),%GuardClass,DEFAULT('WbGuardClass'),REQ
+      #ENDBUTTON
+    #ENDENABLE
+    #BUTTON('Guard Library Files'),AT(,,170)
+      #BOXED('Guard Library Files')
+        #INSERT(%AbcLibraryPrompts(ABC))
+      #ENDBOXED
+    #ENDBUTTON
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'Guard', 'Guard', %GuardClass)
+#ENDAT
+#!
+#!
+#AT(%GatherObjects),WHERE(%GuardEnabled)
+  #CALL(%AddObjectList(ABC), 'Guard')
+#ENDAT
+#!
+#!
+#AT (%BeforeGenerateApplication),WHERE(%GuardEnabled)
+  #CALL(%AddCategory(ABC), 'GUARD')
+  #CALL(%SetCategoryLocationFromPrompts(ABC), 'GUARD','Guard','GRD')
+  #EQUATE (%GuardCategoryLinkMode, %CategoryLinkMode)
+  #IF (%OverRideLogon=%TRUE)
+    #CALL(%AddGlobalMapInclude(ABC), %OverrideLogonProcedure)
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%GlobalData),WHERE(%GuardEnabled)
+#INSERT(%GenerateClass(ABC), 'Guard', 'Application Security Guard')
+#ENDAT
+#!
+#AT(%CustomGlobalDeclarations),WHERE(%GuardEnabled)
+  #ADD(%UsedFile, %GuardDataFile)
+  #INSERT(%AddRelatedFiles(ABC),%UsedFile,%GuardDataFile)
+#ENDAT
+#!
+#AT(%BeforeInitializingGlobalObjects),WHERE(%GuardEnabled),PRIORITY(100)
+  #ADD(%UsedFile, %GuardDataFile)
+  #FIX(%File, %GuardDataFile)
+  #ASSERT(%File = %GuardDataFile, 'Guard - %BeforeInitializingGlobalObjects, unable to fix to %GuardDataFile')
+  #SET(%CacheFileUsed, %True)
+IF Guard.Init(Access:%GuardDataFile, %GuardDataFileKey, %GuardUserField, %GuardPasswordField, %GuardCapabilityField, %GuardIDField, %GuardCountFailureField, %GuardLockedField, %GuardLockedUntilField, GlobalErrors) = Level:Benign
+  #IF(%GuardWebEnabled)
+Guard.SetWeb(WebServer)
+  #ENDIF
+  #IF(%GuardMaxLogonAttempts > 0)
+Guard.AllowedAttempts = %GuardMaxLogonAttempts
+  #ENDIF
+  #IF(%GuardDaysToLock > 0)
+Guard.DaysToLock = %GuardDaysToLock
+  #ENDIF
+  #IF(%GuardDefaultCapabilities <> '')
+Guard.DefaultCapabilities = %(%StripPling(%GuardDefaultCapabilities))
+  #ENDIF
+  #IF(%AdminLogon <> '')
+Guard.AdminLogon = %(%StripPling(%AdminLogon))
+  #ENDIF
+  #IF(%AdminPassword <> '')
+Guard.AdminPassword = %(%StripPling(%AdminPassword))
+  #ENDIF
+  #IF(%AdminCapabilities <> '')
+Guard.AdminCapabilities = %(%StripPling(%AdminCapabilities))
+  #ENDIF
+Guard.IgnoreCase = %GuardIgnoreCase
+Guard.PositionFile = %PositionFile
+  #IF(%AllowNewUser = 'Yes')
+Guard.AllowNewUser = %TRUE
+  #ENDIF
+  #IF(%PasswordReminder = %TRUE)
+Guard.PasswordReminder = %TRUE
+  #ENDIF
+  #IF(%GuardCountFailureField <> '' AND %GuardMaxLogonAttempts > 0)
+Guard.AllowedAttempts = %GuardMaxLogonAttempts
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%GuardMethodCodeSection,'Ask','(),BYTE'),WHERE(%GuardEnabled AND %OverRideLogon=%TRUE),PRIORITY(4500)
+ReturnValue=%OverrideLogonProcedure()
+#EMBED(%AfterCallingGeneratedLogonProcedure,'After Calling Generated Logon Procedure')
+RETURN ReturnValue
+#ENDAT
+#!
+#!
+#AT(%BeforeCallingFirstProcedure),WHERE(%GuardEnabled)
+  #IF(%UseCookies)
+Guard.SetCookieMgr(INIMgr)
+  #ENDIF
+  #IF(%ForceLogonAtStart OR %UseCookies)
+IF Guard.ActivateGuardFile() = Level:Benign
+    #IF(%ForceLogonAtStart)
+IF Guard.Ask() = Level:Benign
+    #ELSIF(%UseCookies)
+IF Guard.GetPriorUse() = Level:Benign OR (Guard.GetPriorUse() = Level:Notify AND Guard.Ask() = Level:Benign)
+    #ENDIF
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%AfterCallingFirstProcedure),PRIORITY(9990),WHERE(%GuardEnabled AND (%ForceLogonAtStart OR %UseCookies))
+END
+Guard.DeactivateGuardFile
+END
+#ENDAT
+#!
+#!
+#AT(%AfterKillingGlobalObjects),WHERE(%GuardEnabled),PRIORITY(9900)
+Guard.Kill
+END
+#ENDAT
+#!
+#!
+#AT(%GuardMethodCodeSection),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%GuardEnabled AND %ParentCallValid())
+  #CALL(%GenerateParentCall(ABC))
+#ENDAT
+#!
+#!
+#AT(%ProgramProcedures),WHERE(%GuardEnabled)
+  #CALL(%GenerateVirtuals(ABC), 'Guard', 'Global Objects|Web Objects|Application Guard', '%ApplicationGuardVirtuals(Web)', %True)
+#ENDAT
+#!
+#!
+#GROUP(%ApplicationGuardVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%GuardMethodDataSection,'Security Guard Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('Guard'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%GuardMethodCodeSection,'Security Guard Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('Guard'))),TREE(%TreeText & %CodeText)
+#!
+#!
+#!
+#!
+#GROUP(%FieldIsPrimaryKey, %aFile, %aKey, %aField),PRESERVE
+  #FIX(%File, %aFile)
+  #IF(%File = %aFile)
+    #FIX(%Key, %aKey)
+    #IF(%Key = %aKey)
+      #SELECT(%KeyField, 1)
+      #IF(UPPER(%KeyField) = UPPER(%aField))
+        #RETURN(%True)
+      #ENDIF
+    #ENDIF
+  #ENDIF
+  #RETURN(%False)
+#!
+#!
+#!
+#!
+#!
+#!
+#EXTENSION(WebGuardProc, 'Web Procedure Guard Extension'),PROCEDURE,SINGLE,REQ(WebGuard(Web)),HLP('~WebGuardProcExt')
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+#ENDPREPARE
+#!
+#BOXED(''),AT(0,0),WHERE(%False),HIDE
+  #PROMPT('',@S64),%GuardItem,MULTI(''),UNIQUE
+#ENDBOXED
+#PROMPT('Guard Procedure Entry', CHECK),%GuardProcEntry,DEFAULT(%False)
+#ENABLE(%GuardProcEntry = %True)
+  #PROMPT('Required &Entry Capability:', @S80),%ProcEntryCapability,REQ
+  #WITH(%GuardItem, 'Global')
+    #INSERT(%GuardFailureActionsPrompts)
+  #ENDWITH
+#ENDENABLE
+#BUTTON('Control Guard Options'),MULTI(%ControlGuardInstance, %ControlGuardType & ' guard on ' & %GuardControl & ' requires ' & %ControlCapability),INLINE
+  #PROMPT('&Control to Guard:', CONTROL),%GuardControl,REQ
+  #PROMPT('Required &Control Capability:', @S80),%ControlCapability,REQ
+  #PROMPT('Guard &Type:', DROP('Hide|Trigger')), %ControlGuardType,DEFAULT('Hide')
+  #ENABLE(%ControlGuardType = 'Trigger')
+    #WITH(%GuardItem, 'Control' & %ControlGuardInstance)
+      #INSERT(%GuardFailureActionsPrompts)
+    #ENDWITH
+  #ENDENABLE
+#ENDBUTTON
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+#ENDAT
+#!
+#!
+#AT(%DataSection),WHERE(%GuardEnabled)
+  #FOR(%ControlGuardInstance)
+#INSERT(%MakeDeclr(ABC), 22, %OOPConstruct, 'ControlGuard' & %ControlGuardInstance, 'BYTE,AUTO')
+%OOPConstruct
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Run', '(),BYTE'),WHERE(%GuardEnabled),PRIORITY(1000)
+IF Guard.ActivateGuardFile() THEN RETURN RequestCancelled.
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Run', '(),BYTE'),WHERE(%GuardEnabled),PRIORITY(8000)
+Guard.DeactivateGuardFile
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),WHERE(%GuardEnabled),PRIORITY(1000)
+  #FOR(%ControlGuardInstance),WHERE(%ControlCapability <> '' AND %ControlGuardType = 'Hide')
+ControlGuard%ControlGuardInstance = Guard.GetCapability(%(%StripPling(%ControlCapability, %True)))
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),WHERE(%GuardEnabled),PRIORITY(8005)
+  #FOR(%ControlGuardInstance),WHERE(%ControlCapability <> '' AND %ControlGuardType = 'Hide')
+IF ControlGuard%ControlGuardInstance THEN HIDE(%GuardControl).
+  #ENDFOR
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection, 'Init', '(),BYTE'),PRIORITY(500),WHERE(%GuardEnabled AND %GuardProcEntry = %True),DESCRIPTION('Verify procedure entrance capability')
+  #CASE(%GetGuardFailureAction('Global'))
+  #OF('Run Procedure')
+IF Guard.GetCapability(%(%StripPling(%ProcEntryCapability, %True)))
+  %(%GetGuardProcedureToRun('Global'))
+  RETURN Level:Fatal
+END
+  #OF('Show Message')
+IF Guard.AssertCapability(%(%StripPling(%ProcEntryCapability, %True)))
+  RETURN Level:Fatal
+END
+  #ELSE
+    #ASSERT(%False, 'Guard Failure Action Unknown!')
+  #ENDCASE
+#ENDAT
+#!
+#!
+#AT(%ControlEventHandling, , 'Accepted'),WHERE(%GuardEnabled),PRIORITY(1000)
+  #FOR(%ControlGuardInstance),WHERE(%GuardControl = %Control AND %ControlCapability <> '' AND %ControlGuardType = 'Trigger')
+    #CASE(%GetGuardFailureAction('Control' & %ControlGuardInstance))
+    #OF('Run Procedure')
+  IF Guard.GetCapability(%(%StripPling(%ProcEntryCapability, %True)))
+    %(%GetGuardProcedureToRun('Control' & %ControlGuardInstance))
+    RETURN Level:Notify
+  END
+    #OF('Show Message')
+  IF Guard.AssertCapability(%(%StripPling(%ProcEntryCapability, %True)))
+    RETURN Level:Notify
+  END
+    #ELSE
+      #ASSERT(%False, 'Guard Failure Action Unknown!')
+    #ENDCASE
+  #ENDFOR
+#ENDAT
+#!
+#!
+#!
+#!
+#GROUP(%GuardFailureActionsPrompts)
+  #PROMPT('When Guard &Fails:', DROP('Default Action|Show Message|Run Procedure')),%GuardFailureAction,DEFAULT('Default Action')
+  #ENABLE(%GuardFailureAction = 'Run Procedure')
+    #PROMPT('&Procedure Name:', PROCEDURE),%GuardProcedureToRun,REQ
+  #ENDENABLE
+#!
+#!
+#GROUP(%GetGuardFailureAction, %Tag)
+  #CALL(%FixGuardItem, %Tag)
+  #RETURN(CHOOSE(%GuardFailureAction = 'Default Action', %DefaultGuardFailureAction, %GuardFailureAction))
+#!
+#!
+#GROUP(%GetGuardProcedureToRun, %Tag)
+  #CALL(%FixGuardItem, %Tag)
+  #IF(%GuardFailureAction = 'Default Action' AND %DefaultGuardFailureAction = 'Run Procedure')
+    #RETURN(%DefaultGuardProcedureToRun)
+  #ELSIF(%GuardFailureAction = 'Run Procedure')
+    #RETURN(%GuardProcedureToRun)
+  #ELSE
+    #ASSERT(%False, 'Unable to determine guard failure procedure to call')
+  #ENDIF
+  #RETURN('')
+#!
+#!
+#GROUP(%FixGuardItem, %Tag)
+  #FIX(%GuardItem, %Tag)
+  #ASSERT(%GuardItem = %Tag, 'GetGuardFailureAction: Cannot find ' & %Tag & ' in %GuardItem')
+#!
+#!
+#!
+#!
+#CONTROL(WebGuardLogonButton, 'Logon Button'),WINDOW,MULTI,REQ(WebGuard(Web)),HLP('~WebGuardLogonButton')
+#!
+  CONTROLS
+    BUTTON('Logon'),USE(?Logon),#REQ
+#!
+#PROMPT('Run Procedure When Logon &Successful:', CHECK),%RunProcedureAfterLogon,AT(10),DEFAULT(%False)
+#ENABLE(%RunProcedureAfterLogon = %True)
+  #PROMPT('&Procedure To Run:', PROCEDURE),%ProcedureToRunAtLogon,REQ
+#ENDENABLE
+#!
+#!
+#ATSTART
+  #DECLARE(%ControlName)
+  #CALL(%GetControlName(ABC)),%ControlName
+#ENDAT
+#!
+#!
+#AT(%ControlEventHandling, %ControlName, 'Accepted'),WHERE(%GuardEnabled),PRIORITY(6000)
+IF Guard.Ask() = Level:Benign
+  #IF(%RunProcedureAfterLogon)
+  %ProcedureToRunAtLogon
+  #ELSE
+  ReturnValue = Level:Notify
+  #ENDIF
+END
+#ENDAT
+#!
+#!
+#!
+#!
+#EXTENSION(WebVisitor, 'Web Visitor Extension'),APPLICATION,FIRST,SINGLE,HLP('~WebVisitorExt'),REQ(WebGuard(Web))
+#!
+#!
+#SHEET, HSCROLL
+  #TAB('&Visitors')
+    #ENABLE(%GuardEnabled = %TRUE)
+      #PROMPT('&Enable Visitors', CHECK),%VisitorEnabled,DEFAULT(%TRUE),AT(10)
+      #ENABLE(%VisitorEnabled = %TRUE)
+        #PROMPT('Derived &Guard Class:', FROM(%pClassName)),%VisitorClass,DEFAULT('VisitorClass'),REQ
+        #BOXED('Visitors File')
+          #PROMPT('&Visitors File:',FILE),%VisitorFile,REQ
+          #ENABLE(%VisitorFile <> ''),CLEAR
+            #PROMPT('Visitor Idx Ke&y:',KEY(%VisitorFile)),%VISIdxKey,REQ
+            #PROMPT('Visitor Id&x Field:', FIELD(%VisitorFile)),%VISIdx,REQ
+            #PROMPT('Visitor Custo&mer ID Field:', FIELD(%VisitorFile)),%VISCusID,REQ
+            #PROMPT('Visitor Date Field:', FIELD(%VisitorFile)),%VISDte,REQ
+            #ENABLE(%VISDte <> ''),CLEAR
+              #PROMPT('Date Field Initial Value:', @S255),%VISDteInitial,REQ,DEFAULT('TODAY()')
+            #ENDENABLE
+          #ENDENABLE
+        #ENDBOXED
+        #BOXED('Cart File')
+          #PROMPT('&Cart File:',FILE),%CartFile
+          #ENABLE(%CartFile <> ''),CLEAR
+            #PROMPT('Cart Customer &Key:',KEY(%CartFile)),%CARTKey,REQ
+            #PROMPT('Cart C&ustomer ID Field:', FIELD(%CartFile)),%CARTCusID,REQ
+          #ENDENABLE
+        #ENDBOXED
+        #BOXED('Invoice File')
+          #PROMPT('&Invoice File:',FILE),%InvoiceFile
+          #ENABLE(%InvoiceFile <> ''),CLEAR
+            #PROMPT('In&voice Customer Key:',KEY(%InvoiceFile)),%INVKey,REQ
+            #PROMPT('Invoice Cu&stomer ID Field:', FIELD(%InvoiceFile)),%INVCusID,REQ
+          #ENDENABLE
+        #ENDBOXED
+      #ENDENABLE
+    #ENDENABLE
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#AT(%FileManagerCodeSection,,'PrimeFields','()'),WHERE(%VisitorEnabled AND %File = %VisitorFile),PRIORITY(3000)
+  #SUSPEND
+    #FIX(%Field,%VISDte)
+    #IF(%FieldInitial = '' OR %VISDteInitial <> 'TODAY()')
+      #RELEASE
+%Field = %VISDteInitial
+    #ENDIF
+  #RESUME
+#ENDAT
+#!
+#!
+#AT(%CustomGlobalDeclarations),WHERE(%VisitorEnabled)
+  #ADD(%UsedFile, %VisitorFile)
+  #INSERT(%AddRelatedFiles(ABC),%UsedFile,%VisitorFile)
+  #IF(%CartFile <> '')
+    #ADD(%UsedFile, %CartFile)
+    #INSERT(%AddRelatedFiles(ABC),%UsedFile,%CartFile)
+  #ENDIF
+  #IF(%InvoiceFile <> '')
+    #ADD(%UsedFile, %InvoiceFile)
+    #INSERT(%AddRelatedFiles(ABC),%UsedFile,%InvoiceFile)
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%BeforeInitializingGlobalObjects),WHERE(%VisitorEnabled),PRIORITY(300),DESCRIPTION('Initialize Visitor')
+IF Guard.InitVisitor(Access:%VisitorFile, %VISIdxKey, %VISIdx, %VISCusID)=Level:Benign
+  #IF(%CartFile <> '')
+IF Guard.InitCart(Access:%CartFile, %CARTKey, %CARTCusId)=Level:Benign
+  #ENDIF
+  #IF(%InvoiceFile <> '')
+IF Guard.InitInvoice(Access:%InvoiceFile, %INVKey, %INVCusId)=Level:Benign
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%AfterEntryPointCodeStatement),WHERE(%VisitorEnabled)
+  #DECLARE(%TplInstance)
+  #CALL(%FindGlobalTemplateInstance(ABC), 'WebGuard(Web)'),%TplInstance
+  #IF(%TplInstance > 0)
+    #ALIAS(%ThisClassItem, %ClassItem, %TplInstance),APPLICATION
+    #FIX(%ThisClassItem, 'Guard')
+    #ALIAS(%ThisActualDefaultBaseClassType, %ActualDefaultBaseClassType, %TplInstance),APPLICATION
+    #SET(%ThisActualDefaultBaseClassType, %VisitorClass)
+  #ELSE
+    #ASSERT(%False, 'Global WebGuard template instance not found!')
+  #ENDIF
+#ENDAT
+#!
+#!
+#AT(%BeforeCallingFirstProcedure),PRIORITY(8000),WHERE(%VisitorEnabled)
+IF Guard.ActivateGuardFile() = Level:Benign
+IF Guard.NewVisitor()=Level:Benign
+#ENDAT
+#!
+#!
+#AT(%AfterCallingFirstProcedure),PRIORITY(1000),WHERE(%VisitorEnabled)
+END
+Guard.DeactivateGuardFile
+END
+#ENDAT
+#!
+#!
+#AT(%AfterCallingGeneratedLogonProcedure),WHERE(%VisitorEnabled=%TRUE AND %OverRideLogon=%TRUE)
+IF ReturnValue=TRUE
+  Guard.TidyUp()
+END
+#ENDAT
+#!
+#!
+#AT(%AfterKillingGlobalObjects),WHERE(%VisitorEnabled),PRIORITY(9000)
+  #IF(%InvoiceFile <> '')
+END
+  #ENDIF
+  #IF(%CartFile <> '')
+END
+  #ENDIF
+Guard.KillVisitor()
+END
+#ENDAT
+#!
+#!
+#!
+#!
+#!
+#!
+#EXTENSION(DeleteVisitorProcess, 'Application DeleteVisitor Extension'),SINGLE,HLP('~DeleteVisitorProcessExt'),REQ(WebGuard(Web))
+#RESTRICT,WHERE(UPPER(%ProcedureTemplate)='PROCESS')
+#ENDRESTRICT
+#!
+#!
+#SHEET
+  #TAB('Cancel &Reservation'),WHERE(%HasReservation()=%TRUE)
+    #PROMPT('&Use Reservation System', CHECK),%UseProductReservation,DEFAULT(%FALSE),AT(10)
+    #ENABLE(%UseProductReservation = %TRUE)
+      #BOXED('Invoice File')
+        #PROMPT('Custo&mer ID Field:',FIELD),%INVCustomerIDField,REQ
+      #ENDBOXED
+      #BOXED('Invoice Line File')
+        #PROMPT('Re&servation Number Field:', FIELD),%INVLResNoField,REQ
+        #PROMPT('Product &ID Field:', FIELD),%INVLProductIDField,REQ
+        #PROMPT('&Quantity Field:', FIELD),%INVLQuantityField,REQ
+      #ENDBOXED
+    #ENDENABLE
+  #ENDTAB
+#ENDSHEET
+#!
+#!
+#AT(%BeforeGenerateApplication)
+  #ADD(%CustomGlobalMapIncludes, UPPER(SLICE(%Module, 1, INSTRING('.', %Module, 1, 1))) & 'INC')
+#ENDAT
+#!
+#!
+#AT(%BeforeCallingFirstProcedure)
+#! call current process to delete visitors
+  %Procedure
+#ENDAT
+#!
+#!
+#AT(%ProcessManagerMethodCodeSection,'TakeRecord','(),BYTE'),WHERE(UPPER(%ProcedureTemplate)='PROCESS'),PRIORITY(8000)
+  #IF(%HasReservation() AND %UseProductReservation)
+    #DECLARE(%TplInstance)
+    #CALL(%FindLocalTemplateInstance, 'Reservation(ShoppingTrolley)'),%TplInstance
+    #IF(%TplInstance > 0)
+      #ALIAS(%ThisClassItem, %ClassItem, %TplInstance)
+      #FIX(%ThisClassItem, 'Reservation')
+      #IF(%ThisClassItem='Reservation')
+IF ~%ThisClassItem.IReservation&=NULL AND %INVLResNoField<>''
+  %ThisClassItem.IReservation.ProductReturn(%INVCustomerIDField,%INVLProductIDField,%INVLQuantityField,%INVLResNoField)
+END
+      #ELSE
+        #ASSERT(%False, 'Reservation class not found!')
+      #ENDIF
+    #ELSE
+      #ASSERT(%False, 'Reservation template instance not found!')
+    #ENDIF
+  #ENDIF
+#ENDAT
+#!
+#GROUP(%FindLocalTemplateInstance, %LookFor)
+  #DECLARE(%RVal)
+  #CALL(%FindLocalTemplateInstance(ABC), %LookFor),%RVal
+  #RETURN(%RVal)
+#!
+#!
+#GROUP(%HasReservation),AUTO
+  #DECLARE(%TplInstance)
+  #CALL(%FindLocalTemplateInstance, 'Reservation(ShoppingTrolley)'),%TplInstance
+  #IF(%TplInstance > 0)
+    #ALIAS(%CheckReservation, %UseReservation, %TplInstance)
+    #RETURN(%CheckReservation)
+  #ELSE
+    #RETURN(%FALSE)
+  #ENDIF
+#!
+#!

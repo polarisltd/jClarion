@@ -1,0 +1,12 @@
+ !ABCIncludeFile(ABC)
+
+OMIT('_EndOfInclude_', _ReservationInterface_)
+_ReservationInterface_ EQUATE(TRUE)
+
+IReservation       INTERFACE
+ProductReturn        PROCEDURE(ASTRING CustID, ASTRING ProdID, LONG Quantity, LONG ResNo),BYTE,PROC
+Reserve              PROCEDURE(ASTRING CustID, ASTRING ProdID, LONG Quantity, *LONG ResNo, BYTE InSequence=TRUE),BYTE
+Reserve              PROCEDURE(ASTRING CustID, ASTRING ProdID, <ASTRING StartFrom>, LONG Quantity, *LONG ResNo, BYTE InSequence=TRUE),BYTE
+                   END
+
+_EndOfInclude_

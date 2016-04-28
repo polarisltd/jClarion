@@ -1,0 +1,320 @@
+#PROCEDURE(Report,'Generic Reporting Procedure'),REPORT,PRIMARY('Report Procedure',OPTKEY),HLP('~TPLProcReport'),QUICK(ReportWizard(Wizards))
+#LOCALDATA
+RejectRecord         LONG
+LocalRequest         LONG
+LocalResponse        LONG
+FilesOpened          LONG
+WindowOpened         LONG
+RecordsToProcess     LONG,AUTO
+RecordsProcessed     LONG,AUTO
+RecordsPerCycle      LONG,AUTO
+RecordsThisCycle     LONG,AUTO
+PercentProgress      BYTE
+RecordStatus         BYTE,AUTO
+#ENDLOCALDATA
+#PROMPT('P&arameters:', @s255), %Parameters
+#ENABLE(%ProcedureType='FUNCTION')
+  #PROMPT('Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#PROMPT('Window Message:',@S40),%WindowMessage
+#BUTTON('Repor&t Properties'),AT(10,,180)
+  #SHEET
+    #TAB('&General'),HLP('~TPLProcReport_General')
+      #PROMPT('Print Preview',CHECK),%EnablePrintPreview,DEFAULT(1)
+      #PROMPT('Quick-Scan Records',CHECK),%EnableQuickScan,DEFAULT(1)
+      #PROMPT('&Record Filter:',@S255),%RecordFilter
+      #ENABLE(%RecordFilter OR %RangeField)
+        #PROMPT('Approx. Record Count:',@N6),%ApproxRecordCount
+      #ENDENABLE
+    #ENDTAB
+    #TAB('&Range Limits'),WHERE(%PrimaryKey),HLP('~TPLProcReport_Range_Limits')
+      #ENABLE(%PrimaryKey)
+        #PROMPT('Range Limit &Field:',COMPONENT(%PrimaryKey)),%RangeField
+      #ENDENABLE
+      #ENABLE(%RangeField)
+        #PROMPT('Range Limit &Type:',DROP('Current Value|Single Value|Range of Values|File Relationship')),%RangeLimitType,DEFAULT('Current Value')
+        #BOXED('Range Limit Boundary:'),WHERE(%RangeLimitType='Single Value'),AT(,60)
+          #PROMPT('&Range Limit Value:',FIELD),%RangeLimit
+        #ENDBOXED
+        #BOXED('Range Limit Boundaries:'),WHERE(%RangeLimitType='Range of Values'),AT(,60)
+          #PROMPT('&Low Limit Value:',FIELD),%RangeLow
+          #PROMPT('&High Limit Value:',FIELD),%RangeHigh
+        #ENDBOXED
+        #BOXED('Range limiting file'),WHERE(%RangeLimitType='File Relationship'),AT(,60)
+          #PROMPT('&Related file:',FILE),%RangeFile
+        #ENDBOXED
+      #ENDENABLE
+    #ENDTAB
+    #TAB('&Range Limits'),WHERE(NOT %PrimaryKey),HLP('~TPLProcReport_Range_Limits')
+      #DISPLAY('To use a range limit, your report must use a key. You will not be able to specify a range limit until you''ve specified the report''s key.'),AT(10,30,175,30)
+    #ENDTAB
+    #TAB('&Hot Fields'),HLP('~TPLProcReport_Hot_Fields')
+      #BUTTON('"Hot" Fields'),AT(10,,180),MULTI(%HotFields,%HotField),INLINE,HLP('~TPLProcReport_Hot_Fields')
+        #PROMPT('Hot Field:',FIELD),%HotField
+        #PROMPT('BIND Field',CHECK),%HotFieldBound
+      #ENDBUTTON
+    #ENDTAB
+    #TAB('&Detail Filters'),HLP('~TPLProcReport_Detail_Filters')
+      #BUTTON('&Detail Filters'),FROM(%ReportControl,%ReportControlLabel),WHERE(%ReportControlType = 'DETAIL'),INLINE,HLP('~TPLProcReport_Detail_Filters')
+        #PROMPT('Filter:',@s255),%DetailFilter
+        #ENABLE( %DetailFilter )
+          #PROMPT('Exclude unfiltered:',CHECK),%DetailFilterExclusive
+        #ENDENABLE
+      #ENDBUTTON
+    #ENDTAB
+  #ENDSHEET
+#ENDBUTTON
+#DECLARE(%ListView)
+#SET(%ListView,'Process:View')
+#DECLARE(%QueueField),UNIQUE
+#DECLARE(%ListViewBoundField),UNIQUE
+#DECLARE(%QueueFieldAssignment,%QueueField)
+#DECLARE(%ProcessFilter)
+#DECLARE(%InstancePrefix)
+#DECLARE(%Temp1)
+#DECLARE(%Temp2)
+#CASE(%RangeLimitType)
+#OF('Range of Values')
+  #SET(%Temp1,%RangeLow)
+  #SET(%Temp2,%RangeHigh)
+#OF('Single Value')
+  #SET(%Temp1,%RangeLimit)
+#OF('File Relationship')
+  #SET(%Temp1,%RangeFile)
+#ENDCASE
+#INSERT(%StandardViewFilter,%RecordFilter,%PrimaryKey,%RangeField,%RangeLimitType,'Report:Save:',%Temp1,%Temp2,'Construct')
+#SET(%ProcessFilter,%ValueConstruct)
+#IF(%PrimaryKey)
+  #FIX(%File,%Primary)
+  #FIX(%Key,%PrimaryKey)
+  #FOR(%KeyField)
+    #ADD(%QueueField,%KeyField)
+  #ENDFOR
+#ENDIF
+#FOR (%HotFields)
+  #ADD(%QueueField,%HotField)
+  #SET(%QueueFieldAssignment,%HotField)
+  #IF (%HotFieldBound)
+    #ADD(%ListViewBoundField,%HotField)
+  #ENDIF
+#ENDFOR
+#FOR (%Formula), WHERE( ITEMS(%FormulaField) )
+  #FOR (%FormulaField)
+    #ADD(%QueueField,%FormulaField)
+    #SET(%QueueFieldAssignment,%FormulaField)
+  #ENDFOR
+#ENDFOR
+#FOR (%ReportControl), WHERE(%ReportControlUse)
+  #ADD(%QueueField,%ReportControlUse)
+  #SET(%QueueFieldAssignment,%ReportControlUse)
+#ENDFOR
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','After Record Retrieved, Before Lookups')
+#CLASS('After Lookups','After Record Retrieved, After Lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#CLASS('Before Range Check','In Validate Record ROUTINE, Before Range Limit Code')
+#CLASS('Before Filter Check','In Validate Record ROUTINE, Before Filter Code')
+#CLASS('Before Print Detail','Before Printing Report Detail')
+#AT(%CustomGlobalDeclarations)
+  #IF(%EnablePrintPreview = %True)
+    #SET(%PrintPreviewUsed,%True)
+  #ENDIF
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#INSERT(%FileControlInitialize)
+#EMBED(%GatherSymbols,'Gather Template Symbols'),HIDE
+%Procedure %ProcedureType%Parameters
+#INSERT(%StandardViewFilter,%RecordFilter,%PrimaryKey,%RangeField,%RangeLimitType,'Report:Save:',%Temp1,%Temp2,'Declare')
+#INSERT(%ProcessDeclarations)
+#INSERT(%ConstructView)
+#INSERT(%StandardReportGeneration)
+#INSERT(%StandardProgressWindow)
+PrintSkipDetails BOOL,AUTO
+#IF(%EnablePrintPreview)
+PrintPreviewQueue QUEUE,PRE
+PrintPreviewImage   STRING(80)
+                  END
+#ENDIF
+  CODE
+  PUSHBIND
+  #EMBED(%ProcedureSetup,'Procedure Setup')
+  #FOR (%ListViewBoundField)
+    #FIND(%Field,%ListViewBoundField)
+    #IF(NOT %FieldFile OR %FieldName)
+  BIND('%ListViewBoundField',%ListViewBoundField)
+    #ENDIF
+  #ENDFOR
+  #INSERT(%StandardViewFilter,%RecordFilter,%PrimaryKey,%RangeField,%RangeLimitType,'Report:Save:',%Temp1,%Temp2,'Bind')
+  LocalRequest = GlobalRequest
+  LocalResponse = RequestCancelled
+  CLEAR(GlobalRequest)
+  CLEAR(GlobalResponse)
+  #INSERT(%StandardFormula,'Procedure Setup')
+  #INSERT(%FileControlOpen)
+  #EMBED(%BeforeAccept,'Preparing to Process the Window')
+  #INSERT(%StandardViewFilter,%RecordFilter,%PrimaryKey,%RangeField,%RangeLimitType,'Report:Save:',%Temp1,%Temp2,'Save')
+  #MESSAGE('Accept Handling',3)
+  #IF(%PrimaryKey)
+    #IF(%RecordFilter OR %RangeField)
+      #IF(NOT(%ApproxRecordCount))
+  RecordsToProcess = 500
+      #ELSE
+  RecordsToProcess = %ApproxRecordCount
+      #ENDIF
+    #ELSE
+  RecordsToProcess = RECORDS(%Primary)
+    #ENDIF
+  RecordsPerCycle = 25
+  #ELSE
+    #IF(%RecordFilter)
+      #IF(NOT(%ApproxRecordCount))
+  RecordsToProcess = 10000
+      #ELSE
+  RecordsToProcess = %ApproxRecordCount
+      #ENDIF
+    #ELSE
+  RecordsToProcess = BYTES(%Primary)
+    #ENDIF
+  RecordsPerCycle = 1000
+  #ENDIF
+  RecordsProcessed = 0
+  PercentProgress = 0
+  #EMBED(%BeforeOpeningWindow,'Before Opening Progress Window')
+  OPEN(ProgressWindow)
+  Progress:Thermometer = 0
+  ?Progress:PctText{Prop:Text} = '0% Completed'
+  #IF(%EnablePrintPreview)
+  ProgressWindow{Prop:Text} = 'Generating Report'
+  #ELSE
+  ProgressWindow{Prop:Text} = 'Printing Report'
+  #ENDIF
+  #IF(SUB(%WindowMessage,1,1)='!')
+    #SET(%ValueConstruct,SUB(%WindowMessage,2,LEN(%WindowMessage)-1))
+  ?Progress:UserString{Prop:Text}=%ValueConstruct
+  #ELSE
+  ?Progress:UserString{Prop:Text}='%'WindowMessage'
+  #ENDIF
+  #EMBED(%AfterOpeningWindow,'After Opening Progress Window')
+  #IF(%EnableQuickScan)
+  #EMBED(%BeforeTurnQuickScanOn,'Before Turning QuickScan On'),WHERE(%EnableQuickScan)
+  SEND(%Primary,'QUICKSCAN=on')
+    #FOR(%Secondary),WHERE(%SecondaryType = '1:MANY')
+  SEND(%Secondary,'QUICKSCAN=on')
+    #ENDFOR
+  #EMBED(%AfterTurnQuickScanOn,'After Turning QuickScan On'),WHERE(%EnableQuickScan)
+  #ENDIF
+  ACCEPT
+    CASE EVENT()
+    OF Event:OpenWindow
+      #INSERT(%ProcessSaveLimits)
+      #INSERT(%ReportEventOpenWindow)
+    OF Event:Timer
+      LOOP RecordsPerCycle TIMES
+        #INSERT(%ReportEventTimer)
+        LOOP
+          #EMBED(%BeforeSubsequentRead,'Before subsequent record retrieval')
+          DO GetNextRecord
+          #EMBED(%AfterSubsequentRead,'After subsequent record retrieval')
+          DO ValidateRecord
+          CASE RecordStatus
+            OF Record:OutOfRange
+              LocalResponse = RequestCancelled
+              BREAK
+            OF Record:OK
+              BREAK
+          END
+        END
+        IF LocalResponse = RequestCancelled
+          LocalResponse = RequestCompleted
+          BREAK
+        END
+        LocalResponse = RequestCancelled
+      END
+      IF LocalResponse = RequestCompleted
+        POST(Event:CloseWindow)
+      END
+    END
+    CASE FIELD()
+    OF ?Progress:Cancel
+      CASE Event()
+      OF Event:Accepted
+        #EMBED(%ProgressCancel,'When the report is cancelled')
+        LocalResponse = RequestCancelled
+        POST(Event:CloseWindow)
+      END
+    END
+  END
+  #INSERT(%ReportEndOfProcedure)
+  DO ProcedureReturn
+#!---------------------------------------------------------------------
+ProcedureReturn ROUTINE
+!|
+!| This routine provides a common procedure exit point for all template
+!| generated procedures.
+!|
+!| First, all of the files opened by this procedure are closed.
+!|
+!| Next, GlobalResponse is assigned a value to signal the calling procedure
+!| what happened in this procedure.
+!|
+!| Next, we replace the BINDings that were in place when the procedure initialized
+!| (and saved with PUSHBIND) using POPBIND.
+!|
+#IF(%ReturnValue)
+!| Finally, we return to the calling procedure, passing %ReturnValue back.
+#ELSE
+!| Finally, we return to the calling procedure.
+#ENDIF
+!|
+  #INSERT(%FileControlClose)
+  #EMBED(%EndOfProcedure,'End of Procedure')
+  #INSERT(%StandardFormula,'Procedure Exit')
+  IF LocalResponse
+    GlobalResponse = LocalResponse
+  ELSE
+    GlobalResponse = RequestCancelled
+  END
+  POPBIND
+  #IF(%ReturnValue)
+  RETURN(%ReturnValue)
+  #ELSE
+  RETURN
+  #ENDIF
+#INSERT(%ProcessValidateRecord)
+#INSERT(%ProcessGetRecords)
+#!---------------------------------------------------------------------
+#EMBED(%ProcRoutines,'Procedure Routines'),LABEL
+#EMBED(%ProcedureRoutines,'Procedure Routines'),HIDE
+#EMBED(%LocalProcedures,'Local Procedures'),HIDE
+#DEFAULT
+NAME DefaultReport
+[COMMON]
+DESCRIPTION 'A reporting procedure'
+FROM Clarion Report
+[DATA]
+RejectRecord             LONG,AUTO
+LocalRequest             LONG,AUTO
+LocalResponse            LONG,AUTO
+WindowOpened             LONG,AUTO
+RecordsToProcess         LONG,AUTO
+RecordsProcessed         LONG,AUTO
+RecordsPerCycle          LONG,AUTO
+RecordsThisCycle         LONG,AUTO
+PercentProgress          BYTE,AUTO
+RecordStatus             BYTE,AUTO
+[PROMPTS]
+%RangeLimitType STRING  ('Current Value')
+[REPORT]
+Report REPORT,AT(1000,2000,6000,7000),PRE(RPT),THOUS
+       HEADER,AT(1000,1000,6000,1000)
+       END
+detail DETAIL
+       END
+       FOOTER,AT(1000,9000,6000,1000)
+       END
+       FORM,AT(1000,1000,6000,9000)
+       END
+     END
+
+#ENDDEFAULT
+#INCLUDE('GPReport.TPW')

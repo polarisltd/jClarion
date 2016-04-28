@@ -1,0 +1,14 @@
+!ABCIncludeFile(WEB)
+
+  OMIT('_EndOfInclude_',_WBHttpInterface_)
+_WBHttpInterface_ EQUATE(1)
+
+  INCLUDE('IbcBase.int')
+
+IWbArgumentIterator     INTERFACE(IIterator)
+GetName           PROCEDURE,STRING,PASCAL
+GetValue          PROCEDURE,STRING,PASCAL
+                END
+
+  _EndOfInclude_
+

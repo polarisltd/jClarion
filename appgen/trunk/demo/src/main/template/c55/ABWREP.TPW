@@ -1,0 +1,52 @@
+#UTILITY(ReportWizard,'Create a New Report Procedure'),WIZARD(Report(ABC)),HLP('~TPLWizardReport')
+#!
+#SHEET
+  #TAB('Report Wizard'),HLP('~TPLWizardReport')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WRPT1'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('This wizard will help you quickly create a new Report procedure.'),AT(90,8,235,24)
+    #DISPLAY('To begin creating your new Report procedure, click Next.'),AT(90,,,65)
+  #ENDTAB
+  #TAB('Report Wizard - Procedure Name'),WHERE(~%QuickProcedure),HLP('~TPLWizardReport')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WRPT1'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('What name should be used as the label of the report procedure?',@S100),%QuickReportPromptProcedureName,AT(90,23,235),PROMPTAT(90,8,235)
+    #VALIDATE(%QuickReportPromptProcedureName,'You must supply a procedure name!')
+  #ENDTAB
+  #TAB('Report Wizard - File Access'),FINISH(1),HLP('~TPLWizardReport')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFSCH'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('Which file do you want to report?',FILE),%QuickReportPromptPrimaryFile,AT(90,23,235),PROMPTAT(90,8,235)
+    #VALIDATE(%QuickReportPromptPrimaryFile,'You must supply a file to report!')
+  #ENDTAB
+  #TAB('Report Wizard - Key Sequence'),FINISH(1),HLP('~TPLWizardReport')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WKEY'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('A report can use a single record key, or can run in record order.  Enter a key below, or leave the field blank to run in record order.',KEY(%QuickReportPromptPrimaryFile)),%QuickReportPromptPrimaryKey,AT(90,30,235),PROMPTAT(90,8,235,24)
+  #ENDTAB
+  #TAB('Report Wizard - Columns'),FINISH(1),HLP('~TPLWizardReport')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WRPT2'&%GetColorSuffix()&'.GIF'))
+    #PROMPT('The generated report will show the data in equally sized columns. How many columns do you want the report to use?',SPIN(@n3,1,20,1)),%QuickReportColumnCount,DEFAULT(4),AT(90,30,235),PROMPTAT(90,8,235,24)
+  #ENDTAB
+  #TAB('Report Wizard - Finally...'),FINISH(1),HLP('~TPLWizardReport')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WRPT1'&%GetColorSuffix()&'.GIF'))
+    #DISPLAY('If you are creating new procedures with names that already exist in your application, the old procedures can be overwritten or the new procedures can be suppressed.'),AT(90,8,235,24)
+    #PROMPT('Overwrite existing procedures',CHECK),%QuickReportPromptOverwriteAll,AT(90,,235),DEFAULT(0)
+    #IMAGE('<255,1,4,127>'),AT(90,55)
+    #DISPLAY('The report procedure will always be overwritten by the report wizard!'),AT(125,54,200,20)
+  #ENDTAB
+#ENDSHEET
+#!
+#INSERT(%DeclareSymbols)
+#!
+#IF(%QuickProcedure)
+  #SET(%ValueConstruct,%QuickProcedure)
+#ELSE
+  #SET(%ValueConstruct,%QuickReportPromptProcedureName)
+#ENDIF
+#SET(%ReplaceExistingProcedures,%QuickReportPromptOverwriteAll)
+#ADD(%ProcedureList,%ValueConstruct)
+#SET(%QuickProcedurePrimary,%QuickReportPromptPrimaryFile)
+#SET(%QuickProcedurePrimaryKey,%QuickReportPromptPrimaryKey)
+#SET(%QuickProcedureType,'ABC Report')
+#SET(%QuickProcedureDescription,'Report the ' & %QuickProcedurePrimary & ' File')
+#SET(%QuickProcedureReport,%True)
+#SET(%QuickProcedureReportColumns,%QuickReportColumnCount)
+#!
+#INSERT(%GenerateProcedures)

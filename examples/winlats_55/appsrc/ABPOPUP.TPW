@@ -1,0 +1,155 @@
+#CODE(DisplayPopupMenu,'Displays a popup menu'),HLP('~TPLCodePreparePopup'),MULTI,PROCEDURE
+#PREPARE
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','PopupMgr'&%ActiveTemplateInstance,%PopupClass)
+#ENDPREPARE
+#SHEET
+  #TAB('&General'),HLP('~TPLCodePreparePopup_General')
+    #BOXED('Default Resizer prompts'),AT(0,0),WHERE(%False),HIDE
+      #INSERT(%OOPHiddenPrompts)
+    #ENDBOXED
+    #PROMPT('String variable for Selection:',FIELD),%MenuIDField
+    #PROMPT('Build Menu From:',DROP('Menu String|Item List|INI File')),%BuildMenuFrom
+    #ENABLE(%BuildMenuFrom='INI File')
+      #PROMPT('Menu Description:',@S80),%INIDescription,REQ
+    #ENDENABLE
+    #ENABLE(%BuildMenuFrom='Menu String')
+      #PROMPT('Menu String:',@S200),%MenuString,REQ
+      #BUTTON('Item Properties...'),MULTI(%sInternalItemID,%sItemName&' - '&%sActionMode),WHERE(%MenuString),AT(98)
+        #PROMPT('Item Name:',@S32),%sItemName
+        #PROMPT('Disabled?',CHECK),%sItemDisabled
+        #PROMPT('Checkable?',CHECK),%sItemCheckable
+        #ENABLE(%sItemCheckable=%True)
+          #PROMPT('Initially Checked?',CHECK),%sItemInitiallyChecked
+        #ENDENABLE
+        #PROMPT('Action mode:',DROP('Normal|Post Event|Mimic Button')),%sActionMode
+        #BOXED('Post Event Options'),WHERE(%sActionMode='Post Event')
+          #PROMPT('Event to Post:',@S32),%sEventToPost,REQ
+          #PROMPT('Control to Post to:',CONTROL),%sControlToPostTo
+        #ENDBOXED
+        #BOXED('Mimic Button Options'),WHERE(%sActionMode='Mimic Button')
+          #PROMPT('Button to Mimic:',CONTROL),%sButtonToMimic,REQ
+        #ENDBOXED
+      #ENDBUTTON
+    #ENDENABLE
+    #ENABLE(%BuildMenuFrom='Item List')
+      #BUTTON('Menu Items...'),MULTI(%iInternalItemID,%iItemName&' - '&%iActionMode),REQ,AT(98)
+        #PROMPT('Item Name:',@S32),%iItemName,REQ
+        #PROMPT('Item Text:',@S32),%iItemText,REQ
+        #PROMPT('Disabled?',CHECK),%iItemDisabled
+        #PROMPT('Checkable?',CHECK),%iItemCheckable
+        #ENABLE(%iItemCheckable=%True)
+          #PROMPT('Initially Checked?',CHECK),%iItemInitiallyChecked
+        #ENDENABLE
+        #PROMPT('Action mode:',DROP('Normal|Post Event|Mimic Button')),%iActionMode
+        #BOXED('Post Event Options'),WHERE(%iActionMode='Post Event')
+          #PROMPT('Event to Post:',@S32),%iEventToPost,REQ
+          #PROMPT('Control to Post to:',CONTROL),%iControlToPostTo
+        #ENDBOXED
+        #BOXED('Mimic Button Options'),WHERE(%iActionMode='Mimic Button')
+          #PROMPT('Button to Mimic:',CONTROL),%iButtonToMimic,REQ
+        #ENDBOXED
+      #ENDBUTTON
+    #ENDENABLE
+  #ENDTAB
+  #TAB('&Classes'),HLP('~TPLCodePreparePopup_Classes')
+    #WITH(%ClassItem,'Default')
+      #INSERT(%ClassPrompts)
+    #ENDWITH
+  #ENDTAB
+#ENDSHEET
+#!
+#ATSTART
+  #CALL(%ReadABCFiles)
+  #CALL(%SetClassDefaults, 'Default','PopupMgr'&%ActiveTemplateInstance,%PopupClass)
+  #EQUATE(%PopupObject,%ThisObjectName)
+  #DECLARE(%PopupClassLine),MULTI
+#ENDAT
+#!
+#AT(%GatherObjects)
+#CALL(%AddObjectList, 'Default')
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8500)
+%PopupObject.Init(INIMgr)
+  #IF(%EnableRunTimeTranslator)
+%PopupObject.SetTranslator(Translator)
+  #ENDIF
+#CASE(%BuildMenuFrom)
+#OF('INI File')
+%PopupObject.Restore(%(%StripPling(%INIDescription)))
+#OF('Menu String')
+%PopupObject.AddMenu(%(%StripPling(%MenuString)))
+  #FOR(%sInternalItemID)
+    #IF(%sItemDisabled)
+%PopupObject.SetItemEnable('%sItemName',False)
+    #ENDIF
+    #IF(%sItemCheckable)
+      #IF(%sItemInitiallyChecked)
+%PopupObject.SetItemCheck('%sItemName',True)
+      #ELSE
+%PopupObject.SetItemCheck('%sItemName',False)
+      #ENDIF
+    #ENDIF
+    #CASE(%sActionMode)
+    #OF('Post Event')
+%PopupObject.AddItemEvent('%sItemName',%sEventToPost,%sControlToPostTo)
+    #OF('Mimic Button')
+%PopupObject.AddItemMimic('%sItemName',%sButtonToMimic)
+    #ENDCASE
+  #ENDFOR
+#OF('Item List')
+  #FOR(%iInternalItemID)
+%PopupObject.AddItem('%iItemText','%iItemName')
+    #IF(%iItemDisabled)
+%PopupObject.SetItemEnable('%iItemName',False)
+    #ENDIF
+    #IF(%iItemCheckable)
+      #IF(%iItemInitiallyChecked)
+%PopupObject.SetItemCheck('%iItemName',True)
+      #ELSE
+%PopupObject.SetItemCheck('%iItemName',False)
+      #ENDIF
+    #ENDIF
+    #CASE(%iActionMode)
+    #OF('Post Event')
+%PopupObject.AddItemEvent('%iItemName',%iEventToPost,%iControlToPostTo)
+    #OF('Mimic Button')
+%PopupObject.AddItemMimic('%iItemName',%iButtonToMimic)
+    #ENDCASE
+  #ENDFOR
+#ENDCASE
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Kill','(),BYTE'),PRIORITY(7500)
+%PopupObject.Kill
+#ENDAT
+#!
+#AT(%PopupMgrMethodCodeSection,%ActiveTemplateInstance),PRIORITY(5000),DESCRIPTION('Parent Call'),WHERE(%ParentCallValid())
+  #CALL(%GenerateParentCall)
+#ENDAT
+#!
+#AT(%LocalProcedures)
+#CALL(%GenerateVirtuals, 'Default', 'Local Objects|Abc Objects|Popup Menu Manager ' & %ActiveTemplateInstance, '%PopupVirtuals(ABC)')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass, 'Default')
+#ENDAT
+#!
+#!
+#IF(%MenuIDField)
+%MenuIDField=%PopupObject.Ask()
+#ELSE
+%PopupObject.Ask
+#ENDIF
+#!
+#!
+#GROUP(%PopupVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%PopupMgrMethodDataSection,'PopupMgr Method Data Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%BaseClassToUse('Default'))),TREE(%TreeText & %DataText)
+#?%NULL
+  #?CODE
+  #EMBED(%PopupMgrMethodCodeSection,'PopupMgr Method Executable Code Section'),%ActiveTemplateInstance,%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%BaseClassToUse('Default'))),TREE(%TreeText & %CodeText)
+#!
+#!

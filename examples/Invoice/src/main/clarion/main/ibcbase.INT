@@ -1,0 +1,56 @@
+!ABCIncludeFile(IBC)
+
+OMIT('_EndOfInclude_',_IInterfaceInterface_)
+_IInterfaceInterface_ EQUATE(1)
+
+CBOOL           EQUATE(BYTE)
+
+
+IInterface      INTERFACE
+Link              PROCEDURE,PASCAL
+Release           PROCEDURE,PASCAL
+                END
+
+BaseIterator    INTERFACE(IInterface)
+First             PROCEDURE,CBOOL,PASCAL,PROC
+Next              PROCEDURE,CBOOL,PASCAL,PROC
+IsValid           PROCEDURE,CBOOL,PASCAL
+                END
+
+
+CIterator       INTERFACE(BaseIterator)               ! supports iteration throug a list of objects
+GetCurrent        PROCEDURE,*CInterface,PASCAL
+                END
+
+
+IIterator       INTERFACE(BaseIterator)               ! supports iteration through a list of interfaces
+GetCurrent        PROCEDURE,*IInterface,PASCAL
+                END
+
+
+IStringVal      INTERFACE(IInterface)
+GetValue          PROCEDURE,*CSTRING,PASCAL
+SetValue          PROCEDURE(CONST *CSTRING),PASCAL
+ClearValue        PROCEDURE(),PASCAL
+                END
+
+
+IAStringVal     INTERFACE(IInterface)
+GetValue          PROCEDURE(),ASTRING,PASCAL
+SetValue          PROCEDURE(ASTRING Value),PASCAL
+ClearValue        PROCEDURE,PASCAL
+                END
+
+
+        MAP
+          MODULE('IbcBase')  ! Clarion implementation
+IStringVal::Create   PROCEDURE(),*IStringVal,NAME('IStringVal$Create')
+IAStringVal::Create  PROCEDURE(<ASTRING InitVal>),*IAStringVal,NAME('IAStringVal$Create')
+          END
+          MODULE('IBase')    ! C++ implementation
+MakeStringVal     PROCEDURE(), *IStringVal, PASCAL, NAME('MakeStringVal')
+          END
+        END
+
+_EndOfInclude_
+

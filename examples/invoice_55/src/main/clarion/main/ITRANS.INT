@@ -1,0 +1,85 @@
+
+  OMIT('EndDefine',_ABTRANSPORT_)
+_ABTRANSPORT_  EQUATE(1)
+
+  INCLUDE('WINSOCK.INC'),ONCE
+
+
+!The New IINetConnection Interface will replace IConnection as and when all code
+!refering to it has been changed
+
+IConnection             INTERFACE
+CloseSocket               PROCEDURE
+Shutdown                  PROCEDURE,LONG
+SendData                  PROCEDURE(*STRING strSendBuffer, *LONG BytesSent),LONG
+ReceiveData               PROCEDURE(LONG lpRecieveBuffer, LONG dwSize, *LONG BytesReceived),LONG
+SetSendTimeout            PROCEDURE(LONG dwTimeout),LONG
+SetRecvTimeout            PROCEDURE(LONG dwTimeout),LONG
+GetSocket                 PROCEDURE,LONG
+IsServerSocket            PROCEDURE,BYTE
+GetThreadID               PROCEDURE,LONG
+                        END
+
+
+IINetConnection         INTERFACE
+CloseConnection           PROCEDURE
+SendData                  PROCEDURE(<*STRING strSendBuffer>, <*STRING strObjName>),BYTE,PROC
+ReceiveData               PROCEDURE(LONG lpRecieveBuffer, LONG dwSize),LONG
+GetConnectionID           PROCEDURE,LONG    !A Socket if is Winsock connection
+IsServerConnection        PROCEDURE,BYTE    !Allways returns false
+GetStatus                 PROCEDURE,LONG
+GetThreadID               PROCEDURE,LONG
+                        END
+
+IINetConnectionHttp     INTERFACE(IINetConnection)
+SetOptions                PROCEDURE(*CSTRING szReferer, *CSTRING szAcceptTypes, LONG dwFlags, LONG dwContext)
+                        END
+
+
+!The New IClient and IServer Transport Interfaces will replace ITransport as and
+!when all code refering to them has been changed.
+
+ITransport              INTERFACE
+Connect                   PROCEDURE(LONG dwThreadID, LONG dwSocket, *CSTRING szServiceName, CProtocolSocket Socket, *LONG nErr),*IConnection
+Disconnect                PROCEDURE(IConnection Connection)
+
+SendData                  PROCEDURE(IConnection Connection, *STRING strSendBuffer, *LONG BytesSent),LONG
+GetNextResponse           PROCEDURE(IConnection Connection, *STRING strResponseBuffer)
+GetNextResponseSize       PROCEDURE(IConnection Connection),LONG
+IsDataReady               PROCEDURE(),BYTE
+GetNextServerResponse     PROCEDURE(*STRING strResponseBuffer)
+GetNextServerResponseSize PROCEDURE,LONG
+IsServerDataReady         PROCEDURE,BYTE
+Listen                    PROCEDURE
+                        END
+
+
+IClientTransport        INTERFACE
+Disconnect                PROCEDURE(IINetConnection Connection)
+SendData                  PROCEDURE(IINetConnection Connection, *STRING strSendBuffer)
+GetNextResponse           PROCEDURE(IINetConnection Connection, *STRING strResponseBuffer),BYTE
+GetNextResponseSize       PROCEDURE(IINetConnection Connection),LONG
+IsDataReady               PROCEDURE(IINetConnection Connection),BYTE
+                        END
+
+
+IClientTransportSocks   INTERFACE(IClientTransport)
+Connect                   PROCEDURE(LONG dwPort, *CSTRING szServerName, *CSTRING szProtocolName),*IINetConnection
+                        END
+
+
+IClientTransportHttp    INTERFACE(IClientTransport)
+Connect                   PROCEDURE(ASTRING szVerb, *CSTRING szServerName, LONG dwPort = INTERNET_DEFAULT_HTTP_PORT),*IINetConnectionHttp
+SetUser                   PROCEDURE(*CSTRING szUserName, *CSTRING szPassword)
+                        END
+
+
+IServerTransport        INTERFACE
+GetNextServerResponse     PROCEDURE(*STRING strResponseBuffer)
+GetNextServerResponseSize PROCEDURE,LONG
+IsServerDataReady         PROCEDURE,BYTE
+Listen                    PROCEDURE
+                        END
+
+
+  EndDefine

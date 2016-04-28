@@ -1,0 +1,80 @@
+#PROCEDURE(Form,'View / Edit a Record from a File'),WINDOW,HLP('~TPLProcForm'),QUICK(FormWizard(Wizards))
+#LOCALDATA
+LocalRequest         LONG
+OriginalRequest      LONG
+LocalResponse        LONG
+FilesOpened          LONG
+WindowOpened         LONG
+WindowInitialized    LONG
+ForceRefresh         LONG
+CurrentTab           STRING(80)
+#ENDLOCALDATA
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','Refresh Window ROUTINE, before lookups')
+#CLASS('After Lookups','Refresh Window ROUTINE, after lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#PROMPT('&Parameters:', @s255),%Parameters
+#ENABLE(%ProcedureType='FUNCTION')
+  #PROMPT('Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#PROMPT('Window Operation Mode:',DROP('Use WINDOW setting|Normal|MDI|Modal')),%WindowOperationMode
+#ENABLE(%INIActive)
+  #BOXED('INI File Settings')
+    #PROMPT('Save and Restore Window Location',CHECK),%INISaveWindow,DEFAULT(1),AT(10,,150)
+  #ENDBOXED
+#ENDENABLE
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#INSERT(%StandardWindowCode)
+#!-----------------------------------------
+#DEFAULT
+NAME DefaultForm
+[COMMON]
+DESCRIPTION 'Default record update'
+FROM Clarion Form
+[PROMPTS]
+%WindowOperationMode STRING  ('Use WINDOW setting')
+%INISaveWindow LONG  (1)
+[ADDITION]
+NAME Clarion SaveButton
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%InsertAllowed LONG  (1)
+%InsertMessage @S30  ('Record will be Added')
+%ChangeAllowed LONG  (1)
+%ChangeMessage @S30  ('Record will be Changed')
+%DeleteAllowed LONG  (1)
+%DeleteMessage @S30  ('Record will be Deleted')
+%MessageHeader LONG  (0)
+%HistoryKey    LONG  (734)
+[ADDITION]
+NAME Clarion CancelButton
+[INSTANCE]
+INSTANCE 2
+[ADDITION]
+NAME Clarion RecordValidation
+[INSTANCE]
+INSTANCE 3
+PROCPROP
+[PROMPTS]
+%ValidateOnAccept LONG  (1)
+%ValidateOnNonStopSelect LONG  (1)
+%ControlsExcluded MULTI LONG  ()
+%ControlToExclude DEPEND %ControlsExcluded STRING TIMES 0
+[ADDITION]
+NAME Clarion FormVCRControls
+[INSTANCE]
+INSTANCE 4
+[PROMPTS]
+%AllowVCRAccess LONG (0)
+[WINDOW]
+FormWindow WINDOW('Update Records...'),AT(18,5,289,159),CENTER,SYSTEM,GRAY,MDI
+       BUTTON('OK'),AT(5,140,40,12),USE(?OK),DEFAULT,REQ,#SEQ(1),#ORIG(?OK),#LINK(?Cancel)
+       BUTTON('Cancel'),AT(50,140,40,12),USE(?Cancel),#SEQ(2),#ORIG(?Cancel)
+       STRING(@S40),AT(95,140,,),USE(ActionMessage)
+     END
+
+#ENDDEFAULT

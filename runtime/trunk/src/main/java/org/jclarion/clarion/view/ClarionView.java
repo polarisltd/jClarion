@@ -205,6 +205,7 @@ public class ClarionView extends PropertyObject implements ViewField
     {
         CErrorImpl.getInstance().clearError();
         if (open==true) {
+        	log.info("Error 52 View already open");
             CErrorImpl.getInstance().setError(52,"View already open");
             return;
         }
@@ -305,7 +306,7 @@ public class ClarionView extends PropertyObject implements ViewField
     
     public void set()
     {
-        //log.entering("CV","set");
+        log.fine("CV set() ENTRY");
         
         set(0);
     }
@@ -331,14 +332,14 @@ public class ClarionView extends PropertyObject implements ViewField
      */
     public int records()
     {
-        //log.entering("CV","record");
+        log.fine("CV records() ENTRY");
         if (!testOpen());
         return file.records();
     }
     
     public void set(int sortOffset)
     {
-        //log.entering("CV","set",sortOffset);
+        log.fine("CV set(int) "+sortOffset+" ENTRY");
         if (!testOpen()) return;
         if (!regenOrderAndFilter()) return;
         
@@ -363,7 +364,7 @@ public class ClarionView extends PropertyObject implements ViewField
 
     public void next()
     {
-        //log.entering("CV","next");
+        log.fine("CV next()");
         iterate(1);
     }
     
@@ -415,7 +416,7 @@ public class ClarionView extends PropertyObject implements ViewField
     
     public ClarionString getPosition()
     {
-        //log.entering("CV","getPosition");
+        log.fine("CV getPosition() ENTRY");
         CMem sos = CMem.create();
         for (ClarionFile file : allFiles) {
             ClarionKey ck = file.getPrimaryKey();
@@ -466,7 +467,7 @@ public class ClarionView extends PropertyObject implements ViewField
      */
     public void reset(ClarionString position)
     {
-        //log.entering("CV","reset ClarionString");
+        log.fine("CV reset(ClarionString) "+position);
         
         if (!testOpen()) return;
         
@@ -495,7 +496,7 @@ public class ClarionView extends PropertyObject implements ViewField
 
     public void reget(ClarionString position)
     {
-        //log.entering("CV","reget",position);
+        log.fine("CV reget(ClarionString) "+position);
         
         CMem sos = CMem.create();
         position.serialize(sos);
@@ -530,7 +531,7 @@ public class ClarionView extends PropertyObject implements ViewField
      */
     public void reset(ClarionFile position)
     {
-        //log.entering("CV","reset ClarionFile",position);
+        log.fine("CV reset(ClarionFile) "+position+" ENTRY");
         
         if (!testOpen()) return;
         if (!regenOrderAndFilter()) return;
@@ -544,7 +545,7 @@ public class ClarionView extends PropertyObject implements ViewField
 
     public void previous()
     {
-        //log.entering("CV","previous");
+        log.fine("CV  previous() ENTRY");
         iterate(-1);
     }
     
@@ -606,7 +607,7 @@ public class ClarionView extends PropertyObject implements ViewField
     
     private boolean regenOrderAndFilter() {
         if (!changed) return true;
-        //log.entering("CV","regenOrderAndFilter");
+        log.fine("CV regenOrderAndFilter() ENTRY");
         
         StringBuilder newFilter=new StringBuilder();
 
@@ -767,6 +768,7 @@ public class ClarionView extends PropertyObject implements ViewField
     
     private void substituteBindings(CExpr expr)
     {
+    	log.fine("CV substituteBindings() "+expr.toString()+" ENTRY");
         Iterator<CExpr> scan = expr.iterator();
         while (scan.hasNext()) {
             CExpr e = scan.next();
@@ -775,12 +777,14 @@ public class ClarionView extends PropertyObject implements ViewField
                 String name = le.getName();
                 if (le.getParams()!=null) {
                 	for (CExpr pe : le.getParams()) {
+                		log.fine("CV substituteBindings recursive CExpr:"+pe);
                 		substituteBindings(pe);
                 	}
                 }
                 ClarionObject o = e.eval();
                 FieldEntry fe = allFields.get(o);
                 if (fe!=null) {
+                	log.fine("CV substituteBindings e CExprImpl.getInstance().bind()");
                     CExprImpl.getInstance().bind(name,o,fe.viewName,fe.type);
                 } else {
                     if (o.getOwner() instanceof ClarionFile) {
@@ -788,6 +792,7 @@ public class ClarionView extends PropertyObject implements ViewField
                             ClarionFile file = (ClarionFile)o.getOwner();
                             int indx = allFiles.indexOf(file);
                             char c = (char)('A'+indx);
+                            log.fine("CV substituteBindings e CExprImpl.getInstance().bind()");
                             CExprImpl.getInstance().bind(name,o,c+"."+o.getName(),file.getSQLType(o));
                         }
                     }

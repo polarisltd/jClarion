@@ -21,6 +21,7 @@ public abstract class Formatter
         if (c=='d' || c=='D') return new DateFormat(type);
         if (c=='t' || c=='T') return new TimeFormat(type);
         if (c=='p' || c=='P') return new PatternFormat(type);
+        if (c=='k' || c=='K') return new KeyinFormat(type);  // this is new picture in 6.2 or jclarion was not implemented before
         throw new IllegalArgumentException("Invalid picture:"+type);
     }
     

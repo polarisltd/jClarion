@@ -1,0 +1,395 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DbAuditing),HIDDEN(1)
+  PROPERTY: NAME(Default.AdministratorAddress),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Default.AdministratorName),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Default.ChangeTriggerSubject),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Default.DeleteTriggerSubject),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Default.InsertTriggerSubject),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Default.ReplyToAddress),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Default.ReplyToName),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Default.SenderAddress),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Default.SMTP.DefaultServer),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),TYPE(STRING)
+  PROPERTY: NAME(Messaging),ACORN(1),ACORN.CONTEXT('SMTPReplyToName(%Author%)'),ACORN.NAME(Messaging),ACORN.WIZARD(ControlTemplate#GlobalTemplate#GlobalDocumentHandling),DESCRIPTION(Include Messaging e-mail),DEVIMP(ASK),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.AddMessaging),DESCRIPTION(Add Messaging Support?),DTYPE(CHECK),QUICKSTART(TOPSPEED:Default),QUICKSTART.PRIORITY(200),QUICKSTART.PROMPT(Add Messaging Support),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:Application.Messaging(%_Value_%)'),TYPE(BOOLEAN)
+  PROPERTY: NAME(QuickStart.AdministratorAddress),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%Quickstart.AdministratorName%''='''' OR ''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(191),QUICKSTART.PROMPT(Administrator eMail Address),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#GlobalTemplate#GlobalDocumentHandling.LogonRecipientAddress(%_Value_%)')
+  PROPERTY: NAME(QuickStart.AdministratorName),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(192),QUICKSTART.PROMPT(Administrator name),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:ControlTemplate#GlobalTemplate#GlobalDocumentHandling.LogonRecipientName(%_Value_%),TOPSPEED:ControlTemplate#GlobalTemplate#GlobalDocumentHandling.SendInvalidLogonMessage(1)')
+  PROPERTY: NAME(QuickStart.ChangeTriggerSubject),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(199),QUICKSTART.PROMPT(Change Trigger Subject),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:Application.Default.ChangeTriggerSubject(%_Value_%)'),VALIDATION('@EVAL(CHOOSE(''%_VALUE_%''<>''''))'),VALIDATIONTEXT(Change trigger subject cannot be blank.)
+  PROPERTY: NAME(QuickStart.DeleteTriggerSubject),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(198),QUICKSTART.PROMPT(Delete Trigger Subject),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:Application.Default.DeleteTriggerSubject(%_Value_%)'),VALIDATION('@EVAL(CHOOSE(''%_VALUE_%''<>''''))'),VALIDATIONTEXT(Delete trigger subject cannot be blank.)
+  PROPERTY: NAME(QuickStart.InsertTriggerSubject),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(197),QUICKSTART.PROMPT(Insert Trigger Subject),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:Application.Default.InsertTriggerSubject(%_Value_%)'),VALIDATION('@EVAL(CHOOSE(''%_VALUE_%''<>''''))'),VALIDATIONTEXT(Insert trigger subject cannot be blank.)
+  PROPERTY: NAME(QuickStart.ReplyToAddress),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(196),QUICKSTART.PROMPT(Reply to e-mail address),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:Application.Default.Default.ReplyToAddress(%_Value_%)'),VALIDATION('@EVAL(CHOOSE(''%_VALUE_%''<>''''))'),VALIDATIONTEXT(Reply To Address cannot be blank)
+  PROPERTY: NAME(QuickStart.ReplyToName),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(195),QUICKSTART.PROMPT(Reply to name),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:Application.Default.Default.ReplyToName(%_Value_%)'),VALIDATION('@EVAL(CHOOSE(''%_VALUE_%''<>''''))'),VALIDATIONTEXT(Reply to Name cannot be blank.)
+  PROPERTY: NAME(QuickStart.SenderAddress),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(194),QUICKSTART.PROMPT(Sender e-mail address),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:Application.Default.SenderAddress(%_Value_%)'),VALIDATION('@EVAL(CHOOSE(''%_VALUE_%''<>''''))'),VALIDATIONTEXT(Sender e-mail address cannot be blank.)
+  PROPERTY: NAME(QuickStart.SMTP.DefaultServer),QUICKSTART(TOPSPEED:Default),QUICKSTART.DEPENDS('@EVAL(CHOOSE(''%QuickStart.AddMessaging%''=''0'',0,1))'),QUICKSTART.PRIORITY(193),QUICKSTART.PROMPT(IP Address or Domain Name),QUICKSTART.TABLABEL(Messaging),QUICKSTART.WHENAPPLY('TOPSPEED:Application.Default.SMTP.DefaultServer(%_Value_%)')
+  [DEFINITION]
+    DBAUDITING(%Messaging%)
+    MESSAGING(0)
+    QUICKSTART.ADDMESSAGING(1)
+    QUICKSTART.CHANGETRIGGERSUBJECT(Change notification)
+    QUICKSTART.DELETETRIGGERSUBJECT(Delete notification)
+    QUICKSTART.INSERTTRIGGERSUBJECT(Insert notification)
+    QUICKSTART.REPLYTONAME()
+    QUICKSTART.SMTP.DEFAULTSERVER(127.0.0.1)
+    TARGETOS(Windows - 32bit)
+    TARGETOS.LIST(Windows - 32bit)
+    TARGETTYPE(EXE)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#GlobalDocumentHandling
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ChangeFileTrigger),ACORN(1),ACORN.CONTEXT('TriggerFile(%_VALUE_%)'),ACORN.NAME(ChangeFileTrigger %_VALUE_%),ACORN.WIZARD(ControlTemplate#GlobalTemplate#FileTrigger#ChangeTrigger),DESCRIPTION(Watch changes on these files),DEVIMP(USEFUL),DTYPE(MULTIDROP),MULTI(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(ChangeFileTrigger.List),DESCRIPTION(Watch for changes),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,CHANGETRIGGER,0)=1,1,0))'),LISTFILL.FUNC('@FILES()'),MULTI(1),OUTPUT.TYPE(STRING)
+  PROPERTY: NAME(DeleteFileTrigger),ACORN(1),ACORN.CONTEXT('TriggerFile(%_VALUE_%)'),ACORN.NAME(DeleteFileTrigger %_VALUE_%),ACORN.WIZARD(ControlTemplate#GlobalTemplate#FileTrigger#DeleteTrigger),DESCRIPTION(Watch deletes on these files),DEVIMP(USEFUL),DTYPE(MULTIDROP),MULTI(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(DeleteFileTrigger.List),DESCRIPTION(Watch for deletes),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,DELETETRIGGER,0)=1,1,0))'),LISTFILL.FUNC('@FILES()'),MULTI(1),OUTPUT.TYPE(STRING)
+  PROPERTY: NAME(GlobalAddresses.LoadProcedure),DESCRIPTION(Procedure to Load Addresses),OUTPUT.NAME(AdrLoadProc)
+  PROPERTY: NAME(GlobalAddresses.SaveRestore),DESCRIPTION(Save and Restore Addresses),DEVIMP(DETAILED),DTYPE(CHECK),OUTPUT.NAME(AdrSaveRestore),TYPE(BOOLEAN)
+  PROPERTY: NAME(GuardBody),DESCRIPTION(Trigger Body),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Html File (*.htm)|*.htm|Text Files (*.txt)|*.txt'),OUTPUT.NAME(GuardBody),TYPE(STRING)
+  PROPERTY: NAME(GuardContent),DESCRIPTION(Trigger Message Content),DTYPE(SINGLEDROP),OUTPUT.NAME(GuardContent),TYPE(STRING)
+  PROPERTY: NAME(GuardContent.List),DESCRIPTION(Trigger Message Content),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(GuardRecipClass),DESCRIPTION(Recipient Class),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(GuardRecipClass),TYPE(STRING)
+  PROPERTY: NAME(GuardRecipClass.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(GuardRecipientAddress),DESCRIPTION(Recipient Address for Password Reminder),DEVIMP(BAROQUE),DOCUMENTATION(eMail address of the person to whom the password reminder must be sent to when the account is locked.),DTYPE(ENTRY),OUTPUT.NAME(GuardRecipientAddress),TYPE(STRING)
+  PROPERTY: NAME(GuardRecipientName),DESCRIPTION(Recipient Name for Password Reminder),DEVIMP(BAROQUE),DOCUMENTATION(Name of the person to whom the password reminder must be sent to when the account is locked.),DTYPE(ENTRY),OUTPUT.NAME(GuardRecipientName),TYPE(STRING)
+  PROPERTY: NAME(GuardSubject),DESCRIPTION(Invalid Password email Subject),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(GuardSubject),TYPE(STRING)
+  PROPERTY: NAME(InsertFileTrigger),ACORN(1),ACORN.CONTEXT('TriggerFile(%_VALUE_%)'),ACORN.NAME(InsertFileTrigger %_VALUE_%),ACORN.WIZARD(ControlTemplate#GlobalTemplate#FileTrigger#InsertTrigger),DESCRIPTION(Watch inserts on these files),DEVIMP(USEFUL),DTYPE(MULTIDROP),MULTI(1),TYPE(BOOLEAN)
+  PROPERTY: NAME(InsertFileTrigger.List),DESCRIPTION(Watch for inserts),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@EVAL(CHOOSE(@USER(%_VALUE_%,INSERTTRIGGER,0)=1,1,0))'),LISTFILL.FUNC('@FILES()'),MULTI(1),OUTPUT.TYPE(STRING)
+  PROPERTY: NAME(LogonBody),DESCRIPTION(Trigger Body),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Html File (*.htm)|*.htm|Text Files (*.txt)|*.txt'),OUTPUT.NAME(LogonBody),TYPE(STRING)
+  PROPERTY: NAME(LogonContent),DESCRIPTION(Trigger Message Content),DTYPE(SINGLEDROP),OUTPUT.NAME(LogonContent),TYPE(STRING)
+  PROPERTY: NAME(LogonContent.List),DESCRIPTION(Trigger Message Content),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(LogonRecipClass),DESCRIPTION(Recipient Class),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(LogonRecipClass),TYPE(STRING)
+  PROPERTY: NAME(LogonRecipClass.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(LogonRecipientAddress),DESCRIPTION(Recipient Address for Password Reminder),DEVIMP(BAROQUE),DOCUMENTATION(eMail address of the person to whom the password reminder must be sent to when the account is locked.),DTYPE(ENTRY),OUTPUT.NAME(LogonRecipientAddress),TYPE(STRING)
+  PROPERTY: NAME(LogonRecipientName),DESCRIPTION(Recipient Name for Password Reminder),DEVIMP(BAROQUE),DOCUMENTATION(Name of the person to whom the password reminder must be sent to when the account is locked.),DTYPE(ENTRY),OUTPUT.NAME(LogonRecipientName),TYPE(STRING)
+  PROPERTY: NAME(LogonSubject),DESCRIPTION(Invalid Password email Subject),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(LogonSubject),TYPE(STRING)
+  PROPERTY: NAME(SendInvalidLogonMessage),DESCRIPTION(Invalid Login Attempts Notification),DEVIMP(BAROQUE),DOCUMENTATION(Enable this option to generate email notifications when an invalid logon attempt occurrs.),DTYPE(CHECK),OUTPUT.NAME(SendInvalidLogonMessage),TYPE(STRING)
+  PROPERTY: NAME(SendInvalidPasswordMessage),DESCRIPTION(Enable sending an email on invalid password notification),DEVIMP(BAROQUE),DOCUMENTATION(Enable this option to generate email notifications when an invalid password is entered and an account is locked. This will only send a reminder if Email Password is on in WebGuard.Sty.),DTYPE(CHECK),OUTPUT.NAME(SendInvalidPasswordMessage),TYPE(STRING)
+  PROPERTY: NAME(SMTP.DefaultPort),DESCRIPTION(Default SMTP Port),OUTPUT.NAME(SMTPDefaultPort)
+  PROPERTY: NAME(SMTP.DefaultServer),DESCRIPTION(Default SMTP Server),OUTPUT.NAME(SMTPDefaultServer)
+  PROPERTY: NAME(SMTP.Sender),DESCRIPTION(Sender Address),OUTPUT.NAME(SMTPSender)
+  PROPERTY: NAME(SMTP.SenderDomain),DESCRIPTION(Sender Domain),OUTPUT.NAME(SMTPSenderDomain)
+  PROPERTY: NAME(SMTPReplyTo),DESCRIPTION(Reply To instances - Based on ReplyToName),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LISTFILL.CONVERT('@INDEX(SMTPReplyToName,%_VALUE_%)'),LISTFILL.FUNC(%SMTPReplyToName%),LOCKED(1),MULTI(1),OUTPUT.NAME(SMTPReplyTo),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(SMTPReplyToAddresses),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(SMTPReplyToName[@INDEX(SMTPReplyToAddresses,%_Value_%)],SMTPReplyToAddress)'),LISTFILL.FUNC(%SMTPReplyToName%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(SMTPReplyTo),OUTPUT.NAME(SMTPReplyToAddress),TYPE(STRING)
+  PROPERTY: NAME(SMTPReplyToName),ACORN(1),ACORN.NAME(SMTP.ReplyTo: %_Value_%),ACORN.WIZARD(Component#ReplyTo),DESCRIPTION(Reply To Name),DEVIMP(BAROQUE),DTYPE(EDITLIST),MULTI(1),OUTPUT.DEPENDS(SMTPReplyTo),OUTPUT.NAME(SMTPReplyToName),TYPE(STRING)
+  PROPERTY: NAME(WebGuardSupport),DESCRIPTION(Enable WebGuard Support),DEVIMP(BAROQUE),DOCUMENTATION(If the Web Templates are included enabling this option with allow generation of Login Failure and Password reminder emails.),DTYPE(CHECK),OUTPUT.NAME(WebGuardSupport),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CONTROLTEMPLATE(GlobalDocumentHandling)
+    GLOBALADDRESSES.SAVERESTORE(1)
+    GUARDBODY(Pswdrem.htm)
+    GUARDCONTENT(Html)
+    GUARDCONTENT.LIST(Html,Plain Text)
+    GUARDRECIPCLASS(SendTo)
+    GUARDRECIPCLASS.LIST(SendTo,CC,BCC)
+    GUARDRECIPIENTADDRESS('@NAME(@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,USERS)`))'',`@USER(%_Value_%,EMAIL)`))')
+    GUARDRECIPIENTNAME('@NAME(@FIND(''@FIELDS(@FIND(''@FILES()'',`@USER(%_Value_%,USERS)`))'',`@USER(%_Value_%,EMAILNAME)`))')
+    GUARDSUBJECT('Invalid Password Notification (Account Locked).')
+    LOGONBODY(Logonerr.htm)
+    LOGONCONTENT(Html)
+    LOGONCONTENT.LIST(Html,Plain Text)
+    LOGONRECIPCLASS(SendTo)
+    LOGONRECIPCLASS.LIST(SendTo,CC,BCC)
+    LOGONRECIPIENTADDRESS()
+    LOGONSUBJECT('Invalid Password Notification (Account Locked).')
+    NAME(TOPSPEED:ControlTemplate#GlobalTemplate#DocumentHandling)
+    SENDINVALIDLOGONMESSAGE('@EVAL(CHOOSE(''%LogonRecipientName%''='''',0,1))')
+    SENDINVALIDPASSWORDMESSAGE(%WebGuardSupport%)
+    SMTP.DEFAULTPORT(25)
+    SMTP.DEFAULTSERVER('@EVAL(CHOOSE(''%Scope.Default.SMTP.DefaultServer%''<>'''',''%Scope.Default.SMTP.DefaultServer%'',''127.0.0.1''))')
+    SMTP.SENDER(%Scope.Default.SenderAddress%)
+    SMTP.SENDERDOMAIN(TSDC)
+    SMTPREPLYTOADDRESSES()
+    SMTPREPLYTONAME()
+    TEMPLATECHAIN(Messaging)
+    WEBGUARDSUPPORT()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#ReplyTo
+  DESCRIPTOR: 1
+  PROPERTY: NAME(SMTPReplyToAddress),DESCRIPTION(Reply to e-mail address),DEVIMP(USEFUL),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent)
+    NAME(TOPSPEED:ApplicationComponent#ReplyTo)
+    SMTPREPLYTOADDRESS(%Scope.Default.Default.ReplyToAddress%)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#FileTrigger
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Trigger),DESCRIPTION(Trigger on),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(Trigger),TYPE(STRING)
+  PROPERTY: NAME(Trigger.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(TriggerAction),DESCRIPTION(Trigger Action),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(TriggerAction),TYPE(STRING)
+  PROPERTY: NAME(TriggerBody),DESCRIPTION(Trigger Body),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Html File (*.htm)|*.htm|Text Files (*.txt)|*.txt'),OUTPUT.NAME(TriggerBody),TYPE(STRING)
+  PROPERTY: NAME(TriggerContent),DESCRIPTION(Trigger Message Content),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(TriggerContent.List),DESCRIPTION(Trigger Message Content),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(TriggerFile),DESCRIPTION(File to Watch),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(0),MULTI(0),OUTPUT.NAME(TriggerFile),TYPE(STRING)
+  PROPERTY: NAME(TriggerRecipient),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@INDEX(TriggerRecipients,%_VALUE_%)'),LISTFILL.FUNC(%TriggerRecipients%),MULTI(1),OUTPUT.NAME(TriggerRecipient),TYPE(STRING)
+  PROPERTY: NAME(TriggerRecipientClasses),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(TriggerRecipients[@INDEX(TriggerRecipientClasses,%_Value_%)],TriggerRecipientClass)'),LISTFILL.FUNC(%TriggerRecipients%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(TriggerRecipient),OUTPUT.NAME(TriggerRecipClass),TYPE(STRING)
+  PROPERTY: NAME(TriggerRecipientNames),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(TriggerRecipients[@INDEX(TriggerRecipientNames,%_Value_%)],TriggerRecipientName)'),LISTFILL.FUNC(%TriggerRecipients%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(TriggerRecipient),OUTPUT.NAME(TriggerRecipientName),TYPE(STRING)
+  PROPERTY: NAME(TriggerRecipients),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(TriggerRecipients: %_VALUE_%),ACORN.WIZARD(Component#TriggerRecipient),DESCRIPTION(Recipients for Trigger message),DEVIMP(USEFUL),DTYPE(ENTRY),LIST(1),MULTI(1),OUTPUT.DEPENDS(TriggerRecipient),OUTPUT.NAME(TriggerRecipientAddress),TYPE(BOOLEAN)
+  PROPERTY: NAME(TriggerSubject),DESCRIPTION(Subject),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(TriggerSubject),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CONTROLTEMPLATE(FileTrigger)
+    TEMPLATECHAIN(Messaging)
+    TRIGGER(Per Row Change)
+    TRIGGER.LIST(Per Row Change,Per Column Change)
+    TRIGGERACTION()
+    TRIGGERCONTENT(Html)
+    TRIGGERCONTENT.LIST(Html,Plain Text)
+    TRIGGERRECIPIENT()
+    TRIGGERRECIPIENTS()
+    TRIGGERSUBJECT()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#FileTrigger#ChangeTrigger
+  DESCRIPTOR: 1
+  PROPERTY: NAME(TriggerAction),HIDDEN()
+  PROPERTY: NAME(TriggerFieldNames),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(TriggerFields %_VALUE_%),ACORN.WIZARD(Component#TriggerField),DESCRIPTION(Trigger Fields),DEVIMP(USEFUL),DTYPE(MULTIDROP),LISTFILL.CONVERT('@NAME(%_VALUE_%)'),MULTI(1),OUTPUT.DEPENDS(TriggerFields),OUTPUT.NAME(TriggerFieldName),TYPE(BOOLEAN)
+  PROPERTY: NAME(TriggerFieldNames.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@NAME(%_VALUE_%)'),LISTFILL.FUNC('@Fields(%TriggerFile%)'),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(TriggerFields),DESCRIPTION(TriggerField instances - Based on TriggerFieldNames),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LISTFILL.CONVERT('@INDEX(TriggerFields,%_VALUE_%)'),LISTFILL.FUNC(%TriggerFieldNames%),LOCKED(1),MULTI(1),OUTPUT.NAME(TriggerFields),OUTPUT.TYPE(LONG),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate#FileTrigger)
+    TRIGGER(Per Row Change)
+    TRIGGERACTION(Change)
+    TRIGGERBODY(%TriggerFile%Change.htm)
+    TRIGGERFIELDNAMES.LIST()
+    TRIGGERFIELDS()
+    TRIGGERSUBJECT('%Scope.Default.ChangeTriggerSubject% (%TriggerFile%)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#FileTrigger#DeleteTrigger
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Trigger),HIDDEN(1)
+  PROPERTY: NAME(TriggerAction),HIDDEN()
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate#FileTrigger)
+    TRIGGERACTION(Delete)
+    TRIGGERBODY(%TriggerFile%Delete.htm)
+    TRIGGERSUBJECT('%Scope.Default.DeleteTriggerSubject% (%TriggerFile%)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#FileTrigger#InsertTrigger
+  DESCRIPTOR: 1
+  PROPERTY: NAME(Trigger),HIDDEN(1)
+  PROPERTY: NAME(TriggerAction),HIDDEN()
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate#FileTrigger)
+    TRIGGERACTION(Insert)
+    TRIGGERBODY(%TriggerFile%Insert.htm)
+    TRIGGERSUBJECT('%Scope.Default.InsertTriggerSubject% (%TriggerFile%)')
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#TriggerRecipient
+  DESCRIPTOR: 1
+  PROPERTY: NAME(TriggerRecipientClass),DESCRIPTION(Recipient Class),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),TYPE(STRING)
+  PROPERTY: NAME(TriggerRecipientClass.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(TriggerRecipientName),DESCRIPTION(Recipient Name),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent)
+    TRIGGERRECIPIENTCLASS(SendTo)
+    TRIGGERRECIPIENTCLASS.LIST(SendTo,CC,BCC)
+    TRIGGERRECIPIENTNAME()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#TriggerField
+  DESCRIPTOR: 1
+  PROPERTY: NAME(TriggerColumnBody),DESCRIPTION(Message Body),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Html File (*.htm)|*.htm|Text Files (*.txt)|*.txt'),TYPE(STRING)
+  PROPERTY: NAME(TriggerColumnBodyContent),DESCRIPTION(Message Body),DTYPE(SINGLEDROP)
+  PROPERTY: NAME(TriggerColumnBodyContent.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(TriggerColumnDocSubject),DESCRIPTION(Message Subject),DEVIMP(BAROQUE),DTYPE(ENTRY),TYPE(STRING)
+  [DEFINITION]
+    TRIGGERCOLUMNBODY()
+    TRIGGERCOLUMNBODYCONTENT(Plain Text)
+    TRIGGERCOLUMNBODYCONTENT.LIST(Html,Plain Text)
+    TRIGGERCOLUMNDOCSUBJECT()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#DocumentSend
+  DESCRIPTOR: 1
+  PROPERTY: NAME(AddressControl),DESCRIPTION(Control used for calling addressbook),DTYPE(SINGLEDROP),HIDDEN('@EVAL(CHOOSE(''%AddressTrigger%''=''Control Event'',''0'',''1''))'),OUTPUT.NAME(AddressControl)
+  PROPERTY: NAME(AddressControl.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@EXTRACT(\%_VALUE_%,Use.Label)'),LISTFILL.FUNC('@EXTRACT(Scope.WindowManager,node.controls)'),MULTI(1),OUTPUT.NAME(),TYPE(STRING)
+  PROPERTY: NAME(AddressControlEvent),DESCRIPTION(Address Control Event),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),HIDDEN('@EVAL(CHOOSE(''%AddressTrigger%''=''Control Event'',''0'',''1''))'),OUTPUT.NAME(AddressControlEvent),TYPE(STRING)
+  PROPERTY: NAME(AddressControlEvent.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AddressFamily),DESCRIPTION(Addressbook Family),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN('@EVAL(CHOOSE(''%AddressSaveRestore%''=''1'' AND ''%AddressUseGlobal%''=''0'',''0'',''1''))'),OUTPUT.NAME(AddressFamily),TYPE(STRING)
+  PROPERTY: NAME(AddressMethod),DESCRIPTION(Method to call addressbook on),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),HIDDEN('@EVAL(CHOOSE(''%AddressTrigger%''=''Other'',''0'',''1''))'),OUTPUT.NAME(AddressMethod),TYPE(STRING)
+  PROPERTY: NAME(AddressMethod.List),DESCRIPTION(Methods),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AddressSaveRestore),DESCRIPTION(Save and restore addressbook),DEVIMP(BAROQUE),DTYPE(CHECK),HIDDEN(%AddressUseGlobal%),OUTPUT.NAME(AddressSaveRestore),TYPE(STRING)
+  PROPERTY: NAME(AddressTrigger),DESCRIPTION(Call Addressbook on),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(AddressTrigger),TYPE(STRING)
+  PROPERTY: NAME(AddressTrigger.List),DESCRIPTION(Addressbook Event Trigger),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AddressUseGlobal),DESCRIPTION(Use Global addresses),DEVIMP(BAROQUE),DTYPE(CHECK),OUTPUT.NAME(AddressUseGlobal),TYPE(STRING)
+  PROPERTY: NAME(AddressWindowEvent),DESCRIPTION(Window Event to Call Addressbook),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),HIDDEN('@EVAL(CHOOSE(''%AddressTrigger%''=''Window Event'',''0'',''1''))'),OUTPUT.NAME(AddressWindowEvent),TYPE(STRING)
+  PROPERTY: NAME(AddressWindowEvent.List),DESCRIPTION(Window Event List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AlternateEncoder),DESCRIPTION(Encoder for alternate body text),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(AlternateEncoder),TYPE(STRING)
+  PROPERTY: NAME(AlternateEncoder.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AlternateField),DESCRIPTION(Field containing text for alternate body),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN('@EVAL(CHOOSE(''%AlternateSource%''=''Field'',''0'',''1''))'),OUTPUT.NAME(AlternateField),TYPE(STRING)
+  PROPERTY: NAME(AlternateSource),DESCRIPTION(Alternate body type),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(AlternateSource),TYPE(STRING)
+  PROPERTY: NAME(AlternateSource.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(AlternateSourceFile),DESCRIPTION(Alternate body file),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Html File (*.htm)|*.htm'),HIDDEN('@EVAL(CHOOSE(''%AlternateSource%''=''File'',''0'',''1''))'),OUTPUT.NAME(AlternateSourceFile),TYPE(STRING)
+  PROPERTY: NAME(Attachments),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(Attachments: %_VALUE_%),ACORN.WIZARD(Component#Attachment),DESCRIPTION(Attachment names),DEVIMP(USEFUL),DTYPE(ENTRY),LIST(1),MULTI(1),OUTPUT.DEPENDS(Content),OUTPUT.NAME(DocFileName),TYPE(BOOLEAN)
+  PROPERTY: NAME(BodyContent),DESCRIPTION(Type of content),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(BodyContent),TYPE(STRING)
+  PROPERTY: NAME(BodyContent.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(BodyEncoder),DESCRIPTION(Type of encoder),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(BodyEncoder),TYPE(STRING)
+  PROPERTY: NAME(BodyEncoder.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(BodyField),DESCRIPTION(Field with message body content),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN('@EVAL(CHOOSE(''%BodySource%''=''Field'',''0'',''1''))'),OUTPUT.NAME(BodyField),TYPE(STRING)
+  PROPERTY: NAME(BodySource),DESCRIPTION(Source of Message Body),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(BodySource),TYPE(STRING)
+  PROPERTY: NAME(BodySource.List),DESCRIPTION(Source for Message Body),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(BodySourceFile),DESCRIPTION(File for Message Body),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Html File (*.htm)|*.htm|Text Files (*.txt)|*.txt|All Files (*.*)|*.*'),HIDDEN('@EVAL(CHOOSE(''%BodySource%''=''File'',''0'',''1''))'),OUTPUT.NAME(BodySourceFile),TYPE(STRING)
+  PROPERTY: NAME(Content),DESCRIPTION(Attachment filenames),DEVIMP(BAROQUE),DTYPE(ENTRY),LIST(1),LISTFILL.CONVERT('@INDEX(Attachments,%_VALUE_%)'),LISTFILL.FUNC(%Attachments%),MULTI(1),OUTPUT.NAME(Content),TYPE(STRING)
+  PROPERTY: NAME(ContentFields),DESCRIPTION(Dummy Property for Output),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(Attachments[@INDEX(ContentFields,%_Value_%)],ContentField)'),LISTFILL.FUNC(%Attachments%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(Content),OUTPUT.NAME(ContentField),TYPE(STRING)
+  PROPERTY: NAME(ContentSourceFiles),DESCRIPTION(Dummy Property for Output),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(Attachments[@INDEX(ContentSourceFiles,%_Value_%)],ContentSourceFile)'),LISTFILL.FUNC(%Attachments%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(Content),OUTPUT.NAME(ContentSourceFile),TYPE(STRING)
+  PROPERTY: NAME(ContentSources),DESCRIPTION(Dummy Property for Output),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(Attachments[@INDEX(ContentSources,%_Value_%)],ContentSource)'),LISTFILL.FUNC(%Attachments%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(Content),OUTPUT.NAME(ContentSource),TYPE(STRING)
+  PROPERTY: NAME(DocContentSubTypes),DESCRIPTION(Dummy Property for Output),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(Attachments[@INDEX(DocContentSubTypes,%_Value_%)],DocContentSubType)'),LISTFILL.FUNC(%Attachments%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(Content),OUTPUT.NAME(DocContentSubType),TYPE(STRING)
+  PROPERTY: NAME(DocContentTypes),DESCRIPTION(Dummy Property for Output),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(Attachments[@INDEX(DocContentTypes,%_Value_%)],DocContentType)'),LISTFILL.FUNC(%Attachments%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(Content),OUTPUT.NAME(DocContentType),TYPE(STRING)
+  PROPERTY: NAME(DocEncoders),DESCRIPTION(Dummy Property for Output),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(Attachments[@INDEX(DocEncoders,%_Value_%)],DocEncoder)'),LISTFILL.FUNC(%Attachments%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(Content),OUTPUT.NAME(DocEncoder),TYPE(STRING)
+  PROPERTY: NAME(DocSimpleContents),DESCRIPTION(Dummy Property for Output),DEVIMP(BAROQUE),DTYPE(EDITLIST),HIDDEN(1),LISTFILL.CONVERT('@EXTRACT(Attachments[@INDEX(DocSimpleContents,%_Value_%)],DocSimpleContent)'),LISTFILL.FUNC(%Attachments%),LOCKED(1),MULTI(1),OUTPUT.DEPENDS(Content),OUTPUT.NAME(DocSimpleContent),TYPE(STRING)
+  PROPERTY: NAME(DocSubject),DESCRIPTION(Message Subject),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(DocSubject),TYPE(STRING)
+  PROPERTY: NAME(LoadAddress),DESCRIPTION(Load Addresses),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(LoadAddress),TYPE(STRING)
+  PROPERTY: NAME(LoadAddress.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(RecipAddress),DESCRIPTION(Recipient Addresses),DEVIMP(BAROQUE),DTYPE(ENTRY),MULTI(1),OUTPUT.DEPENDS(Recipients),OUTPUT.NAME(RecipAddress),TYPE(STRING)
+  PROPERTY: NAME(Recipients),DESCRIPTION(Reply To instances - Based on RecipAddress),DEVIMP(BAROQUE),DTYPE(ENTRY),LISTFILL.CONVERT('@INDEX(Recipients,%_VALUE_%)'),LISTFILL.FUNC(%RecipAddress%),MULTI(1),OUTPUT.NAME(Recipients),OUTPUT.TYPE(LONG),TYPE(STRING)
+  PROPERTY: NAME(RecipName),DESCRIPTION(Recipient Names),DEVIMP(BAROQUE),DTYPE(ENTRY),MULTI(1),OUTPUT.DEPENDS(Recipients),OUTPUT.NAME(RecipName),TYPE(STRING)
+  PROPERTY: NAME(SendControl),DESCRIPTION(Control used for sending),DTYPE(SINGLEDROP),HIDDEN('@EVAL(CHOOSE(''%SendTrigger%''=''Control Event'',''0'',''1''))'),OUTPUT.NAME(SendControl)
+  PROPERTY: NAME(SendControl.List),DESCRIPTION(Control to Send Message),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),LISTFILL.CONVERT('@EXTRACT(\%_VALUE_%,Use.Label)'),LISTFILL.FUNC('@EXTRACT(Scope.WindowManager,node.controls)'),MULTI(1),OUTPUT.NAME(),TYPE(STRING)
+  PROPERTY: NAME(SendControlEvent),DESCRIPTION(Send Control Event),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),HIDDEN('@EVAL(CHOOSE(''%SendTrigger%''=''Control Event'',''0'',''1''))'),OUTPUT.NAME(SendControlEvent),TYPE(STRING)
+  PROPERTY: NAME(SendControlEvent.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(SendMethod),DESCRIPTION(Method call to send on),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),HIDDEN('@EVAL(CHOOSE(''%SendTrigger%''=''Other'',''0'',''1''))'),OUTPUT.NAME(SendMethod),TYPE(STRING)
+  PROPERTY: NAME(SendMethod.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(SendTrigger),DESCRIPTION(Send Trigger),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(SendTrigger),TYPE(STRING)
+  PROPERTY: NAME(SendTrigger.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(SendWindowEvent),DESCRIPTION(Window Event to send on),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),HIDDEN('@EVAL(CHOOSE(''%SendTrigger%''=''Window Event'',''0'',''1''))'),TYPE(STRING)
+  PROPERTY: NAME(SendWindowEvent.List),DESCRIPTION(Window Events),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate)
+    ADDRESSCONTROLEVENT.LIST(Accepted,Selected,NewSelection)
+    ADDRESSFAMILY()
+    ADDRESSMETHOD(Process a Record)
+    ADDRESSMETHOD.LIST(Process a Record,Window Completed)
+    ADDRESSSAVERESTORE()
+    ADDRESSTRIGGER()
+    ADDRESSTRIGGER.LIST(Control Event,Window Event,Other,None)
+    ADDRESSUSEGLOBAL(0)
+    ADDRESSWINDOWEVENT(OpenWindow)
+    ADDRESSWINDOWEVENT.LIST(OpenWindow,CloseWindow)
+    ALTERNATEENCODER(Quoted Printable)
+    ALTERNATEENCODER.LIST(Quoted Printable,Base64)
+    ALTERNATEFIELD()
+    ALTERNATESOURCE(None)
+    ALTERNATESOURCE.LIST(None,File,Field)
+    ALTERNATESOURCEFILE()
+    ATTACHMENTS()
+    BODYCONTENT(Plain Text)
+    BODYCONTENT.LIST(Html,Plain Text)
+    BODYENCODER(Quoted Printable)
+    BODYENCODER.LIST(Quoted Printable,Base64)
+    BODYFIELD()
+    BODYSOURCE(File)
+    BODYSOURCE.LIST(File,Field)
+    BODYSOURCEFILE(default.htm)
+    CONTROLTEMPLATE(DocumentSend)
+    DOCSUBJECT(Newsletter)
+    LOADADDRESS(Once per valid record)
+    LOADADDRESS.LIST(Once,Once per valid record)
+    SENDCONTROL()
+    SENDCONTROLEVENT()
+    SENDCONTROLEVENT.LIST(Accepted,Selected,NewSelection)
+    SENDMETHOD(Process a Record)
+    SENDMETHOD.LIST(Window Completed,Process a Record,After IReport Creation)
+    SENDTRIGGER(Other)
+    SENDTRIGGER.LIST(Control Event,Window Event,Other,None)
+    SENDWINDOWEVENT(OpenWindow)
+    SENDWINDOWEVENT.LIST(CloseWindow,OpenWindow,GainFocus)
+    TEMPLATECHAIN(Messaging)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ApplicationComponent#Attachment
+  DESCRIPTOR: 1
+  PROPERTY: NAME(ContentField),DESCRIPTION(Field with the contents of the attachment),DEVIMP(BAROQUE),DTYPE(ENTRY),OUTPUT.NAME(),TYPE(STRING)
+  PROPERTY: NAME(ContentSource),DESCRIPTION(Souce for the attachment content),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),OUTPUT.NAME(),TYPE(STRING)
+  PROPERTY: NAME(ContentSource.List),DEVIMP(BAROQUE),DTYPE(ENTRY),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(ContentSourceFile),DESCRIPTION(Attachment file),DEVIMP(BAROQUE),DTYPE(FILE),FILE.MASK(16),FILE.PATTERNS('Html File (*.htm)|*.htm|Text Files (*.txt)|*.txt|All Files (*.*)|*.*'),OUTPUT.NAME(),TYPE(STRING)
+  PROPERTY: NAME(DocContentSubType),DESCRIPTION(Attachment Subtype),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),TYPE(STRING)
+  PROPERTY: NAME(DocContentSubType.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(DocContentType),DESCRIPTION(Type of Attachment),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),TYPE(STRING)
+  PROPERTY: NAME(DocContentType.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(DocEncoder),DESCRIPTION(Attachment encoding),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),TYPE(STRING)
+  PROPERTY: NAME(DocEncoder.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(DocSimpleContent),DESCRIPTION(Type of attachment),DEVIMP(BAROQUE),DTYPE(SINGLEDROP),TYPE(STRING)
+  PROPERTY: NAME(DocSimpleContent.List),DEVIMP(BAROQUE),DTYPE(ENTRY),HIDDEN(1),LIST(1),MULTI(1),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ApplicationComponent)
+    CONTENTFIELD()
+    CONTENTSOURCE(File)
+    CONTENTSOURCE.LIST(Field,File)
+    CONTENTSOURCEFILE()
+    DOCCONTENTSUBTYPE(octetstream)
+    DOCCONTENTSUBTYPE.LIST(plain,html,mixed,alternative,digest,parallel,RFC822,partial,externalbody,octetstream,msword)
+    DOCCONTENTTYPE(Application)
+    DOCCONTENTTYPE.LIST(Text,Image,Audio,Video,Multipart,Message,Application,MIME)
+    DOCENCODER(Base64)
+    DOCENCODER.LIST(Quoted Printable,Base64)
+    DOCSIMPLECONTENT(Binary)
+    DOCSIMPLECONTENT.LIST(Html,Plain Text,Binary,Other)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Window#Mail
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Window)
+    TITLE(Send e-Mail)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ProcedureComponent#Mail
+  DESCRIPTOR: 1
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ProcedureComponent)
+    OUTPUT.CATEGORY(Messaging)
+    OUTPUT.PROCNAME(MailProc)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Frame
+  DESCRIPTOR: 1
+  PROPERTY: NAME(MailWindow),ACORN(1),ACORN.CONTEXT(),ACORN.NAME(MailWindow),ACORN.WIZARD(Mail),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    MAILWINDOW()
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Process#Mail
+  DESCRIPTOR: 1
+  PROPERTY: NAME(DeferOpen),DESCRIPTION(Start paused),DEVIMP(DETAILED),DOCUMENTATION(Start process in paused mode),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(DocumentSend),ACORN(1),ACORN.CONTEXT('RecipAddress(%eMailAddressList%),RecipName(%eMailNameList%)'),ACORN.INITPRIORITY(100),ACORN.NAME(Document Send Extension),ACORN.WIZARD(ControlTemplate#DocumentSend),DESCRIPTION(Enable Messaging - eMail),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  PROPERTY: NAME(eMailAddressList),DESCRIPTION(eMail Addresses),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.CONVERT('!@NAME(%_VALUE_%)'),MULTI(1)
+  PROPERTY: NAME(eMailAddressList.List),DESCRIPTION(eMail Address),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@USER(%_VALUE_%,EMAIL)'),LISTFILL.FUNC('@FIELDS(%PrimaryFile%)'),MULTI(1)
+  PROPERTY: NAME(eMailNameList),DESCRIPTION(eMail Names),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.CONVERT('!@NAME(%_VALUE_%)'),MULTI(1)
+  PROPERTY: NAME(eMailNameList.List),DESCRIPTION(eMail Address),DTYPE(HIDDEN),HIDDEN(1),LIST(1),LISTFILL.AUTO('@USER(%_VALUE_%,EMAILNAME)'),LISTFILL.FUNC('@FIELDS(%PrimaryFile%)'),MULTI(1)
+  PROPERTY: NAME(HasReportQuery),ACORN(1),ACORN.NAME(Process Report QBE),ACORN.WIZARD(ButtonControl#QBE#ReportQBE),DESCRIPTION(Has QBE button),DEVIMP(USEFUL),DTYPE(CHECK),TYPE(BOOLEAN)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:Process)
+    DEFEROPEN(1)
+    DOCUMENTSEND('@EVAL(''%Scope.Messaging%''=''0'',0,1)')
+    HASREPORTQUERY(1)
+    OUTPUT.DESCRIPTION(EMail from the %PrimaryFile% file)
+    OUTPUT.PROCNAME(Mail%PrimaryFile%)
+    PAUSEBUTTON(1)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ButtonControl#Pause
+  DESCRIPTOR: 1
+  [DEFINITION]
+    DEFEROPEN(1)
+  [END]
+[END]

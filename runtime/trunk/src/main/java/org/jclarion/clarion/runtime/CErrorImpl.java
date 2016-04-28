@@ -11,12 +11,15 @@
 package org.jclarion.clarion.runtime;
 
 import java.util.Stack;
+import java.util.logging.Logger;
 
+import org.jclarion.clarion.ClarionFile;
 import org.jclarion.clarion.primative.ActiveThreadMap;
 
 public class CErrorImpl 
 {
-    private static ActiveThreadMap<CErrorImpl> instance =new ActiveThreadMap<CErrorImpl>();
+    private static Logger log = Logger.getLogger(CErrorImpl.class.getName());
+	private static ActiveThreadMap<CErrorImpl> instance =new ActiveThreadMap<CErrorImpl>();
     
     public static CErrorImpl getInstance()
     {
@@ -60,7 +63,8 @@ public class CErrorImpl
     {
     	if (error==null) error="";
         this.error.error=error;
-        this.error.errorcode=errorcode;;
+        this.error.errorcode=errorcode;
+        if (errorcode!=0)log.fine("setError "+errorcode+" : "+error);
     }
 
     public void setFileError(String errorcode,String error,String errorfile)
@@ -71,6 +75,7 @@ public class CErrorImpl
         this.error.fileerror=error;
         this.error.fileerrorcode=errorcode;;
         this.error.file=errorfile;
+        if (errorcode!=null && !errorcode.equals(""))log.fine("setFileError "+errorcode+" : "+errorfile+" : "+error);
     }
     
     public void clearError()

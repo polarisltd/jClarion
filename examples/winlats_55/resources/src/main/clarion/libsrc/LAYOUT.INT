@@ -1,0 +1,28 @@
+  !ABCIncludeFile(LAY)
+
+OMIT('_EndOfInclude_',_IPYLayoutPresent_)
+_IPYLayoutPresent_ EQUATE(1)
+
+  INCLUDE('LAYHTML.INT'),ONCE
+
+IHtmlGenerator          INTERFACE
+GenerateHtml              PROCEDURE(IHtmlWriter Target)
+                        END
+
+Layout:DefaultWidth     EQUATE(1)
+Layout:DefaultHeight    EQUATE(2)
+
+PosGroup                GROUP, TYPE
+X                         SIGNED
+Y                         SIGNED
+W                         SIGNED
+H                         SIGNED
+Flags                     SIGNED
+                        END
+
+ICellHtmlGenerator      INTERFACE(IHtmlGenerator)
+GetCellAttributes         PROCEDURE(IHtmlWriter Target),STRING
+GetPosition               PROCEDURE(*PosGroup Item)
+                        END
+
+_EndOfInclude_

@@ -3,7 +3,7 @@
 # this file in the Run Configuration's Arguments tab
 #
 
-#org.eclipse.ui/debug=false
+#org.eclipse.ui/debug=true
 #org.eclipse.ui/trace/keyBindings=false
 #org.eclipse.ui/trace/keyBindings.verbose=false
 #org.eclipse.ui/trace/sources=false

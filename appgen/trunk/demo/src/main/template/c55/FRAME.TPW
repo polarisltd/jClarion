@@ -1,0 +1,109 @@
+#PROCEDURE(Frame,'Multiple Document Main Menu'),WINDOW,HLP('~TPLProcFrame')
+#LOCALDATA
+LocalRequest         LONG
+OriginalRequest      LONG
+LocalResponse        LONG
+FilesOpened          LONG
+WindowOpened         LONG
+WindowInitialized    LONG
+ForceRefresh         LONG
+CurrentTab           STRING(80)
+#ENDLOCALDATA
+#CLASS('Procedure Setup','Upon Entry into the Procedure')
+#CLASS('Before Lookups','Refresh Window ROUTINE, before lookups')
+#CLASS('After Lookups','Refresh Window ROUTINE, after lookups')
+#CLASS('Procedure Exit','Before Leaving the Procedure')
+#PROMPT('&Parameters:', @s255),%Parameters
+#ENABLE(%ProcedureType='FUNCTION')
+  #PROMPT('&Return Value:',FIELD),%ReturnValue
+#ENDENABLE
+#PROMPT('&Splash Procedure:',PROCEDURE),%SplashProcedure
+#ENABLE(%INIActive)
+  #BOXED('INI File Settings')
+    #PROMPT('Sa&ve and Restore Window Location',CHECK),%INISaveWindow,DEFAULT(1),AT(10,,150)
+  #ENDBOXED
+#ENDENABLE
+#AT(%DataSectionBeforeWindow)
+  #IF(%SplashProcedure)
+SplashProcedureThread LONG
+  #ENDIF
+#ENDAT
+#AT(%CustomGlobalDeclarations)
+  #INSERT(%StandardGlobalSetup)
+#ENDAT
+#AT(%WindowEventHandling,'OpenWindow')
+  #IF(%SplashProcedure)
+SplashProcedureThread = START(%SplashProcedure)
+  #ENDIF
+#ENDAT
+#AT(%WindowOtherEventHandling)
+  #IF(%SplashProcedure)
+IF SplashProcedureThread
+  IF EVENT() = Event:Accepted
+    POST(Event:CloseWindow,,SplashProcedureThread)
+    SplashPRocedureThread = 0
+  END
+END
+  #ENDIF
+#ENDAT
+#INSERT(%StandardWindowCode)
+#!-----------------------------------------
+#DEFAULT
+NAME DefaultFrame
+[COMMON]
+DESCRIPTION 'Default MDI Frame'
+FROM Clarion Frame
+[PROMPTS]
+%INISaveWindow LONG  (1)
+%ButtonAction DEPEND %Control STRING TIMES 1
+WHEN  ('?Exit') ('No Special Action')
+
+%MenuAction DEPEND %Control STRING TIMES 1
+WHEN  ('?Exit') ('No Special Action')
+
+[ADDITION]
+NAME Clarion DateTimeDisplay
+[INSTANCE]
+INSTANCE 1
+PROCPROP
+[PROMPTS]
+%DisplayDate LONG  (0)
+%DatePicture STRING  ('October 31, 1959')
+%OtherDatePicture @S20  ('')
+%ShowDayOfWeek LONG  (1)
+%DateDisplayLocation STRING  ('Status Bar')
+%DateStatusSection @n1  (3)
+%DateControl STRING  ('')
+%DisplayTime LONG  (0)
+%TimePicture STRING  ('5:30PM')
+%OtherTimePicture @S20  ('')
+%TimeDisplayLocation STRING  ('Status Bar')
+%TimeStatusSection @n1  (4)
+%TimeControl STRING  ('')
+[WINDOW]
+AppFrame APPLICATION('Application'),AT(,,310,190),STATUS(-1,80,120,45),SYSTEM,MAX,RESIZE
+       MENUBAR
+         MENU('&File'),USE(?FileMenu)
+           ITEM('P&rint Setup...'),USE(?PrintSetup),MSG('Setup Printer'),STD(STD:PrintSetup)
+           ITEM,SEPARATOR
+           ITEM('E&xit'),USE(?Exit),MSG('Exit this application'),STD(STD:Close)
+         END
+         MENU('&Edit'),USE(?EditMenu)
+           ITEM('Cu&t'),USE(?Cut),MSG('Remove item to Windows Clipboard'),STD(STD:Cut)
+           ITEM('&Copy'),USE(?Copy),MSG('Copy item to Windows Clipboard'),STD(STD:Copy)
+           ITEM('&Paste'),USE(?Paste),MSG('Paste contents of Windows Clipboard'),STD(STD:Paste)
+         END
+         MENU('&Window'),MSG('Create and Arrange windows'),STD(STD:WindowList)
+           ITEM('T&ile'),USE(?Tile),MSG('Make all open windows visible'),STD(STD:TileWindow)
+           ITEM('&Cascade'),USE(?Cascade),MSG('Stack all open windows'),STD(STD:CascadeWindow)
+           ITEM('&Arrange Icons'),USE(?Arrange),MSG('Align all window icons'),STD(STD:ArrangeIcons)
+         END
+         MENU('&Help'),MSG('Windows Help')
+           ITEM('&Contents'),USE(?Helpindex),MSG('View the contents of the help file'),STD(STD:HelpIndex)
+           ITEM('&Search for Help On...'),USE(?HelpSearch),MSG('Search for help on a subject'),STD(STD:HelpSearch)
+           ITEM('&How to Use Help'),USE(?HelpOnHelp),MSG('How to use Windows Help'),STD(STD:HelpOnHelp)
+         END
+       END
+     END
+
+#ENDDEFAULT

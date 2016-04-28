@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jclarion.example</groupId>
+  <artifactId>winlats55</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0</version>
+  <name>clarion</name>
+  <url>http://maven.apache.org</url>
+  <build>
+          <defaultGoal>assembly:assembly</defaultGoal>
+
+  <plugins>
+      <plugin>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <version>2.2-beta-2</version>
+              <configuration>
+              	<descriptor>src/main/assembly/dep.xml</descriptor>
+              </configuration>
+      </plugin>
+
+	<plugin>
+		<groupId>org.jclarion</groupId>
+		<artifactId>clarion-maven-plugin</artifactId>
+		<version>1.22-SNAPSHOT</version>
+		<executions>
+			<execution>
+				<goals>
+					<goal>clarion</goal>
+				</goals>
+			</execution>
+		</executions>
+		<configuration>
+			<mainSourceFile>winlats.clw</mainSourceFile>
+		</configuration>
+	</plugin>
+
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<version>2.3.2</version>
+		<configuration>
+			<source>1.8</source>
+			<target>1.8</target>
+		</configuration>
+	</plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>clarion.Main</mainClass>
+              <packageName>clarion</packageName>
+              <addClasspath>true</addClasspath>
+              <addExtensions/>
+              <classpathPrefix/>
+            </manifest>
+
+            <manifestEntries>
+              <System-ClassPath>clarion-sysruntime</System-ClassPath>
+              <mode>development</mode>
+              <url>${project.url}</url>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+  </plugins>
+
+  </build>
+
+  <dependencies>
+
+    <dependency>
+	<groupId>org.jclarion</groupId>
+	<artifactId>clarion-runtime</artifactId>
+	<version>1.122-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+	<groupId>org.jclarion</groupId>
+	<artifactId>clarion-sysruntime</artifactId>
+	<version>1.17</version>
+    </dependency>
+
+  </dependencies>
+</project>

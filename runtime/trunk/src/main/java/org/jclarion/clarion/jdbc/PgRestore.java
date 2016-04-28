@@ -73,7 +73,8 @@ public class PgRestore
 
     public void setFileName(String name)
     {
-        file.setValue(name);
+        log.info("PgRestore filename: "+name);
+    	file.setValue(name);
     }
 
     public String getDetails(String input)

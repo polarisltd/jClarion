@@ -1,0 +1,56 @@
+!ABCIncludeFile(ABL)
+
+OMIT('_EndOfInclude_',_AblProp_Interface_)
+_AblProp_Interface_ EQUATE(1)
+
+   INCLUDE('IBCBASE.INT'),ONCE
+
+!!--------------------------------------------------------------------------
+
+WebControlId            EQUATE(LONG)
+
+ResetType               EQUATE(SIGNED)
+
+IControlToHtml          INTERFACE(IInterface)
+AddContents               PROCEDURE(WebControlId Child, SIGNED index=0)
+CanContain                PROCEDURE,BOOL
+GetContainer              PROCEDURE,SIGNED
+GetContentCount           PROCEDURE,SIGNED
+GetContents               PROCEDURE(SIGNED index),WebControlId
+GetDefaultContainerIndex  PROCEDURE,SIGNED
+GetId                     PROCEDURE,WebControlId
+GetVisible                PROCEDURE,BOOL
+IsDefaultButton           PROCEDURE,BOOL
+SetMap                    PROCEDURE(IMapFeqToControl Map)
+QueryProperties           PROCEDURE,*IHtmlElementProperties
+RemoveContents            PROCEDURE(WebControlId Child)
+SetContainer              PROCEDURE(WebControlId Container)
+
+BeforeResponse            PROCEDURE()
+TakeResponse              PROCEDURE(STRING subControl, STRING value, ResetType type, IWbEventProcessor EventProcessor)
+AfterResponse             PROCEDURE()
+                        END
+
+IMapFeqToControl        INTERFACE
+GetRoot                   PROCEDURE(),*IControlToHtml
+Map                       PROCEDURE(WebControlId cid),*IControlToHtml
+                        END
+
+IWbEventProcessor       INTERFACE
+DelayedPost               PROCEDURE(UNSIGNED EventNo, SIGNED feq)
+                        END
+
+
+                        ITEMIZE(EVENT:Last+1),PRE(RESET)
+Value                     EQUATE
+Choice                    EQUATE
+Bool                      EQUATE
+                        END
+
+FEQ:UNKNOWN             EQUATE(32700)
+FEQ:None                EQUATE(32701)
+
+CREATE:istoolbar        EQUATE(23)
+
+_EndOfInclude_
+

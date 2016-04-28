@@ -1,0 +1,119 @@
+#!TEMPLATE (cwHH, 'HTML Help for Clarion'), FAMILY('CW20')
+#!HELP('C55HELP.HLP')
+#! -------------------------------------------------------------------------
+#! (cwHH.TPL)
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#EXTENSION (cwHHGlobal, 'Include HTML Help for Clarion Global Definitions'), DESCRIPTION('HTML Help Global Definitions'), APPLICATION,HLP('~TPLHHGlobal')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#DISPLAY
+#PROMPT( 'Default Help File Name: ',@s40),%cwHHgFileName
+#DISPLAY( '(or variable prefixed' )
+#DISPLAY( ' with !)' )
+#DISPLAY
+#DISPLAY('Enjoy!')
+#! --------------------------------------------------------------------------
+#ATSTART
+#! --------------------------------------------------------------------------
+#IF(~%Target32)
+  #ERROR('HTML Help may only be used with 32 bit programs.')
+#ELSE
+  #IF( %CWVersion < '5002' )
+    #ERROR( 'HTML Help has been Compile for Clarion version 5b' )
+  #ELSIF( %CWVersion = '5002' )
+    #PROJECT ('cwHH.LIB')
+  #ELSE
+    #IF( %ApplicationLocalLibrary )
+      #PROJECT( 'cwHH55L.LIB' )
+    #ELSE
+      #PROJECT( 'cwHH55.LIB' )
+    #ENDIF
+  #END
+#ENDIF
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%ShipList)
+#! --------------------------------------------------------------------------
+  #IF( NOT %ApplicationLocalLibrary )
+
+    #IF( %CWVersion = '5002' )
+___    cwHH.DLL - HTML Support DLL for Clarion 5b
+    #ELSE
+___    cwHH55.DLL - HTML Support DLL for Clarion 5.5
+    #END
+  #ENDIF
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%BeforeGlobalIncludes)
+#! --------------------------------------------------------------------------
+  #IF( %ApplicationLocalLibrary )
+   INCLUDE('cwHHL.INC'),ONCE
+  #ELSE
+   INCLUDE('cwHH.INC'),ONCE
+  #ENDIF
+#ENDAT
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#!  VERSION 1.0
+#! -------------------------------------------------------------------------
+#! -------------------------------------------------------------------------
+#EXTENSION (cwHHProc, 'Use HTML Help on a Procedure'), DESCRIPTION('Enable HTML Help on Procedure'), PROCEDURE, FIRST, REQ( cwHHGlobal ),HLP('~TPLHHPROC')
+#! -------------------------------------------------------------------------
+#DISPLAY
+#DISPLAY
+#PROMPT ( 'Override Help File Name: ',@s40), %cwHHFileName
+#DISPLAY( ' (Leaving the help file blank will use the' )
+#DISPLAY( ' global default help file)' )
+#PROMPT ( 'Context URL: ', @s40 ), %cwHHContextURL
+#DISPLAY( ' (This is the page that should be' )
+#DISPLAY( ' displayed when the user presses' )
+#DISPLAY( ' the F1 Key)' )
+#PROMPT ( 'Alternate "TRAP" Key', @s20 ), %cwHHAltTrapKey
+#DISPLAY( ' (Override the default TRAP key of' )
+#DISPLAY( ' F11)' )
+#DISPLAY
+#! --------------------------------------------------------------------------
+#AT(%DataSectionBeforeWindow)
+#! --------------------------------------------------------------------------
+oHH           &tagHTMLHelp
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%PrepareAlerts)
+#! --------------------------------------------------------------------------
+#DECLARE( %hhInitString )
+#SET( %hhInitString, '' )
+#IF( CLIP(%cwHHFileName) = '' )
+  #IF( SUB( %cwHHgFileName, 1, 1 ) = '!' )
+    #SET( %hhInitString, SUB( %cwHHgFileName, 2, LEN( %cwHHgFileName ) ) )
+  #ELSE
+    #SET( %hhInitString, '''' & CLIP( %cwHHgFileName ) & '''' )
+  #END
+#ELSE
+  #IF( SUB( %cwHHFileName, 1, 1 ) = '!' )
+    #SET( %hhInitString, SUB( %cwHHFileName, 2, LEN( %cwHHFileName ) ) )
+  #ELSE
+    #SET( %hhInitString, '''' & CLIP( %cwHHFileName ) & '''' )
+  #END
+#ENDIF
+#IF( CLIP( %cwHHAltTrapKey ) <> '' )
+  #SET( %hhInitString, CLIP( %hhInitString ) & ',' & CLIP( %cwHHAltTrapKey ) )
+#ENDIF
+oHH &= NEW tagHTMLHelp
+oHH.Init( %hhInitString )
+#FOR(%Control)
+  #SET( %hhInitString, EXTRACT(%ControlStatement,'HLP(',1) )
+  #IF(CLIP( %hhInitString ) <> '') 
+oHH.SetTopic( %Control, %hhInitString )
+  #ENDIF
+#ENDFOR
+#ENDAT
+#! --------------------------------------------------------------------------
+#AT(%EndOfProcedure)
+#! --------------------------------------------------------------------------
+oHH.Kill()
+DISPOSE( oHH )
+#ENDAT
+#INCLUDE('cwHHCode.tpw')

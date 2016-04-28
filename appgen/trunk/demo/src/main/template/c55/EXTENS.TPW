@@ -1,0 +1,409 @@
+#!----------------------------------------------------------------
+#EXTENSION(RecordValidation,'Validate a record against the dictionary'),HLP('~TPLExtensionRecordValidation'),PROCEDURE
+#BOXED('Record Validation')
+  #DISPLAY('Control Value Validation Conditions..')
+  #PROMPT('Validate when the control is Accepted',CHECK),%ValidateOnAccept,AT(10,,150),DEFAULT(1)
+  #PROMPT('Validate during Non-Stop Select',CHECK),%ValidateOnNonStopSelect,DEFAULT(1),AT(10,,150)
+  #BUTTON('Do Not Validate...'),MULTI(%ControlsExcluded,%ControlToExclude),AT(10,,180),HLP('~TPLExtensionRecordValidation')
+    #PROMPT('Control to Exclude',CONTROL),%ControlToExclude
+  #ENDBUTTON
+#ENDBOXED
+#AT(%GatherSymbols)
+  #FOR(%Control)                               #! FOR each screen field
+    #FIND(%Field,%ControlUse)                  #! FIX to process field
+    #IF(%Field)
+      #IF(%FieldLookup)                        #! IF Must Be In File
+        #ADD(%ProcFilesUsed,%FieldLookup)      #! FIX for file processing
+      #ENDIF                                   #! END (IF Must Be In File)
+    #ENDIF
+  #ENDFOR                                      #! END (FOR each screen field)
+#ENDAT
+#AT(%ControlPostEventHandling)
+  #SUSPEND
+    #IF(%ControlEvent = 'Accepted')
+      #IF(%ValidateOnAccept OR %ValidateOnNonStopSelect)
+        #IF(%ValidateOnAccept AND %validateOnNonStopSelect)
+#INSERT(%RecordValidationCode)
+        #ELSIF(%ValidateOnAccept)
+#?IF %Window{Prop:AcceptAll} = False
+  #INSERT(%RecordValidationCode)
+#?END
+        #ELSE
+#?IF %Window{Prop:AcceptAll} = True
+  #INSERT(%RecordValidationCode)
+#?END
+        #ENDIF
+      #ENDIF
+    #ENDIF
+  #RESUME
+#ENDAT
+#!----------------------------------------------------------------
+#GROUP(%RecordValidationCode)
+  #FIND(%ControlToExclude,%Control)
+  #IF(NOT %ControlToExclude)
+    #CASE(%ControlType)
+    #OF('ENTRY')
+    #OROF('SPIN')
+    #OROF('DROP')
+    #OROF('COMBO')
+      #FIND(%Field,%ControlUse)
+      #IF(%FieldLookup)
+        #FIX(%Relation,%FieldLookup)
+        #FOR(%FileKeyField)
+%FileKeyFieldLink = %FileKeyField
+        #ENDFOR
+GET(%Relation,%RelationKey)
+IF ERRORCODE()
+        #IF(%FieldDescription)
+  IF StandardWarning(Warn:NotInFile,'%'FieldDescription','%Relation')
+        #ELSE
+  IF StandardWarning(Warn:NotInFile,'%Field','%Relation')
+        #ENDIF
+    SELECT(%Control)
+        #IF(%ValidateOnNonStopSelect)
+    %Window{Prop:AcceptAll} = False
+        #ENDIF
+    CYCLE
+  END
+END
+      #ENDIF
+      #IF(%FieldRangeLow <> '' OR %FieldRangeHigh <> '')
+        #IF(%FieldDescription)
+          #IF(%FieldRangeLow <> '' AND %FieldRangeHigh <> '')
+IF NOT INRANGE(%Field,%FieldRangeLow,%FieldRangeHigh)
+  IF StandardWarning(Warn:OutOfRange,'%'FieldDescription','%FieldRangeLow and %FieldRangeHigh')
+          #ELSIF(%FieldRangeLow <> '')
+IF %Field < %FieldRangeLow
+  IF StandardWarning(Warn:OutOfRangeLow,'%'FieldDescription','%FieldRangeLow')
+          #ELSE
+IF %Field > %FieldRangeHigh
+  IF StandardWarning(Warn:OutOfRangeHigh,'%'FieldDescription','%FieldRangeHigh')
+          #ENDIF
+        #ELSE
+          #IF(%FieldRangeLow <> '' AND %FieldRangeHigh <> '')
+IF NOT INRANGE(%Field,%FieldRangeLow,%FieldRangeHigh)
+  IF StandardWarning(Warn:OutOfRange,'%Field','%FieldRangeLow and %FieldRangeHigh')
+          #ELSIF(%FieldRangeLow <> '')
+IF %Field < %FieldRangeLow
+  IF StandardWarning(Warn:OutOfRangeLow,'%Field','%FieldRangeLow')
+          #ELSE
+IF %Field > %FieldRangeHigh
+  IF StandardWarning(Warn:OutOfRangeHigh,'%Field','%FieldRangeHigh')
+          #ENDIF
+        #ENDIF
+    SELECT(%Control)
+        #IF(%ValidateOnNonStopSelect)
+    %Window{Prop:AcceptAll} = False
+        #ENDIF
+    CYCLE
+  END
+END
+      #ENDIF
+    #ENDCASE
+  #ENDIF
+#!----------------------------------------------------------------
+#EXTENSION(DateTimeDisplay,'Display the date and/or time in the current window'),HLP('~TPLExtensionDateTimeDisplay'),PROCEDURE,LAST
+#BUTTON('Date and Time Display'),AT(10,,180),HLP('~TPLExtensionDateTimeDisplay')
+  #BOXED('Date Display...')
+    #PROMPT('Display the current day/date in the window',CHECK),%DisplayDate,DEFAULT(0),AT(10,,150)
+    #ENABLE(%DisplayDate)
+      #PROMPT('Date Picture:',DROP('October 31, 1959|OCT 31,1959|10/31/59|10/31/1959|31 OCT 59|31 OCT 1959|31/10/59|31/10/1959|Other')),%DatePicture,DEFAULT('October 31, 1959')
+      #ENABLE(%DatePicture = 'Other')
+        #PROMPT('Other Date Picture:',@S20),%OtherDatePicture,REQ
+      #ENDENABLE
+      #PROMPT('Show the day of the week before the date',CHECK),%ShowDayOfWeek,DEFAULT(1),AT(10,,150)
+      #PROMPT('&Location of Date Display:',DROP('Control|Status Bar')),%DateDisplayLocation
+      #ENABLE(%DateDisplayLocation='Status Bar')
+        #PROMPT('Status Bar Section:',@n1),%DateStatusSection,REQ,DEFAULT(1)
+      #ENDENABLE
+      #ENABLE(%DateDisplayLocation='Control')
+        #PROMPT('Date Display Control:',CONTROL),%DateControl,REQ
+      #ENDENABLE
+    #ENDENABLE
+  #ENDBOXED
+  #BOXED('Time Display...')
+    #PROMPT('Display the current time in the window',CHECK),%DisplayTime,DEFAULT(0),AT(10,,150)
+    #ENABLE(%DisplayTime)
+      #PROMPT('Time Picture:',DROP('5:30PM|5:30:00PM|17:30|17:30:00|1730|173000|Other')),%TimePicture,DEFAULT('5:30PM')
+      #ENABLE(%TimePicture = 'Other')
+        #PROMPT('Other Time Picture:',@S20),%OtherTimePicture,REQ
+      #ENDENABLE
+      #PROMPT('&Location of Time Display:',DROP('Control|Status Bar')),%TimeDisplayLocation
+      #ENABLE(%TimeDisplayLocation='Status Bar')
+        #PROMPT('Status Bar Section:',@n1),%TimeStatusSection,REQ,DEFAULT(2)
+      #ENDENABLE
+      #ENABLE(%TimeDisplayLocation='Control')
+        #PROMPT('Time Display Control:',CONTROL),%TimeControl,REQ
+      #ENDENABLE
+    #ENDENABLE
+  #ENDBOXED
+#ENDBUTTON
+#ATSTART
+  #DECLARE(%TimerEventGenerated)
+  #IF(%DisplayDate)
+    #DECLARE(%DateUsePicture)
+    #CASE(%DatePicture)
+    #OF('10/31/59')
+      #SET(%DateUsePicture,'@D1')
+    #OF('10/31/1959')
+      #SET(%DateUsePicture,'@D2')
+    #OF('OCT 31,1959')
+      #SET(%DateUsePicture,'@D3')
+    #OF('October 31, 1959')
+      #SET(%DateUsePicture,'@D4')
+    #OF('31/10/59')
+      #SET(%DateUsePicture,'@D5')
+    #OF('31/10/1959')
+      #SET(%DateUsePicture,'@D6')
+    #OF('31 OCT 59')
+      #SET(%DateUsePicture,'@D7')
+    #OF('31 OCT 1959')
+      #SET(%DateUsePicture,'@D8')
+    #OF('Other')
+      #SET(%DateUsePicture,%OtherDatePicture)
+    #ENDCASE
+  #ENDIF
+  #IF(%DisplayTime)
+    #DECLARE(%TimeUsePicture)
+    #CASE(%TimePicture)
+    #OF('17:30')
+      #SET(%TimeUsePicture,'@T1')
+    #OF('1730')
+      #SET(%TimeUsePicture,'@T2')
+    #OF('5:30PM')
+      #SET(%TimeUsePicture,'@T3')
+    #OF('17:30:00')
+      #SET(%TimeUsePicture,'@T4')
+    #OF('173000')
+      #SET(%TimeUsePicture,'@T5')
+    #OF('5:30:00PM')
+      #SET(%TimeUsePicture,'@T6')
+    #OF('Other')
+      #SET(%TimeUsePicture,%OtherTimePicture)
+    #ENDCASE
+  #ENDIF
+#ENDAT
+#AT(%DataSectionBeforeWindow)
+  #IF(%DisplayDate AND %ShowDayOfWeek)
+DisplayDayString STRING('Sunday   Monday   Tuesday  WednesdayThursday Friday   Saturday ')
+DisplayDayText   STRING(9),DIM(7),OVER(DisplayDayString)
+  #ENDIF
+#ENDAT
+#AT(%BeforeAccept)
+  #IF(%DisplayTime OR %DisplayDate)
+IF NOT INRANGE(%Window{Prop:Timer},1,100)
+  %Window{Prop:Timer} = 100
+END
+#INSERT(%DateTimeDisplayCode)
+  #ENDIF
+#ENDAT
+#AT(%WindowEventHandling,'Timer')
+  #SET(%TimerEventGenerated,%True)
+  #IF(%DisplayDate OR %DisplayTime)
+#INSERT(%DateTimeDisplayCode)
+  #ENDIF
+#ENDAT
+#AT(%WindowOtherEventHandling)
+  #IF(%DisplayDate OR %DisplayTime)
+    #IF(NOT %TimerEventGenerated)
+IF EVENT() = Event:Timer
+  #INSERT(%DateTimeDisplayCode)
+END
+    #ENDIF
+  #ENDIF
+#ENDAT
+#GROUP(%DateTimeDisplayCode)
+  #IF(%DisplayDate)
+    #IF(%ShowDayOfWeek)
+      #CASE(%DateDisplayLocation)
+      #OF('Control')
+  %DateControl{Prop:Text} = CLIP(DisplayDayText[(TODAY()%%7)+1]) & ', ' & FORMAT(TODAY(),%DateUsePicture)
+  DISPLAY(%DateControl)
+      #ELSE
+  %Window{Prop:StatusText,%DateStatusSection} = CLIP(DisplayDayText[(TODAY()%%7)+1]) & ', ' & FORMAT(TODAY(),%DateUsePicture)
+      #ENDCASE
+    #ELSE
+      #CASE(%DateDisplayLocation)
+      #OF('Control')
+  %DateControl{Prop:Text} = FORMAT(TODAY(),%DateUsePicture)
+  DISPLAY(%DateControl)
+      #ELSE
+  %Window{Prop:StatusText,%DateStatusSection} = FORMAT(TODAY(),%DateUsePicture)
+      #ENDCASE
+    #ENDIF
+  #ENDIF
+  #IF(%DisplayTime)
+    #CASE(%TimeDisplayLocation)
+    #OF('Control')
+  %TimeControl{Prop:Text} = FORMAT(CLOCK(),%TimeUsePicture)
+  DISPLAY(%TimeControl)
+    #ELSE
+  %Window{Prop:StatusText,%TimeStatusSection} = FORMAT(CLOCK(),%TimeUsePicture)
+    #ENDCASE
+  #ENDIF
+#! --------------------------------------------------------------------------------------
+#EXTENSION (WindowResize, 'Allows controls to be resized with window'), PROCEDURE,HLP('~TPLExtensionWindowResize')
+  #PROMPT('Resize Strategy: ',DROP('Resize|Spread|Don''t alter controls')),%AppStrategy,DEFAULT('Spread')
+  #PROMPT('Restrict Minimum Window Size', CHECK), %RestrictMinSize, DEFAULT(%False), AT(5)
+  #ENABLE(%RestrictMinSize=%True)
+    #BOXED('Minimum Window Size')
+      #PROMPT('Minimum Width:', @n5), %WindowMinWidth
+      #PROMPT('Minimum Height:', @n5), %WindowMinHeight
+    #ENDBOXED
+  #ENDENABLE
+  #PROMPT('Restrict Maximum Window Size', CHECK), %RestrictMaxSize, DEFAULT(%False), AT(5)
+  #ENABLE(%RestrictMaxSize=%True)
+    #BOXED('Maxmium Window Size')
+      #PROMPT('Maximum Width:', @n5), %WindowMaxWidth
+      #PROMPT('Maximum Height:', @n5), %WindowMaxHeight
+    #ENDBOXED
+  #ENDENABLE
+#!
+#AT (%CustomGlobalDeclarations)
+  #PROJECT ('ResCode.Clw')
+#ENDAT
+#!
+#AT (%AfterGlobalIncludes), WHERE(~%ResizeGlobalDefsPlaced)
+   INCLUDE('ResDef.Clw')
+  #SET (%ResizeGlobalDefsPlaced, %True)
+#ENDAT
+#!
+#AT (%DataSectionBeforeWindow)
+WinResize            WindowResizeType
+#ENDAT
+#!
+#AT (%BeforeWindowIniResize)
+  #IF(%RestrictMinSize)
+    #IF(%WindowMinWidth=0)
+%Window{PROP:MinWidth}=%Window{PROP:Width}
+    #ELSE
+%Window{PROP:MinWidth}=%WindowMinWidth
+    #ENDIF
+    #IF(%WindowMinHeight=0)
+%Window{PROP:MinHeight}=%Window{PROP:Height}
+    #ELSE
+%Window{PROP:MinHeight}=%WindowMinHeight
+    #ENDIF
+  #ENDIF
+  #IF(%RestrictMaxSize)
+    #IF(%WindowMaxWidth=0)
+%Window{PROP:MaxWidth}=%Window{PROP:Width}
+    #ELSE
+%Window{PROP:MaxWidth}=%WindowMaxWidth
+    #ENDIF
+    #IF(%WindowMaxHeight=0)
+%Window{PROP:MaxHeight}=%Window{PROP:Height}
+    #ELSE
+%Window{PROP:MaxHeight}=%WindowMaxHeight
+    #ENDIF
+  #ENDIF
+  #CASE(%AppStrategy)
+  #OF('Spread')
+WinResize.Initialize(AppStrat:Spread)
+  #OF('Resize')
+WinResize.Initialize(AppStrat:Resize)
+  #ENDCASE
+#ENDAT
+#AT (%AfterWindowIniResize),WHERE(%AppStrategy NOT='Don''t alter controls')
+WinResize.Resize
+#ENDAT
+#!
+#AT (%WindowEventHandling, 'Sized'),WHERE(%AppStrategy NOT='Don''t alter controls')
+WinResize.Resize
+#ENDAT
+#AT (%WindowEventHandling, 'CloseDown'),WHERE(%AppStrategy NOT='Don''t alter controls')
+WinResize.Destroy
+#ENDAT
+#!
+#! ------------------------------------------------------------------------------------
+#EXTENSION (FormVCRControls, 'Allow Form to be driven by Toolbar VCR Controls'), PROCEDURE, REQ(SaveButton), HLP('~TPLExtensionFormVCRControls')
+#AT (%DataSectionBeforeWindow), WHERE(INSTANCE(%ActiveTemplateInstance) = 1)
+  #IF (~(%GenerateBRWInstance OR %GenerateReltreeInstance))
+ToolBarMode     UNSIGNED,AUTO
+  #ENDIF
+WindowXPos      SIGNED,AUTO,STATIC
+WindowYPos      SIGNED,AUTO,STATIC
+WindowPosInit   BOOL(False),STATIC
+#ENDAT
+#!
+#AT(%AfterWindowOpening),WHERE(~(%INIActive AND %INISaveWindow))
+IF WindowPosInit THEN
+  SETPOSITION(0,WindowXPos,WindowYPos)
+ELSE
+  GETPOSITION(0,WindowXPos,WindowYPos)
+  WindowPosInit=True
+END
+#ENDAT
+#!
+#AT (%WindowEventHandling, 'OpenWindow')
+DO FORM::AssignButtons
+#ENDAT
+#!
+#AT(%WindowEventHandling, 'Moved'),WHERE(~(%INIActive AND %INISaveWindow))
+GETPOSITION(0,WindowXPos,WindowYPos)
+#ENDAT
+#!
+#AT (%WindowOtherEventHandling)
+IF ToolbarMode = FormMode THEN
+  CASE ACCEPTED()
+  OF TBarBrwBottom TO TBarBrwUp
+  OROF TBarBrwInsert
+    VCRRequest=ACCEPTED()
+    POST(EVENT:Completed)
+  OF TBarBrwHelp
+    PRESSKEY(F1Key)
+  END
+  #EMBED (%AfterToolbarDispatch, 'After toolbar processed'),%ActiveTemplateInstance
+END
+#ENDAT
+#!
+#AT (%ProcedureRoutines)
+FORM::AssignButtons ROUTINE
+  ToolBarMode=FormMode
+  DISABLE(TBarBrwFirst,TBarBrwLast)
+  #EMBED(%InsideFORMAssignButtons,''),HIDE
+  CASE OriginalRequest
+  OF InsertRecord
+    ENABLE(TBarBrwDown)
+    ENABLE(TBarBrwInsert)
+    TBarBrwDown{PROP:ToolTip}='Save record and add another'
+    TBarBrwInsert{PROP:ToolTip}=TBarBrwDown{PROP:ToolTip}
+  OF ChangeRecord
+    ENABLE(TBarBrwBottom,TBarBrwUp)
+    ENABLE(TBarBrwInsert)
+    TBarBrwBottom{PROP:ToolTip}='Save changes and go to last record'
+    TBarBrwTop{PROP:ToolTip}='Save changes and go to first record'
+    TBarBrwPageDown{PROP:ToolTip}='Save changes and page down to record'
+    TBarBrwPageUp{PROP:ToolTip}='Save changes and page up to record'
+    TBarBrwDown{PROP:ToolTip}='Save changes and go to next record'
+    TBarBrwUP{PROP:ToolTip}='Save changes and go to previous record'
+    TBarBrwInsert{PROP:ToolTip}='Save this record and add a new one'
+  END
+  #FOR(%Control)
+    #IF(UPPER(EXTRACT(%ControlStatement,'STD',1))='STD:HELP')
+  TBarBrwHelp{PROP:Disable}=%Control{PROP:Disable}
+      #BREAK
+    #ENDIF
+  #ENDFOR
+  DISPLAY(TBarBrwFirst,TBarBrwLast)
+
+#ENDAT
+#!
+#AT (%CancelBeforeCloseWindow)
+VCRRequest = VCRNone
+#ENDAT
+#AT (%CloseBeforeCloseWindow)
+VCRRequest = VCRNone
+#ENDAT
+#AT (%InsertCompletedDuplicateKeyError)
+VCRRequest = VCRNone
+#ENDAT
+#AT (%InsertCompletedInsertError)
+VCRRequest = VCRNone
+#ENDAT
+#AT (%ChangeCompletedUpdateError)
+VCRRequest = VCRNone
+#ENDAT
+#AT (%DeleteCompletedDeleteError)
+VCRRequest = VCRNone
+#ENDAT

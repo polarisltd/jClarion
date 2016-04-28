@@ -31,6 +31,8 @@ public abstract class AbstractTarget extends PropertyObject
     private Map<Integer,AbstractControl> idlist=new HashMap<Integer, AbstractControl>();
     
     private int lastID;
+    private int firstID=0;  // robertsp160221. Attempt to implement resize
+    
     
     private int fontWidth;
     private int fontHeight;
@@ -179,6 +181,11 @@ public abstract class AbstractTarget extends PropertyObject
     public int getLastID()
     {
         return lastID;
+    }
+    
+    public int getFirstID()
+    {
+        return firstID;
     }
     
     /**

@@ -1,0 +1,23 @@
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO tutor1;
+
+CREATE USER invoice WITH PASSWORD 'invoice';
+
+Postgres works with schemas. You can have multiple schemes in a single database. So, if you're working within the same database, and want to change schema, You can do:
+
+SET SCHEMA 'schema_name';
+
+To view information about the current database connection, type \conninfo.
+
+
+//////////////////////////////
+
+
+CREATE USER cardreg WITH PASSWORD 'cardreg';
+
+create database cardreg;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO cardreg;
+
+run application, it shows in list database cardreg and it allows to select it.
+
+		

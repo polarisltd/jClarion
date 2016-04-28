@@ -1,0 +1,663 @@
+#!-----------------------------------------------------------------------
+#GROUP(%GenerateAdditionPrompts)
+#FOR(%QuickTemplateInstance)
+  #CASE(%QuickTemplateType)
+  #OF('ASCIIBox')
+  #OF('ASCIIPrintButton')
+  #OF('ASCIISearchButton')
+  #OF('BrowseBox')
+#INSERT(%QuickGenerateBrowseBox)
+  #OF('BrowseSelectButton')
+#INSERT(%QuickGenerateBrowseSelectButton)
+  #OF('BrowseUpdateButton')
+#INSERT(%QuickGenerateBrowseUpdateButton)
+  #OF('CancelButton')
+#INSERT(%QuickGenerateCancelButton)
+  #OF('CloseButton')
+#INSERT(%QuickGenerateCloseButton)
+  #OF('DOSFileLookup')
+  #OF('FieldLookupButton')
+  #OF('SaveButton')
+#INSERT(%QuickGenerateSaveButton)
+  #OF('DateTimeDisplay')
+  #OF('RecordValidation')
+#INSERT(%QuickGenerateRecordValidation)
+  #ENDCASE
+#ENDFOR
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareAdditions)
+#INSERT(%QuickDeclareASCIIBox)
+#INSERT(%QuickDeclareASCIIPrintButton)
+#INSERT(%QuickDeclareASCIISearchButton)
+#INSERT(%QuickDeclareBrowseBox)
+#INSERT(%QuickDeclareBrowseUpdateButton)
+#INSERT(%QuickDeclareBrowseSelectButton)
+#INSERT(%QuickDeclareDOSFileLookup)
+#INSERT(%QuickDeclareFileDrop)
+#INSERT(%QuickDeclareFieldLookupButton)
+#INSERT(%QuickDeclareSaveButton)
+#INSERT(%QuickDeclareDateTimeDisplay)
+#INSERT(%QuickDeclareRecordValidation)
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareASCIIBox)
+#!DECLARE(%ASCIIBoxControl,%QuickTemplateInstance)
+#!DECLARE(%ASCIIBoxDescription,%ASCIIBoxControl)
+#!DECLARE(%ASCIIBoxFileName,%ASCIIBoxControl)
+#!DECLARE(%ASCIIBoxDisplayBytes,%ASCIIBoxControl)
+#!DECLARE(%ASCIIBoxWarning,%ASCIIBoxControl)
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareASCIIPrintButton)
+#!DECLARE(%PrintParentASCIIBoxInstance,%QuickTemplateInstance)
+#!DECLARE(%ASCIIPrintButtonControl,%QuickTemplateInstance)
+#!DECLARE(%ASCIIPrintButtonParent,%ASCIIPrintButtonControl)
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareASCIISearchButton)
+#DECLARE(%SearchParentASCIIBoxInstance,%QuickTemplateInstance)
+#!DECLARE(%ASCIIFindControl,%QuickTemplateInstance)
+#!DECLARE(%ASCIINextControl,%ASCIIFindControl)
+#!DECLARE(%ASCIIFindButtonParent,%ASCIIFindControl)
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareBrowseSelectButton)
+#DECLARE(%HideIfDisabled,%QuickTemplateInstance)
+#!-------------------------------------------------------------
+#GROUP(%QuickSetBrowseSelectButton)
+#SET(%HoldConstruct,%QuickTemplateInstance)
+#ADD(%QuickTemplateInstance,ITEMS(%QuickTemplateInstance)+1)
+#SET(%QuickTemplateType,'BrowseSelectButton')
+#SET(%QuickTemplateProcProp,0)
+#SET(%QuickTemplateParent,%HoldConstruct)
+#ADD(%QuickTemplateControl,'?Select:' & %QuickTemplateInstance)
+#SET(%HideIfDisabled,1)
+#!-------------------------------------------------------------
+#GROUP(%QuickGenerateBrowseSelectButton)
+[ADDITION]
+NAME Clarion BrowseSelectButton
+[INSTANCE]
+INSTANCE %QuickTemplateInstance
+PARENT %QuickTemplateParent
+#IF(%QuickTemplateProcProp)
+PROCPROP
+#ENDIF
+[PROMPTS]
+%%HideIfDisabled LONG  (%HideIfDisabled)
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareBrowseUpdateButton)
+#DECLARE(%UpdateProcedure,%QuickTemplateInstance)
+#DECLARE(%UpdateButtonDefault,%QuickTemplateInstance)
+#DECLARE(%EditViaPopup,%QuickTemplateInstance)
+#!-------------------------------------------------------------
+#GROUP(%QuickSetBrowseUpdateButton,%QuickUpdateProcedure,%QuickUpdatePopupMenu,%QuickUpdateButtonDefault)
+#SET(%HoldConstruct,%QuickTemplateInstance)
+#ADD(%QuickTemplateInstance,ITEMS(%QuickTemplateInstance)+1)
+#SET(%QuickTemplateType,'BrowseUpdateButton')
+#SET(%QuickTemplateProcProp,%True)
+#SET(%QuickTemplateParent,%HoldConstruct)
+#ADD(%QuickTemplateControl,'?Insert:' & %QuickTemplateInstance)
+#ADD(%QuickTemplateControl,'?Change:' & %QuickTemplateInstance)
+#ADD(%QuickTemplateControl,'?Delete:' & %QuickTemplateInstance)
+#SET(%HideIfDisabled,1)
+#SET(%UpdateProcedure,%QuickUpdateProcedure)
+#SET(%UpdateButtonDefault,%QuickUpdateButtonDefault)
+#SET(%EditViaPopup,%QuickUpdatePopupMenu)
+#!-------------------------------------------------------------
+#GROUP(%QuickGenerateBrowseUpdateButton)
+[ADDITION]
+NAME Clarion BrowseUpdateButtons
+[INSTANCE]
+INSTANCE %QuickTemplateInstance
+PARENT %QuickTemplateParent
+#IF(%QuickTemplateProcProp)
+PROCPROP
+#ENDIF
+[PROMPTS]
+%%UpdateProcedure PROCEDURE  (%UpdateProcedure)
+%%EditViaPopup LONG  (%EditViaPopup)
+#!-------------------------------------------------------------
+#GROUP(%QuickSetCloseButton)
+#ADD(%QuickTemplateInstance,ITEMS(%QuickTemplateInstance)+1)
+#SET(%QuickTemplateType,'CloseButton')
+#SET(%QuickTemplateProcProp,%False)
+#ADD(%QuickTemplateControl,'?Close')
+#!-------------------------------------------------------------
+#GROUP(%QuickGenerateCloseButton)
+[ADDITION]
+NAME Clarion CloseButton
+[INSTANCE]
+INSTANCE %QuickTemplateInstance
+#!-------------------------------------------------------------
+#GROUP(%QuickSetCancelButton)
+#ADD(%QuickTemplateInstance,ITEMS(%QuickTemplateInstance)+1)
+#SET(%QuickTemplateType,'CancelButton')
+#SET(%QuickTemplateProcProp,%False)
+#ADD(%QuickTemplateControl,'?Cancel')
+#!-------------------------------------------------------------
+#GROUP(%QuickGenerateCancelButton)
+[ADDITION]
+NAME Clarion CancelButton
+[INSTANCE]
+INSTANCE %QuickTemplateInstance
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareBrowseBox)
+#!
+#DECLARE(%QBBPrimary,%QuickTemplateInstance)
+#DECLARE(%QBBKeyList,%QuickTemplateInstance),MULTI
+#DECLARE(%QBBKeyListID,%QBBKeyList)
+#DECLARE(%QBBSortID,%QBBKeyList)
+#DECLARE(%QBBLocator,%QBBKeyList)
+#DECLARE(%QBBRangeField,%QBBKeyList)
+#DECLARE(%QBBRangeFile,%QBBKeyList)
+#DECLARE(%QBBParentFound,%QuickTemplateInstance)
+#DECLARE(%QBBFrom,%QuickTemplateInstance)
+#DECLARE(%QBBFormat,%QuickTemplateInstance)
+#DECLARE(%QBBFields,%QuickTemplateInstance)
+#DECLARE(%QBBWidth,%QuickTemplateInstance)
+#!
+#DECLARE(%CurrentBrowseBoxInstance)
+#DECLARE(%PopulatedFieldCount)
+#!-------------------------------------------------------------
+#GROUP(%QuickSetBrowseBox,%PassedBrowseFile,%PassedProcProp,%PassedAccessKey)
+#!
+#ADD(%QuickTemplateInstance,ITEMS(%QuickTemplateInstance)+1)
+#SET(%QuickTemplateType,'BrowseBox')
+#SET(%QuickTemplateProcProp,%PassedProcProp)
+#SET(%QuickTemplatePrimary,%PassedBrowseFile)
+#FIX(%FileList,%QuickTemplatePrimary)
+#ADD(%QuickTemplateControl,'?Browse:' & %QuickTemplateInstance)
+#SET(%QBBFrom,'Queue:Browse:' & %QuickTemplateInstance)
+#SET(%QBBWidth,0)
+#SET(%QBBFields,'')
+#SET(%QBBFormat,'')
+#FREE(%QBBKeyList)
+#SET(%ValueConstruct,0)
+#FIX(%FileList,%QuickTemplatePrimary)
+#SET(%PopulatedFieldCount,0)
+#FOR(%FieldListID),WHERE(%FieldListBrowseWidth)
+  #SET(%PopulatedFieldCount,%PopulatedFieldCount + 1)
+  #IF(%PopulatedFieldCount = %MaximumBrowseFields)
+    #BREAK
+  #ENDIF
+  #SET(%QBBFields,%QBBFields & ',' & %FieldList)
+  #SET(%QBBWidth,%QBBWidth + %FieldListBrowseWidth)
+  #SET(%QBBFormat,%QBBFormat & %FieldListBrowseWidth & %FieldListBrowseColumnJust & '(' & %FieldListBrowseColumnIndent & ')|M~' & %FieldListHeader & '~' & %FieldListBrowseHeaderJust & '(' & %FieldListBrowseHeaderIndent & ')' & %FieldListPicture & '@')
+#ENDFOR
+#SET(%QBBFields,SUB(%QBBFields,2,LEN(%QBBFields)-1))
+#FIX(%FileList,%QuickTemplatePrimary)
+#FIX(%File,%QuickTemplatePrimary)
+#IF(%PassedAccessKey)
+  #FOR(%KeyListID)
+    #IF(%KeyList = %PassedAccessKey)
+      #ADD(%QBBKeyList,%PassedAccessKey)
+      #SET(%QBBSortID,1)
+      #SET(%QBBKeyListID,%KeyListID)
+      #BREAK
+    #ENDIF
+  #ENDFOR
+#ELSE
+  #FOR(%KeyListID),WHERE(NOT %KeyListNoPopulate)
+    #SET(%ValueConstruct,%False)
+    #IF(ITEMS(%KeyListField))
+      #SET(%ValueConstruct,%True)
+    #ENDIF
+    #ADD(%QBBKeyList,%KeyList)
+    #IF(ITEMS(%QBBKeyList)=1)
+      #SET(%QBBSortID,ITEMS(%Key))
+    #ELSE
+      #SET(%QBBSortID,ITEMS(%QBBKeyList)-1)
+    #ENDIF
+    #SET(%QBBKeyListID,%KeyListID)
+  #ENDFOR
+#ENDIF
+#IF(ITEMS(%QBBKeyList))
+  #SET(%QBBParentFound,%False)
+  #FOR(%QBBKeyList)
+    #FIX(%KeyListID,%QBBKeyListID)
+    #SET(%QBBLocator,%True)
+    #IF(%QuickBrowseParentHandling <> 'Do not select by parent record')
+      #FOR(%Relation),WHERE(%FileRelationType='MANY:1' AND %FileKey=%KeyList)
+        #SET(%QBBLocator,%False)
+        #SET(%QBBParentFound,%True)
+        #ADD(%QuickOtherFiles,%Relation)
+        #SET(%QBBRangeFile,%Relation)
+        #FOR(%RelationKeyField)
+          #IF(NOT(%RelationKeyField))
+            #SET(%QBBLocator,%True)
+            #BREAK
+          #ELSE
+            #SET(%QBBRangeField,%RelationKeyFieldLink)
+          #ENDIF
+        #ENDFOR
+      #ENDFOR
+    #ENDIF
+  #ENDFOR
+  #SELECT(%QBBKeyList,1)
+  #SET(%QuickTemplatePrimaryKey,%QBBKeyList)
+#ENDIF
+#!-------------------------------------------------------------
+#GROUP(%QuickGenerateBrowseBox)
+[ADDITION]
+NAME Clarion BrowseBox
+[INSTANCE]
+INSTANCE %QuickTemplateInstance
+#IF(%QuickTemplateProcProp)
+PROCPROP
+#ENDIF
+[PROMPTS]
+#IF(%ControlModel='Button')
+%%AcceptToolbarControl LONG (0)
+#ELSE
+%%AcceptToolbarControl LONG (1)
+#ENDIF
+#FIX(%FileList,%QuickTemplatePrimary)
+%%EnableQuickScan LONG  (0)
+
+#SELECT(%QBBKeyList,1)
+#IF(%QBBLocator)
+%%LocatorType DEFAULT  ('Step')
+#ELSE
+%%LocatorType DEFAULT  ('')
+#ENDIF
+%%OverrideDefaultLocator DEFAULT ('')
+%%OverrideLocator DEFAULT ('')
+
+%%RecordFilter @S255  ('')
+
+%%RangeField COMPONENT  (%QBBRangeField)
+
+#IF(%QBBRangeField)
+%%RangeLimitType DEFAULT  ('File Relationship')
+#ELSE
+%%RangeLimitType DEFAULT  ('')
+#ENDIF
+%%RangeLimit FIELD  ()
+%%RangeLow FIELD  ()
+%%RangeHigh FIELD  ()
+%%RangeFile FILE  (%QBBRangeFile)
+#!
+#!
+#FIX(%File,%QuickTemplatePrimary)
+#FIX(%Driver,%FileDriver)
+#IF(%DriverSQL)
+%%ScrollBehavior DEFAULT  ('Fixed Thumb')
+#ELSE
+%%ScrollBehavior DEFAULT  ('Movable Thumb')
+%%ScrollKeyDistribution STRING  ('Runtime')
+%%CustomKeyDistribution MULTI LONG  ()
+%%KeyDistributionValue DEPEND %%CustomKeyDistribution @S10 TIMES 0
+
+%%ScrollAlpha LONG  (1)
+%%ScrollNumeric LONG  (0)
+%%ScrollAlt LONG  (0)
+#ENDIF
+#!
+#SET(%ValueConstruct,'')
+#FOR(%QBBKeyList),WHERE(INSTANCE(%QBBKeyList) < ITEMS(%QBBKeyList))
+  #SET(%ValueConstruct,%ValueConstruct & ',' & INSTANCE(%QBBKeyList))
+#ENDFOR
+#SET(%ValueConstruct,SUB(%ValueConstruct,2,LEN(%ValueConstruct)-1))
+%%SortOrder MULTI LONG  (%ValueConstruct)
+#INSERT(%QuickGenBrowseBoxSort,'SortCondition')
+#INSERT(%QuickGenBrowseBoxSort,'SortKey')
+#INSERT(%QuickGenBrowseBoxSort,'SortLocatorType')
+#INSERT(%QuickGenBrowseBoxSort,'SortOverrideDefaultLocator')
+#INSERT(%QuickGenBrowseBoxSort,'SortOverrideLocator')
+#INSERT(%QuickGenBrowseBoxSort,'SortRecordFilter')
+#INSERT(%QuickGenBrowseBoxSort,'SortRangeField')
+#INSERT(%QuickGenBrowseBoxSort,'SortRangeLimitType')
+#INSERT(%QuickGenBrowseBoxSort,'SortRangeLimit')
+#INSERT(%QuickGenBrowseBoxSort,'SortRangeLow')
+#INSERT(%QuickGenBrowseBoxSort,'SortRangeHigh')
+#INSERT(%QuickGenBrowseBoxSort,'SortRangeFile')
+#INSERT(%QuickGenBrowseBoxSort,'SortScrollBehavior')
+#INSERT(%QuickGenBrowseBoxSort,'SortScrollKeyDistribution')
+#INSERT(%QuickGenBrowseBoxSort,'SortCustomKeyDistribution')
+#INSERT(%QuickGenBrowseBoxSort,'SortKeyDistributionValue')
+#INSERT(%QuickGenBrowseBoxSort,'SortScrollAlpha')
+#INSERT(%QuickGenBrowseBoxSort,'SortScrollNumeric')
+#INSERT(%QuickGenBrowseBoxSort,'SortScrollAlt')
+#!--------------------------------------------------------------------------
+#GROUP(%QuickGenBrowseBoxSort,%CurrentPlace)
+#SET(%ValueConstruct,ITEMS(%QBBKeyList)-1)
+#IF(%ValueConstruct < 0)
+  #SET(%ValueConstruct,0)
+#ENDIF
+#CASE(%CurrentPlace)
+#OF('SortCondition')
+%%SortCondition DEPEND %%SortOrder @S255 TIMES %ValueConstruct
+#OF('SortKey')
+%%SortKey DEPEND %%SortOrder KEY TIMES %ValueConstruct
+#OF('SortLocatorType')
+%%SortLocatorType DEPEND %%SortOrder DEFAULT TIMES %ValueConstruct
+#OF('SortOverrideDefaultLocator')
+%%SortOverrideDefaultLocator DEPEND %%SortOrder DEFAULT TIMES %ValueConstruct
+#OF('SortOverrideLocator')
+%%SortOverrideLocator DEPEND %%SortOrder DEFAULT TIMES %ValueConstruct
+#OF('SortRecordFilter')
+%%SortRecordFilter DEPEND %%SortOrder @S255 TIMES %ValueConstruct
+#OF('SortRangeField')
+  #IF( %ProgramType='Full' OR %QuickProcedureType='Clarion Form' )
+%%SortRangeField DEPEND %%SortOrder COMPONENT TIMES %ValueConstruct
+  #ELSE
+%%SortRangeField DEPEND %%SortOrder COMPONENT TIMES 0
+  #ENDIF
+#OF('SortRangeLimitType')
+%%SortRangeLimitType DEPEND %%SortOrder DEFAULT TIMES %ValueConstruct
+#OF('SortRangeLimit')
+%%SortRangeLimit DEPEND %%SortOrder FIELD TIMES %ValueConstruct
+#OF('SortRangeLow')
+%%SortRangeLow DEPEND %%SortOrder FIELD TIMES %ValueConstruct
+#OF('SortRangeHigh')
+%%SortRangeHigh DEPEND %%SortOrder FIELD TIMES %ValueConstruct
+#OF('SortRangeFile')
+%%SortRangeFile DEPEND %%SortOrder FILE TIMES %ValueConstruct
+#OF('SortScrollBehavior')
+%%SortScrollBehavior DEPEND %%SortOrder DEFAULT TIMES %ValueConstruct
+#OF('SortScrollKeyDistribution')
+%%SortScrollKeyDistribution DEPEND %%SortOrder STRING TIMES %ValueConstruct
+#OF('SortCustomKeyDistribution')
+%%SortCustomKeyDistribution DEPEND %%SortOrder MULTI LONG TIMES 0
+#OF('SortKeyDistributionValue')
+%%SortKeyDistributionValue DEPEND %%SortCustomKeyDistribution @S10 TIMES %ValueConstruct
+#OF('SortScrollAlpha')
+%%SortScrollAlpha DEPEND %%SortOrder LONG TIMES %ValueConstruct
+#OF('SortScrollNumeric')
+%%SortScrollNumeric DEPEND %%SortOrder LONG TIMES %ValueConstruct
+#OF('SortScrollAlt')
+%%SortScrollAlt DEPEND %%SortOrder LONG TIMES %ValueConstruct
+#ENDCASE
+#FOR(%QBBKeyList),WHERE(INSTANCE(%QBBKeyList)<>1)
+  #SET(%ValueConstruct,INSTANCE(%QBBKeyList)-1)
+  #SET(%HoldConstruct,INSTANCE(%QBBKeyList))
+  #CASE(%CurrentPlace)
+  #OF('SortCondition')
+    #FIX(%KeyListID,%QBBKeyListID)
+WHEN  (%ValueConstruct) ('CHOICE(?CurrentTab) = %HoldConstruct')
+  #OF('SortKey')
+WHEN  (%ValueConstruct) (%QBBKeyList)
+  #OF('SortLocatorType')
+#IF(%QBBLocator)
+WHEN  (%ValueConstruct) ('Step')
+#ELSE
+WHEN  (%ValueConstruct) ('')
+#ENDIF
+  #OF('SortOverrideDefaultLocator')
+WHEN  (%ValueConstruct) ('')
+  #OF('SortOverrideLocator')
+WHEN  (%ValueConstruct) ('')
+  #OF('SortRecordFilter')
+WHEN  (%ValueConstruct) ('')
+  #OF('SortRangeField')
+    #IF(%QBBRangeField AND (%ProgramType='Full' OR %QuickProcedureType='Clarion Form'))
+WHEN  (%ValueConstruct) (%QBBRangeField)
+    #END
+  #OF('SortRangeLimitType')
+    #IF(%QBBRangeField AND (%ProgramType='Full' OR %QuickProcedureType='Clarion Form'))
+WHEN  (%ValueConstruct) ('File Relationship')
+    #ELSE
+WHEN  (%ValueConstruct) ('')
+    #ENDIF
+  #OF('SortRangeLimit')
+WHEN  (%ValueConstruct) ()
+  #OF('SortRangeLow')
+WHEN  (%ValueConstruct) ()
+  #OF('SortRangeHigh')
+WHEN  (%ValueConstruct) ()
+  #OF('SortRangeFile')
+WHEN  (%ValueConstruct) (%QBBRangeFile)
+  #OF('SortScrollBehavior')
+    #FIX(%File,%QuickTemplatePrimary)
+    #FIX(%Driver,%FileDriver)
+    #IF(%DriverSQL)
+WHEN  (%ValueConstruct) ('Fixed Thumb')
+    #ELSE
+WHEN  (%ValueConstruct) ('Movable Thumb')
+    #ENDIF
+  #OF('SortScrollKeyDistribution')
+WHEN  (%ValueConstruct) ('Runtime')
+  #OF('SortKeyDistributionValue')
+WHEN  (%ValueConstruct)TIMES 0
+  #OF('SortScrollAlpha')
+WHEN  (%ValueConstruct) (1)
+  #OF('SortScrollNumeric')
+WHEN  (%ValueConstruct) (0)
+  #OF('SortScrollAlt')
+WHEN  (%ValueConstruct) (0)
+  #ENDCASE
+#ENDFOR
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareDOSFileLookup)
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareFileDrop)
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareFieldLookupButton)
+#DECLARE(%FLBControlToLookup,%QuickTemplateInstance)
+#!-------------------------------------------------------------
+#GROUP(%QuickSetFieldLookupButton)
+#ADD(%QuickTemplateInstance,ITEMS(%QuickTemplateInstance)+1)
+#SET(%QuickTemplateType,'FieldLookupButton')
+#SET(%QuickTemplateProcProp,%False)
+#SET(%QuickTemplatePrimary,%Null)
+#ADD(%QuickTemplateControl,'?CallLookup:' & %WindowControl)
+#SET(%FLBControlToLookup,%WindowControl)
+#!-------------------------------------------------------------
+#GROUP(%QuickGenerateFieldLookupButton)
+[ADDITION]
+NAME Clarion FieldLookupButton
+[INSTANCE]
+INSTANCE %QuickTemplateInstance
+[PROMPTS]
+%%ControlToLookup PROCEDURE  (%FLBControlToLookup)
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareSaveButton)
+#DECLARE(%QSBInsertAllowed,%QuickTemplateInstance)
+#DECLARE(%QSBChangeAllowed,%QuickTemplateInstance)
+#DECLARE(%QSBDeleteAllowed,%QuickTemplateInstance)
+#DECLARE(%QSBActionOnDelete,%QuickTemplateInstance)
+#DECLARE(%QSBInsertMessage,%QuickTemplateInstance)
+#DECLARE(%QSBChangeMessage,%QuickTemplateInstance)
+#DECLARE(%QSBDeleteMessage,%QuickTemplateInstance)
+#DECLARE(%QSBActionOnCancel,%QuickTemplateInstance)
+#DECLARE(%QSBMessageLocation,%QuickTemplateInstance)
+#DECLARE(%QSBMessageStatusSection,%QuickTemplateInstance)
+#DECLARE(%QSBAppendToTitleID,%QuickTemplateInstance)
+#!-------------------------------------------------------------
+#GROUP(%QuickSetSaveButton)
+#ADD(%QuickTemplateInstance,ITEMS(%QuickTemplateInstance)+1)
+#SET(%QuickTemplateType,'SaveButton')
+#SET(%QuickTemplateProcProp,1)
+#SET(%QuickTemplatePrimary,%QuickProcedurePrimary)
+#ADD(%QuickTemplateControl,'?OK')
+#SET(%QSBInsertAllowed,%QuickFormAllowInsert)
+#SET(%QSBChangeAllowed,%QuickFormAllowChange)
+#SET(%QSBDeleteAllowed,%QuickFormAllowDelete)
+#SET(%QSBActionOnDelete,'Standard Warning')
+#SET(%QSBInsertMessage,%QuickFormInsertMessage)
+#SET(%QSBChangeMessage,%QuickFormChangeMessage)
+#SET(%QSBDeleteMessage,%QuickFormDeleteMessage)
+#SET(%QSBActionOnCancel,'Confirm Cancel')
+#SET(%QSBMessageLocation,%QuickFormMessageLocation)
+#IF(%QSBMessageLocation = 'Status Bar')
+  #SET(%QSBMessageStatusSection,2)
+#ELSE
+  #SET(%QSBMessageStatusSection,0)
+#ENDIF
+#IF(%QuickFormAppendToTitleID)
+  #SET(%QSBAppendToTitleID,'!' & %QuickFormAppendToTitleID)
+#ELSE
+  #SET(%QSBAppendToTitleID,'')
+#ENDIF
+#!-------------------------------------------------------------
+#GROUP(%QuickGenerateSaveButton)
+[ADDITION]
+NAME Clarion SaveButton
+[INSTANCE]
+INSTANCE %QuickTemplateInstance
+#IF(%QuickTemplateProcProp)
+PROCPROP
+#ENDIF
+[PROMPTS]
+%%InsertAllowed LONG  (%QSBInsertAllowed)
+%%InsertMessage @S40  ('%QuickFormInsertMessage')
+%%ChangeAllowed LONG  (%QSBChangeAllowed)
+%%ChangeMessage @S40  ('%QuickFormChangeMessage')
+%%DeleteAllowed LONG  (%QSBDeleteAllowed)
+%%DeleteMessage @S40  ('%QuickFormDeleteMessage')
+%%MessageHeader LONG  (0)
+%%ActionOnDelete STRING  ('%QSBActionOnDelete')
+%%PrimingFields MULTI LONG  ()
+%%PrimedField DEPEND %%PrimingFields FIELD TIMES 0
+
+%%PrimedValue DEPEND %%PrimingFields @S255 TIMES 0
+
+%%ActionOnCancel STRING  ('%QSBActionOnCancel')
+%%MessageLocation STRING  ('%QSBMessageLocation')
+%%MessageStatusSection @n1  (%QSBMessageStatusSection)
+
+%%HistoryKey        DEFAULT (734)
+
+#IF(%QSBAppendToTitleID)
+%%AppendToTitle LONG  (1)
+%%AppendToTitleID @S255  ('%QSBAppendToTitleID')
+#ELSE
+%%AppendToTitle LONG  ()
+%%AppendToTitleID @S255  ('')
+#ENDIF
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareDateTimeDisplay)
+!
+#!-------------------------------------------------------------
+#GROUP(%QuickDeclareRecordValidation)
+#DECLARE(%QRVValidateOnAccept)
+#DECLARE(%QRVValidateOnNonStopSelect)
+#!-------------------------------------------------------------
+#GROUP(%QuickSetRecordValidation)
+#ADD(%QuickTemplateInstance,ITEMS(%QuickTemplateInstance)+1)
+#SET(%QuickTemplateType,'RecordValidation')
+#SET(%QRVValidateOnAccept,%QuickFormValidateOnAccept)
+#SET(%QRVValidateOnNonStopSelect,%QuickFormValidateOnNonStopSelect)
+#IF(%QRVValidateOnAccept OR %QRVValidateOnNonStopSelect)
+  #SET(%QuickTemplateProcProp,%True)
+#ENDIF
+#!-------------------------------------------------------------
+#GROUP(%QuickGenerateRecordValidation)
+[ADDITION]
+NAME Clarion RecordValidation
+[INSTANCE]
+INSTANCE %QuickTemplateInstance
+#IF(%QuickTemplateProcProp)
+PROCPROP
+#ENDIF
+[PROMPTS]
+%%ValidateOnAccept LONG  (%QRVValidateOnAccept)
+%%ValidateOnNonStopSelect LONG  (%QRVValidateOnNonStopSelect)
+%%ControlsExcluded MULTI LONG  ()
+%%ControlToExclude DEPEND %%ControlsExcluded STRING TIMES 0
+#!--------------------------------------------------------------------------
+#GROUP(%PopulateControlTemplate)
+#CASE(%QuickTemplateType)
+#OF('ASCIIBox')
+#OF('ASCIIPrintButton')
+#OF('ASCIISearchButton')
+#OF('BrowseBox')
+  #SET(%NoListResize,%False)
+  #IF(%ProgramType='Full' OR %QuickBrowseParentHandling='Select parent record via button')
+    #SET(%ThisTemplateInstance,INSTANCE(%QuickTemplateInstance))
+    #FIX(%QuickTemplateInstance,%PrimaryBrowseInstance)
+    #FOR(%QBBKeyList)
+      #FIX(%KeyListID,%QBBKeyListID)
+      #IF(%QBBRangeFile AND %QuickBrowseParentHandling='Select parent record via button')
+        #SET(%NoListResize,%True)
+        #BREAK
+      #ENDIF
+    #ENDFOR
+    #FIX(%QuickTemplateInstance,%ThisTemplateInstance)  #!restore saved instance
+  #ENDIF
+  #IF(%ControlModel='Toolbar' AND ~%NoListResize)
+    #SET(%WindowControlHeight,%WindowControlHeight+18)
+  #ENDIF
+ LIST,AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%QuickTemplateControl),MSG('Browsing Records'),IMM,HVSCROLL,|
+   FORMAT('%'QBBFormat'),|
+   FROM(%QBBFrom),#SEQ(%QuickTemplateInstance),#ORIG(?List),#FIELDS(%QBBFields)
+  #IF(%ControlModel='Toolbar' AND ~%NolistResize)
+    #SET(%WindowControlHeight,%WindowControlHeight-18)
+  #ENDIF
+#OF('BrowseSelectButton')
+ #INSERT(%IncYOffset)
+ #IF(%ControlModel='Toolbar')
+ BUTTON('%DefaultSelectControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),HIDE,#SEQ(%QuickTemplateInstance),#ORIG(?Select)
+ #ELSE
+ BUTTON('%DefaultSelectControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),#SEQ(%QuickTemplateInstance),#ORIG(?Select)
+ #ENDIF
+ #INSERT(%DecYOffset)
+#OF('BrowseUpdateButton')
+  #INSERT(%DecYOffset)
+  #CASE(SUB(%WindowControl,1,7))
+  #OF('?Insert')
+    #IF(%ControlModel='Toolbar')
+ BUTTON('%DefaultInsertControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),HIDE,#SEQ(%QuickTemplateInstance),#ORIG(?Insert),#LINK(?Change:%QuickTemplateInstance)
+    #ELSE
+ BUTTON('%DefaultInsertControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),#SEQ(%QuickTemplateInstance),#ORIG(?Insert),#LINK(?Change:%QuickTemplateInstance)
+    #ENDIF
+  #OF('?Change')
+    #IF(%UpdateButtonDefault)
+      #IF(%ControlModel='Toolbar')
+ BUTTON('%DefaultChangeControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),HIDE,DEFAULT,#SEQ(%QuickTemplateInstance),#ORIG(?Change),#LINK(?Delete:%QuickTemplateInstance)
+      #ELSE
+ BUTTON('%DefaultChangeControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),DEFAULT,#SEQ(%QuickTemplateInstance),#ORIG(?Change),#LINK(?Delete:%QuickTemplateInstance)
+      #ENDIF
+    #ELSE
+      #IF(%ControlModel='Toolbar')
+ BUTTON('%DefaultChangeControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),HIDE,#SEQ(%QuickTemplateInstance),#ORIG(?Change),#LINK(?Delete:%QuickTemplateInstance)
+      #ELSE
+ BUTTON('%DefaultChangeControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),#SEQ(%QuickTemplateInstance),#ORIG(?Change),#LINK(?Delete:%QuickTemplateInstance)
+      #ENDIF
+    #ENDIF
+  #OF('?Delete')
+    #IF(%ControlModel='Toolbar')
+ BUTTON('%DefaultDeleteControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),HIDE,#SEQ(%QuickTemplateInstance),#ORIG(?Delete),#LINK(?Insert:%QuickTemplateInstance)
+    #ELSE
+ BUTTON('%DefaultDeleteControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),#SEQ(%QuickTemplateInstance),#ORIG(?Delete),#LINK(?Insert:%QuickTemplateInstance)
+    #ENDIF
+  #ENDCASE
+  #INSERT(%IncYOffset)
+#OF('CancelButton')
+  #IF(%QuickProcedureType NOT='Clarion Form')
+    #INSERT(%DecYOffset)
+  #ELSIF(%ControlModel='Toolbar')
+    #SET(%WindowControlXOffset,%WindowWidth-%WindowControlWidth-4)
+  #ENDIF
+ BUTTON('%DefaultCancelControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),#SEQ(%QuickTemplateInstance),#ORIG(%WindowControl)
+  #IF(%QuickProcedureType NOT='Clarion Form')
+    #INSERT(%IncYOffset)
+  #ENDIF
+#OF('CloseButton')
+  #INSERT(%DecYOffset)
+  #IF(%ControlModel='Toolbar')
+ BUTTON('%DefaultCloseControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),HIDE,#SEQ(%QuickTemplateInstance),#ORIG(%WindowControl)
+  #ELSE
+ BUTTON('%DefaultCloseControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),#SEQ(%QuickTemplateInstance),#ORIG(%WindowControl)
+  #ENDIF
+  #INSERT(%IncYOffset)
+#OF('DOSFileLookup')
+#OF('FieldLookupButton')
+ BUTTON('...'),AT(%WindowControlXOffset,%WindowControlYOffset,%DefaultControlHeight,%DefaultControlHeight),USE(%WindowControl)
+#OF('SaveButton')
+  #IF(%ControlModel='Toolbar' AND %QuickProcedureType='Clarion Form')
+    #SET(%WindowControlXOffset,%WindowWidth-(2*%WindowControlWidth)-8)
+  #ENDIF
+ BUTTON('%DefaultOKControlText'),AT(%WindowControlXOffset,%WindowControlYOffset,%WindowControlWidth,%WindowControlHeight),USE(%WindowControl),DEFAULT,#SEQ(%QuickTemplateInstance),#ORIG(%WindowControl)
+#ENDCASE
+#!
+#!
+#!--------------------------------------------------------------------------
+#GROUP(%DecYOffset)
+#IF(%ControlModel='Toolbar')
+  #SET(%WindowControlYOffset,%WindowControlYOffset-18)
+#ENDIF
+#!
+#!
+#GROUP(%IncYOffset)
+#IF(%ControlModel='Toolbar')
+  #SET(%WindowControlYOffset,%WindowControlYOffset+18)
+#ENDIF
+#!
+#!

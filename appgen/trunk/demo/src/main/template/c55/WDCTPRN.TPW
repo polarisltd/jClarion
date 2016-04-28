@@ -1,0 +1,532 @@
+#UTILITY(DictionaryPrint,'Print the contents of your current data dictionary'),WIZARD,HLP('~TPLWizardDictionaryPrint')
+#!
+#SHEET
+  #TAB('Dictionary Print Wizard'),HLP('~TPLWizardDictionaryPrint')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WDCT1' & %GetColorSuffix() & '.GIF'))
+    #DISPLAY('This wizard will generate a report of the contents of your current dictionary.'),AT(90,8,235,24)
+    #DISPLAY('To specify how you want the report constructed, click on the Next button.'),AT(90)
+  #ENDTAB
+  #TAB('Dictionary Print Wizard - Output File'),FINISH(1),HLP('~TPLWizardDictionaryPrint')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WDCT2' & %GetColorSuffix() & '.GIF'))
+    #DISPLAY('The dictionary report wizard creates a text file, which is then sent to your printer. You can, if you wish, have this wizard delete the file when it''s done, or you can keep the file for later use.'),AT(90,8,235,24)
+    #PROMPT('What do you want to do with the file?',OPTION),%RetainFile,AT(90,,235)
+    #PROMPT('I don''t want it. Remove the file after printing.',RADIO),AT(100)
+    #PROMPT('I might need it. Keep the file around.',RADIO),AT(100)
+  #ENDTAB
+  #TAB('Dictionary Print Wizard - Output File'),WHERE(%RetainFile = 'I might need it. Keep the file around.'),FINISH(1),HLP('~TPLWizardDictionaryPrint')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFILE' & %GetColorSuffix() & '.GIF'))
+    #PROMPT('What name do you want the text file to have?',OPTION),%WhatName,AT(90,8,235,70)
+    #PROMPT('Use the dictionary name, with a .TXT extension.',RADIO),AT(100,,224)
+    #PROMPT('Let me supply my own file name.',RADIO),AT(100)
+    #ENABLE(%WhatName = 'Let me supply my own file name.')
+      #PROMPT('Please enter the name of the text file to be generated.',@S100),%NewName,AT(100,52,215),PROMPTAT(100,40,215)
+    #ENDENABLE
+    #PROMPT('Don''t print this report automatically. I''ll print it from the text file later.',CHECK),%DoNotPrint,AT(100,,224)
+  #ENDTAB
+  #TAB('Dictionary Print Wizard - Reported Files'),FINISH(1),HLP('~TPLWizardDictionaryPrint')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFSCH' & %GetColorSuffix() & '.GIF'))
+    #DISPLAY('You can report on each file in your dictionary, or you can select individual files to report on.'),AT(90,8,235,24)
+    #PROMPT('Report on all files in my dictionary.',CHECK),%DictionaryReportUseAllFiles,AT(90,,180),DEFAULT(1)
+  #ENDTAB
+  #TAB('Dictionary Print Wizard - Select Reported Files'),WHERE(NOT %DictionaryReportUseAllFiles),FINISH(1),HLP('~TPLWizardDictionaryPrint')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFSCH' & %GetColorSuffix() & '.GIF'))
+    #PROMPT('File Selection',FROM(%File)),%DictionaryReportFileSelection,INLINE,SELECTION('File Selection'),AT(90,8,235)
+  #ENDTAB
+  #TAB('Dictionary Print Wizard - Report Detail'),FINISH(1),HLP('~TPLWizardDictionaryPrint')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WFSCH' & %GetColorSuffix() & '.GIF'))
+    #PROMPT('What level of detail do you want for each file reported?',OPTION),%FileDetail,AT(90,8,235)
+    #PROMPT('All. Tell me everything about the file.',RADIO),AT(100,,215)
+    #PROMPT('Some. Just give me the basics, like file name and prefix.',RADIO),AT(100,,224)
+    #PROMPT('What level of detail do you want for each field?',OPTION),%FieldDetail,AT(90,,235)
+    #PROMPT('All. Tell me everything about the field.',RADIO),AT(100,,215)
+    #PROMPT('Some. Just give me the basics, like field name and data type.',RADIO),AT(100,,224)
+    #PROMPT('None. I don''t want to know about the fields.',RADIO),AT(100,,215)
+  #ENDTAB
+  #TAB('Dictionary Print Wizard - Report Detail'),FINISH(1),HLP('~TPLWizardDictionaryPrint')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WKEY' & %GetColorSuffix() & '.GIF'))
+    #PROMPT('What level of detail do you want for each key?',OPTION),%KeyDetail,AT(90,8,235)
+    #PROMPT('All. Tell me everything about the key.',RADIO),AT(100,,215)
+    #PROMPT('Some. Just give me the basics, like key name, and fields used.',RADIO),AT(100,,224)
+    #PROMPT('None. I don''t want to know about the keys.',RADIO),AT(100,,215)
+    #PROMPT('What level of detail do you want for each relationship?',OPTION),%RelationDetail,AT(90,,235)
+    #PROMPT('All. Tell me everything about the relationships.',RADIO),AT(100,,215)
+    #PROMPT('None. I don''t want to know about the relationships.',RADIO),AT(100,,215)
+  #ENDTAB
+  #TAB('Dictionary Print Wizard - Finally...'),HLP('~TPLWizardDictionaryPrint')
+    #IMAGE(''),PROP(PROP:Text,FULLNAME('WDCT1' & %GetColorSuffix() & '.GIF'))
+    #DISPLAY('This concludes the dictionary report wizard.'),AT(90,8,235,24)
+    #DISPLAY('Click on the Finish button to generate the text file.'),AT(90,82,235,24)
+  #ENDTAB
+#ENDSHEET
+#DECLARE(%OutputFile)
+#IF(%WhatName = 'Use the dictionary name, with a .TXT extension.')
+  #SET(%OutputFile,SUB(%DictionaryFile,1,LEN(%DictionaryFile)-3) & 'TXT')
+#ELSE
+  #SET(%OutputFile,%NewName)
+#ENDIF
+#DECLARE(%ReportedFiles),UNIQUE
+#DECLARE(%Groups),MULTI
+#DECLARE(%ValueConstruct)
+#IF(%DictionaryReportUseAllFiles)
+  #FOR(%File)
+    #ADD(%ReportedFiles,%File)
+  #ENDFOR
+#ELSE
+  #FOR(%DictionaryReportFileSelection)
+    #ADD(%ReportedFiles,%DictionaryReportFileSelection)
+  #ENDFOR
+#ENDIF
+#CREATE(%OutputFile)
+Dictionary Report                           Generated %@D4@(TODAY())
+%[43]DictionaryFile at %@T3@(CLOCK())
+#FOR(%ReportedFiles)
+  #FIX(%File,%ReportedFiles)
+
+=File=================================================================================
+  #CASE(SUB(%FileDetail,1,4))
+  #OF('All.')
+  #INSERT(%AllFileDetail)
+  #OF('Some')
+  #INSERT(%SomeFileDetail)
+  #ENDCASE
+
+  #SUSPEND
+  #?--Keys------------------------------------------------------------------------------
+    #FOR(%Key)
+    #?--Key-----------------------------------------------------------------------------
+      #CASE(SUB(%KeyDetail,1,4))
+      #OF('All.')
+    #INSERT(%AllKeyDetail)
+      #OF('Some')
+    #INSERT(%SomeKeyDetail)
+      #ENDCASE
+#?
+    #ENDFOR
+  #RESUME
+  #SUSPEND
+  #?--Fields----------------------------------------------------------------------------
+    #FOR(%Field)
+    #?--Field---------------------------------------------------------------------------
+      #IF(%FieldType = 'END')
+    END OF %Groups GROUP
+#?
+        #DELETE(%Groups)
+      #ELSE
+        #IF(%FieldType = 'GROUP')
+          #ADD(%Groups,%FieldID)
+        #ENDIF
+        #CASE(SUB(%FieldDetail,1,4))
+        #OF('All.')
+    #INSERT(%AllFieldDetail)
+        #OF('Some')
+    #INSERT(%SomeFieldDetail)
+        #ENDCASE
+#?
+      #ENDIF
+    #ENDFOR
+  #RESUME
+  #SUSPEND
+  #?--Relationships-----------------------------------------------------------------------
+    #FOR(%Relation)
+    #?--Relationship----------------------------------------------------------------------
+      #CASE(SUB(%RelationDetail,1,4))
+      #OF('All.')
+    #INSERT(%AllRelationDetail)
+      #ENDCASE
+#?
+    #ENDFOR
+  #RESUME
+#ENDFOR
+#CLOSE(%OutputFile)
+#IF(NOT %DoNotPrint)
+  #PRINT(%OutputFile,'Clarion for Windows Data Dictionary Report')
+#ENDIF
+#IF(%RetainFile = 'I don''t want it. Remove the file after printing.')
+  #REMOVE(%OutputFile)
+#ENDIF
+#!-----------------------------------------------
+#GROUP(%SomeFileDetail)
+#IF(%FileType = 'ALIAS')
+Label:             %File  (An alias of %AliasFile)
+#ELSE
+Label:             %File
+#ENDIF
+Prefix:            %FilePrefix
+#IF(%FileDescription)
+Description:       %FileDescription
+#ENDIF
+#IF(%FileName)
+Name:              %FileName
+#ENDIF
+#!-----------------------------------------------
+#GROUP(%AllFileDetail)
+#IF(%FileType = 'ALIAS')
+Label:             %File  (An alias of %AliasFile)
+#ELSE
+Label:             %File
+#ENDIF
+Prefix:            %FilePrefix
+#IF(%FileDescription)
+Description:       %FileDescription
+  #IF(%FileLongDesc)
+                   %FileLongDesc
+  #ENDIF
+#ELSE
+  #IF(%FileLongDesc)
+Description:       %FileLongDesc
+  #ENDIF
+#ENDIF
+Driver:            %FileDriver
+#IF(%FileDriverParameter)
+  Parameters:      %FileDriverParameter
+#ENDIF
+#IF(%FileName)
+File Name:         %FileName
+#ENDIF
+#IF(%FileOwner)
+Owner:             %FileOwner
+#ENDIF
+#IF(%FileQuickOptions)
+  --Wizard Options-------------------
+  #IF(EXTRACT(%FileQuickOptions,'NOPOPULATE'))
+  Populate:        No
+  #ENDIF
+#ENDIF
+#IF(%FileUserOptions)
+  --User Options---------------------
+  %FileUserOptions
+#ENDIF
+  --Flags----------------------------
+#IF(%FileCreate)
+  Create:          Yes
+#ELSE
+  Create:          No
+#ENDIF
+#IF(%FileReclaim)
+  Reclaim:         Yes
+#ELSE
+  Reclaim:         No
+#ENDIF
+#IF(%FileEncrypt)
+  Encrypt:         Yes
+#ELSE
+  Encrypt:         No
+#ENDIF
+#IF(%FileBindable)
+  Bindable:        Yes
+#ELSE
+  Bindable:        No
+#ENDIF
+#IF(%FileThreaded)
+  Threaded:        Yes
+#ELSE
+  Threaded:        No
+#ENDIF
+#IF(%FileExternal)
+  External:        Yes
+  #IF(%FileExternalModule)
+    Module:        %FileExternalModule
+  #ENDIF
+#ELSE
+  External:        No
+#ENDIF
+#!-----------------------------------------------
+#GROUP(%SomeKeyDetail)
+Label:             %KeyID
+#IF(%KeyDescription)
+Description:       %KeyDescription
+#ENDIF
+  --Key Fields-------------------
+  #FOR(%KeyField)
+    #FIX(%Field,%KeyField)
+  %FieldID (%KeyFieldSequence)
+  #ENDFOR
+#!-----------------------------------------------
+#GROUP(%AllKeyDetail)
+Label:             %KeyID
+#IF(%KeyDescription)
+Description:       %KeyDescription
+  #IF(%KeyLongDesc)
+                   %KeyLongDesc
+  #ENDIF
+#ELSE
+  #IF(%KeyLongDesc)
+Description:       %KeyLongDesc
+  #ENDIF
+#ENDIF
+#CASE(%KeyIndex)
+#OF('KEY')
+Type:              Record Key
+#OF('INDEX')
+Type:              Static Index
+#OF('DYNAMIC')
+Type:              Runtime Index
+#ENDCASE
+#IF(%KeyName)
+Name:              %KeyName
+#ENDIF
+#SUSPEND
+  #?--1:Many Relations-----------------
+  #?This key is used as the Primary key for relations with the following file(s):
+#FOR(%Relation),WHERE(%FileRelationType = '1:MANY' AND %FileKey = %Key)
+    %Relation
+#ENDFOR
+#RESUME
+#SUSPEND
+  #?--Many:1 Relations-----------------
+  #?This key is used as the Foreign key for relations with the following file(s):
+#FOR(%Relation),WHERE(%FileRelationType = 'MANY:1' AND %FileKey = %Key)
+    %Relation
+#ENDFOR
+#RESUME
+#IF(%KeyQuickOptions)
+  --Wizard Options-------------------
+    %KeyQuickOptions
+  #IF(EXTRACT(%KeyQuickOptions,'NOPOPULATE'))
+    Populate:      No
+  #ENDIF
+#ENDIF
+#IF(%KeyUserOptions)
+  --User Options---------------------
+  %KeyUserOptions
+#ENDIF
+  --Flags----------------------------
+#IF(%KeyPrimary)
+  Primary Key:     Yes
+#ELSE
+  Primary Key:     No
+#ENDIF
+#IF(%KeyDuplicate)
+  Unique:          No
+#ELSE
+  Unique:          Yes
+  #IF(%KeyAuto)
+  Auto-Increment:  Yes
+  #ELSE
+  Auto-Increment:  No
+  #ENDIF
+#ENDIF
+#IF(%KeyExcludeNulls)
+  Exclude Nulls:   Yes
+#ELSE
+  Exclude Nulls:   No
+#ENDIF
+#IF(%KeyNoCase)
+  Case Sensitive:  No
+#ELSE
+  Case sensitive:  Yes
+#ENDIF
+  --Key Fields-------------------
+  #FOR(%KeyField)
+    #FIX(%Field,%KeyField)
+    %FieldID (%KeyFieldSequence)
+  #ENDFOR
+#!-----------------------------------------------
+#GROUP(%SomeFieldDetail)
+Label:             %FieldID
+#IF(%FieldDescription)
+Description:       %FieldDescription
+#ENDIF
+#INSERT(%ConstructType)
+#IF(%FieldDimension1 <> '0')
+Dimensions:        %FieldDimension1%|
+  #IF(%FieldDimension2 <> '0')
+, %FieldDimension2%|
+  #ENDIF
+  #IF(%FieldDimension3 <> '0')
+, %FieldDimension3%|
+  #ENDIF
+  #IF(%FieldDimension4 <> '0')
+, %FieldDimension4
+  #ELSE
+
+  #ENDIF
+#ENDIF
+#IF(%FieldDisplayPicture)
+Display Picture:   %FieldDisplayPicture
+#ENDIF
+#!-----------------------------------------------
+#GROUP(%AllFieldDetail)
+Label:             %FieldID
+#IF(%FieldDescription)
+Description:       %FieldDescription
+  #IF(%FieldLongDesc)
+                   %FieldLongDesc
+  #ENDIF
+#ELSE
+  #IF(%FieldLongDesc)
+Description:       %FieldLongDesc
+  #ENDIF
+#ENDIF
+#INSERT(%ConstructType)
+#IF(%FieldDimension1 <> '0')
+Dimensions:        %FieldDimension1%|
+  #IF(%FieldDimension2 <> '0')
+, %FieldDimension2%|
+  #ENDIF
+  #IF(%FieldDimension3 <> '0')
+, %FieldDimension3%|
+  #ENDIF
+  #IF(%FieldDimension4 <> '0')
+, %FieldDimension4
+  #ELSE
+
+  #ENDIF
+#ENDIF
+#IF(%FieldDisplayPicture)
+Display Picture:   %FieldDisplayPicture
+#ENDIF
+Column Header:     %FieldHeader
+#IF(%FieldInitial)
+Initial Value:     %FieldInitial
+#ENDIF
+#IF(%FieldHelpID)
+Help ID            %FieldHelpID
+#ENDIF
+#CASE(%FieldJustType)
+#OF('L')
+Justification:     Left%|
+#OF('R')
+Justification:     Right%|
+#OF('C')
+Justification:     Center%|
+#OF('D')
+Justification:     Decimal%|
+#ENDCASE
+#IF(%FieldJustIndent)
+(%FieldJustIndent)
+#ENDIF
+#SUSPEND
+  #?--Validity Checks--------------
+  #IF(%FieldRangeLow)
+  Low Range:       %FieldRangeLow
+  #ENDIF
+  #IF(%FieldRangeHigh)
+  High Range:      %FieldRangeHigh
+  #ENDIF
+  #IF(%FieldLookup)
+  Must Be In File: %FieldLookup
+  #ENDIF
+  #IF(ITEMS(%FieldChoices))
+  Valid Values:    %|
+    #FOR(%FieldChoices)
+      #IF(INSTANCE(%FieldChoices) = ITEMS(%FieldChoices))
+, %FieldChoices
+      #ELSIF(INSTANCE(%FieldChoices) = 1)
+%FieldChoices%|
+      #ELSE
+, %FieldChoices%|
+      #ENDIF
+    #ENDFOR
+  #ENDIF
+#RESUME
+#IF(%FieldQuickOptions)
+  --Wizard Options-------------------
+  #IF(EXTRACT(%FieldQuickOptions,'NOPOPULATE'))
+  Populate:        No
+  #ENDIF
+  #SET(%ValueConstruct,EXTRACT(%FieldQuickOptions,'TAB',1))
+  #IF(%ValueConstruct)
+  Tab:             %ValueConstruct
+  #ENDIF
+  #SET(%ValueConstruct,EXTRACT(%FieldQuickOptions,'ORDER'))
+  #IF(%ValueConstruct)
+    #IF(%ValueConstruct = 'FIRST')
+  Order:           First
+    #ELSIF(%ValueConstruct = 'LAST')
+  Order:           Last
+    #ENDIF
+  #ENDIF
+#ENDIF
+#IF(%FieldUserOptions)
+  --User Options---------------------
+  %FieldUserOptions
+#ENDIF
+#!-----------------------------------------------
+#GROUP(%AllRelationDetail)
+Type:              %FileRelationType
+#IF(%FileRelationType = '1:MANY')
+Primary Key:       %FileKey
+#ELSE
+  #IF(%FileKey)
+Foreign Key:       %FileKey
+  #ELSE
+Foreign Key:       None
+  #ENDIF
+#ENDIF
+Related File:      %Relation
+#IF(%FileRelationType = '1:MANY')
+  #IF(%RelationKey)
+Foreign Key:       %RelationKey
+  #ELSE
+Foreign Key:       None
+  #ENDIF
+#ELSE
+Primary Key:       %RelationKey
+#ENDIF
+#IF(%RelationConstraintUpdate)
+Update Constraint: %RelationConstraintUpdate
+#ELSE
+Update Constraint: NONE
+#ENDIF
+#IF(%RelationConstraintDelete)
+Delete Constraint: %RelationConstraintDelete
+#ELSE
+Delete Constraint: NONE
+#ENDIF
+#INSERT(%ConstructLinkingFields)
+#IF(%RelationQuickOptions)
+  --Wizard Options-------------------
+  #IF(EXTRACT(%RelationQuickOptions,'NOPOPULATE'))
+  Populate:      No
+  #ENDIF
+#ENDIF
+#IF(%RelationUserOptions)
+  --User Options---------------------
+  %RelationUserOptions
+#ENDIF
+#!-----------------------------------------------
+#GROUP(%ConstructType)
+#CASE(%FieldType)
+#OF('DECIMAL')
+#OROF('PDECIMAL')
+Type:              %FieldType(%FieldMemoSize,%FieldPlaces)
+#OF('STRING')
+#OROF('PSTRING')
+#OROF('CSTRING')
+Type:              %FieldType(%FieldMemoSize)
+#OF('MEMO')
+  #IF(%FieldMemoImage)
+Type:              BINARY MEMO(%FieldMemoSize)
+  #ELSE
+Type:              MEMO(%FieldMemoSize)
+  #ENDIF
+#ELSE
+Type:              %FieldType
+#ENDCASE
+#!-----------------------------------------------
+#GROUP(%ConstructLinkingFields)
+  --Linking Fields-------------------
+#IF(%FileRelationType = 'MANY:1')
+  #SET(%ValueConstruct,'<<<<==>')
+#ELSE
+  #SET(%ValueConstruct,'<<==>>')
+#ENDIF
+#IF(ITEMS(%RelationKeyField) > ITEMS(%FileKeyField))
+  #FOR(%RelationKeyField)
+    #IF(%RelationKeyFieldLink AND %RelationKeyFieldLink)
+  %[25]RelationKeyFieldLink %ValueConstruct %RelationKeyField
+    #ELSE
+  %[31]RelationKeyFieldLink
+    #ENDIF
+  #ENDFOR
+#ELSE
+  #FOR(%FileKeyField)
+    #IF(%FileKeyFieldLink)
+  %[25]FileKeyField %ValueConstruct %FileKeyFieldLink
+    #ELSE
+  %FileKeyField
+    #ENDIF
+  #ENDFOR
+#ENDIF
+#!----------------------------------------------

@@ -1,0 +1,10 @@
+[Style Folio]
+1=NAME(TopSpeed Standard Style File),FILE(standard.sty)
+2=NAME(TopSpeed Documentation),FILE(doc.sty),REQUIRES(TopSpeed Standard Style File)
+3=NAME(TopSpeed Web Builder Style),FILE(web.sty),REQUIRES(TopSpeed Standard Style File)
+4=NAME(TopSpeed Web Builder Guard Extension),FILE(webguard.sty),REQUIRES(TopSpeed Web Builder Style)
+5=NAME(TopSpeed Web Builder Hit Counter Extension),FILE(webhits.sty),REQUIRES(TopSpeed Web Builder Style)
+6=NAME(TopSpeed Fuzzy Match Style File),FILE(fuzzy.sty),REQUIRES(TopSpeed Standard Style File)
+7=NAME(TopSpeed Silent Running Extension),FILE(silent.sty),REQUIRES(TopSpeed Standard Style File)
+8=NAME(TopSpeed Grid Extension),FILE(grid.sty),REQUIRES(TopSpeed Standard Style File)
+9=NAME(TopSpeed Web Grid Extension),FILE(grid.sty),REQUIRES(TopSpeed Grid Extension)

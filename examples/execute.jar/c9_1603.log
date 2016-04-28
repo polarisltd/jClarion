@@ -1,0 +1,375 @@
+*** Enabling debug!
+03/02 16:41:37 I ClarionFile - Clarionfile NAME: nodalas
+03/02 16:41:37 I ClarionFile - Clarionfile NAME:                                                                       
+winl001.main() before prepare
+Hello PrepareProcedure
+03/02 16:41:37 W runtime.CWinImpl - Icon Not Found!:CLARION.ICO (resources/images/clarion.ico)
+03/02 16:41:37 W runtime.CWinImpl - Font Unknown :MS Sans Serif using: SansSerif
+03/02 16:41:37 F AbstractWindowTarget - Event[Event:OpenWindow W:false C:true]
+winl001.main() before checkopen
+03/02 16:41:37 F ClarionSQLFile - open() ENTRY global
+03/02 16:41:37 I runtime.FileConfigImpl - Loading java-syscfg.properties
+03/02 16:41:37 I runtime.FileConfigImpl - File does not exist
+03/02 16:41:37 I runtime.FileConfigImpl - Loading db.properties
+03/02 16:41:37 I jdbc.PgSourceFinder - getHostData() <- localhost:app:app:5432
+03/02 16:41:37 I jdbc.PgSource - Connecting to DB! jdbc:postgresql://localhost:5432/app
+03/02 16:41:37 F ClarionSQLFile - put() ENTRY global
+03/02 16:41:37 F ClarionSQLFile - testWatch() ENTRYglobal
+03/02 16:41:37 F ClarionSQLFile - saveKeyPosition() ENTRY global
+03/02 16:41:37 F ClarionSQLFile - setInternalSQL() UPDATE global SET DB_GADS=2016,DB_S_DAT=78531,DB_B_DAT=78896 WHERE (ID=0) [[]]
+03/02 16:41:37 F ClarionSQLFile - put() SQL UPDATE global SET DB_GADS=2016,DB_S_DAT=78531,DB_B_DAT=78896 WHERE (ID=0)
+03/02 16:41:37 F ClarionSQLFile - optCommit() ENTRY 
+03/02 16:41:37 F ClarionSQLFile - close() ENTRY
+winl001.main() 001
+03/02 16:41:37 F ClarionSQLFile - open() ENTRY val_k
+03/02 16:41:37 F ClarionSQLFile - get() ENTRY val_k key:ClarionKey(NOS_KEY),+null[87765719]
+03/02 16:41:37 F ClarionSQLFile - setInternalSQL() SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='EUR') [[]]
+03/02 16:41:37 F ClarionSQLFile - get() SQL SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='EUR')
+03/02 16:41:37 F ClarionSQLFile - saveKeyPosition() ENTRY val_k
+03/02 16:41:37 F ClarionSQLFile - close() ENTRY
+GETVAL_K normal return EUR
+GETVAL_K EUR
+03/02 16:41:37 F ClarionSQLFile - open() ENTRY val_k
+03/02 16:41:37 F ClarionSQLFile - get() ENTRY val_k key:ClarionKey(NOS_KEY),+VAL:VAL[87765719]
+03/02 16:41:37 F ClarionSQLFile - setInternalSQL() SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='Ls') [[]]
+03/02 16:41:37 F ClarionSQLFile - get() SQL SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='Ls')
+03/02 16:41:37 F runtime.CErrorImpl - setError 35 : Reget Failed: SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='Ls')
+GETVAL_K error_1 35Reget Failed: SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='Ls')
+03/02 16:41:37 F ClarionSQLFile - close() ENTRY
+GETVAL_K normal return    
+03/02 16:41:37 F ClarionSQLFile - open() ENTRY val_k
+03/02 16:41:37 F ClarionSQLFile - get() ENTRY val_k key:ClarionKey(NOS_KEY),+VAL:VAL[87765719]
+03/02 16:41:37 F ClarionSQLFile - setInternalSQL() SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='LVL') [[]]
+03/02 16:41:37 F ClarionSQLFile - get() SQL SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='LVL')
+03/02 16:41:37 F runtime.CErrorImpl - setError 35 : Reget Failed: SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='LVL')
+GETVAL_K error_1 35Reget Failed: SELECT VAL,V_KODS,VALSTS,VALSTS_A,DZIMTE,RUBLI,RUBLI_A,KAPIKI,KAPIKI_A,BKK,BKKK,Tips,TEST,GNET_FLAG,ACC_KODS,ACC_DATUMS FROM val_k WHERE (VAL='LVL')
+03/02 16:41:37 F ClarionSQLFile - close() ENTRY
+GETVAL_K normal return    
+03/02 16:41:37 F ClarionSQLFile - open() ENTRY bankas_k
+03/02 16:41:37 F ClarionSQLFile - close() ENTRY
+03/02 16:41:37 F AbstractWindowTarget - Event[Event:Sized W:false C:true]
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:Accepted field:main.appframe.browsebankas_k W:true C:null]
+03/02 16:41:53 I ClarionFile - Clarionfile NAME: BANKAS_K
+03/02 16:41:53 F ClarionFile - setCreate() := true
+03/02 16:41:53 F ClarionSQLFile - open() ENTRY bankas_k
+03/02 16:41:53 F runtime.CExprImpl - bind() ClarionGroup: clarion.Bankas_k@5bcab519
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:NOS_P ClarionObject:                                
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:NOS_S ClarionObject:                
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:NOS_A ClarionObject:     
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:INDEX ClarionObject:        
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:KODS ClarionObject:                
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:KOR_K ClarionObject:            
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:ADRESE1 ClarionObject:                                
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:ADRESE2 ClarionObject:                                
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:SPEC ClarionObject:                                
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:MAKSAJUMA_TAKA ClarionObject:                                                        
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:GNET_FLAG ClarionObject:   
+03/02 16:41:53 F runtime.CExprImpl - bind() BAN:BAITS ClarionObject: 0
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:OpenWindow W:false C:true]
+03/02 16:41:53 I runtime.FileConfigImpl - Loading winlats.properties
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:Sized W:false C:true]
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:Moved W:false C:true]
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:Sized W:false C:true]
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:Moved W:false C:true]
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+null[280884709]
+BRW1::RefreshPage ======== 
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:Selected field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+null[280884709]
+BRW1::FillRecord ======== 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F runtime.CErrorImpl - setError 33 : EOF Reached
+BRW1::FillRecord Errorcode 33
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:NewSelection field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+03/02 16:41:53 F runtime.CErrorImpl - setError 30 : Position out of range
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F view.ClarionView - CV  previous() ENTRY
+03/02 16:41:53 F ClarionSQLFile - previous() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:Accepted field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:NewSelection field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+03/02 16:41:53 F view.ClarionView - CV reget(ClarionString)  003            ÿ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+03/02 16:41:53 F ClarionSQLFile - get() ENTRY bankas_k key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='003') [[]]
+03/02 16:41:53 F ClarionSQLFile - get() SQL SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='003')
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+BRW1::LocateRecord ======== 
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - reset() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709] str: 003            
+BRW1::FillRecord ======== 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+BRW1::RefreshPage ======== 
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+03/02 16:41:53 F view.ClarionView - CV reset(ClarionString)  003            ÿ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+03/02 16:41:53 F view.ClarionView - CV reget(ClarionString)  003            ÿ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+03/02 16:41:53 F ClarionSQLFile - get() ENTRY bankas_k key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='003') [[]]
+03/02 16:41:53 F ClarionSQLFile - get() SQL SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='003')
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV reset(ClarionFile) clarion.Bankas_k@5bcab519 ENTRY
+03/02 16:41:53 F view.ClarionView - CV regenOrderAndFilter() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:NULL
+03/02 16:41:53 F ClarionSQLFile - set(null KEY)
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:ColumnResize field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+BRW1::FillRecord ======== 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F runtime.CErrorImpl - setError 33 : EOF Reached
+BRW1::FillRecord Errorcode 33
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F view.ClarionView - CV  previous() ENTRY
+03/02 16:41:53 F ClarionSQLFile - previous() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV reget(ClarionString)  004            ÿ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+03/02 16:41:53 F ClarionSQLFile - get() ENTRY bankas_k key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='004') [[]]
+03/02 16:41:53 F ClarionSQLFile - get() SQL SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='004')
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+BRW1::LocateRecord ======== 
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - reset() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709] str: 004            
+BRW1::FillRecord ======== 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+BRW1::RefreshPage ======== 
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+03/02 16:41:53 F view.ClarionView - CV reset(ClarionString)  003            ÿ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+03/02 16:41:53 F view.ClarionView - CV reget(ClarionString)  003            ÿ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+03/02 16:41:53 F ClarionSQLFile - get() ENTRY bankas_k key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='003') [[]]
+03/02 16:41:53 F ClarionSQLFile - get() SQL SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='003')
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV reset(ClarionFile) clarion.Bankas_k@5bcab519 ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:NULL
+03/02 16:41:53 F ClarionSQLFile - set(null KEY)
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:ColumnResize field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+BRW1::FillRecord ======== 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F view.ClarionView - CV getPosition() ENTRY
+BRW1::FillRecord ADD Queue:Browse 
+BRW1::FillRecord NEXT 
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F runtime.CErrorImpl - setError 33 : EOF Reached
+BRW1::FillRecord Errorcode 33
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F view.ClarionView - CV  previous() ENTRY
+03/02 16:41:53 F ClarionSQLFile - previous() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F ClarionSQLFile - close() ENTRY
+03/02 16:41:53 F ClarionSQLFile - set() ENTRY key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:53 F view.ClarionView - CV next()
+03/02 16:41:53 F ClarionSQLFile - next() ENTRY
+03/02 16:41:53 F ClarionSQLFile - iterate() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - iterate() filestate 
+03/02 16:41:53 F ClarionSQLFile - setInternalSQL() SELECT A.KODS,A.NOS_S,A.NOS_P,A.NOS_A,A.GNET_FLAG FROM bankas_k A [[]]
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY 
+03/02 16:41:53 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:53 F AbstractWindowTarget - Event[Event:NewSelection field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+03/02 16:41:55 F AbstractWindowTarget - Event[Event:Accepted field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+03/02 16:41:55 F AbstractWindowTarget - Event[Event:NewSelection field:browsebankas_k.quickwindow.browse:1 W:true C:null]
+03/02 16:41:57 F AbstractWindowTarget - Event[Event:Selected field:browsebankas_k.quickwindow.close W:true C:null]
+03/02 16:41:57 F AbstractWindowTarget - Event[Event:Accepted field:browsebankas_k.quickwindow.close W:true C:null]
+03/02 16:41:57 F view.ClarionView - CV reget(ClarionString)  002            ÿ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+03/02 16:41:57 F ClarionSQLFile - get() ENTRY bankas_k key:ClarionKey(KOD_KEY),+BAN:KODS[280884709]
+03/02 16:41:57 F ClarionSQLFile - setInternalSQL() SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='002') [[]]
+03/02 16:41:57 F ClarionSQLFile - get() SQL SELECT NOS_P,NOS_S,NOS_A,INDEX,KODS,KOR_K,ADRESE1,ADRESE2,SPEC,MAKSAJUMA_TAKA,GNET_FLAG,BAITS FROM bankas_k WHERE (KODS='002')
+03/02 16:41:57 F ClarionSQLFile - saveKeyPosition() ENTRY bankas_k
+03/02 16:41:57 F AbstractWindowTarget - Event[Event:CloseWindow W:false C:null]
+03/02 16:41:57 F ClarionSQLFile - close() ENTRY
+03/02 16:42:45 F AbstractWindowTarget - Event[Event:CloseWindow W:false C:null]

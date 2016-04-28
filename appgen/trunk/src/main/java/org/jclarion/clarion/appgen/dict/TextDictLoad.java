@@ -64,6 +64,7 @@ public class TextDictLoad
 	
 	public Dict load(Lexer src)
 	{
+        System.out.println("load(Lexer) ENTRY");
 		Dict result = new Dict();
 		while ( src.lookahead().type!=LexType.eof) {
 			src.setIgnoreWhitespace(true);

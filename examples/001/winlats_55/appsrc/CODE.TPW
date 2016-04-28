@@ -1,0 +1,245 @@
+#!-------------------------------------------------------------------------
+#CODE(ControlValueValidation,'Control Value Validation'),HLP('~TPLCodeControlValueValidation')
+#RESTRICT
+  #CASE(%ControlType)
+  #OF('ENTRY')
+  #OROF('SPIN')
+  #OROF('COMBO')
+    #CASE(%ControlEvent)
+    #OF('Accepted')
+    #OROF('Selected')
+      #ACCEPT
+    #ELSE
+      #REJECT
+    #ENDCASE
+  #ELSE
+    #REJECT
+  #ENDCASE
+#ENDRESTRICT
+#DISPLAY('This Code Template is used to perform a control value')
+#DISPLAY('validation.  This Code Template only works for')
+#DISPLAY('the Selected or Accepted Events for an Entry Control.')
+#DISPLAY('')
+#PROMPT('Lookup Key',KEY),%LookupKey,REQ
+#PROMPT('Lookup Field',COMPONENT(%LookupKey)),%LookupField,REQ
+#PROMPT('Lookup Procedure',PROCEDURE),%LookupProcedure
+#DISPLAY('')
+#DISPLAY('The Lookup Key is the key used to perform the value validation.')
+#DISPLAY('If the Lookup Key is a multi-component key, you must insure that')
+#DISPLAY('other key elements are primed BEFORE this Code Template is used.')
+#DISPLAY('')
+#DISPLAY('The Lookup field must be a component of the Lookup Key.  Before execution')
+#DISPLAY('of the lookup code, this field will be assigned the value of the control being')
+#DISPLAY('validated, and the control will be assigned the value of the lookup field if')
+#DISPLAY('the Lookup procedure is successful.')
+#DISPLAY('')
+#DISPLAY('The Lookup Procedure is called to let the user to select a value.  Request')
+#DISPLAY('upon entrance to the Lookup will be set to SelectRecord, and successful')
+#DISPLAY('completion is signalled when Response = RequestCompleted.')
+#IF(%ControlEvent='Accepted')
+ IF %Control{Prop:Req} = False AND NOT %ControlUse #<! If not required and empty
+ ELSE
+   #INSERT(%CodeTPLValidationCode)
+ END
+#ELSIF(%ControlEvent='Selected')
+ #INSERT(%CodeTPLValidationCode)
+#ELSE
+  #ERROR('Value Validation Code Template must be used for Accepted or Selected Control Events!')
+#ENDIF
+#!-------------------------------------------------------------------------
+#GROUP(%CodeTPLValidationCode)
+ %LookupField = %ControlUse                        #<! Move value for lookup
+#FIND(%Field,%LookupField)                        #! FIX field for lookup
+ GET(%File,%LookupKey)                             #<! Get value from file
+ IF ERRORCODE()                                    #<! IF record not found
+   GlobalRequest = SelectRecord                    #<! Set Action for Lookup
+   %LookupProcedure                                #<! Call Lookup Procedure
+   LocalResponse = GlobalResponse                  #<! Save Returned Action
+   GlobalResponse = RequestCancelled               #<! Clear the Action Value
+   IF LocalResponse = RequestCompleted             #<! IF Lookup successful
+     %ControlUse = %LookupField                    #<! Move value to control field
+#IF(%ControlEvent='Accepted')                     #! IF a Post-Edit Validation
+   ELSE                                            #<! ELSE (IF Lookup NOT...)
+     SELECT(%Control)                              #<! Select the control
+     CYCLE                                         #<! Go back to ACCEPT
+#ENDIF                                            #! END (IF a Pre-Edit...)
+   END                                             #<! END (IF Lookup successful)
+#IF(%ControlEvent='Selected')                     #! IF a Pre-Edit Validation
+   SELECT(%Control)                                #<! Select the control
+#ENDIF                                            #! END (IF a Pre-Edit...)
+ END                                               #<! END (IF record not found)
+#!-------------------------------------------------------------------------
+#CODE(InitiateThread,'Initiate Thread Execution'),HLP('~TPLCodeInitiateThread')
+#DISPLAY('This Code Template is used to initiate a Thread.  The')
+#DISPLAY('code generated will follow the format:')
+#DISPLAY('')
+#DISPLAY('IF NOT START(Procedure)')
+#DISPLAY('  Error Handling')
+#DISPLAY('END')
+#DISPLAY('')
+#PROMPT('Procedure Name:',PROCEDURE),%ThreadProcedure
+#PROMPT('Thread Stack:',SPIN(@n7,5000,64000,500)),%ThreadStack,DEFAULT(25000)
+#PROMPT('Error Handling',@S255),%ThreadError
+#IF(%ThreadError)                                 #! IF Thread Error provided
+  #IF(%ThreadStack)
+ IF NOT START(%ThreadProcedure,%ThreadStack)       #<! IF Thread not initiated
+  #ELSE
+ IF NOT START(%ThreadProcedure)                    #<! IF Thread not initiated
+  #ENDIF
+   %ThreadError                                    #<! Perform the error code
+ END                                               #<! END (IF Thread not...)
+#ELSE                                             #! ELSE (IF NOT Thread Error...)
+  #IF(%ThreadStack)
+ START(%ThreadProcedure,%ThreadStack)              #<! Initiate the Thread
+  #ELSE
+ START(%ThreadProcedure)                          #<! Initiate the Thread
+  #ENDIF
+#ENDIF                                            #! END (IF Thread Error...)
+#!-------------------------------------------------------------------------
+#CODE(LookupNonRelatedRecord,'Lookup Non-Related Record'),HLP('~TPLCodeLookupNonRelatedRecord')
+#DISPLAY('This Code Template retrieves a non-related record from a file.')
+#DISPLAY('')
+#PROMPT('Lookup Key',KEY),%LookupKey,REQ
+#PROMPT('Lookup Field',COMPONENT(%LookupKey)),%LookupField,REQ
+#PROMPT('Related Field',FIELD),%RelatedField,REQ
+#DISPLAY('')
+#DISPLAY('The Lookup Key is the key used to perform the lookup.  If the Lookup')
+#DISPLAY('Key is a multi-component key, you must insure that the other key')
+#DISPLAY('elements are primed BEFORE this Code Template is executed.')
+#DISPLAY('')
+#DISPLAY('The Lookup field must be a component of the Lookup Key.  Before execution')
+#DISPLAY('of the lookup code, this field will be assigned the value of the related field.')
+#DISPLAY('')
+#DISPLAY('The Related field is a component of the primary file, which relates to the')
+#DISPLAY('lookup field.')
+#DISPLAY('')
+ %LookupField = %RelatedField                      #<! Move value for lookup
+#FIND(%Field,%LookupField)                        #! FIX field for lookup
+ GET(%File,%LookupKey)                             #<! Get value from file
+ IF ERRORCODE()                                    #<! IF record not found
+   CLEAR(%FilePrefix:Record)                       #<! Clear the record buffer
+ END                                               #<! END (IF record not found)
+#!-------------------------------------------------------------------------
+#CODE(CallProcedureAsLookup,'Call Procedure as Lookup'),HLP('~TPLCodeCallProcedureAsLookup')
+#DISPLAY('This Code Template calls a procedure as a lookup.')
+#DISPLAY('')
+#PROMPT('Lookup Procedure',PROCEDURE),%LookupProcedure,REQ
+#PROMPT('Code Before',@S255),%CodeBeforeLookup
+#PROMPT('Code After, Completed',@S255),%CodeOnComplete
+#PROMPT('Code After, Cancelled',@S255),%CodeOnCancel
+#DISPLAY('')
+#DISPLAY('This Code Template is used to call any procedure as a "Lookup."  Before')
+#DISPLAY('the call is made the global variable "GlobalRequest" is set to a value of')
+#DISPLAY('SelectRecord.  Upon return, the value of GlobalResponse is copied to a local')
+#DISPLAY('holding variable (LocalResponse), then cleared.')
+#DISPLAY('')
+#DISPLAY('The value of LocalResponse upon return from the called procedure')
+#DISPLAY('determines if the lookup is considered "Completed".  An LocalResponse')
+#DISPLAY('value of 1 (RequestCompleted) indicates that the lookup was successful.')
+#DISPLAY('Any other value indicates that the lookup was cancelled.')
+#DISPLAY('')
+#DISPLAY('The LocalResponse variable should be used in any EMBED code after')
+#DISPLAY('this Code Template to check for Lookup completion.')
+#DISPLAY('')
+#DISPLAY('A Browse Template procedure automatically senses if an GlobalRequest of')
+#DISPLAY('SelectRecord and functions accordingly.')
+#IF(%CodeBeforeLookup)
+ %CodeBeforeLookup                                 #<! Source before Lookup
+#ENDIF
+ GlobalRequest = SelectRecord                      #<! Set Action for Lookup
+ %LookupProcedure                                  #<! Call the Lookup Procedure
+ LocalResponse = GlobalResponse                    #<! Save Action for evaluation
+ GlobalResponse = RequestCancelled                 #<! Clear Action
+#IF(%CodeOnComplete AND %CodeOnCancel)
+ IF LocalResponse = RequestCompleted               #<! IF Lookup completed
+   %CodeOnComplete                                 #<! Source on Completion
+ ELSE                                              #<! ELSE (IF Lookup NOT...)
+   %CodeOnCancel                                   #<! Source on Cancellation
+ END                                               #<! END (IF Lookup completed)
+#ELSIF(%CodeOnComplete)
+ IF LocalResponse = RequestCompleted               #<! IF Lookup completed
+   %CodeOnComplete                                 #<! Source on Completion
+ END                                               #<! END (IF Lookup completed)
+#ELSIF(%CodeOnCancel)
+ IF LocalResponse = RequestCancelled               #<! IF Lookup completed
+   %CodeOnCancel                                   #<! Source on Cancellation
+ END                                               #<! END (IF Lookup NOT completed)
+#ENDIF
+ LocalResponse = RequestCancelled
+#!-------------------------------------------------------------------------
+#CODE(CloseCurrentWindow,'Close Current Window and Procedure'),HLP('~TPLCodeCloseCurrentWindow')
+#DISPLAY('There are no prompts to fill out for this Code Template.')
+#DISPLAY('')
+#DISPLAY('This Code Template initiates the triggers the shut-down')
+#DISPLAY('of the active procedure.  It does this by triggering')
+#DISPLAY('Event:CloseWindow, using the command:')
+#DISPLAY('')
+#DISPLAY('  POST(Event:CloseWindow)')
+#DISPLAY('')
+#DISPLAY('Use the Source Point: "Window Event: Close Window" to ')
+#DISPLAY('execute any code upon window close down.')
+ POST(Event:CloseWindow)
+#!
+#!-------------------------------------------------------------------------
+#!
+#CODE (SetProperty, 'Set a property on a control'),HLP('~TPLCodeSetProperty')
+#PREPARE
+  #DECLARE (%Choices),MULTI
+  #DECLARE (%NextLine)
+  #FREE (%Choices)
+  #OPEN ('property.clw'),READ
+  #READ (%NextLine)
+  #LOOP WHILE(%NextLine <> %Eof)
+    #! Exclude PROPLIST: properties
+    #IF (SUB(%NextLine, 1, 5) = 'PROP:')
+      #ADD (%Choices, SUB(%NextLine, 1, INSTRING(' ',%NextLine)-1))
+    #END
+    #READ (%NextLine)
+  #END
+  #CLOSE,READ
+#ENDPREPARE
+#PROMPT ('Control:', FROM(%Control)),%Target
+#PROMPT ('Property:', FROM(%Choices)),%Selection
+#PROMPT ('Value:', @s255),%TargetValue
+%target{%Selection} = %TargetValue
+#!
+#!-------------------------------------------------------------------------
+#!
+#CODE (SelectToolbarTarget, 'Select target for toolbar'),HLP('~TPLCodeSelectToolbarTarget')
+#PREPARE
+  #DECLARE (%InstanceList),UNIQUE
+  #DECLARE (%InstanceText, %InstanceList)
+  #FREE (%InstanceList)
+  #FOR (%ActiveTemplate)
+    #CASE (%ActiveTemplate)
+    #OF ('SaveButton(Clarion)')
+      #FOR (%ActiveTemplateInstance)
+        #ADD (%InstanceList, 'FORM')
+        #SET (%InstanceText, %ActiveTemplateInstanceDescription & ' (' & %activeTemplateInstance & ')')
+      #END
+    #OF ('BrowseBox(Clarion)')
+      #FOR (%ActiveTemplateInstance)
+        #ADD (%InstanceList, 'BRW' & %ActiveTemplateInstance)
+        #SET (%InstanceText, %ActiveTemplateInstanceDescription & ' (' & %activeTemplateInstance & ')')
+      #END
+    #OF ('RelationTree(Clarion)')
+      #FOR (%ActiveTemplateInstance)
+        #ADD (%InstanceList, 'REL' & %ActiveTemplateInstance)
+        #SET (%InstanceText, %ActiveTemplateInstanceDescription & ' (' & %activeTemplateInstance & ')')
+      #END
+    #END
+  #END
+#ENDPREPARE
+#PROMPT ('Toolbar Navigation Target:', FROM(%InstanceList,,%InstanceText)),%TargetChoice
+#BOXED,WHERE(%False)
+  #PROMPT ('', @s255),%TargetPrefix
+  #PREPARE
+   #FOR ( %InstanceList )
+     #IF ( %InstanceText = %TargetChoice )
+        #SET (%TargetPrefix, %InstanceList)
+        #BREAK
+     #ENDIF
+   #END
+  #END
+#END
+DO %TargetPrefix::AssignButtons

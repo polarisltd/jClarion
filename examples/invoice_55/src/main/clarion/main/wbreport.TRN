@@ -1,0 +1,13 @@
+ReportFirstText      EQUATE(' |<< ')
+ReportPrevText       EQUATE(' << ')
+ReportGoText         EQUATE(' Go ')
+ReportNextText       EQUATE(' > ')
+ReportLastText       EQUATE(' >| ')
+ReportCloseText      EQUATE('Close')
+
+MaxButtons           EQUATE(0)
+UseJavaButtons       EQUATE(TRUE)
+ButtonsPerLine       EQUATE(20)
+ButtonWidth          EQUATE(20)
+ButtonHeight         EQUATE(14)
+

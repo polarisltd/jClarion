@@ -1,0 +1,68 @@
+!#
+!# ATTENTION!
+!#
+!# Folowing are macros. 
+!#
+!# %FormatName% - A name of deleted List Format
+!# %Error%      - An occured error during some FILE/QUEUE operation.
+!#
+!# You MUSTN'T change it, otherwise you'll get an incorrect MESSAGE.
+!#
+!##############################################################################
+
+MESSAGE_TITLE           EQUATE('List Format Manager')
+MESSAGE_DELETE          EQUATE('Do you really want to delete current list format "%FormatName%" ?')
+MESSAGE_DELETEALL       EQUATE('Do you really want to delete all list formats ?')
+MESSAGE_UNCHECKLAST     EQUATE('At least one column must be selected !')
+MESSAGE_SIZEEXCEED      EQUATE('There is no enough space for storing format name!')
+MESSAGE_DFLTNOTFOUND    EQUATE('Default format not found.')
+MESSAGE_CURRNOTFOUND    EQUATE('Current format not found.')
+MESSAGE_NOMEMO          EQUATE('The buffer for storing of formats is not initialized!')
+MESSAGE_NOMOVE          EQUATE('There are no rows to move!')
+MESSAGE_WRONGFORMAT     EQUATE('The current format string for a group is incorrect!')
+MESSAGE_DUPERROR        EQUATE('Some group(s) content(s) fully identical column format!')
+MESSAGE_ERROR           EQUATE('An error occured: %Error%.' )
+MESSAGE_ERRORLEVEL      EQUATE('|Error level: ')
+MESSAGE_BTNYESNO        EQUATE('&Yes|&No')
+MESSAGE_BTNOK           EQUATE('&OK')
+MESSAGE_HALT            EQUATE('List Format Manager cannot work properly!<10>Program is terminated!')
+MESSAGE_SYNFAILED       EQUATE('Synchronization failed!<10>Temporary control was not created!')
+MESSAGE_DIRFAILED       EQUATE('An error occured during directory creating!')
+MESSAGE_ERR_VARLINE     EQUATE('The current variable buffer is wrong!')
+
+BROWSE_TITLE            EQUATE('List Format Setup')
+BROWSE_GROUPPROMPT      EQUATE('&List Formats')
+BROWSE_BTNINSERT        EQUATE('&Insert')
+BROWSE_BTNCHANGE        EQUATE('&Change')
+BROWSE_BTNDELETE        EQUATE('&Delete')
+BROWSE_BTNAPPLY         EQUATE('A&pply')
+BROWSE_BTNDELETEALL     EQUATE('Delete &All')
+BROWSE_BTNCLOSE         EQUATE('Cl&ose')
+
+EDIT_TITLE_INSERT       EQUATE('New List Format')
+EDIT_TITLE_CHANGE       EQUATE('Change List Format')
+EDIT_GROUPPROMPT        EQUATE('Settings')
+EDIT_NAMEPROMPT         EQUATE('&Name:')
+EDIT_LISTPROMPT         EQUATE('&Columns')
+EDIT_BTNSAVE            EQUATE('&Save')
+EDIT_BTNCANCEL          EQUATE('Cancel')
+EDIT_LIST_COLNAME       EQUATE('Name')
+EDIT_LIST_COLON         EQUATE('On')
+EDIT_MOVEUP             EQUATE('Move &Up')
+EDIT_MOVEDOWN           EQUATE('Move &Down')
+EDIT_MOVEFIRST          EQUATE('Move to &First')
+EDIT_MOVELAST           EQUATE('Move to &Last')
+EDIT_SETMARK            EQUATE('&Set Mark')
+EDIT_RESETMARK          EQUATE('&Reset Mark')
+EDIT_GROUPHEAD          EQUATE('GROUP  ')
+EDIT_GROUPFOOT          EQUATE('END  ')
+
+POPUP_NAME_DEFAULT      EQUATE('&Default Format')
+POPUP_NAME_MAIN         EQUATE('List &Formats')
+POPUP_NAME_SETUP        EQUATE('Format &Setup...')
+
+TIPTEXT                 EQUATE('Current list format is')
+
+!##############################################################################
+!### END OF LOCALE MODULE #####################################################
+!##############################################################################

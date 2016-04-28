@@ -1,0 +1,192 @@
+#EXTENSION(WebHttpEngine, 'Web Application submission of static pages to Search Engines'),HLP('~WebHttpEngineExt')
+#!
+#RESTRICT,WHERE(UPPER(%ProcedureTemplate)='WINDOW')
+  #IF(%ProcedureHasWebWindow())
+    #ACCEPT
+  #END
+  #REJECT
+#ENDRESTRICT
+#!
+#PREPARE
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'WbHttpEngine', 'HttpEngine', %WbHttpEngineClass)
+  #CALL(%SetClassDefaults(ABC), 'WbHttpString', 'HttpString', %WbHttpStringClass)
+#ENDPREPARE
+#!
+#!
+#BOXED(''),AT(0,0),WHERE(%False),HIDE
+  #INSERT(%OOPHiddenPrompts(ABC))
+#ENDBOXED
+#SHEET,HSCROLL
+  #TAB('&Http Settings')
+    #PROMPT('Submit Control:',CONTROL),%SubmitControl,REQ
+  #ENDTAB
+  #TAB('&Search Engine Settings')
+    #BOXED(''),HIDE
+      #PROMPT('Search Engines',@s60),%SearchEngines,MULTI(''),REQ
+    #ENDBOXED
+    #BUTTON('Search &Engine Properties'),FROM(%SearchEngines, %SearchEngines)
+      #PROMPT('Engine check box',CONTROL),%SearchEngineControl,REQ
+      #PROMPT('Server name',@s100),%ServerName,REQ
+      #PROMPT('Submission page Url',@s200),%URLOfSubmitPage,REQ
+      #PROMPT('Url to Submit',@s200),%URLToSubmit,REQ
+      #BOXED(''),HIDE
+        #PROMPT('Field',@s40),%HttpStrings,MULTI(''),REQ
+      #ENDBOXED
+      #BUTTON('Http Form Fields'),FROM(%HttpStrings,%HttpStrings)
+        #PROMPT('Field Value',@s200),%HttpStringValues,REQ
+      #ENDBUTTON
+      #PROMPT('Username',@s100),%UserName,DEFAULT('Anonymous'),REQ
+      #PROMPT('Password',@s100),%Password
+    #ENDBUTTON
+  #ENDTAB
+  #TAB('C&lasses'),HLP('~WbHttp_Classes'),AT(,,170)
+    #BOXED('')
+      #PROMPT('&Http Engine Class:',FROM(%pClassName)),%WbHttpEngineClass,DEFAULT('HttpClass'),REQ
+      #PROMPT('&Http String Class:',FROM(%pClassName)),%WbHttpStringClass,DEFAULT('HttpURLString'),REQ
+    #ENDBOXED
+  #ENDTAB
+  #BUTTON('&WbHttpEngine Class'),AT(,,170),HLP('~WbHttpEngine_Class')
+    #WITH(%ClassItem,'WbHttpEngine')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDBUTTON
+  #BUTTON('&WbHttpString Class'),AT(,,170),HLP('~WbHttpString_Class')
+    #WITH(%ClassItem,'WbHttpString')
+      #INSERT(%ClassPrompts(ABC))
+    #ENDWITH
+  #ENDBUTTON
+#ENDSHEET
+#!
+#!
+#ATSTART
+  #CALL(%ReadABCFiles(ABC))
+  #CALL(%SetClassDefaults(ABC), 'WbHttpEngine', 'HttpEngine', %WbHttpEngineClass)
+  #CALL(%SetClassDefaults(ABC), 'WbHttpString', 'HttpString', %WbHttpStringClass)
+  #FIX(%ClassItem,'WbHttpEngine')
+  #EQUATE(%WbHttpEngineObjectName, %ThisObjectName)
+  #FIX(%ClassItem,'WbHttpString')
+  #EQUATE(%WbHttpStringObjectName, %ThisObjectName)
+#ENDAT
+#!
+#AT(%GatherObjects)
+  #CALL(%AddObjectList(ABC), 'WbHttpEngine')
+  #CALL(%AddObjectList(ABC), 'WbHttpString')
+#ENDAT
+#!
+#!
+#AT(%LocalDataClasses)
+#INSERT(%GenerateClass(ABC), 'WbHttpEngine')
+#INSERT(%GenerateClass(ABC), 'WbHttpString')
+#ENDAT
+#!
+#!
+#AT(%LocalProcedures)
+  #CALL(%GenerateVirtuals(ABC), 'WbHttpEngine', 'Local Objects|Web Objects|Web Http Engine Properties', '%WbHttpEngineVirtuals(Web)')
+  #CALL(%GenerateVirtuals(ABC), 'WbHttpString', 'Local Objects|Web Objects|Web Http String Properties', '%WbHttpStringVirtuals(Web)')
+#ENDAT
+#!
+#AT(%DataSection),PRIORITY(8000)
+
+dwSc                LONG
+dwLen               LONG
+szEmptyStr          CSTRING('')
+szUserName          &CSTRING
+szPassword          &CSTRING
+szServerName        &CSTRING
+strEncodedURL       &STRING
+strObjectName       &STRING
+strReadBuffer       &STRING
+Connection          &IINetConnectionHttp
+
+#ENDAT
+#!
+#AT(%WindowManagerMethodCodeSection,'Init','(),BYTE'),PRIORITY(8300)
+%WbHttpEngineObjectName.Init(szEmptyStr, 0,)
+szUserName &= NEW(CSTRING(LEN('%UserName') + 1))
+IF '%Password' ~= ''
+  szPassword &= NEW(CSTRING(LEN('%Password') + 1))
+END
+#ENDAT
+#!
+#!
+#AT(%WindowManagerMethodCodeSection,'Kill','(),BYTE'),PRIORITY(9000)
+%WbHttpEngineObjectName.Kill
+DISPOSE(szUserName)
+IF ~szPassword &= NULL
+  DISPOSE(szPassword)
+END
+#ENDAT
+#!
+#AT(%ControlEventHandling,%SubmitControl,'Accepted')
+  IF ~szPassword &= NULL
+    %WbHttpEngineObjectName.IClientTransportHttp.SetUser(szUserName, szPassword)
+  ELSE
+    %WbHttpEngineObjectName.IClientTransportHttp.SetUser(szUserName, szEmptyStr)
+  END
+  #FOR(%SearchEngines)
+  IF %SearchEngineControl{PROP:Checked} = true
+    szServerName &= NEW(CSTRING(LEN('%ServerName') + 1))
+    szServerName = '%ServerName'
+    strObjectName &= NEW(STRING(LEN('%URLOfSubmitPage')))
+    strObjectName = '%URLOfSubmitPage'
+    Connection &= %WbHttpEngineObjectName.IClientTransportHttp.Connect(WININET_POST, szServerName)
+    ASSERT(ADDRESS(Connection))
+    IF ADDRESS(Connection)
+    #FOR(%HttpStrings)
+      %WbHttpStringObjectName.AppendFormField('%HttpStrings', '%HttpStringValues')
+    #ENDFOR
+      DO Submit
+      %WbHttpEngineObjectName.Disconnect(Connection)
+    ELSE
+      !Throw ConnectFailure Error
+    END
+    DISPOSE(strObjectName)
+    DISPOSE(szServerName)
+    %WbHttpStringObjectName.Kill
+  END
+  #ENDFOR
+  POST(EVENT:CloseWindow)
+  RETURN Level:Benign
+#ENDAT
+#!
+#AT(%ProcedureRoutines),PRIORITY(8000)
+
+! *AI - TODO - Fix call to GetNextResponseSize for dynamic buffer creation
+
+Submit          ROUTINE
+
+    dwLen = %WbHttpStringObjectName.GetEncodedURLSize()
+    strEncodedURL &= NEW(STRING(dwLen))
+    %WbHttpStringObjectName.GetEncodedURL(strEncodedURL)
+    Connection.SetOptions(szEmptyStr, szEmptyStr, 0, 0)
+    IF Connection.SendData(strEncodedURL, strObjectName)
+      dwSc = Connection.GetStatus()
+      IF dwSc >= 200 AND dwSc <= 299
+        IF %WbHttpEngineObjectName.IClientTransportHttp.IsDataReady(Connection)
+          strReadBuffer &= NEW(STRING(16384))
+          !dwLen = WbHttpStringObjectName.GetNextResponseSize(Connection)))
+          !IF dwLen
+            !Create string dwLen + 1 in Length
+            %WbHttpEngineObjectName.GetNextResponse(Connection, strReadBuffer)
+            !Dispose of string
+          !END
+          DISPOSE(strReadBuffer)
+        END
+      END
+    ELSE
+      MESSAGE('Error Sending Data : ' & Connection.GetStatus())
+    END
+    DISPOSE(strEncodedURL)
+#ENDAT
+#!
+#GROUP(%WbHttpEngineVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebHttpEngineMethodDataSection,'WebHttpEngine Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('WbHttpEngine'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebHttpEngineMethodCodeSection,'WebHttpEngine Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('WbHttpEngine'))),TREE(%TreeText & %CodeText)
+#!
+#GROUP(%WbHttpStringVirtuals, %TreeText, %DataText, %CodeText)
+#EMBED(%WebHttpStringMethodDataSection,'WebHttpString Method Data Section'),%pClassMethod,%pClassMethodPrototype,LABEL,DATA,PREPARE(,%FixClassName(%FixBaseClassToUse('WbHttpString'))),TREE(%TreeText & %DataText)
+  #?CODE
+  #EMBED(%WebHttpStringMethodCodeSection,'WebHttpString Method Executable Code Section'),%pClassMethod,%pClassMethodPrototype,PREPARE(,%FixClassName(%FixBaseClassToUse('WbHttpString'))),TREE(%TreeText & %CodeText)
+#!

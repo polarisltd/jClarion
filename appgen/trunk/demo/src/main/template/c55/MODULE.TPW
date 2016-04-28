@@ -1,0 +1,36 @@
+#MODULE(GENERATED,'Generated Source Module'),HLP('~TPLModuleGenerated') #! MODULE header
+#PREEMBED('! Before Embed Point: ' & %EmbedID & ') DESC(' & %EmbedDescription & ') ARG(' & %EmbedParameters & ')',%GenerateEmbedComments)
+#POSTEMBED('! After Embed Point: ' & %EmbedID & ') DESC(' & %EmbedDescription & ') ARG(' & %EmbedParameters & ')',%GenerateEmbedComments)
+%[20]Null MEMBER('%Program')                      #<! This is a MEMBER module
+#FREE(%CustomModuleMapModule)
+#FREE(%CustomModuleData)
+#EMBED(%CustomModuleDeclarations,'Compile Module Declarations'),HIDE
+#EMBED(%ModuleDataSection,'Module Data Section'),DATA
+#SUSPEND
+                     #?MAP
+  #FIX(%CustomModuleMapModule,'CURRENT MODULE')
+  #FOR(%CustomModuleMapProcedure)
+%[22]Null %CustomModuleMapProcedure%CustomModuleMapProcedurePrototype
+  #ENDFOR
+  #FOR(%CustomModuleMapModule),WHERE(%CustomModuleMapModule <> 'CURRENT MODULE')
+                       MODULE(%CustomModuleMapModule)
+    #FOR(%CustomModuleMapProcedure)
+%[24]Null %CustomModuleMapProcedure%CustomModuleMapProcedurePrototype
+    #ENDFOR
+                       END
+  #ENDFOR
+                     #?END
+#RESUME
+#FOR(%ModuleData)
+%ModuleData   %ModuleDataStatement
+#ENDFOR
+#FOR(%CustomModuleData)
+%[20]CustomModuleData %CustomModuleDataDeclaration
+  #FOR(%CustomModuleDataComponent)
+%[20 + (%CustomModuleDataComponentIndent * 2)]CustomModuleDataComponent %CustomModuleDataComponentDeclaration
+  #ENDFOR
+#ENDFOR
+#MODULE(ExternalSource,'External Source Module','External','.clw'),EXTERNAL,HLP('~TPLModuleExternalSource')
+#MODULE(ExternalObj,'External Object Module','External','.obj'),EXTERNAL,HLP('~TPLModuleExternalObj')
+#MODULE(ExternalLib,'External Library Module (LIB)','External','.lib'),EXTERNAL,HLP('~TPLModuleExternalLib')
+#MODULE(ExternalDLL,'External Dynamic Link Library (DLL)','External','.lib'),EXTERNAL,HLP('~TPLModuleExternalDll')

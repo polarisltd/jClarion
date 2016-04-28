@@ -1,0 +1,20 @@
+#UTILITY(QuickStart,'Generate a New Application and Dictionary'),WIZARD
+#!
+#INSERT(%DeclareSymbols)
+#!
+#DECLARE(%ControlModel)
+#SET(%ControlModel,'Toolbar')
+#DECLARE(%QuickAppGenerateAllFiles)
+#SET(%QuickAppGenerateAllFiles,%True)
+#SET(%ValueConstruct,'Main')
+#FIX(%Procedure,%ValueConstruct)
+#ADD(%ProcedureList,%ValueConstruct)
+#SET(%QuickProcedurePrimary,'')
+#SET(%QuickProcedureType,'ABC Frame')
+#SET(%QuickProcedureDescription,'Clarion 5.5 Quick Application for ' & %DictionaryFile)
+#SET(%QuickProcedureWindow,%True)
+#SET(%GenerateProgramSection,%True)
+#!
+#INSERT(%GenerateProcedures)
+#!
+#SET(%GenerateProgramSection,%False)

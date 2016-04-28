@@ -54,6 +54,12 @@ public class ClarionReal extends ClarionObject
         return value;
     }
     
+    public ClarionReal like(){           // robertsp160217 %%%%% added this as compiler is generating like() on REAL numbers
+    	return new ClarionReal(value);   // robertsp160217 %%%%% 
+    }                                    // robertsp160217 %%%%% 
+    
+    
+    
     @Override
     public ClarionObject add(ClarionObject object) 
     {
@@ -210,5 +216,20 @@ public class ClarionReal extends ClarionObject
     public Object getLockedObject(Thread t) {
         return this;
     }
+    
+    /**
+     * Set external name for object - used by SQL drivers etc
+     * 
+     * @param name
+     * @return
+     */
+    public ClarionReal setName(String name)
+    {
+        doSetName(name);
+        return this;
+    }
+
+    
+    
 
 }

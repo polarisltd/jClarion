@@ -1,0 +1,21 @@
+[PROPERTYCLASS]
+  NAME: TOPSPEED:ControlTemplate#GlobalTemplate#FileAssociation
+  DESCRIPTOR: 1
+  PROPERTY: NAME(FieldTags),DTYPE(EDITLIST),MULTI(1),TYPE(STRING)
+  PROPERTY: NAME(FileTags),DTYPE(EDITLIST),MULTI(1),TYPE(STRING)
+  [DEFINITION]
+    PARENTWIZARD(TOPSPEED:ControlTemplate#GlobalTemplate)
+    CONTROLTEMPLATE(FileUserTags)
+    FIELDTAGS()
+    FILETAGS()
+    NAME(TOPSPEED:ControlTemplate#GlobalTemplate#FileAssociation)
+  [END]
+[END]
+[PROPERTYCLASS]
+  NAME: TOPSPEED:Application
+  DESCRIPTOR: 1
+  PROPERTY: NAME(FileAssoc),ACORN(1),ACORN.NAME(FileAssoc),ACORN.WIZARD(ControlTemplate#GlobalTemplate#FileAssociation)
+  [DEFINITION]
+    FILEASSOC(1)
+  [END]
+[END]

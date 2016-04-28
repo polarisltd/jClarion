@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="clarion.abdrops.Abdrops"/>
+<fullyQualifiedTypeName name="clarion.Main"/>
+<fullyQualifiedTypeName name="clarion.abquery.Queryformclass_4"/>
+<fullyQualifiedTypeName name="clarion.abquery.Queryformvisual_4"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.io.ByteArrayInputStream"/>
+<fullyQualifiedTypeName name="org.jclarion.clarion.util.PDFPreviewer"/>
+<fullyQualifiedTypeName name="java.text.SimpleDateFormat"/>
+<fullyQualifiedTypeName name="java.sql.Date"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="java.io.FileWriter"/>
+</qualifiedTypeNameHistroy>
